@@ -3,6 +3,7 @@ package com.RepGraph;
 import java.util.HashMap;
 
 public class model {
-    HashMap<String, graph> graphs;
+    private HashMap<String, graph> graphs;
 
+    public model(){}
 }
