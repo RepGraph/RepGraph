@@ -1,5 +1,5 @@
 /**
- * A semantic node class that represents node in a graph.
+ * A semantic node class that represents a node in a graph.
  * @since 29/08/2020
  */
 

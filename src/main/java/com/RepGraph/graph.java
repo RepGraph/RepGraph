@@ -1,5 +1,5 @@
 /**
- * The graph class represents a single sentence which comprises of nodes, endges and tokens.
+ * The graph class represents a single sentence which comprises of nodes, edges and tokens.
  * @since 29/08/2020
  */
 package com.RepGraph;

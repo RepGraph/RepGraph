@@ -1,5 +1,5 @@
 /**
- * The token class is used to represeent a token (usually a word or a meaningful part of a word). Sentences are split into a sequence of tokens.
+ * The token class is used to represent a token (usually a word or a meaningful part of a word). Sentences are split into a sequence of tokens.
  * @since 29/08/2020
  */
 package com.RepGraph;
