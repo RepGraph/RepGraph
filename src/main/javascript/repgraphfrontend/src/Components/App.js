@@ -38,7 +38,7 @@ class App extends React.Component{
                                    onSelect={this.handleSentenceSelected}/>
                     </Grid>
                     <Grid item xs={7}>
-                        <VisualizerArea/>
+                        <VisualizerArea sentence={sentence}/>
                     </Grid>
                 </Grid>
             </React.Fragment>
