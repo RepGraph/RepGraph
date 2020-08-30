@@ -39,14 +39,14 @@ public class RequestHandler {
      * This method will be called when the class receives a GET HTTP request with the "Visualise" keyword in the Request URL.
      * The Request URL also requires the "index" and "format" Request Params to be present.
      *
-     * @param index  This refers to which graph the user wants to be visualised on the front end.
+     * @param id  This refers to which graph the user wants to be visualised on the front end.
      * @param format This refers to which format the user wants the graph to be visualised in.
      * @return graph This method returns a graph object of the requested graph.
      */
     @GetMapping("/Visualise")
     @ResponseBody
-    public graph Visualise(@RequestParam int index, @RequestParam int format) {
-        return RepModel.getGraph(index);
+    public graph Visualise(@RequestParam String id, @RequestParam int format) {
+        return RepModel.getGraph(id);
     }
 
 
@@ -65,24 +65,26 @@ public class RequestHandler {
      * This method will be called when the class receives a GET HTTP request with the "CompareGraphs" keyword in the Request URL.
      * The Request URL also requires the "index1" and "index2" Request Params to be present.
      *
-     * @param index1 This refers to one of the indexes of the graphs to be compared.
-     * @param index2 This refers to the other index of the graph to be compared.
+     * @param id1 This refers to one of the indexes of the graphs to be compared.
+     * @param id2 This refers to the other index of the graph to be compared.
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public void CompareGraphs(@RequestParam int index1, @RequestParam int index2) {
+    public void CompareGraphs(@RequestParam String id1, @RequestParam String id2) {
     }
 
     /**
      * This method will be called when the class receives a GET HTTP request with the "TestGraph" keyword in the Request URL.
      * The Request URL also requires the "index" and "test" Request Params to be present.
      *
-     * @param index This refers to the index of the graph that will be tested.
-     * @param test  The refers to the TestId of the test to be performed.
+     * @param id This refers to the id of the graph that will be tested.
+     * @param planar This refers to whether its getting tested for the graph being planar
+     * @param connected This refers to whether its getting tested for being connected
+     * @param longestpath This refers to finding the longest path
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public void TestGraph(@RequestParam int index, @RequestParam int test) {
+    public void TestGraph(@RequestParam String id, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam boolean connected) {
     }
 
     public static void main(String[] args) {
