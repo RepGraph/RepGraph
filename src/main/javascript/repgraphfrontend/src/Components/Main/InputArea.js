@@ -3,6 +3,10 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
+import Tooltip from "@material-ui/core/Tooltip";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Zoom from "@material-ui/core/Zoom";
 
 const styles = {
     Paper: {
@@ -25,6 +29,10 @@ class InputArea extends React.Component
 
     render(){
 
+        const parsedSentences = this.props.sentences;
+        console.log(parsedSentences);
+        const onSelect = this.props.onSelect;
+
         return (
             <Paper style={styles.Paper} variant="elevation" elevation={5}>
                 <Typography variant="h6" align="center">Select a Sentence for Visualization:</Typography>
@@ -32,7 +40,18 @@ class InputArea extends React.Component
                 <List component="nav" aria-label="features">
                     <Paper style={styles.SentencePaper}>
                         <List component="ul">
-                            Sentence List here
+                            {parsedSentences.map((sentence)=>
+                                <Tooltip TransitionComponent={Zoom} title="Display Graph >" placement="right">
+                                    <div>
+                                        <ListItem button key={sentence.id} onClick={()=>onSelect(sentence.id)}>
+                                            <ListItemText
+                                                primary={sentence.input}
+                                            >
+                                            </ListItemText>
+                                        </ListItem>
+                                        <Divider/>
+                                    </div>
+                                </Tooltip>)}
                         </List>
                     </Paper>
                 </List>
