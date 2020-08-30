@@ -1,6 +1,7 @@
 /**
  * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
  * @since 29/08/2020
+ *
  */
 
 package com.RepGraph;
@@ -24,7 +25,7 @@ public class RepGraphModel {
      * @param graphID A graph's ID.
      * @return graph The requested graph.
      */
-    public graph getGraph(String graphID){
+    public graph getGraph(int graphID) {
         return null;
     }
 

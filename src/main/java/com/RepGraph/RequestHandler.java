@@ -11,11 +11,29 @@ import org.springframework.web.bind.annotation.*;
  * @author TLDEDA001
  * @version 1
  * @since 24-Aug-2020
+ *
  */
 
 @SpringBootApplication
 @RestController
 public class RequestHandler {
+
+    RepGraphModel RepModel;
+
+
+    /**
+     * This method is the post request to upload data and create the model
+     *
+     * @param data This parameter is the json string of data that is automatically converted into a repgraph model.
+     * @return RepGraphModel - this method returns the method it creates which is a RepGraphModel of the data uploaded
+     */
+    @PostMapping("/Upload")
+    @ResponseBody
+    public RepGraphModel UploadData(@RequestBody RepGraphModel data) {
+        RepModel = data;
+        return RepModel;
+    }
+
 
     /**
      * This method will be called when the class receives a GET HTTP request with the "Visualise" keyword in the Request URL.
@@ -23,10 +41,12 @@ public class RequestHandler {
      *
      * @param index  This refers to which graph the user wants to be visualised on the front end.
      * @param format This refers to which format the user wants the graph to be visualised in.
+     * @return graph This method returns a graph object of the requested graph.
      */
     @GetMapping("/Visualise")
     @ResponseBody
-    public void Visualise(@RequestParam int index, @RequestParam int format) {
+    public graph Visualise(@RequestParam int index, @RequestParam int format) {
+        return RepModel.getGraph(index);
     }
 
 
