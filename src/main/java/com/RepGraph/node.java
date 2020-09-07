@@ -25,6 +25,11 @@ public class node {
     private ArrayList<String> anchors;
 
     /**
+     * An array list of neighbouring nodes.
+     */
+    private ArrayList<Integer> nodeNeighbours;
+
+    /**
      * Default constructor for the node class.
      */
     public node(){}
@@ -87,5 +92,13 @@ public class node {
      */
     public void setAnchors(ArrayList<String> anchors) {
         this.anchors = anchors;
+    }
+
+    /**
+     * Adds a neighbouring node.
+     * @param neighbour A neighbouring node
+     */
+    public void addNeighbour(int neighbour){
+        nodeNeighbours.add(neighbour);
     }
 }

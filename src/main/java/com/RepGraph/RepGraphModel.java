@@ -61,11 +61,11 @@ public class RepGraphModel {
      * Runs formal tests on a graph.
      * @param graphID The graph ID which the tests will be run.
      * @param planar Boolean to decide if to test for if the graph is planar.
-     * @param directed Boolean to decide if to find the longest directed or undirected path.
+     * @param longest Boolean to decide if to find the longest directed or undirected path.
      * @param connected Boolean to decide if to test for if the graph is connected.
      * @return String Results of the tests.
      */
-    public String runFormalTests(String graphID, boolean planar, boolean directed, boolean connected){
+    public String runFormalTests(String graphID, boolean planar, boolean longest, boolean connected){
         return null;
     }
 

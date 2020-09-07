@@ -156,4 +156,21 @@ public class graph {
     public void setEdges(ArrayList<edge> edges) {
         this.edges = edges;
     }
+
+    public void findLongest(){
+        setNodeNeighbours();
+    }
+
+    /**
+     * Assigns all the nodes in the graph their neighbouring nodes, which will be used for analysis.
+     */
+    public void setNodeNeighbours(){
+        int source;
+        int target;
+        for (int i=0; i<edges.size();i++){
+            source = edges.get(i).getSource();
+            target = edges.get(i).getTarget();
+            nodes.get(source).addNeighbour(target);
+        }
+    }
 }
