@@ -4,6 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 /**
  * This is the RestAPI class and controller in the MVC format. This class will handle all communication between
  * the front-end and back-end.
@@ -51,26 +53,43 @@ public class RequestHandler {
      * This method will be called when the class receives a GET HTTP request with the "Visualise" keyword in the Request URL.
      * The Request URL also requires the "index" and "format" Request Params to be present.
      *
-     * @param id  This refers to which graph the user wants to be visualised on the front end.
+     * @param graphID  This refers to which graph the user wants to be visualised on the front end.
      * @param format This refers to which format the user wants the graph to be visualised in.
      * @return graph This method returns a graph object of the requested graph.
      */
     @GetMapping("/Visualise")
     @ResponseBody
-    public graph Visualise(@RequestParam String id, @RequestParam int format) {
+    public graph Visualise(@RequestParam String graphID, @RequestParam int format) {
         return RepModel.getGraph(id);
     }
 
+    /**
+     * This method will be called when the class receives a GET HTTP request with the "SearchSubgraphNodeSet" keyword in the Request URL.
+     * The Request URL also requires the "graphID" and "NodeID" list Request Params to be present.
+     *
+     * @param graphID This is the graph containing the nodes and their corresponding labels to be searched for
+     * @param NodeID  This is the list of node indexes
+     * @return ArrayList<String> This is the list of graph ids of graphs that have matching node labels
+     */
+    @GetMapping("/SearchSubgraphNodeSet")
+    @ResponseBody
+    public ArrayList<String> SearchSubgraphNodeSet(@RequestParam String graphID, @RequestParam int[] NodeID) {
+
+        return RepModel.searchSubgraphNodeSet(graphID, NodeID);
+    }
 
     /**
-     * This method will be called when the class receives a GET HTTP request with the "SearchSubgraph" keyword in the Request URL.
-     * The Request URL also requires the "Subgraph" Request Param to be present.
+     * This method will be called when the class receives a GET HTTP request with the "SearchSubgraphPattern" keyword in the Request URL.
+     * The Request URL also requires the "graphID" Request Param and "subgraph" graph object requestbody to be present.
      *
-     * @param Subgraph This refers the subgraph pattern that will be searched over all the models
+     * @param graphID  This is the graph id of the graph with the pattern to be searched
+     * @param subgraph This is the graph object containing the subgraph information.
+     * @return ArrayList<String> This is a list a graph IDs with matching subgraph patterns
      */
-    @GetMapping("/SearchSubgraph")
+    @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public void SearchSubgraph(@RequestParam String Subgraph) {
+    public ArrayList<String> SearchSubgraphPattern(@RequestParam String graphID, @RequestBody graph subgraph) {
+        return RepModel.searchSubgraphPattern(graphID, subgraph);
     }
 
     /**
