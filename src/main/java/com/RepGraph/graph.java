@@ -4,7 +4,9 @@
  */
 package com.RepGraph;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 public class graph {
 
@@ -155,5 +157,92 @@ public class graph {
      */
     public void setEdges(ArrayList<edge> edges) {
         this.edges = edges;
+    }
+
+    /**
+     * Analysis Tool for finding the longest path in the graph.
+     * @return ArrayList The route of the longest path.
+     */
+    public ArrayList<Integer> findLongest(){
+        setNodeNeighbours();
+        ArrayList<Integer> longest = Dijkstra(0);
+        ArrayList<Integer> temp;
+        for (int i =1; i<nodes.size();i++){
+            temp = Dijkstra(i);
+            if (temp.size() > longest.size()){
+                longest = temp;
+            }
+        }
+
+        ArrayList<Integer> reversed = new ArrayList<Integer>();
+        for (int i = longest.size() - 1; i >= 0; i--) {
+            reversed.add(longest.get(i));
+        }
+
+        return reversed;
+    }
+
+    /**
+     * Assigns all the nodes in the graph their neighbouring nodes, which will be used for analysis.
+     */
+    public void setNodeNeighbours(){
+        int source;
+        int target;
+        for (int i=0; i<edges.size();i++){
+            source = edges.get(i).getSource();
+            target = edges.get(i).getTarget();
+            nodes.get(source).addNeighbour(target);
+        }
+    }
+
+    /**
+     * Finds the longest distance from a given start node to all the other nodes in the system and returns the path of the longest path.
+     * @param startNode Number of the start node.
+     * @return ArrayList The longest path available from the start node.
+     */
+    public ArrayList<Integer> Dijkstra(int startNode){
+        int nodesVisited = 0;
+        PriorityQueue<node> Q = new PriorityQueue<node>();
+        int[] dist = new int[nodes.size()];
+        int[] prevNode = new int[nodes.size()];
+
+        for (int i = 0; i<nodes.size();i++){
+            Q.add(nodes.get(i));
+            dist[i] = Integer.MIN_VALUE;
+        }
+
+        dist[startNode] = 0;
+
+        while ((Q.size() != 0) && (nodesVisited < nodes.size())){
+            node currentNode = Q.poll();
+            nodesVisited++;
+
+            for (int neighbourNodeID : currentNode.getNodeNeighbours()){
+                int currentNodeID = currentNode.getId();
+                if (dist[neighbourNodeID] > dist[currentNodeID] - 1){
+                    dist[neighbourNodeID] = dist[currentNodeID] - 1;
+                    prevNode[neighbourNodeID] = currentNodeID;
+                }
+            }
+        }
+
+        ArrayList<Integer> path = new ArrayList<Integer>();
+        int max = 0;
+        for (int i = 0; i<dist.length;i++){
+            if (dist[max] < dist[i]){
+                max = i;
+            }
+        }
+
+        path.add(max);
+        int prev = prevNode[max];
+        while (prev!=startNode){
+            path.add(prev);
+            prev = prevNode[prev];
+        }
+        path.add(startNode);
+
+        return path;
+
     }
 }

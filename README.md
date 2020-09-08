@@ -1,11 +1,29 @@
-### Java Spring template project
+### RepGraph - Capstone
+TLDEDA001 CHNROY002 CHNJAR003
 
-This project is based on a GitLab [Project Template](https://docs.gitlab.com/ee/gitlab-basics/create-project.html).
 
-Improvements can be proposed in the [original project](https://gitlab.com/gitlab-org/project-templates/spring).
+Description
+---
+The meaning of a sentence can be represented by a graph in which the nodes represent
+concepts, entities or actions, and the edges represent relations between the edges, indicating
+who does what to whom. Nodes and edges are labelled, and every node is linked to a word or a
+phrase in the sentence. Meaning representation graphs are used in question answering
+systems and other natural language processing applications. 
 
-### CI/CD with Auto DevOps
 
-This template is compatible with [Auto DevOps](https://docs.gitlab.com/ee/topics/autodevops/).
+Purpose
+---
 
-If Auto DevOps is not already enabled for this project, you can [turn it on](https://docs.gitlab.com/ee/topics/autodevops/#enabling-auto-devops) in the project settings.
+This project visualises and analyses these meaning representation graphs.
+
+Technical Details:
+---
+
+This project was created using a combination of javascript for the front-end and java with Spring for the back-end.
+
+Authors
+---
+**Created By:**
+* TLDEDA001
+* CHNROY002
+* CHNJAR003
