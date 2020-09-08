@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class RequestHandler {
 
-    RepGraphModel RepModel;
+    RepGraphModel RepModel = new RepGraphModel();
+    ;
 
 
     /**
@@ -34,6 +35,17 @@ public class RequestHandler {
         return RepModel;
     }
 
+    /**
+     * Uploads a single graph to the model object
+     *
+     * @param data This is the graph object to be uploaded
+     */
+    @PostMapping("/UploadSingle")
+    @ResponseBody
+    public void UploadDataSingle(@RequestBody graph data) {
+        RepModel.addGraph(data);
+
+    }
 
     /**
      * This method will be called when the class receives a GET HTTP request with the "Visualise" keyword in the Request URL.
