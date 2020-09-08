@@ -4,6 +4,7 @@
  */
 package com.RepGraph;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -160,11 +161,25 @@ public class graph {
 
     /**
      * Analysis Tool for finding the longest path in the graph.
-     * @return String The route of the longest path.
+     * @return ArrayList The route of the longest path.
      */
-    public String findLongest(){
+    public ArrayList<Integer> findLongest(){
         setNodeNeighbours();
-        return "";
+        ArrayList<Integer> longest = Dijkstra(0);
+        ArrayList<Integer> temp;
+        for (int i =1; i<nodes.size();i++){
+            temp = Dijkstra(i);
+            if (temp.size() > longest.size()){
+                longest = temp;
+            }
+        }
+
+        ArrayList<Integer> reversed = new ArrayList<Integer>();
+        for (int i = longest.size() - 1; i >= 0; i--) {
+            reversed.add(longest.get(i));
+        }
+
+        return reversed;
     }
 
     /**
@@ -180,22 +195,25 @@ public class graph {
         }
     }
 
-
+    /**
+     * Finds the longest distance from a given start node to all the other nodes in the system and returns the path of the longest path.
+     * @param startNode Number of the start node.
+     * @return ArrayList The longest path available from the start node.
+     */
     public ArrayList<Integer> Dijkstra(int startNode){
         int nodesVisited = 0;
         PriorityQueue<node> Q = new PriorityQueue<node>();
         int[] dist = new int[nodes.size()];
         int[] prevNode = new int[nodes.size()];
 
-        dist[startNode] = 0;
-
         for (int i = 0; i<nodes.size();i++){
             Q.add(nodes.get(i));
             dist[i] = Integer.MIN_VALUE;
         }
 
-        while ((Q.size() != 0) && (nodesVisited < nodes.size())){
+        dist[startNode] = 0;
 
+        while ((Q.size() != 0) && (nodesVisited < nodes.size())){
             node currentNode = Q.poll();
             nodesVisited++;
 
