@@ -30,6 +30,11 @@ public class node {
     private ArrayList<Integer> nodeNeighbours;
 
     /**
+     * When calculating longest path, prevNode will be the previous node in the path.
+     */
+    private int prevNode;
+
+    /**
      * Default constructor for the node class.
      */
     public node(){}
@@ -96,9 +101,17 @@ public class node {
 
     /**
      * Adds a neighbouring node.
-     * @param neighbour A neighbouring node
+     * @param neighbour A neighbouring node.
      */
     public void addNeighbour(int neighbour){
         nodeNeighbours.add(neighbour);
+    }
+
+    /**
+     * Getter method for a node's neighbours.
+     * @return ArrayList The node's neighbours.
+     */
+    public ArrayList<Integer> getNodeNeighbours(){
+        return nodeNeighbours;
     }
 }

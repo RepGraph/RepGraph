@@ -5,6 +5,7 @@
 package com.RepGraph;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 public class graph {
 
@@ -157,8 +158,13 @@ public class graph {
         this.edges = edges;
     }
 
-    public void findLongest(){
+    /**
+     * Analysis Tool for finding the longest path in the graph.
+     * @return String The route of the longest path.
+     */
+    public String findLongest(){
         setNodeNeighbours();
+        return "";
     }
 
     /**
@@ -172,5 +178,53 @@ public class graph {
             target = edges.get(i).getTarget();
             nodes.get(source).addNeighbour(target);
         }
+    }
+
+
+    public ArrayList<Integer> Dijkstra(int startNode){
+        int nodesVisited = 0;
+        PriorityQueue<node> Q = new PriorityQueue<node>();
+        int[] dist = new int[nodes.size()];
+        int[] prevNode = new int[nodes.size()];
+
+        dist[startNode] = 0;
+
+        for (int i = 0; i<nodes.size();i++){
+            Q.add(nodes.get(i));
+            dist[i] = Integer.MIN_VALUE;
+        }
+
+        while ((Q.size() != 0) && (nodesVisited < nodes.size())){
+
+            node currentNode = Q.poll();
+            nodesVisited++;
+
+            for (int neighbourNodeID : currentNode.getNodeNeighbours()){
+                int currentNodeID = currentNode.getId();
+                if (dist[neighbourNodeID] > dist[currentNodeID] - 1){
+                    dist[neighbourNodeID] = dist[currentNodeID] - 1;
+                    prevNode[neighbourNodeID] = currentNodeID;
+                }
+            }
+        }
+
+        ArrayList<Integer> path = new ArrayList<Integer>();
+        int max = 0;
+        for (int i = 0; i<dist.length;i++){
+            if (dist[max] < dist[i]){
+                max = i;
+            }
+        }
+
+        path.add(max);
+        int prev = prevNode[max];
+        while (prev!=startNode){
+            path.add(prev);
+            prev = prevNode[prev];
+        }
+        path.add(startNode);
+
+        return path;
+
     }
 }
