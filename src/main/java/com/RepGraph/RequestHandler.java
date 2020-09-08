@@ -96,26 +96,30 @@ public class RequestHandler {
      * This method will be called when the class receives a GET HTTP request with the "CompareGraphs" keyword in the Request URL.
      * The Request URL also requires the "index1" and "index2" Request Params to be present.
      *
-     * @param id1 This refers to one of the indexes of the graphs to be compared.
-     * @param id2 This refers to the other index of the graph to be compared.
+     * @param graphID1 This refers to one of the indexes of the graphs to be compared.
+     * @param graphID2 This refers to the other index of the graph to be compared.
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public void CompareGraphs(@RequestParam String id1, @RequestParam String id2) {
+    public void CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
+        RepModel.compareTwoGraphs(graphID1, graphID2);
+
     }
 
     /**
      * This method will be called when the class receives a GET HTTP request with the "TestGraph" keyword in the Request URL.
      * The Request URL also requires the "index" and "test" Request Params to be present.
      *
-     * @param id This refers to the id of the graph that will be tested.
-     * @param planar This refers to whether its getting tested for the graph being planar
-     * @param connected This refers to whether its getting tested for being connected
+     * @param graphID          This refers to the id of the graph that will be tested.
+     * @param planar      This refers to whether its getting tested for the graph being planar
+     * @param connected   This refers to whether its getting tested for being connected
      * @param longestpath This refers to finding the longest path
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public void TestGraph(@RequestParam String id, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam boolean connected) {
+    public void TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam boolean connected) {
+        RepModel.runFormalTests(graphID, planar, longestpath, connected);
+
     }
 
     public static void main(String[] args) {
