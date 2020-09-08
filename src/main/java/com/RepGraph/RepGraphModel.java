@@ -86,6 +86,16 @@ public class RepGraphModel {
     }
 
     /**
+     * Checks if all values in boolean array are true
+     *
+     * @param array an array of boolean values
+     * @return boolean True if all values are true and false if there is at least one false value
+     */
+    public boolean areAllTrue(boolean[] array) {
+        for (boolean b : array) if (!b) return false;
+        return true;
+    }
+    /**
      * Compares two graphs and searches for similarities and differences.
      * @param graphID1 Graph ID of the first graph.
      * @param graphID2 Graph ID of the second graph.
