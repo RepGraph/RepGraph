@@ -164,8 +164,16 @@ public class graph {
      * @return ArrayList The route of the longest path.
      */
     public ArrayList<Integer> findLongest(){
+
         setNodeNeighbours();
+
         ArrayList<Integer> longest = Dijkstra(0);
+
+        for (int i = 0; i < longest.size(); i++){
+            System.out.println(longest.get(i) + " ");
+        }
+
+        System.out.println();
         ArrayList<Integer> temp;
         for (int i =1; i<nodes.size();i++){
             temp = Dijkstra(i);
@@ -186,6 +194,7 @@ public class graph {
      * Assigns all the nodes in the graph their neighbouring nodes, which will be used for analysis.
      */
     public void setNodeNeighbours(){
+
         int source;
         int target;
         for (int i=0; i<edges.size();i++){
@@ -201,21 +210,29 @@ public class graph {
      * @return ArrayList The longest path available from the start node.
      */
     public ArrayList<Integer> Dijkstra(int startNode){
-        int nodesVisited = 0;
-        PriorityQueue<node> Q = new PriorityQueue<node>();
+        ArrayList<Integer> nodesVisited = new ArrayList<Integer>();
+
         int[] dist = new int[nodes.size()];
         int[] prevNode = new int[nodes.size()];
 
         for (int i = 0; i<nodes.size();i++){
-            Q.add(nodes.get(i));
-            dist[i] = Integer.MIN_VALUE;
+            dist[i] = Integer.MAX_VALUE;
         }
 
         dist[startNode] = 0;
+        int maxDistIndex = startNode;
 
-        while ((Q.size() != 0) && (nodesVisited < nodes.size())){
-            node currentNode = Q.poll();
-            nodesVisited++;
+
+        while (nodesVisited.size() < nodes.size()){
+
+            for(int i = 0; i<dist.length; i++){
+                if ((dist[maxDistIndex] < dist[i]) && (!nodesVisited.contains(i))){
+                    maxDistIndex = i;
+                }
+            }
+
+            node currentNode = nodes.get(maxDistIndex);
+            nodesVisited.add(maxDistIndex);
 
             for (int neighbourNodeID : currentNode.getNodeNeighbours()){
                 int currentNodeID = currentNode.getId();
@@ -229,7 +246,7 @@ public class graph {
         ArrayList<Integer> path = new ArrayList<Integer>();
         int max = 0;
         for (int i = 0; i<dist.length;i++){
-            if (dist[max] < dist[i]){
+            if (dist[max] > dist[i]){
                 max = i;
             }
         }
