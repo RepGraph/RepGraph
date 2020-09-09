@@ -169,14 +169,11 @@ public class graph {
 
         ArrayList<Integer> longest = Dijkstra(0);
 
-        for (int i = 0; i < longest.size(); i++){
-            System.out.println(longest.get(i) + " ");
-        }
-
         System.out.println();
         ArrayList<Integer> temp;
         for (int i =1; i<nodes.size();i++){
             temp = Dijkstra(i);
+
             if (temp.size() > longest.size()){
                 longest = temp;
             }
@@ -210,43 +207,53 @@ public class graph {
      * @return ArrayList The longest path available from the start node.
      */
     public ArrayList<Integer> Dijkstra(int startNode){
-        ArrayList<Integer> nodesVisited = new ArrayList<Integer>();
 
-        int[] dist = new int[nodes.size()];
+        ArrayList<Integer> path = new ArrayList<Integer>();
+
+        if (nodes.get(startNode).getNodeNeighbours().size()==0){
+            return path;
+        }
+
+        ArrayList<Integer> nodesLeft = new ArrayList<Integer>();
+
+        ArrayList<Integer> dist = new ArrayList<Integer>();
         int[] prevNode = new int[nodes.size()];
 
         for (int i = 0; i<nodes.size();i++){
-            dist[i] = Integer.MAX_VALUE;
+            dist.add(Integer.MAX_VALUE);
+            nodesLeft.add(i);
         }
 
-        dist[startNode] = 0;
+        dist.set(startNode,0);
         int maxDistIndex = startNode;
 
+        while (nodesLeft.size() > 0){
 
-        while (nodesVisited.size() < nodes.size()){
+            maxDistIndex = nodesLeft.get(0);
+            for(int i = 1; i<nodesLeft.size(); i++){
+                if (dist.get(nodesLeft.get(i)) < dist.get(maxDistIndex)){
 
-            for(int i = 0; i<dist.length; i++){
-                if ((dist[maxDistIndex] < dist[i]) && (!nodesVisited.contains(i))){
-                    maxDistIndex = i;
+                    maxDistIndex = nodesLeft.get(i);
                 }
             }
 
             node currentNode = nodes.get(maxDistIndex);
-            nodesVisited.add(maxDistIndex);
+            nodesLeft.remove(nodesLeft.indexOf(maxDistIndex));
+
+
 
             for (int neighbourNodeID : currentNode.getNodeNeighbours()){
                 int currentNodeID = currentNode.getId();
-                if (dist[neighbourNodeID] > dist[currentNodeID] - 1){
-                    dist[neighbourNodeID] = dist[currentNodeID] - 1;
+                if (dist.get(neighbourNodeID) > dist.get(currentNodeID) - 1){
+                    dist.set(neighbourNodeID, dist.get(currentNodeID)  - 1);
                     prevNode[neighbourNodeID] = currentNodeID;
                 }
             }
         }
 
-        ArrayList<Integer> path = new ArrayList<Integer>();
         int max = 0;
-        for (int i = 0; i<dist.length;i++){
-            if (dist[max] > dist[i]){
+        for (int i = 0; i<dist.size();i++){
+            if (dist.get(max) > dist.get(i)){
                 max = i;
             }
         }
