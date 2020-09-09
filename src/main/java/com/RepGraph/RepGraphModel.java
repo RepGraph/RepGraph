@@ -25,7 +25,7 @@ public class RepGraphModel {
      * @param graphID A graph's ID.
      * @return graph The requested graph.
      */
-    public graph getGraph(int graphID) {
+    public graph getGraph(String graphID) {
         return null;
     }
 
