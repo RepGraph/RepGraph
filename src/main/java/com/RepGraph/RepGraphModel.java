@@ -56,7 +56,37 @@ public class RepGraphModel {
      * @return String A string of graph IDs who have matching subgraphs.
      */
     public ArrayList<String> searchSubgraphPattern(String graphID, graph subgraph) {
-        return null;
+
+        ArrayList<String> FoundGraphs = new ArrayList<String>();
+
+
+        ArrayList<Boolean> checks = new ArrayList<>();
+        for (graph g : graphs.values()) {
+
+            for (node n : g.getNodes()) {
+                for (node sn : subgraph.getNodes()) {
+                    if (n.getLabel().equals(sn.getLabel())) {
+                        for (edge e : g.getEdges()) {
+                            for (edge se : subgraph.getEdges()) {
+                                if (e.getSource() == n.getId() && se.getSource() == sn.getId() && g.getNodes().get(e.getTarget()).getLabel().equals(subgraph.getNodes().get(se.getTarget()).getLabel())) {
+                                    checks.add(true);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            if (checks.size() == subgraph.getEdges().size() && !checks.contains(false)) {
+                FoundGraphs.add(g.getId());
+            }
+        }
+
+
+        return FoundGraphs;
+
+
+
     }
 
     /**
@@ -82,6 +112,7 @@ public class RepGraphModel {
         boolean[] checks = new boolean[labels.size()];
         for (graph g : graphs.values()) {
             for (node n : g.getNodes()) {
+                //could use indexOf to get rid of forloop
                 for (int i = 0; i < labels.size(); i++) {
                     if (n.getLabel().equals(labels.get(i))) {
                         checks[i] = true;
