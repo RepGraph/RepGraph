@@ -18,15 +18,26 @@ public class RepGraphModel {
     /**
      * Default constructor for the model class.
      */
-    public RepGraphModel(){}
+    public RepGraphModel() {
+        graphs = new HashMap<String, graph>();
+    }
 
     /**
      * Getter method for a graph given the graph's ID.
      * @param graphID A graph's ID.
      * @return graph The requested graph.
      */
-    public graph getGraph(String graphID) {
-        return null;
+    public graph getGraph(String graphID){
+        return graphs.get(graphID);
+    }
+
+    /**
+     * Adds graph to hashmap
+     *
+     * @param value Graph object
+     */
+    public void addGraph(graph value) {
+        graphs.put(value.getId(), value);
     }
 
     /**

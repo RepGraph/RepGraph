@@ -22,7 +22,17 @@ public class node {
     /**
      * An array list of anchors which give the node to token index alignment.
      */
-    private ArrayList<String> anchors;
+    private ArrayList<anchors> anchors;
+
+    /**
+     * An array list of neighbouring nodes.
+     */
+    private ArrayList<Integer> nodeNeighbours;
+
+    /**
+     * When calculating longest path, prevNode will be the previous node in the path.
+     */
+    private int prevNode;
 
     /**
      * Default constructor for the node class.
@@ -35,7 +45,7 @@ public class node {
      * @param label The node's label.
      * @param anchors An array list of the node's anchors.
      */
-    public node(int id, String label, ArrayList<String> anchors){
+    public node(int id, String label, ArrayList<anchors> anchors) {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
@@ -77,7 +87,7 @@ public class node {
      * Getter method for the the node's anchors.
      * @return ArrayList The node's anchors.
      */
-    public ArrayList<String> getAnchors() {
+    public ArrayList<anchors> getAnchors() {
         return anchors;
     }
 
@@ -85,7 +95,23 @@ public class node {
      * Setter method for the the node's anchors.
      * @param anchors The node's anchors.
      */
-    public void setAnchors(ArrayList<String> anchors) {
+    public void setAnchors(ArrayList<anchors> anchors) {
         this.anchors = anchors;
+    }
+
+    /**
+     * Adds a neighbouring node.
+     * @param neighbour A neighbouring node.
+     */
+    public void addNeighbour(int neighbour){
+        nodeNeighbours.add(neighbour);
+    }
+
+    /**
+     * Getter method for a node's neighbours.
+     * @return ArrayList The node's neighbours.
+     */
+    public ArrayList<Integer> getNodeNeighbours(){
+        return nodeNeighbours;
     }
 }
