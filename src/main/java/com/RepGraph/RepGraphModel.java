@@ -60,16 +60,20 @@ public class RepGraphModel {
         ArrayList<String> FoundGraphs = new ArrayList<String>();
 
 
-        ArrayList<Boolean> checks = new ArrayList<>();
+        HashMap<String, Boolean> checks = new HashMap<>();
+        boolean[] checksarr = new boolean[subgraph.getEdges().size()];
         for (graph g : graphs.values()) {
 
-            for (node n : g.getNodes()) {
-                for (node sn : subgraph.getNodes()) {
+            for (node sn : subgraph.getNodes()) {
+                for (node n : g.getNodes()) {
                     if (n.getLabel().equals(sn.getLabel())) {
-                        for (edge e : g.getEdges()) {
-                            for (edge se : subgraph.getEdges()) {
+                        System.out.println("graph node id " + n.getId() + " subgraph node id " + sn.getId());
+                        for (edge se : subgraph.getEdges()) {
+                            for (edge e : g.getEdges()) {
                                 if (e.getSource() == n.getId() && se.getSource() == sn.getId() && g.getNodes().get(e.getTarget()).getLabel().equals(subgraph.getNodes().get(se.getTarget()).getLabel())) {
-                                    checks.add(true);
+                                    System.out.println("******************************************");
+                                    System.out.println("Graph node target: " + g.getNodes().get(e.getTarget()).getLabel() + " subgraph node target label: " + subgraph.getNodes().get(se.getTarget()).getLabel());
+                                    checks.put(sn.getId() + subgraph.getNodes().get(se.getTarget()).getId() + "", true);
                                 }
                             }
                         }
@@ -77,17 +81,23 @@ public class RepGraphModel {
                 }
 
             }
-            if (checks.size() == subgraph.getEdges().size() && !checks.contains(false)) {
+
+            for (int i = 0; i < subgraph.getEdges().size(); i++) {
+                if (checks.containsKey(subgraph.getEdges().get(i).getSource() + subgraph.getEdges().get(i).getTarget() + "") && checks.get(subgraph.getEdges().get(i).getSource() + subgraph.getEdges().get(i).getTarget() + "") == true) {
+                    checksarr[i] = true;
+                }
+            }
+            if (areAllTrue(checksarr)) {
                 FoundGraphs.add(g.getId());
             }
         }
 
 
         return FoundGraphs;
-
-
-
     }
+
+
+
 
     /**
      * Uses a graph ID and a set of Node IDS which will be used to search for which graphs have the requested node labels present .
