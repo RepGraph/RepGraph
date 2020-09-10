@@ -13,9 +13,12 @@ class App extends React.Component{
         super(props);
         this.state = {
             sentences: dmrsData,
-            sentence: {}
+            sentence: dmrsData[0],
+            selectingSubset: false
         };
         this.handleSentenceSelected.bind(this);
+        this.handleClose.bind(this);
+        this.handleToggle.bind(this);
     }
 
     handleSentenceSelected = (id) => {
@@ -25,9 +28,20 @@ class App extends React.Component{
         );
     }
 
+    handleClose = () => {
+        this.setState({selectingSubset: false});
+    };
+
+    handleToggle = () => {
+        this.setState((prevState)=> (
+                {selectingSubset: !prevState.selectingSubset}
+            )
+        );
+    }
+
     render() {
 
-        const {sentences, sentence} = this.state; //destructure internal state
+        const {sentences, sentence, selectingSubset} = this.state; //destructure internal state
 
         return (
             <React.Fragment>
@@ -35,10 +49,17 @@ class App extends React.Component{
                 <Grid container spacing={1}>
                     <Grid item xs={5}>
                         <InputArea sentences={sentences}
-                                   onSelect={this.handleSentenceSelected}/>
+                                   sentence={sentence}
+                                   onSelect={this.handleSentenceSelected}
+                                   subsetHandleToggle={this.handleToggle}/>
+
                     </Grid>
                     <Grid item xs={7}>
-                        <VisualizerArea sentence={sentence}/>
+                        <VisualizerArea
+                            sentence={sentence}
+                            selectingSubset={selectingSubset}
+                            subsetHandleClose={this.handleClose}
+                        />
                     </Grid>
                 </Grid>
             </React.Fragment>
