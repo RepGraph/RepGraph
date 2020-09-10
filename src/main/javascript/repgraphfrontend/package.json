@@ -9,7 +9,13 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@vx/event": "0.0.199",
+    "@vx/gradient": "0.0.199",
+    "@vx/network": "0.0.198",
+    "@vx/text": "0.0.199",
+    "@vx/zoom": "0.0.199",
     "bootstrap": "^4.5.2",
+    "d3": "^6.1.1",
     "gojs": "^2.1.23",
     "gojs-react": "^1.0.8",
     "material-ui-dropzone": "^3.4.0",
@@ -39,5 +45,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@vx/clip-path": "0.0.199",
+    "@vx/responsive": "0.0.199"
   }
 }
