@@ -26,6 +26,11 @@ public class anchors {
         this.from = from;
     }
 
+    /**
+     * Equals method for the node class.
+     * @param o Object
+     * @return boolean Whether to two classes being compared are equal.
+     */
     @Override
     public boolean equals(Object o){
 
@@ -40,7 +45,6 @@ public class anchors {
         anchors a = (anchors) o;
 
         return (from == a.getFrom()) && (end == a.getEnd());
-
     }
 
 

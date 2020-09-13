@@ -110,4 +110,26 @@ public class edge {
     public void setPostLabel(String postLabel) {
         this.postLabel = postLabel;
     }
+
+    /**
+     * Equals method for the edge class.
+     * @param o Object
+     * @return boolean Whether to two classes being compared are equal.
+     */
+    @Override
+    public boolean equals(Object o){
+
+        if (o == this){
+            return true;
+        }
+
+        if (!(o instanceof edge)){
+            return false;
+        }
+
+        edge e = (edge) o;
+
+        return ((source == e.getSource()) && (target == e.getTarget()) && (label.equals(e.getLabel())) && (postLabel.equals(e.getPostLabel())));
+    }
+
 }
