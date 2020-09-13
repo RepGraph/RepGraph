@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 public class EdgeTest {
@@ -163,5 +165,40 @@ public class EdgeTest {
         field.setAccessible(true);
         assertEquals("Post Label was not set properly", field.get(e), "test");
     }
+
+    @Test
+    public void test_equal_TwoEdgesWithDifferentValues() {
+
+        final edge e1 = new edge(0,2, "testLabel", "testPostLabel");
+        final edge e2 = new edge(0,3, "test3Label", "test2PostLabel");
+
+        assertFalse("Equals does not work with two edges with different values.", e1.equals(e2));
+    }
+
+    @Test
+    public void test_equal_IdenticalEdgesWithSameValues() {
+
+        final edge e1 = new edge(0,2, "testLabel", "testPostLabel");
+        final edge e2 = new edge(0,2, "testLabel", "testPostLabel");
+
+        assertTrue("Equals does not work with two identical edges with the same values.", e1.equals(e2));
+    }
+
+    @Test
+    public void test_equal_TwoObjectsOfDifferentClasses() {
+
+        final edge e1 = new edge(0,2, "testLabel", "testPostLabel");
+
+        assertFalse("Equals does not work with two objects of different classes", e1.equals(new anchors(0, 1)));
+    }
+
+    @Test
+    public void test_equal_EqualToItself() {
+
+        final edge e1 = new edge(0,2, "testLabel", "testPostLabel");
+
+        assertTrue("Equals does not work with an edge equalling itself.", e1.equals(e1));
+    }
+
 
 }
