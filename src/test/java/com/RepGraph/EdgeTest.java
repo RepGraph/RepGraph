@@ -109,4 +109,22 @@ public class EdgeTest {
     }
 
 
+    @Test
+    public void tests_getPostLabel_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final edge e = new edge();
+
+        //Set Field not using setter
+        final Field field = e.getClass().getDeclaredField("postLabel");
+        field.setAccessible(true);
+        field.set(e, "test");
+
+
+        final String result = e.getPostLabel();
+
+        //then
+        assertEquals("field wasn't retrieved properly", result, "test");
+
+    }
+
 }
