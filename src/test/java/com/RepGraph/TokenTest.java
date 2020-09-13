@@ -83,7 +83,7 @@ public class TokenTest {
         final String result = t.getLemma();
 
         //then
-        assertEquals("Index was not retrieved properly", result, "testlemma");
+        assertEquals("Lemma was not retrieved properly", result, "testlemma");
 
     }
 
@@ -101,11 +101,65 @@ public class TokenTest {
         final String result = t.getCarg();
 
         //then
-        assertEquals("Index was not retrieved properly", result, "testcarg");
+        assertEquals("Carg was not retrieved properly", result, "testcarg");
 
     }
 
+    @Test
+    public void test_setIndex_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
+
+        final token t = new token();
+
+        t.setIndex(3);
+
+        //get value not using getter
+        final Field field = t.getClass().getDeclaredField("index");
+        field.setAccessible(true);
+        assertEquals("Index was not set properly", field.get(t), 3);
+    }
+
+    @Test
+    public void test_setForm_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+
+        final token t = new token();
+
+        t.setForm("testform");
+
+        //get value not using getter
+        final Field field = t.getClass().getDeclaredField("form");
+        field.setAccessible(true);
+        assertEquals("Form was not set properly", field.get(t), "testform");
+    }
+
+    @Test
+    public void test_setLemma_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+
+        final token t = new token();
+
+        t.setLemma("testlemma");
+
+        //get value not using getter
+        final Field field = t.getClass().getDeclaredField("lemma");
+        field.setAccessible(true);
+        assertEquals("Lemma was not set properly", field.get(t), "testlemma");
+    }
+
+    @Test
+    public void test_setCarg_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+
+        final token t = new token();
+
+        t.setCarg("testcarg");
+
+        //get value not using getter
+        final Field field = t.getClass().getDeclaredField("carg");
+        field.setAccessible(true);
+        assertEquals("Carg was not set properly", field.get(t), "testcarg");
+    }
 
 
 
