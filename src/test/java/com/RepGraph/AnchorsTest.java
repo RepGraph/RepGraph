@@ -60,4 +60,20 @@ public class AnchorsTest {
 
     }
 
+    @Test
+    public void test_setEnd_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final anchors anch = new anchors();
+
+        anch.setEnd(3);
+
+        //get value not using getter
+        final Field field = anch.getClass().getDeclaredField("end");
+        field.setAccessible(true);
+        assertEquals("Fields didn't match", field.get(anch), 3);
+    }
+
+
+
+
 }
