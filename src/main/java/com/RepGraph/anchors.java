@@ -1,3 +1,4 @@
+
 package com.RepGraph;
 
 public class anchors {
@@ -23,6 +24,23 @@ public class anchors {
 
     public void setFrom(int from) {
         this.from = from;
+    }
+
+    @Override
+    public boolean equals(Object o){
+
+        if (o == this){
+            return true;
+        }
+
+        if (!(o instanceof anchors)){
+            return false;
+        }
+
+        anchors a = (anchors) o;
+
+        return (from == a.getFrom()) && (end == a.getEnd());
+
     }
 
 
