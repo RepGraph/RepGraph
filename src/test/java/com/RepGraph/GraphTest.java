@@ -54,6 +54,91 @@ public class GraphTest {
         assertEquals("nodes value was not constructed properly.", fieldNodes.get(g), nodes);
         assertEquals("tokens value was not constructed properly.", fieldTokens.get(g), tokens);
         assertEquals("edges value was not constructed properly.", fieldEdges.get(g), edges);
+
+
     }
+
+    @Test
+    public void test_getId_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        final graph g = new graph();
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("id");
+        field.setAccessible(true);
+        field.set(g, "11111");
+
+        assertEquals("id value was not retrieved properly.", g.getId(), "11111");
+    }
+
+    @Test
+    public void test_getSource_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        final graph g = new graph();
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("source");
+        field.setAccessible(true);
+        field.set(g, "testsource");
+
+        assertEquals("source value was not retrieved properly.", g.getSource(), "testsource");
+    }
+
+    @Test
+    public void test_getInput_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        final graph g = new graph();
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("input");
+        field.setAccessible(true);
+        field.set(g, "node1 node2 node3 node4");
+
+        assertEquals("input value was not retrieved properly.", g.getInput(), "node1 node2 node3 node4");
+    }
+
+    @Test
+    public void test_getNodes_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        final graph g = new graph();
+
+        ArrayList<node> nodes = new ArrayList<>();
+        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("nodes");
+        field.setAccessible(true);
+        field.set(g, nodes);
+
+        assertEquals("nodes value was not retrieved properly.", g.getNodes(), nodes);
+    }
+
+    @Test
+    public void test_getTokens_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        final graph g = new graph();
+
+        ArrayList<token> tokens = new ArrayList<token>();
+        tokens.add(new token(0, "form1", "lemma1", "carg1"));
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("tokens");
+        field.setAccessible(true);
+        field.set(g, tokens);
+
+        assertEquals("tokens value was not retrieved properly.", g.getTokens(), tokens);
+    }
+
+    @Test
+    public void test_getEdges_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        final graph g = new graph();
+
+        ArrayList<edge> edges = new ArrayList<edge>();
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("edges");
+        field.setAccessible(true);
+        field.set(g, edges);
+
+        assertEquals("edges value was not retrieved properly.", g.getEdges(), edges);
+    }
+
+
 
 }
