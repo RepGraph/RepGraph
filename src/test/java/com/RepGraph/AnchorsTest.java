@@ -42,4 +42,22 @@ public class AnchorsTest {
         assertEquals("Fields didn't match", field.get(anch), 3);
     }
 
+    @Test
+    public void tests_getEnd_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final anchors anch = new anchors();
+
+        //Set Field not using setter
+        final Field field = anch.getClass().getDeclaredField("end");
+        field.setAccessible(true);
+        field.set(anch, 3);
+
+
+        final int result = anch.getEnd();
+
+        //then
+        assertEquals("field wasn't retrieved properly", result, 3);
+
+    }
+
 }
