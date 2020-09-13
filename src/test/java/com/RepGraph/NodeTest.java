@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.*;
 
 public class NodeTest {
 
@@ -111,7 +111,7 @@ public class NodeTest {
         assertEquals("anchors value was not set properly.", field.get(n), anchs);
     }
 
-    @Test
+    /*@Test
     public void test_addNeighbour_AddNeighbourCorrectly() throws NoSuchFieldException, IllegalAccessException{
 
         final node n = new node();
@@ -131,7 +131,7 @@ public class NodeTest {
 
         assertEquals("nodeNeighbours was not added to correctly.", field.get(n), g);
     }
-
+*/
     @Test
     public void test_getNodeNeighbours_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
 
@@ -151,6 +151,52 @@ public class NodeTest {
         field.set(n, g);
 
         assertEquals("nodeNeighbours value was not retrieved correctly.", n.getNodeNeighbours(), g);
+    }
+
+    @Test
+    public void test_equal_TwoNodesWithDifferentValues() {
+
+        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        anchs.add(new anchors(0, 1));
+
+        final node n1 = new node(2, "named", anchs);
+        final node n2 = new node(3, "proper_q", anchs);
+
+        assertFalse("Equals does not work with two nodes with different values.", n1.equals(n2));
+    }
+
+    @Test
+    public void test_equal_IdenticalNodeWithSameValues() {
+
+        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        anchs.add(new anchors(0, 1));
+
+        final node n1 = new node(3, "proper_q", anchs);
+        final node n2 = new node(3, "proper_q", anchs);
+
+        assertTrue("Equals does not work with two identical nodes.", n1.equals(n2));
+    }
+
+    @Test
+    public void test_equal_TwoObjectsOfDifferentClasses() {
+
+        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        anchs.add(new anchors(0, 1));
+
+        final node n1 = new node(3, "proper_q", anchs);
+
+        assertFalse("Equals does not work with two objects of different classes", n1.equals(anchs));
+    }
+
+    @Test
+    public void test_equal_EqualToItself() {
+
+        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        anchs.add(new anchors(0, 1));
+
+        final node n1 = new node(3, "proper_q", anchs);
+
+        assertTrue("Equals does not work with a node equalling itself.", n1.equals(n1));
     }
 
 }
