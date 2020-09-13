@@ -197,7 +197,21 @@ public class graph {
 
         int source;
         int target;
-        for (int i=0; i<edges.size();i++){
+
+
+        if (edges.size()!=0){
+            //Graph has no edges
+            return;
+        }
+        else{
+            source = edges.get(0).getSource();
+            if (nodes.get(source).getNodeNeighbours().size() != 0){
+                //Node neighbours have already been set
+                return;
+            }
+        }
+
+        for (int i=1; i<edges.size();i++){
             source = edges.get(i).getSource();
             target = edges.get(i).getTarget();
             nodes.get(source).addNeighbour(target);
@@ -279,5 +293,26 @@ public class graph {
 
         return path;
 
+    }
+
+    /**
+     * Equals method for the graph class.
+     * @param o Object
+     * @return boolean Whether to two classes being compared are equal.
+     */
+    @Override
+    public boolean equals(Object o){
+
+        if (o == this){
+            return true;
+        }
+
+        if (!(o instanceof edge)){
+            return false;
+        }
+
+        graph g = (graph) o;
+
+        return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes()))  && (tokens.equals(g.getTokens()))  && (edges.equals(g.getEdges())));
     }
 }
