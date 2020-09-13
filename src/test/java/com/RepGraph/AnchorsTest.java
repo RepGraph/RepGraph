@@ -9,6 +9,21 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 public class AnchorsTest {
 
+    @Test
+    public void test_constructor_CreatesAndAssignsMemberVariables() throws NoSuchFieldException, IllegalAccessException {
+
+        final anchors anch = new anchors(3, 5);
+
+        final Field from = anch.getClass().getDeclaredField("from");
+        from.setAccessible(true);
+
+        final Field end = anch.getClass().getDeclaredField("end");
+        end.setAccessible(true);
+
+        assertEquals("from value was not assigned properly in constructor", from.get(anch), 3);
+        assertEquals("end value was not assigned properly in constructor", end.get(anch), 5);
+
+    }
 
     @Test
     public void test_getFrom_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
