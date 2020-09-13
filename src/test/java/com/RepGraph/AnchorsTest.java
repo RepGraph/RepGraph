@@ -24,7 +24,7 @@ public class AnchorsTest {
         final int result = anch.getFrom();
 
         //then
-        assertEquals("field wasn't retrieved properly", result, 3);
+        assertEquals("From value was not retrieved properly", result, 3);
 
     }
 
@@ -39,7 +39,7 @@ public class AnchorsTest {
         //get value not using getter
         final Field field = anch.getClass().getDeclaredField("from");
         field.setAccessible(true);
-        assertEquals("Fields didn't match", field.get(anch), 3);
+        assertEquals("From value was not set properly", field.get(anch), 3);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class AnchorsTest {
         final int result = anch.getEnd();
 
         //then
-        assertEquals("field wasn't retrieved properly", result, 3);
+        assertEquals("End value was not retrieved properly", result, 3);
 
     }
 
@@ -70,7 +70,7 @@ public class AnchorsTest {
         //get value not using getter
         final Field field = anch.getClass().getDeclaredField("end");
         field.setAccessible(true);
-        assertEquals("Fields didn't match", field.get(anch), 3);
+        assertEquals("End value was not set properly", field.get(anch), 3);
     }
 
 
