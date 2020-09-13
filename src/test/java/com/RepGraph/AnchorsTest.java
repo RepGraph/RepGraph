@@ -11,7 +11,7 @@ public class AnchorsTest {
 
 
     @Test
-    public void tests_getFrom_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+    public void test_getFrom_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final anchors anch = new anchors();
 
@@ -43,7 +43,7 @@ public class AnchorsTest {
     }
 
     @Test
-    public void tests_getEnd_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+    public void test_getEnd_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final anchors anch = new anchors();
 
