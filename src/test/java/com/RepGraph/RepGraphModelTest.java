@@ -1,5 +1,6 @@
 package com.RepGraph;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -11,10 +12,10 @@ import static junit.framework.TestCase.assertEquals;
 
 public class RepGraphModelTest {
 
-    @Test
-    public void test_getGraph_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    private graph g;
 
-        HashMap<String, graph> graphs = new HashMap<>();
+    @Before
+    public void construct_test_graph(){
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
@@ -33,7 +34,15 @@ public class RepGraphModelTest {
         tokens.add(new token(2, "node3 form", "node3 lemma", "node3 carg"));
         tokens.add(new token(3, "node4 form", "node4 lemma", "node4 carg"));
 
-        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges);
+        g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges);
+    }
+
+    @Test
+    public void test_getGraph_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+
+        construct_test_graph();
+
+        HashMap<String, graph> graphs = new HashMap<>();
         graphs.put("11111", g);
 
         RepGraphModel r = new RepGraphModel();
@@ -44,8 +53,26 @@ public class RepGraphModelTest {
         field.set(r, graphs);
 
 
-
         assertEquals("graph value was not retrieved properly.", r.getGraph("11111"),g);
+    }
+
+    @Test
+    public void test_addGraph_AddGraphCorrectly() throws NoSuchFieldException, IllegalAccessException{
+
+        construct_test_graph();
+
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g);
+
+
+        RepGraphModel r = new RepGraphModel();
+        r.addGraph(g);
+
+        //Get fields without using getter
+        final Field field = r.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+
+        assertEquals("graph value was not added correctly.", field.get(r) , graphs);
     }
 
 }
