@@ -37,7 +37,9 @@ public class node {
     /**
      * Default constructor for the node class.
      */
-    public node(){}
+    public node(){
+        this.nodeNeighbours = new ArrayList<Integer>();
+    }
 
     /**
      * Fully parameterised constructor for the node class.
@@ -49,6 +51,7 @@ public class node {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
+        this.nodeNeighbours = new ArrayList<Integer>();
     }
 
     /**
