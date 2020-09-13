@@ -30,6 +30,11 @@ public class node {
     private ArrayList<node> nodeNeighbours;
 
     /**
+     * An array list of edges to the neighbouring nodes.
+     */
+    private ArrayList<edge> edgeNeighbours;
+
+    /**
      * When calculating longest path, prevNode will be the previous node in the path.
      */
     private int prevNode;
@@ -113,5 +118,24 @@ public class node {
      */
     public ArrayList<node> getNodeNeighbours() {
         return nodeNeighbours;
+    }
+
+
+    /**
+     * Getter method for EdgeNeighbours.
+     *
+     * @return ArrayList The edges connected from this node.
+     */
+    public ArrayList<edge> getEdgeNeighbours() {
+        return edgeNeighbours;
+    }
+
+    /**
+     * Adds an edge to the EdgeNeighbours ArrayList
+     *
+     * @param e This is the edge that will be added to the EdgeNeighbours ArrayList
+     */
+    public void addEdgeNeighbours(edge e) {
+        edgeNeighbours.add(e);
     }
 }
