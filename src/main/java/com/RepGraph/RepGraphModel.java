@@ -52,27 +52,41 @@ public class RepGraphModel {
     }
 
     /**
-     * Uses a graph ID and the number of a node in the graph and creates a subgraph which will be used to search for in other graphs.
+     * This method searches through the graph objects in the hashmap to find graphs that contain a
+     * subgraph pattern.
      * @return String A string of graph IDs who have matching subgraphs.
      */
-    public ArrayList<String> searchSubgraphPattern(String graphID, graph subgraph) {
+    public ArrayList<String> searchSubgraphPattern(graph subgraph) {
 
+        //Empty Arraylist for the graph ids that have the subgraph pattern specified.
         ArrayList<String> FoundGraphs = new ArrayList<String>();
 
-
+        // Hashmap with a string key and boolean value - this is used to confirm that each unique edge in the subgraph has been found in the graph being checked.
+        //This is necessary because there can be multiple of the same two node links so a counter or an array cant be used.
         HashMap<String, Boolean> checks = new HashMap<>();
+        //This is just used to easily check that all the required edges in the subgraph are true because all values in this array need to be true before a graph is added
+        //to foundgraphs arraylist.
         boolean[] checksarr = new boolean[subgraph.getEdges().size()];
-        for (graph g : graphs.values()) {
 
+        //Iterate over each graph in the dataset
+        for (graph g : graphs.values()) {
+            //Iterate over each node in the subgraph patttern
             for (node sn : subgraph.getNodes()) {
+                //for each node in the subgraph pattern, it iterates over every node in the current graph that is being checked.
+                //This is to find a node label equal to the current sub graph node being checked.
                 for (node n : g.getNodes()) {
+                    //This checks if the labels are equal
                     if (n.getLabel().equals(sn.getLabel())) {
-                        System.out.println("graph node id " + n.getId() + " subgraph node id " + sn.getId());
+                        //Once it finds a node in the graph that is the same as the subgraph node label it has to iterate over the subgraph edges list
+                        //to find the corresponding edge of the subgraph node that found a match.
                         for (edge se : subgraph.getEdges()) {
+                            //For every edge it has to iterate over all the current graph edges to find the edge of the matched graph node as well
                             for (edge e : g.getEdges()) {
+                                //This statement checks that each edge is the correct edge of the matching nodes
+                                //and also checks if the target nodes of the subgraph node and graph node have the same label.
+                                //if this is true it creates a hashmap entry with the subgraph node id and the subgraph target node id and sets the value to true
+                                //this indicates that the unique edge in the subgraph pattern has been found.
                                 if (e.getSource() == n.getId() && se.getSource() == sn.getId() && g.getNodes().get(e.getTarget()).getLabel().equals(subgraph.getNodes().get(se.getTarget()).getLabel())) {
-                                    System.out.println("******************************************");
-                                    System.out.println("Graph node target: " + g.getNodes().get(e.getTarget()).getLabel() + " subgraph node target label: " + subgraph.getNodes().get(se.getTarget()).getLabel());
                                     checks.put(sn.getId() + subgraph.getNodes().get(se.getTarget()).getId() + "", true);
                                 }
                             }
@@ -81,12 +95,14 @@ public class RepGraphModel {
                 }
 
             }
-
+            //This for loop checks if the hashmap has a key for the unique edge entry and checks if its true. if it is true then it sets
+            //the corresponding index in the boolean array to true;
             for (int i = 0; i < subgraph.getEdges().size(); i++) {
                 if (checks.containsKey(subgraph.getEdges().get(i).getSource() + subgraph.getEdges().get(i).getTarget() + "") && checks.get(subgraph.getEdges().get(i).getSource() + subgraph.getEdges().get(i).getTarget() + "") == true) {
                     checksarr[i] = true;
                 }
             }
+            //This checks to see if all values in the boolean array are true and if so adds the current graph to the list of found graphs.
             if (areAllTrue(checksarr)) {
                 FoundGraphs.add(g.getId());
             }
@@ -110,6 +126,7 @@ public class RepGraphModel {
 
         //Following code is only if nodeIDs are given - we could remove if method is given node labels directly
         //***********************************************************
+        //This following code creates a list and populates it with the labels of the nodes specified to be searched for
         ArrayList<String> labels = new ArrayList<String>();
         for (int i = 0; i < NodeID.length; i++) {
             String currLabel = graphs.get(graphID).getNodes().get(NodeID[i]).getLabel();
@@ -118,8 +135,11 @@ public class RepGraphModel {
             }
         }
         //***********************************************************
-
+        //boolean array that checks if certain nodes are found
+        //could use a hashmap with the label as a key and boolean as value.
+        //this would allow use to avoid using a for loop inside graph iteration
         boolean[] checks = new boolean[labels.size()];
+
         for (graph g : graphs.values()) {
             for (node n : g.getNodes()) {
                 //could use indexOf to get rid of forloop
@@ -129,6 +149,7 @@ public class RepGraphModel {
                     }
                 }
             }
+            //checks if all node labels have been found
             if (areAllTrue(checks)) {
                 FoundGraphs.add(g.getId());
             }
