@@ -30,11 +30,6 @@ public class node {
     private ArrayList<Integer> nodeNeighbours;
 
     /**
-     * When calculating longest path, prevNode will be the previous node in the path.
-     */
-    private int prevNode;
-
-    /**
      * Default constructor for the node class.
      */
     public node(){
@@ -116,5 +111,26 @@ public class node {
      */
     public ArrayList<Integer> getNodeNeighbours(){
         return nodeNeighbours;
+    }
+
+    /**
+     * Equals method for the node class.
+     * @param o Object
+     * @return boolean Whether to two classes being compared are equal.
+     */
+    @Override
+    public boolean equals(Object o){
+
+        if (o == this){
+            return true;
+        }
+
+        if (!(o instanceof edge)){
+            return false;
+        }
+
+        node n = (node) o;
+
+        return ((id == n.getId()) && (label.equals(n.getLabel())) && (anchors.equals(n.getAnchors())));
     }
 }
