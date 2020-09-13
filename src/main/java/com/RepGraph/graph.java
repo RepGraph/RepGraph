@@ -197,7 +197,21 @@ public class graph {
 
         int source;
         int target;
-        for (int i=0; i<edges.size();i++){
+
+
+        if (edges.size()!=0){
+            //Graph has no edges
+            return;
+        }
+        else{
+            source = edges.get(0).getSource();
+            if (nodes.get(source).getNodeNeighbours().size() != 0){
+                //Node neighbours have already been set
+                return;
+            }
+        }
+
+        for (int i=1; i<edges.size();i++){
             source = edges.get(i).getSource();
             target = edges.get(i).getTarget();
             nodes.get(source).addNeighbour(target);
