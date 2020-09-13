@@ -76,4 +76,22 @@ public class EdgeTest {
     }
 
 
+    @Test
+    public void tests_getLabel_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final edge e = new edge();
+
+        //Set Field not using setter
+        final Field field = e.getClass().getDeclaredField("label");
+        field.setAccessible(true);
+        field.set(e, "test");
+
+
+        final String result = e.getLabel();
+
+        //then
+        assertEquals("field wasn't retrieved properly", result, "test");
+
+    }
+
 }
