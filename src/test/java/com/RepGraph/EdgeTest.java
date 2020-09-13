@@ -42,4 +42,23 @@ public class EdgeTest {
     }
 
 
+    @Test
+    public void tests_getTarget_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final edge e = new edge();
+
+        //Set Field not using setter
+        final Field field = e.getClass().getDeclaredField("target");
+        field.setAccessible(true);
+        field.set(e, 3);
+
+
+        final int result = e.getTarget();
+
+        //then
+        assertEquals("field wasn't retrieved properly", result, 3);
+
+    }
+
+
 }
