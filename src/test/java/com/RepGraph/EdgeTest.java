@@ -28,4 +28,18 @@ public class EdgeTest {
     }
 
 
+    @Test
+    public void test_setSource_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final edge e = new edge();
+
+        e.setSource(3);
+
+        //get value not using getter
+        final Field field = e.getClass().getDeclaredField("source");
+        field.setAccessible(true);
+        assertEquals("Fields didn't match", field.get(e), 3);
+    }
+
+
 }
