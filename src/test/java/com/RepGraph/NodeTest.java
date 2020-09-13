@@ -70,6 +70,45 @@ public class NodeTest {
         assertEquals("anchors value was not retrieved properly.", n.getAnchors(), anchs);
     }
 
+    @Test
+    public void test_setID_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
 
+        final node n = new node();
+        n.setId(3);
+
+        //Get field without using getter
+        final Field field = n.getClass().getDeclaredField("id");
+        field.setAccessible(true);
+
+        assertEquals("id value was not set properly.", field.get(n), 3);
+    }
+
+    @Test
+    public void test_setLabel_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+
+        final node n = new node();
+        n.setLabel("proper_q");
+
+        //Get field without using getter
+        final Field field = n.getClass().getDeclaredField("label");
+        field.setAccessible(true);
+
+        assertEquals("label value was not set properly.", field.get(n), "proper_q");
+    }
+
+    @Test
+    public void test_setAnchors_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+
+        final node n = new node();
+        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        anchs.add(new anchors(0, 1));
+        n.setAnchors(anchs);
+
+        //Get field without using getter
+        final Field field = n.getClass().getDeclaredField("anchors");
+        field.setAccessible(true);
+
+        assertEquals("anchors value was not set properly.", field.get(n), anchs);
+    }
 
 }
