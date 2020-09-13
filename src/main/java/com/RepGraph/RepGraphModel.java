@@ -137,7 +137,7 @@ public class RepGraphModel {
         //***********************************************************
         //boolean array that checks if certain nodes are found
         //could use a hashmap with the label as a key and boolean as value.
-        //this would allow use to avoid using a for loop inside graph iteration
+        //this would allow to avoid using a for loop inside graph iteration
         boolean[] checks = new boolean[labels.size()];
 
         for (graph g : graphs.values()) {
