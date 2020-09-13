@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 public class TokenTest {
@@ -161,6 +163,41 @@ public class TokenTest {
         assertEquals("Carg was not set properly", field.get(t), "testcarg");
     }
 
+
+    @Test
+    public void test_equal_TwoTokensWithDifferentValues() {
+
+        final token t1 = new token(0,"form1", "lemma1", "carg1");
+        final token t2 = new token(1,"form2", "lemma2", "carg2");
+
+
+        assertFalse("Equals does not work with two tokens with different values.", t1.equals(t2));
+    }
+
+    @Test
+    public void test_equal_IdenticalTokensWithSameValues() {
+
+        final token t1 = new token(0,"form1", "lemma1", "carg1");
+        final token t2 = new token(0,"form1", "lemma1", "carg1");
+
+        assertTrue("Equals does not work with two identical tokens with the same values.", t1.equals(t2));
+    }
+
+    @Test
+    public void test_equal_TwoObjectsOfDifferentClasses() {
+
+        final token t1 = new token(0,"form1", "lemma1", "carg1");
+
+        assertFalse("Equals does not work with two objects of different classes", t1.equals(new anchors(0, 1)));
+    }
+
+    @Test
+    public void test_equal_EqualToItself() {
+
+        final token t1 = new token(0,"form1", "lemma1", "carg1");
+
+        assertTrue("Equals does not work with a token equalling itself.", t1.equals(t1));
+    }
 
 
 }
