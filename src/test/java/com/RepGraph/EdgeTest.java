@@ -23,7 +23,7 @@ public class EdgeTest {
         final int result = e.getSource();
 
         //then
-        assertEquals("field wasn't retrieved properly", result, 3);
+        assertEquals("Source was not retrieved properly", result, 3);
 
     }
 
@@ -38,7 +38,7 @@ public class EdgeTest {
         //get value not using getter
         final Field field = e.getClass().getDeclaredField("source");
         field.setAccessible(true);
-        assertEquals("Fields didn't match", field.get(e), 3);
+        assertEquals("Source was not set properly", field.get(e), 3);
     }
 
 
@@ -56,7 +56,7 @@ public class EdgeTest {
         final int result = e.getTarget();
 
         //then
-        assertEquals("field wasn't retrieved properly", result, 3);
+        assertEquals("Target was not retrieved properly", result, 3);
 
     }
 
@@ -72,7 +72,7 @@ public class EdgeTest {
         final Field field = e.getClass().getDeclaredField("target");
         field.setAccessible(true);
 
-        assertEquals("Fields didn't match", field.get(e), 3);
+        assertEquals("Target was not set properly", field.get(e), 3);
     }
 
 
@@ -90,7 +90,7 @@ public class EdgeTest {
         final String result = e.getLabel();
 
         //then
-        assertEquals("field wasn't retrieved properly", result, "test");
+        assertEquals("Label was not retrieved properly", result, "test");
 
     }
 
@@ -105,7 +105,7 @@ public class EdgeTest {
         //get value not using getter
         final Field field = e.getClass().getDeclaredField("label");
         field.setAccessible(true);
-        assertEquals("Fields didn't match", field.get(e), "test");
+        assertEquals("Label was not set properly", field.get(e), "test");
     }
 
 
@@ -123,7 +123,7 @@ public class EdgeTest {
         final String result = e.getPostLabel();
 
         //then
-        assertEquals("field wasn't retrieved properly", result, "test");
+        assertEquals("PostLabel was not retrieved properly", result, "test");
 
     }
 
@@ -138,7 +138,7 @@ public class EdgeTest {
         //get value not using getter
         final Field field = e.getClass().getDeclaredField("postLabel");
         field.setAccessible(true);
-        assertEquals("Fields didn't match", field.get(e), "test");
+        assertEquals("Post Label was not set properly", field.get(e), "test");
     }
 
 }
