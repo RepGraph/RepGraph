@@ -79,15 +79,14 @@ public class RepGraphModel {
                     if (n.getLabel().equals(sn.getLabel())) {
                         //Once it finds a node in the graph that is the same as the subgraph node label it has to iterate over the subgraph edges list
                         //to find the corresponding edge of the subgraph node that found a match.
-                        for (edge se : subgraph.getEdges()) {
+                        for (node subneigh : sn.getNodeNeighbours()) {
                             //For every edge it has to iterate over all the current graph edges to find the edge of the matched graph node as well
-                            for (edge e : g.getEdges()) {
-                                //This statement checks that each edge is the correct edge of the matching nodes
-                                //and also checks if the target nodes of the subgraph node and graph node have the same label.
+                            for (node neigh : n.getNodeNeighbours()) {
+                                //This statement checks if the target nodes of the subgraph node and graph node have the same label.
                                 //if this is true it creates a hashmap entry with the subgraph node id and the subgraph target node id and sets the value to true
                                 //this indicates that the unique edge in the subgraph pattern has been found.
-                                if (e.getSource() == n.getId() && se.getSource() == sn.getId() && g.getNodes().get(e.getTarget()).getLabel().equals(subgraph.getNodes().get(se.getTarget()).getLabel())) {
-                                    checks.put(sn.getId() + subgraph.getNodes().get(se.getTarget()).getId() + "", true);
+                                if (neigh.getLabel().equals(subneigh.getLabel())) {
+                                    checks.put(sn.getId() + subneigh.getId() + "", true);
                                 }
                             }
                         }

@@ -191,7 +191,7 @@ public class graph {
         for (int i=0; i<edges.size();i++){
             source = edges.get(i).getSource();
             target = edges.get(i).getTarget();
-            nodes.get(source).addNeighbour(target);
+            nodes.get(source).addNeighbour(nodes.get(target));
         }
     }
 
@@ -217,7 +217,8 @@ public class graph {
             node currentNode = Q.poll();
             nodesVisited++;
 
-            for (int neighbourNodeID : currentNode.getNodeNeighbours()){
+            for (node neighbourNodeIDnode : currentNode.getNodeNeighbours()) {
+                int neighbourNodeID = neighbourNodeIDnode.getId();
                 int currentNodeID = currentNode.getId();
                 if (dist[neighbourNodeID] > dist[currentNodeID] - 1){
                     dist[neighbourNodeID] = dist[currentNodeID] - 1;
