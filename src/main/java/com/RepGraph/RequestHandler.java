@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class RequestHandler {
 
     RepGraphModel RepModel = new RepGraphModel();
-    ;
+
 
 
     /**
@@ -60,7 +60,7 @@ public class RequestHandler {
     @GetMapping("/Visualise")
     @ResponseBody
     public graph Visualise(@RequestParam String graphID, @RequestParam int format) {
-        return RepModel.getGraph(id);
+        return RepModel.getGraph(graphID);
     }
 
     /**
