@@ -189,9 +189,16 @@ public class graph {
         int source;
         int target;
         for (int i=0; i<edges.size();i++){
-            source = edges.get(i).getSource();
-            target = edges.get(i).getTarget();
-            nodes.get(source).addNeighbour(nodes.get(target));
+            edge currentEdge = edges.get(i);
+
+            source = currentEdge.getSource();
+            target = currentEdge.getTarget();
+
+            node currentNode = nodes.get(source);
+            
+            currentNode.addNeighbour(nodes.get(target));
+            currentNode.addEdgeNeighbour(currentEdge);
+
         }
     }
 

@@ -135,7 +135,7 @@ public class node {
      *
      * @param e This is the edge that will be added to the EdgeNeighbours ArrayList
      */
-    public void addEdgeNeighbours(edge e) {
+    public void addEdgeNeighbour(edge e) {
         edgeNeighbours.add(e);
     }
 }
