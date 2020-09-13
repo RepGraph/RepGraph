@@ -10,7 +10,7 @@ public class EdgeTest {
 
 
     @Test
-    public void tests_getSource_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+    public void test_getSource_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final edge e = new edge();
 
@@ -43,7 +43,7 @@ public class EdgeTest {
 
 
     @Test
-    public void tests_getTarget_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+    public void test_getTarget_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final edge e = new edge();
 
@@ -77,7 +77,7 @@ public class EdgeTest {
 
 
     @Test
-    public void tests_getLabel_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+    public void test_getLabel_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final edge e = new edge();
 
@@ -110,7 +110,7 @@ public class EdgeTest {
 
 
     @Test
-    public void tests_getPostLabel_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+    public void test_getPostLabel_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final edge e = new edge();
 
