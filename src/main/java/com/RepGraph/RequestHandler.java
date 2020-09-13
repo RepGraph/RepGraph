@@ -23,7 +23,6 @@ public class RequestHandler {
     RepGraphModel RepModel = new RepGraphModel();
 
 
-
     /**
      * This method is the post request to upload data and create the model
      *
@@ -44,9 +43,9 @@ public class RequestHandler {
      */
     @PostMapping("/UploadSingle")
     @ResponseBody
-    public void UploadDataSingle(@RequestBody graph data) {
+    public graph UploadDataSingle(@RequestBody graph data) {
         RepModel.addGraph(data);
-
+        return data;
     }
 
     /**
