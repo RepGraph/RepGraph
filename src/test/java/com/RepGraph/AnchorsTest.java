@@ -10,4 +10,21 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 public class AnchorsTest {
 
 
+    @Test
+    public void tests_getFrom_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final anchors anch = new anchors();
+
+        //Set Field not using setter
+        final Field field = anch.getClass().getDeclaredField("from");
+        field.setAccessible(true);
+        field.set(anch, 3);
+
+
+        final int result = anch.getFrom();
+
+        //then
+        assertEquals("field wasn't retrieved properly", result, 3);
+
+    }
 }
