@@ -5,6 +5,8 @@ public class anchors {
     private int from;
     private int end;
 
+    public anchors(){};
+
     public anchors(int from, int end) {
         this.from = from;
         this.end = end;

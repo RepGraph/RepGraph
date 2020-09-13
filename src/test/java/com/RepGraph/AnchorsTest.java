@@ -4,7 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 public class AnchorsTest {
@@ -88,6 +91,43 @@ public class AnchorsTest {
         assertEquals("End value was not set properly", field.get(anch), 3);
     }
 
+    @Test
+    public void test_equal_TwoAnchorsWithDifferentValues() {
+
+        final anchors a1 = new anchors(0, 1);
+        final anchors a2 = new anchors(2, 3);
+
+        assertFalse("Equals does not work with two anchors with different values.", a1.equals(a2));
+    }
+
+    @Test
+    public void test_equal_IdenticalAnchorsWithSameValues() {
+
+        final anchors a1 = new anchors(0, 1);
+        final anchors a2 = new anchors(0, 1);
+
+        assertTrue("Equals does not work with two identical anchors with the same values.", a1.equals(a2));
+    }
+
+    @Test
+    public void test_equal_TwoObjectsOfDifferentClasses() {
+
+        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        anchs.add(new anchors(0, 1));
+        final node n1 = new node(3, "proper_q", anchs);
+
+        final anchors a1 = new anchors(0, 1);
+
+        assertFalse("Equals does not work with two objects of different classes", a1.equals(n1));
+    }
+
+    @Test
+    public void test_equal_EqualToItself() {
+
+        final anchors a1 = new anchors(0, 1);
+
+        assertTrue("Equals does not work with a node equalling itself.", a1.equals(a1));
+    }
 
 
 
