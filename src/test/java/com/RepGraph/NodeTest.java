@@ -156,7 +156,7 @@ public class NodeTest {
     @Test
     public void test_equal_TwoNodesWithDifferentValues() {
 
-        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        ArrayList<anchors> anchs = new ArrayList<>();
         anchs.add(new anchors(0, 1));
 
         final node n1 = new node(2, "named", anchs);
@@ -168,19 +168,22 @@ public class NodeTest {
     @Test
     public void test_equal_IdenticalNodeWithSameValues() {
 
-        ArrayList<anchors> anchs = new ArrayList<anchors>();
-        anchs.add(new anchors(0, 1));
+        ArrayList<anchors> anchs1 = new ArrayList<>();
+        anchs1.add(new anchors(0, 1));
 
-        final node n1 = new node(3, "proper_q", anchs);
-        final node n2 = new node(3, "proper_q", anchs);
+        ArrayList<anchors> anchs2 = new ArrayList<>();
+        anchs2.add(new anchors(0, 1));
 
-        assertTrue("Equals does not work with two identical nodes.", n1.equals(n2));
+        final node n1 = new node(3, "proper_q", anchs1);
+        final node n2 = new node(3, "proper_q", anchs2);
+
+        assertTrue("Equals does not work with two identical nodes with the same values.", n1.equals(n2));
     }
 
     @Test
     public void test_equal_TwoObjectsOfDifferentClasses() {
 
-        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        ArrayList<anchors> anchs = new ArrayList<>();
         anchs.add(new anchors(0, 1));
 
         final node n1 = new node(3, "proper_q", anchs);
@@ -191,7 +194,7 @@ public class NodeTest {
     @Test
     public void test_equal_EqualToItself() {
 
-        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        ArrayList<anchors> anchs = new ArrayList<>();
         anchs.add(new anchors(0, 1));
 
         final node n1 = new node(3, "proper_q", anchs);
