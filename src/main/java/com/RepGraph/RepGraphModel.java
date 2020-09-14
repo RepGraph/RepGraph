@@ -33,8 +33,7 @@ public class RepGraphModel {
     }
 
     /**
-     * Adds graph to hashmap
-     *
+     * Adds graph to hashmap.
      * @param value Graph object
      */
     public void addGraph(graph value) {
