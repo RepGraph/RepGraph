@@ -108,4 +108,25 @@ public class token {
     public void setCarg(String carg) {
         this.carg = carg;
     }
+
+    /**
+     * Equals method for the token class.
+     * @param o Object
+     * @return boolean Whether to two classes being compared are equal.
+     */
+    @Override
+    public boolean equals(Object o){
+
+        if (o == this){
+            return true;
+        }
+
+        if (!(o instanceof edge)){
+            return false;
+        }
+
+        token t = (token) o;
+
+        return ((index == t.getIndex()) && (form.equals(t.getForm())) && (lemma.equals(t.getLemma())) && (carg.equals(t.getCarg())));
+    }
 }

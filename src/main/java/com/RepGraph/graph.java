@@ -294,4 +294,25 @@ public class graph {
         return path;
 
     }
+
+    /**
+     * Equals method for the graph class.
+     * @param o Object
+     * @return boolean Whether to two classes being compared are equal.
+     */
+    @Override
+    public boolean equals(Object o){
+
+        if (o == this){
+            return true;
+        }
+
+        if (!(o instanceof edge)){
+            return false;
+        }
+
+        graph g = (graph) o;
+
+        return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes()))  && (tokens.equals(g.getTokens()))  && (edges.equals(g.getEdges())));
+    }
 }
