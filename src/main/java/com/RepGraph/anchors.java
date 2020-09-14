@@ -8,8 +8,16 @@ public class anchors {
     private int from;
     private int end;
 
+    /**
+     * Default constructor
+     */
     public anchors(){};
 
+    /**
+     * This is the parameterised constructor
+     * @param from This refers to the first token in the node span
+     * @param end  This refers to the last token in the node span
+     */
     public anchors(int from, int end) {
         this.from = from;
         this.end = end;
