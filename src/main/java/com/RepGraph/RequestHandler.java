@@ -1,9 +1,14 @@
 package com.RepGraph;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +28,31 @@ public class RequestHandler {
     RepGraphModel RepModel = new RepGraphModel();
 
 
+    @PostMapping("/uploadFile")
+    public void uploadFile(@RequestParam("name") String name, @RequestParam("file") MultipartFile file) {
 
+        try {
+            byte[] bytes = file.getBytes();
+
+            // Creating the directory to store file
+            String rootPath = System.getProperty("catalina.home");
+            File dir = new File(rootPath + File.separator + "tmpFiles");
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            // Create the file on server
+            File serverFile = new File(dir.getAbsolutePath() + File.separator + name);
+            BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+            stream.write(bytes);
+            stream.close();
+
+            System.out.println("Server File Location=" + serverFile.getAbsolutePath());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * This method is the post request to upload data and create the model
      *
