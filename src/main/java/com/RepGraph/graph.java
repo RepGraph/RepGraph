@@ -307,7 +307,7 @@ public class graph {
             return true;
         }
 
-        if (!(o instanceof edge)){
+        if (!(o instanceof graph)){
             return false;
         }
 
