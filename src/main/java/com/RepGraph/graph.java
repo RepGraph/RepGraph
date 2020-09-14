@@ -4,6 +4,8 @@
  */
 package com.RepGraph;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
@@ -40,6 +42,8 @@ public class graph {
      */
     private ArrayList<edge> edges;
 
+    @JsonProperty("tops")
+    private ArrayList<Integer> tops;
     /**
      * Default constructor for the graph class.
      */
@@ -54,13 +58,14 @@ public class graph {
      * @param tokens An array list of the graph's tokens.
      * @param edges An array list of the graph's edges.
      */
-    public graph(String id, String source, String input, ArrayList<node> nodes, ArrayList<token> tokens, ArrayList<edge> edges){
+    public graph(String id, String source, String input, ArrayList<node> nodes, ArrayList<token> tokens, ArrayList<edge> edges, ArrayList<Integer> tops) {
         this.id = id;
         this.source= source;
         this.input = input;
         this.nodes = nodes;
         this.tokens = tokens;
         this.edges= edges;
+        this.tops = tops;
     }
 
     /**
@@ -315,4 +320,6 @@ public class graph {
 
         return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes()))  && (tokens.equals(g.getTokens()))  && (edges.equals(g.getEdges())));
     }
+
+
 }

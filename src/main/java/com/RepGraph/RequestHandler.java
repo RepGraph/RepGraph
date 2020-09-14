@@ -6,9 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -27,44 +25,48 @@ public class RequestHandler {
 
     RepGraphModel RepModel = new RepGraphModel();
 
-
-    @PostMapping("/uploadFile")
-    public void uploadFile(@RequestParam("name") String name, @RequestParam("file") MultipartFile file) {
+    /**
+     * This method is the post request to upload data and create the model.
+     *
+     * @param name
+     * @param file
+     */
+    @PostMapping("/UploadData")
+    @ResponseBody
+    public void UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
 
         try {
             byte[] bytes = file.getBytes();
-
-            // Creating the directory to store file
-            String rootPath = System.getProperty("catalina.home");
-            File dir = new File(rootPath + File.separator + "tmpFiles");
-            if (!dir.exists()) {
-                dir.mkdirs();
+            //Creates Directory if it does not exist otherwise it finds it in the project folder.
+            File directory = new File("Dataset");
+            if (!directory.exists()) {
+                directory.mkdirs();
             }
 
-            // Create the file on server
-            File serverFile = new File(dir.getAbsolutePath() + File.separator + name);
+            //Creates File in directory
+            File serverFile = new File(directory.getAbsolutePath() + File.separator + name);
+
+            //Writes contents to file
             BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
             stream.write(bytes);
             stream.close();
 
-            System.out.println("Server File Location=" + serverFile.getAbsolutePath());
+            BufferedReader reader = new BufferedReader(new FileReader(serverFile));
+            String currentLine;
+            ObjectMapper objectMapper = new ObjectMapper();
+            while ((currentLine = reader.readLine()) != null) {
+                graph currgraph = objectMapper.readValue(currentLine, graph.class);
+                RepModel.addGraph(currgraph);
+            }
+            reader.close();
 
         } catch (Exception e) {
             e.printStackTrace();
+
         }
+        //RepModel.getGraph("20001001");
     }
-    /**
-     * This method is the post request to upload data and create the model
-     *
-     * @param data This parameter is the json string of data that is automatically converted into a repgraph model.
-     * @return RepGraphModel - this method returns the method it creates which is a RepGraphModel of the data uploaded
-     */
-    @PostMapping("/Upload")
-    @ResponseBody
-    public RepGraphModel UploadData(@RequestBody RepGraphModel data) {
-        RepModel = data;
-        return RepModel;
-    }
+
 
     /**
      * Uploads a single graph to the model object

@@ -6,6 +6,8 @@
 
 package com.RepGraph;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class edge {
 
     /**
@@ -26,6 +28,7 @@ public class edge {
     /**
      * The edge's post label.
      */
+    @JsonProperty("post-label")
     private String postLabel;
 
     /**
