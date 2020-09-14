@@ -1,6 +1,8 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +16,6 @@ import java.util.ArrayList;
  * the front-end and back-end.
  *
  * @author TLDEDA001
- * @version 1
- * @since 24-Aug-2020
  *
  */
 
@@ -28,12 +28,12 @@ public class RequestHandler {
     /**
      * This method is the post request to upload data and create the model.
      *
-     * @param name
-     * @param file
+     * @param name This is the name that the file will be saved under
+     * @param file This is the file data.
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public void UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+    public String UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
 
         try {
             byte[] bytes = file.getBytes();
@@ -51,6 +51,7 @@ public class RequestHandler {
             stream.write(bytes);
             stream.close();
 
+            //Read the contents of the file uploaded and construct a graph for each line;
             BufferedReader reader = new BufferedReader(new FileReader(serverFile));
             String currentLine;
             ObjectMapper objectMapper = new ObjectMapper();
@@ -62,9 +63,9 @@ public class RequestHandler {
 
         } catch (Exception e) {
             e.printStackTrace();
-
+            return "An Error Has Occurred, Please Try Again";
         }
-        //RepModel.getGraph("20001001");
+        return "File Uploaded";
     }
 
 
