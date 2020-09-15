@@ -141,8 +141,12 @@ public class RepGraphModel {
         //This following code creates a list and populates it with the labels of the nodes specified to be searched for
         ArrayList<String> labels = new ArrayList<String>();
         for (int i = 0; i < NodeID.length; i++) {
-            String currLabel = graphs.get(graphID).getNodes().get(NodeID[i]).getLabel();
-
+            String currLabel;
+            try {
+                currLabel = graphs.get(graphID).getNodes().get(NodeID[i]).getLabel();
+            } catch (IndexOutOfBoundsException e) {
+                return FoundGraphs;
+            }
             if (!labels.contains(currLabel)) {
                 labels.add(currLabel);
             }

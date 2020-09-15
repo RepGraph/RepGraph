@@ -173,6 +173,30 @@ public class RepGraphModelTest {
 
     }
 
+    @Test
+    public void test_SearchSubgraphNodeSet_HandlesIncorrectNodeData() throws NoSuchFieldException, IllegalAccessException {
+
+        RepGraphModel model = new RepGraphModel();
+
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g1);
+        graphs.put("22222", g2);
+        graphs.put("33333", g3);
+
+        //Set field without using setter
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        ArrayList<String> correctResults = new ArrayList<>();
+        ArrayList<String> results = model.searchSubgraphNodeSet("11111", new int[]{5, 6});
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched for an empty set of labels and the method did not function correctly.", correctResults, results);
+
+    }
+
     @Test(timeout = 10)
     public void test_SearchSubgraphPattern_FindsGraphsCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
