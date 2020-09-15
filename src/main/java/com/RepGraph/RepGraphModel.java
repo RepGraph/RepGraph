@@ -131,10 +131,12 @@ public class RepGraphModel {
         ArrayList<String> labels = new ArrayList<String>();
         for (int i = 0; i < NodeID.length; i++) {
             String currLabel = graphs.get(graphID).getNodes().get(NodeID[i]).getLabel();
+
             if (!labels.contains(currLabel)) {
                 labels.add(currLabel);
             }
         }
+
         //***********************************************************
         //boolean array that checks if certain nodes are found
         //could use a hashmap with the label as a key and boolean as value.
@@ -145,14 +147,21 @@ public class RepGraphModel {
             for (node n : g.getNodes()) {
                 //could use indexOf to get rid of forloop
                 for (int i = 0; i < labels.size(); i++) {
+
                     if (n.getLabel().equals(labels.get(i))) {
+
                         checks[i] = true;
                     }
                 }
             }
             //checks if all node labels have been found
             if (areAllTrue(checks)) {
+
                 FoundGraphs.add(g.getId());
+
+            }
+            for (int i = 0; i < checks.length; i++) {
+                checks[i] = false;
             }
         }
 
@@ -166,7 +175,10 @@ public class RepGraphModel {
      * @return boolean True if all values are true and false if there is at least one false value
      */
     public boolean areAllTrue(boolean[] array) {
-        for (boolean b : array) if (!b) return false;
+        for (boolean b : array) {
+            if (!b) return false;
+        }
+
         return true;
     }
     /**
