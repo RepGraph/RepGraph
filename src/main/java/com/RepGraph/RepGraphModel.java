@@ -127,6 +127,20 @@ public class RepGraphModel {
             }
         }
 
+        ArrayList<edge> edges1 = graphs.get(graphID1).getEdges();
+        ArrayList<edge> edges2 = graphs.get(graphID2).getEdges();
+        ArrayList<edge> similarEdges = new ArrayList<>();
+
+        for (int i = 0; i<edges1.size(); i++){
+            for (int j = 0; j<edges2.size(); j++){
+                if ((edges1.get(i).getLabel().equals(edges2.get(j).getLabel())) && (edges1.get(i).getPostLabel().equals(edges2.get(j).getPostLabel()))){
+                    similarEdges.add(edges1.get(i));
+                    break;
+                }
+            }
+        }
+
+
         return null;
     }
 
