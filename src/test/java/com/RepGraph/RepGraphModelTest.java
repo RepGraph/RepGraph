@@ -335,4 +335,37 @@ public class RepGraphModelTest {
 
     }
 
+
+    @Test
+    public void test_SearchSubgraphPattern_HandlesIncorrectEdgeData() throws NoSuchFieldException, IllegalAccessException {
+        RepGraphModel model = new RepGraphModel();
+
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g1);
+        graphs.put("22222", g2);
+        graphs.put("33333", g3);
+
+        //Set field without using setter
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        ArrayList<node> subnodes = new ArrayList<>();
+        ArrayList<edge> subedges = new ArrayList<>();
+
+        subnodes.add(new node(0, "node" + (3), new ArrayList<anchors>()));
+        subnodes.add(new node(1, "node" + (5), new ArrayList<anchors>()));
+        subedges.add(new edge(2, 3, "testlabel", "testpostlabel"));
+
+        graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges);
+
+        ArrayList<String> correctResults = new ArrayList<>();
+        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched for a non connected subgraph and it was not handled correctly.", correctResults, results);
+
+    }
+
 }

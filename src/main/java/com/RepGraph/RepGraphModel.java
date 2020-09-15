@@ -68,10 +68,18 @@ public class RepGraphModel {
         //This is just used to easily check that all the required edges in the subgraph are true because all values in this array need to be true before a graph is added
         //to foundgraphs arraylist.
         boolean[] checksarr = new boolean[subgraph.getEdges().size()];
-        subgraph.setNodeNeighbours();
+        try {
+            subgraph.setNodeNeighbours();
+        } catch (IndexOutOfBoundsException e) {
+            return FoundGraphs;
+        }
         //Iterate over each graph in the dataset
         for (graph g : graphs.values()) {
-            g.setNodeNeighbours();
+            try {
+                g.setNodeNeighbours();
+            } catch (IndexOutOfBoundsException f) {
+                continue;
+            }
             //Iterate over each node in the subgraph patttern
             for (node sn : subgraph.getNodes()) {
                 //for each node in the subgraph pattern, it iterates over every node in the current graph that is being checked.
