@@ -54,6 +54,8 @@ public class node {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
+        this.nodeNeighbours = new ArrayList<>();
+        this.edgeNeighbours = new ArrayList<>();
     }
 
     /**

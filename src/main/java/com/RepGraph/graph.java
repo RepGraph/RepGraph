@@ -195,8 +195,8 @@ public class graph {
             target = currentEdge.getTarget();
 
             node currentNode = nodes.get(source);
-            
             currentNode.addNeighbour(nodes.get(target));
+
             currentNode.addEdgeNeighbour(currentEdge);
 
         }

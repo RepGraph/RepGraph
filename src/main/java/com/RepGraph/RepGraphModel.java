@@ -66,9 +66,10 @@ public class RepGraphModel {
         //This is just used to easily check that all the required edges in the subgraph are true because all values in this array need to be true before a graph is added
         //to foundgraphs arraylist.
         boolean[] checksarr = new boolean[subgraph.getEdges().size()];
-
+        subgraph.setNodeNeighbours();
         //Iterate over each graph in the dataset
         for (graph g : graphs.values()) {
+            g.setNodeNeighbours();
             //Iterate over each node in the subgraph patttern
             for (node sn : subgraph.getNodes()) {
                 //for each node in the subgraph pattern, it iterates over every node in the current graph that is being checked.
@@ -107,6 +108,10 @@ public class RepGraphModel {
             if (areAllTrue(checksarr)) {
                 FoundGraphs.add(g.getId());
             }
+            checks.clear();
+            for (int i = 0; i < checksarr.length; i++) {
+                checksarr[i] = false;
+            }
         }
 
 
@@ -123,7 +128,11 @@ public class RepGraphModel {
      */
     public ArrayList<String> searchSubgraphNodeSet(String graphID, int[] NodeID) {
 
+
         ArrayList<String> FoundGraphs = new ArrayList<String>();
+        if (NodeID.length == 0) {
+            return FoundGraphs;
+        }
 
         //Following code is only if nodeIDs are given - we could remove if method is given node labels directly
         //***********************************************************
