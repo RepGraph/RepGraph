@@ -169,7 +169,7 @@ public class RepGraphModelTest {
 
         Collections.sort(results);
         Collections.sort(correctResults);
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for an empty set of labels and the method did not function correctly.", correctResults, results);
 
     }
 
@@ -222,7 +222,7 @@ public class RepGraphModelTest {
 
         Collections.sort(results);
         Collections.sort(correctResults);
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
         correctResults.clear();
         correctResults.add("11111");
@@ -230,7 +230,7 @@ public class RepGraphModelTest {
 
         Collections.sort(results);
         Collections.sort(correctResults);
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
         correctResults.clear();
         correctResults.add("33333");
@@ -238,7 +238,7 @@ public class RepGraphModelTest {
 
         Collections.sort(results);
         Collections.sort(correctResults);
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
         correctResults.clear();
         correctResults.add("22222");
@@ -247,10 +247,68 @@ public class RepGraphModelTest {
 
         Collections.sort(results);
         Collections.sort(correctResults);
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
     }
 
+    @Test
+    public void test_SearchSubgraphPattern_HandlesEmptySubgraph() throws NoSuchFieldException, IllegalAccessException {
+        RepGraphModel model = new RepGraphModel();
 
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g1);
+        graphs.put("22222", g2);
+        graphs.put("33333", g3);
+
+        //Set field without using setter
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        ArrayList<node> subnodes = new ArrayList<>();
+        ArrayList<edge> subedges = new ArrayList<>();
+
+        graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges);
+
+        ArrayList<String> correctResults = new ArrayList<>();
+        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched using an empty subgraph pattern and the method did not handle it correctly.", correctResults, results);
+
+    }
+
+    @Test
+    public void test_SearchSubgraphPattern_HandlesNonConnectedSubgraph() throws NoSuchFieldException, IllegalAccessException {
+        RepGraphModel model = new RepGraphModel();
+
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g1);
+        graphs.put("22222", g2);
+        graphs.put("33333", g3);
+
+        //Set field without using setter
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        ArrayList<node> subnodes = new ArrayList<>();
+        ArrayList<edge> subedges = new ArrayList<>();
+
+        subnodes.add(new node(0, "node" + (3), new ArrayList<anchors>()));
+        subnodes.add(new node(1, "node" + (5), new ArrayList<anchors>()));
+
+        graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges);
+
+        ArrayList<String> correctResults = new ArrayList<>();
+        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched for a non connected subgraph and it was not handled correctly.", correctResults, results);
+
+
+    }
 
 }

@@ -59,7 +59,9 @@ public class RepGraphModel {
 
         //Empty Arraylist for the graph ids that have the subgraph pattern specified.
         ArrayList<String> FoundGraphs = new ArrayList<String>();
-
+        if (subgraph.getNodes().size() == 0 || subgraph.getEdges().size() == 0 || subgraph.getEdges().size() < subgraph.getNodes().size() - 1) {
+            return FoundGraphs;
+        }
         // Hashmap with a string key and boolean value - this is used to confirm that each unique edge in the subgraph has been found in the graph being checked.
         //This is necessary because there can be multiple of the same two node links so a counter or an array cant be used.
         HashMap<String, Boolean> checks = new HashMap<>();
