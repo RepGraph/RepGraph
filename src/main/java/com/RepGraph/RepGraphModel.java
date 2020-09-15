@@ -6,6 +6,7 @@
 
 package com.RepGraph;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -112,6 +113,20 @@ public class RepGraphModel {
      * @return String The differences and similarities of the two graphs.
      */
     public String compareTwoGraphs(String graphID1, String graphID2){
+
+        ArrayList<node> nodes1 = graphs.get(graphID1).getNodes();
+        ArrayList<node> nodes2 = graphs.get(graphID2).getNodes();
+        ArrayList<node> similarNodes = new ArrayList<node>();
+
+        for (int i = 0; i<nodes1.size(); i++){
+            for (int j = 0; j<nodes2.size(); j++){
+                if (nodes1.get(i).getLabel().equals(nodes2.get(j).getLabel())){
+                    similarNodes.add(nodes1.get(i));
+                    break;
+                }
+            }
+        }
+
         return null;
     }
 
