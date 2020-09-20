@@ -13,7 +13,8 @@ import java.util.ArrayList;
 
 /**
  * This is the RestAPI class and controller in the MVC format. This class will handle all communication between
- * the front-end and back-end.
+ * the front-end and back-end. The class makes use of the Spring Framework to handle all the GET and POST request mappings.
+ * It also handles automatic serialisation and deserialization of JSON to Java objects and vice versa.
  *
  * @author TLDEDA001
  *
@@ -70,7 +71,7 @@ public class RequestHandler {
 
 
     /**
-     * Uploads a single graph to the model object
+     * This method is the POST request that takes in a single graph JSON and uploads a single graph to the model object. It is mapped to "/UploadSingle".
      *
      * @param data This is the graph object to be uploaded
      */
@@ -82,8 +83,10 @@ public class RequestHandler {
     }
 
     /**
-     * This method will be called when the class receives a GET HTTP request with the "Visualise" keyword in the Request URL.
+     * This method will be called when the class receives a GET HTTP request with "/Visualise".
      * The Request URL also requires the "index" and "format" Request Params to be present.
+     * This method finds the graph in the model dataset and constructs it into the required
+     * format according to the format type specified.
      *
      * @param graphID  This refers to which graph the user wants to be visualised on the front end.
      * @param format This refers to which format the user wants the graph to be visualised in.
@@ -96,8 +99,10 @@ public class RequestHandler {
     }
 
     /**
-     * This method will be called when the class receives a GET HTTP request with the "SearchSubgraphNodeSet" keyword in the Request URL.
+     * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
      * The Request URL also requires the "graphID" and "NodeID" list Request Params to be present.
+     * This method searches the model's dataset for graphs containing the specified list of node labels and
+     * returns a list of graph IDs where the set of node labels have been found.
      *
      * @param graphID This is the graph containing the nodes and their corresponding labels to be searched for
      * @param NodeID  This is the list of node indexes
@@ -111,22 +116,25 @@ public class RequestHandler {
     }
 
     /**
-     * This method will be called when the class receives a GET HTTP request with the "SearchSubgraphPattern" keyword in the Request URL.
+     * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphPattern".
      * The Request URL also requires the "graphID" Request Param and "subgraph" graph object requestbody to be present.
+     * This method searches the model's dataset for graphs containing the specified subgraph pattern and
+     * returns a list of graph IDs where the subgraph pattern has been found.
      *
-     * @param graphID  This is the graph id of the graph with the pattern to be searched
      * @param subgraph This is the graph object containing the subgraph information.
      * @return ArrayList<String> This is a list a graph IDs with matching subgraph patterns
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphPattern(@RequestParam String graphID, @RequestBody graph subgraph) {
-        return RepModel.searchSubgraphPattern(graphID, subgraph);
+    public ArrayList<String> SearchSubgraphPattern(@RequestBody graph subgraph) {
+        return RepModel.searchSubgraphPattern(subgraph);
     }
 
     /**
-     * This method will be called when the class receives a GET HTTP request with the "CompareGraphs" keyword in the Request URL.
+     * This method will be called when the class receives a GET HTTP request with "/CompareGraphs".
      * The Request URL also requires the "index1" and "index2" Request Params to be present.
+     * This method finds both graphs requested to be compared in the model's dataset and performs the
+     * comparison analysis.
      *
      * @param graphID1 This refers to one of the indexes of the graphs to be compared.
      * @param graphID2 This refers to the other index of the graph to be compared.
@@ -139,8 +147,9 @@ public class RequestHandler {
     }
 
     /**
-     * This method will be called when the class receives a GET HTTP request with the "TestGraph" keyword in the Request URL.
+     * This method will be called when the class receives a GET HTTP request with "/TestGraph".
      * The Request URL also requires the "index" and "test" Request Params to be present.
+     * This method runs the formal tests requested on the model specified and returns the results.
      *
      * @param graphID          This refers to the id of the graph that will be tested.
      * @param planar      This refers to whether its getting tested for the graph being planar

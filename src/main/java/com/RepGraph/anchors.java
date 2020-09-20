@@ -10,15 +10,12 @@ public class anchors {
     private int end;
 
     /**
-     * Default Constructor
+     * Default constructor
      */
-    public anchors() {
-
-    }
+    public anchors(){};
 
     /**
      * This is the parameterised constructor
-     *
      * @param from This refers to the first token in the node span
      * @param end  This refers to the last token in the node span
      */
