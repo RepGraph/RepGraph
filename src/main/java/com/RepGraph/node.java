@@ -27,13 +27,24 @@ public class node {
     /**
      * An array list of neighbouring nodes.
      */
-    private ArrayList<Integer> nodeNeighbours;
+    private ArrayList<node> nodeNeighbours;
+
+    /**
+     * An array list of edges to the neighbouring nodes.
+     */
+    private ArrayList<edge> edgeNeighbours;
+
+    /**
+     * When calculating longest path, prevNode will be the previous node in the path.
+     */
+    private int prevNode;
 
     /**
      * Default constructor for the node class.
      */
-    public node(){
-        this.nodeNeighbours = new ArrayList<Integer>();
+    public node() {
+        this.nodeNeighbours = new ArrayList<>();
+        this.edgeNeighbours = new ArrayList<>();
     }
 
     /**
@@ -46,7 +57,8 @@ public class node {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
-        this.nodeNeighbours = new ArrayList<Integer>();
+        this.nodeNeighbours = new ArrayList<>();
+        this.edgeNeighbours = new ArrayList<>();
     }
 
     /**
@@ -101,7 +113,7 @@ public class node {
      * Adds a neighbouring node.
      * @param neighbour A neighbouring node.
      */
-    public void addNeighbour(int neighbour){
+    public void addNeighbour(node neighbour) {
         nodeNeighbours.add(neighbour);
     }
 
@@ -109,28 +121,47 @@ public class node {
      * Getter method for a node's neighbours.
      * @return ArrayList The node's neighbours.
      */
-    public ArrayList<Integer> getNodeNeighbours(){
+    public ArrayList<node> getNodeNeighbours() {
         return nodeNeighbours;
+    }
+
+
+    /**
+     * Getter method for EdgeNeighbours.
+     *
+     * @return ArrayList The edges connected from this node.
+     */
+    public ArrayList<edge> getEdgeNeighbours() {
+        return edgeNeighbours;
+    }
+
+    /**
+     * Adds an edge to the EdgeNeighbours ArrayList
+     *
+     * @param e This is the edge that will be added to the EdgeNeighbours ArrayList
+     */
+    public void addEdgeNeighbour(edge e) {
+        edgeNeighbours.add(e);
     }
 
     /**
      * Equals method for the node class.
+     *
      * @param o Object
      * @return boolean Whether to two classes being compared are equal.
      */
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
 
-        if (o == this){
+        if (o == this) {
             return true;
         }
 
-        if (!(o instanceof node)){
+        if (!(o instanceof node)) {
             return false;
         }
 
         node n = (node) o;
-
         return ((id == n.getId()) && (label.equals(n.getLabel())) && (anchors.equals(n.getAnchors())));
     }
 }
