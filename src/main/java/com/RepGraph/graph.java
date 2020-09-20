@@ -164,23 +164,17 @@ public class graph {
      * @return ArrayList The route of the longest path.
      */
     public ArrayList<Integer> findLongest(){
-
         setNodeNeighbours();
-
         //Default longest path set from node 0.
         ArrayList<Integer> longest = Dijkstra(0);
-
         ArrayList<Integer> temp;
-
         //Makes each node the start node and finds the longest overall path.
         for (int i =1; i<nodes.size();i++){
             temp = Dijkstra(i);
-
             if (temp.size() > longest.size()){
                 longest = temp;
             }
         }
-
         //Reverses the path so that start node is first.
         ArrayList<Integer> reversed = new ArrayList<Integer>();
         for (int i = longest.size() - 1; i >= 0; i--) {
@@ -194,27 +188,30 @@ public class graph {
      * Assigns all the nodes in the graph their neighbouring nodes, which will be used for analysis.
      */
     public void setNodeNeighbours(){
-
         int source;
         int target;
-
-
-        if (edges.size()!=0){
+        if (edges.size() != 0) {
             //Graph has no edges
             return;
-        }
-        else{
+        } else {
             source = edges.get(0).getSource();
-            if (nodes.get(source).getNodeNeighbours().size() != 0){
+            if (nodes.get(source).getNodeNeighbours().size() != 0) {
                 //Node neighbours have already been set
                 return;
             }
         }
 
-        for (int i=1; i<edges.size();i++){
-            source = edges.get(i).getSource();
-            target = edges.get(i).getTarget();
-            nodes.get(source).addNeighbour(target);
+        for (int i=0; i<edges.size();i++){
+            edge currentEdge = edges.get(i);
+
+            source = currentEdge.getSource();
+            target = currentEdge.getTarget();
+
+            node currentNode = nodes.get(source);
+            currentNode.addNeighbour(nodes.get(target));
+
+            currentNode.addEdgeNeighbour(currentEdge);
+
         }
     }
 
@@ -228,7 +225,7 @@ public class graph {
         ArrayList<Integer> path = new ArrayList<Integer>();
 
         //If the start node has no neighbours then stop performing the algorithm and return empty path.
-        if (nodes.get(startNode).getNodeNeighbours().size()==0){
+        if (nodes.get(startNode).getNodeNeighbours().size() == 0) {
             return path;
         }
 
@@ -245,15 +242,15 @@ public class graph {
         }
 
 
-        dist.set(startNode,0);
+        dist.set(startNode, 0);
         int maxDistIndex = startNode;
 
-        while (nodesLeft.size() > 0){ //While there are still nodes unchecked.
+        while (nodesLeft.size() > 0) { //While there are still nodes unchecked.
 
             //Finds the node in nodeLeft with the longest viable distance from the start node (i.e. longest path that isn't max).
             maxDistIndex = nodesLeft.get(0);
-            for(int i = 1; i<nodesLeft.size(); i++){
-                if (dist.get(nodesLeft.get(i)) < dist.get(maxDistIndex)){
+            for (int i = 1; i < nodesLeft.size(); i++) {
+                if (dist.get(nodesLeft.get(i)) < dist.get(maxDistIndex)) {
 
                     maxDistIndex = nodesLeft.get(i);
                 }
@@ -265,10 +262,11 @@ public class graph {
 
 
             //Checks all of the chosen node's neighbours to see if their distances can be made longer (i.e. more negative and thus a further distance from the start node).
-            for (int neighbourNodeID : currentNode.getNodeNeighbours()){
+            for (node neighbourNodeIDnode : currentNode.getNodeNeighbours()) {
                 int currentNodeID = currentNode.getId();
-                if (dist.get(neighbourNodeID) > dist.get(currentNodeID) - 1){
-                    dist.set(neighbourNodeID, dist.get(currentNodeID)  - 1); //Sets the neighbour node's distance to the current node's distance minus 1. (each edge has a cost of 1).
+                int neighbourNodeID = neighbourNodeIDnode.getId();
+                if (dist.get(neighbourNodeID) > dist.get(currentNodeID) - 1) {
+                    dist.set(neighbourNodeID, dist.get(currentNodeID) - 1); //Sets the neighbour node's distance to the current node's distance minus 1. (each edge has a cost of 1).
                     prevNode[neighbourNodeID] = currentNodeID; //Sets the neighbour node's previous node in the path.
                 }
             }
@@ -276,8 +274,8 @@ public class graph {
 
         //Finds node index with the longest viable path. (i.e. most negative distance)
         int max = 0;
-        for (int i = 0; i<dist.size();i++){
-            if (dist.get(max) > dist.get(i)){
+        for (int i = 0; i < dist.size(); i++) {
+            if (dist.get(max) > dist.get(i)) {
                 max = i;
             }
         }
@@ -297,22 +295,24 @@ public class graph {
 
     /**
      * Equals method for the graph class.
+     *
      * @param o Object
      * @return boolean Whether to two classes being compared are equal.
      */
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
 
-        if (o == this){
+        if (o == this) {
             return true;
         }
 
-        if (!(o instanceof graph)){
+        if (!(o instanceof graph)) {
             return false;
         }
 
         graph g = (graph) o;
 
-        return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes()))  && (tokens.equals(g.getTokens()))  && (edges.equals(g.getEdges())));
+        return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes())) && (tokens.equals(g.getTokens())) && (edges.equals(g.getEdges())));
     }
+
 }
