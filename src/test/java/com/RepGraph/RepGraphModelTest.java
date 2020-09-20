@@ -42,9 +42,9 @@ public class RepGraphModelTest {
             tokens3.add(new token(i + 2, "node" + (i + 3) + " form", "node1" + (i + 3) + " lemma", "node1" + (i + 3) + " carg"));
         }
 
-        g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1);
-        g2 = new graph("22222", "testsource", "node2 node3 node4 node5", nodes2, tokens2, edges1);
-        g3 = new graph("33333", "testsource", "node3 node4 node5 node6", nodes3, tokens3, edges1);
+        g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1, new ArrayList<Integer>());
+        g2 = new graph("22222", "testsource", "node2 node3 node4 node5", nodes2, tokens2, edges1, new ArrayList<Integer>());
+        g3 = new graph("33333", "testsource", "node3 node4 node5 node6", nodes3, tokens3, edges1, new ArrayList<Integer>());
 
 
 
@@ -218,25 +218,25 @@ public class RepGraphModelTest {
         subnodes.add(new node(0, "node" + (2), new ArrayList<anchors>()));
         subnodes.add(new node(1, "node" + (4), new ArrayList<anchors>()));
         subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        graph subgraph1 = new graph("44444", "testsource", "node2 node4", subnodes, new ArrayList<token>(), subedges);
+        graph subgraph1 = new graph("44444", "testsource", "node2 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         subnodes = new ArrayList<>();
         subnodes.add(new node(0, "node" + (1), new ArrayList<anchors>()));
         subnodes.add(new node(1, "node" + (2), new ArrayList<anchors>()));
 
-        graph subgraph2 = new graph("55555", "testsource", "node1 node2", subnodes, new ArrayList<token>(), subedges);
+        graph subgraph2 = new graph("55555", "testsource", "node1 node2", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         subnodes = new ArrayList<>();
         subnodes.add(new node(0, "node" + (3), new ArrayList<anchors>()));
         subnodes.add(new node(1, "node" + (4), new ArrayList<anchors>()));
 
-        graph subgraph3 = new graph("66666", "testsource", "node3 node4", subnodes, new ArrayList<token>(), subedges);
+        graph subgraph3 = new graph("66666", "testsource", "node3 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         subnodes = new ArrayList<>();
         subnodes.add(new node(0, "node" + (3), new ArrayList<anchors>()));
         subnodes.add(new node(1, "node" + (5), new ArrayList<anchors>()));
 
-        graph subgraph4 = new graph("77777", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges);
+        graph subgraph4 = new graph("77777", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
 
         ArrayList<String> correctResults = new ArrayList<>();
@@ -292,7 +292,7 @@ public class RepGraphModelTest {
         ArrayList<node> subnodes = new ArrayList<>();
         ArrayList<edge> subedges = new ArrayList<>();
 
-        graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges);
+        graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         ArrayList<String> correctResults = new ArrayList<>();
         ArrayList<String> results = model.searchSubgraphPattern(subgraph);
@@ -323,7 +323,7 @@ public class RepGraphModelTest {
         subnodes.add(new node(0, "node" + (3), new ArrayList<anchors>()));
         subnodes.add(new node(1, "node" + (5), new ArrayList<anchors>()));
 
-        graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges);
+        graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         ArrayList<String> correctResults = new ArrayList<>();
         ArrayList<String> results = model.searchSubgraphPattern(subgraph);
@@ -357,7 +357,7 @@ public class RepGraphModelTest {
         subnodes.add(new node(1, "node" + (5), new ArrayList<anchors>()));
         subedges.add(new edge(2, 3, "testlabel", "testpostlabel"));
 
-        graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges);
+        graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         ArrayList<String> correctResults = new ArrayList<>();
         ArrayList<String> results = model.searchSubgraphPattern(subgraph);

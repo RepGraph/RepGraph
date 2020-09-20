@@ -33,7 +33,7 @@ public class GraphTest {
         tokens.add(new token(2, "node3 form", "node3 lemma", "node3 carg"));
         tokens.add(new token(3, "node4 form", "node4 lemma", "node4 carg"));
 
-        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges);
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
         //Get fields without using getter
         final Field fieldID = g.getClass().getDeclaredField("id");
@@ -265,8 +265,8 @@ public class GraphTest {
         tokens2.add(new token(2, "node3 form", "node3 lemma", "node3 carg"));
         tokens2.add(new token(3, "node4 form", "node4 lemma", "node4 carg"));
 
-        graph g1 = new graph("11111", "testsource1", "node1 node2 node3 node4", nodes1, tokens1, edges1);
-        graph g2 = new graph("11111", "testsource2", "node1 node2 node3 node4", nodes2, tokens2, edges2);
+        graph g1 = new graph("11111", "testsource1", "node1 node2 node3 node4", nodes1, tokens1, edges1, new ArrayList<Integer>());
+        graph g2 = new graph("11111", "testsource2", "node1 node2 node3 node4", nodes2, tokens2, edges2, new ArrayList<Integer>());
 
 
         assertFalse("Equals does not work with two graphs with different values.", g1.equals(g2));
@@ -295,8 +295,8 @@ public class GraphTest {
         tokens1.add(new token(0, "node1 form", "node1 lemma", "node1 carg"));
         tokens2.add(new token(0, "node1 form", "node1 lemma", "node1 carg"));
 
-        graph g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1);
-        graph g2 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes2, tokens2, edges2);
+        graph g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1, new ArrayList<Integer>());
+        graph g2 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes2, tokens2, edges2, new ArrayList<Integer>());
 
         assertTrue("Equals does not work with two identical graphs with the same values.", g1.equals(g2));
     }
@@ -314,7 +314,7 @@ public class GraphTest {
 
         tokens1.add(new token(0, "node1 form", "node1 lemma", "node1 carg"));
 
-        graph g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1);
+        graph g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1, new ArrayList<Integer>());
 
         assertFalse("Equals does not work with two objects of different classes", g1.equals(new anchors(0, 1)));
     }
@@ -332,7 +332,7 @@ public class GraphTest {
 
         tokens1.add(new token(0, "node1 form", "node1 lemma", "node1 carg"));
 
-        graph g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1);
+        graph g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1, new ArrayList<Integer>());
 
         assertTrue("Equals does not work with a token equalling itself.", g1.equals(g1));
     }
