@@ -337,5 +337,48 @@ public class GraphTest {
         assertTrue("Equals does not work with a token equalling itself.", g1.equals(g1));
     }
 
+    @Test
+    public void test_setNodeNeighbours_setNodesCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
+
+        node node0 = new node(0, "node1", new ArrayList<anchors>());
+        node node1 = new node(1, "node2", new ArrayList<anchors>());
+        node node2 = new node(2, "node3", new ArrayList<anchors>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 2, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(0, 2, "testlabel2", "testpostlabel2"));
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        ArrayList<node> correctResult0 = new ArrayList<>();
+        ArrayList<node> correctResult1 = new ArrayList<>();
+        ArrayList<node> correctResult2 = new ArrayList<>();
+
+        correctResult0.add(node1);
+        correctResult0.add(node2);
+        correctResult1.add(node2);
+
+        g.setNodeNeighbours();
+
+        //Get fields without using getter
+        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("nodeNeighbours");
+        nodeField0.setAccessible(true);
+        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("nodeNeighbours");
+        nodeField1.setAccessible(true);
+        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("nodeNeighbours");
+        nodeField1.setAccessible(true);
+
+        assertTrue("setNodeNeighbours does not set nodes correctly #1", nodeField0.equals(correctResult0));
+        assertTrue("setNodeNeighbours does not set nodes correctly #2", nodeField1.equals(correctResult1));
+        assertTrue("setNodeNeighbours does not set nodes correctly #3", nodeField2.equals(correctResult2));
+
+    }
+
 
 }
