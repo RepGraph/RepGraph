@@ -42,7 +42,10 @@ public class node {
     /**
      * Default constructor for the node class.
      */
-    public node(){}
+    public node() {
+        this.nodeNeighbours = new ArrayList<>();
+        this.edgeNeighbours = new ArrayList<>();
+    }
 
     /**
      * Fully parameterised constructor for the node class.
