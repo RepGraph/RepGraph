@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @author TLDEDA001
  *
  */
-
+@CrossOrigin
 @SpringBootApplication
 @RestController
 public class RequestHandler {
