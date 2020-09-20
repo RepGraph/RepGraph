@@ -42,6 +42,9 @@ public class graph {
      */
     private ArrayList<edge> edges;
 
+    /**
+     * An array list of the graph's top node ids.
+     */
     @JsonProperty("tops")
     private ArrayList<Integer> tops;
     /**
@@ -57,6 +60,7 @@ public class graph {
      * @param nodes An array list of the graph's nodes.
      * @param tokens An array list of the graph's tokens.
      * @param edges An array list of the graph's edges.
+     * @param tops An array list of the graph's top node ids.
      */
     public graph(String id, String source, String input, ArrayList<node> nodes, ArrayList<token> tokens, ArrayList<edge> edges, ArrayList<Integer> tops) {
         this.id = id;
@@ -162,6 +166,24 @@ public class graph {
      */
     public void setEdges(ArrayList<edge> edges) {
         this.edges = edges;
+    }
+
+    /**
+     * Getter method for a graphs top node array
+     *
+     * @return ArrayList<Integer> This is the ArrayList of top node ids.
+     */
+    public ArrayList<Integer> getTops() {
+        return tops;
+    }
+
+    /**
+     * Setter method for a graphs top node array
+     *
+     * @param tops This is an ArrayList of the ids of the top nodes in a graph
+     */
+    public void setTops(ArrayList<Integer> tops) {
+        this.tops = tops;
     }
 
     /**
@@ -317,7 +339,7 @@ public class graph {
 
         graph g = (graph) o;
 
-        return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes())) && (tokens.equals(g.getTokens())) && (edges.equals(g.getEdges())));
+        return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes())) && (tokens.equals(g.getTokens())) && (edges.equals(g.getEdges())) && tops.equals(g.getTops()));
     }
 
 
