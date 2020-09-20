@@ -38,6 +38,7 @@ public class RepGraphModel {
      */
     public void addGraph(graph value) {
         graphs.put(value.getId(), value);
+
     }
 
     /**

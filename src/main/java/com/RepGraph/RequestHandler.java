@@ -1,9 +1,14 @@
 package com.RepGraph;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -12,6 +17,7 @@ import java.util.ArrayList;
  * It also handles automatic serialisation and deserialization of JSON to Java objects and vice versa.
  *
  * @author TLDEDA001
+ *
  */
 
 @SpringBootApplication
@@ -21,17 +27,48 @@ public class RequestHandler {
     RepGraphModel RepModel = new RepGraphModel();
 
     /**
-     * This method is the post request to upload data and create the model. It is mapped to a "/Upload".
+     * This method is the post request to upload data and create the model.
      *
-     * @param data This parameter is the json string of data that is automatically converted into a repgraph model object.
-     * @return RepGraphModel - this method returns the object it assigns to the model object parameters which is the model object of the data uploaded.
+     * @param name This is the name that the file will be saved under
+     * @param file This is the file data.
      */
-    @PostMapping("/Upload")
+    @PostMapping("/UploadData")
     @ResponseBody
-    public RepGraphModel UploadData(@RequestBody RepGraphModel data) {
-        RepModel = data;
-        return RepModel;
+    public String UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+
+        try {
+            byte[] bytes = file.getBytes();
+            //Creates Directory if it does not exist otherwise it finds it in the project folder.
+            File directory = new File("Dataset");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            //Creates File in directory
+            File serverFile = new File(directory.getAbsolutePath() + File.separator + name);
+
+            //Writes contents to file
+            BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+            stream.write(bytes);
+            stream.close();
+
+            //Read the contents of the file uploaded and construct a graph for each line;
+            BufferedReader reader = new BufferedReader(new FileReader(serverFile));
+            String currentLine;
+            ObjectMapper objectMapper = new ObjectMapper();
+            while ((currentLine = reader.readLine()) != null) {
+                graph currgraph = objectMapper.readValue(currentLine, graph.class);
+                RepModel.addGraph(currgraph);
+            }
+            reader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "An Error Has Occurred, Please Try Again";
+        }
+        return "File Uploaded";
     }
+
 
     /**
      * This method is the POST request that takes in a single graph JSON and uploads a single graph to the model object. It is mapped to "/UploadSingle".

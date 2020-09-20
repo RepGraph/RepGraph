@@ -5,6 +5,7 @@ package com.RepGraph;
  * This class stores the token span information of a node
  */
 public class anchors {
+
     private int from;
     private int end;
 
