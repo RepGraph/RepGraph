@@ -154,7 +154,7 @@ public class node {
             return true;
         }
 
-        if (!(o instanceof edge)) {
+        if (!(o instanceof node)) {
             return false;
         }
 
