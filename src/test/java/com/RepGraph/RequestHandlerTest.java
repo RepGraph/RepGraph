@@ -18,9 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 
 @RunWith(SpringRunner.class)
@@ -58,13 +63,24 @@ public class RequestHandlerTest {
         tokens.add(new token(2, "node 3", "node3", "node3"));
         tokens.add(new token(3, "node 4", "node4", "node4"));
 
-        testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges);
+        testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
     }
 
-    //Later
+
     @Test
-    public void test_UploadData_RepModelShouldBePopulated() {
+    public void test_UploadData_FileIsUploaded() throws Exception {
+        String URL = "/UploadData";
+
+        FileInputStream testfilestream = new FileInputStream(new File("src/test/TestResources/wsj00a.dmrs"));
+        MockMultipartFile file = new MockMultipartFile("data", "testUploadDataFile", "text/plain", testfilestream);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart(URL)
+                .file(file)
+                .param("FileName", "UploadUnitTestData"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("File Uploaded"));
+
     }
 
     @Test
@@ -80,9 +96,7 @@ public class RequestHandlerTest {
 
 
         mockMvc.perform(post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("id").value("11111"));
+                .andExpect(status().isOk());
 
     }
 
