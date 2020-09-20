@@ -121,7 +121,7 @@ public class token {
             return true;
         }
 
-        if (!(o instanceof token)) {
+        if (!(o instanceof token)){
             return false;
         }
 
