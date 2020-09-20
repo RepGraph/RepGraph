@@ -412,6 +412,38 @@ public class GraphTest {
         g.setNodeNeighbours();
 
         //Get fields without using getter
+        final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("edgeNeighbours");
+        edgeField0.setAccessible(true);
+        final Field edgeField1 = nodes.get(1).getClass().getDeclaredField("edgeNeighbours");
+        edgeField1.setAccessible(true);
+        final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("edgeNeighbours");
+        edgeField2.setAccessible(true);
+
+
+        assertTrue("setNodeNeighbours does not set edges correctly #1", edgeField0.get(node0).equals(correctResult0));
+        assertTrue("setNodeNeighbours does not set edges correctly #2", edgeField1.get(node1).equals(correctResult1));
+        assertTrue("setNodeNeighbours does not set edges correctly #3", edgeField2.get(node2).equals(correctResult2));
+    }
+
+    @Test
+    public void test_setNodeNeighbours_NoEdgesInGraph() throws NoSuchFieldException, IllegalAccessException {
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node1", new ArrayList<>());
+        node node1 = new node(1, "node2", new ArrayList<>());
+        node node2 = new node(2, "node3", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        ArrayList<edge> emptyArray = new ArrayList<>();
+
+        g.setNodeNeighbours();
+
+        //Get fields without using getter
         final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("edgeNeighbours");
         nodeField0.setAccessible(true);
         final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("edgeNeighbours");
@@ -419,11 +451,65 @@ public class GraphTest {
         final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("edgeNeighbours");
         nodeField2.setAccessible(true);
 
+        final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("edgeNeighbours");
+        edgeField0.setAccessible(true);
+        final Field edgeField1 = nodes.get(1).getClass().getDeclaredField("edgeNeighbours");
+        edgeField1.setAccessible(true);
+        final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("edgeNeighbours");
+        edgeField2.setAccessible(true);
 
-        assertTrue("setNodeNeighbours does not set edges correctly #1", nodeField0.get(node0).equals(correctResult0));
-        assertTrue("setNodeNeighbours does not set edges correctly #2", nodeField1.get(node1).equals(correctResult1));
-        assertTrue("setNodeNeighbours does not set edges correctly #3", nodeField2.get(node2).equals(correctResult2));
+
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField0.get(node0).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField1.get(node1).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField2.get(node2).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField0.get(node0).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField1.get(node1).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField2.get(node2).equals(emptyArray));
     }
+
+    @Test
+    public void test_setNodeNeighbours_NodesAlreadyHaveNodeNeighbours() throws NoSuchFieldException, IllegalAccessException{
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node1", new ArrayList<>());
+        node node1 = new node(1, "node2", new ArrayList<>());
+        node node2 = new node(2, "node3", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+
+        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 =new edge(0, 2, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        ArrayList<node> nodeNeighbours = new ArrayList<>();
+        ArrayList<edge> edgeNeighbours = new ArrayList<>();
+
+        nodeNeighbours.add(node1);
+        edgeNeighbours.add(edge0);
+
+        //Setting without using setter methods
+        final Field nodeField = node0.getClass().getDeclaredField("nodeNeighbours");
+        nodeField.setAccessible(true);
+        nodeField.set(node0, nodeNeighbours);
+        final Field edgeField = node0.getClass().getDeclaredField("edgeNeighbours");
+        edgeField.setAccessible(true);
+        edgeField.set(node0, edgeNeighbours);
+
+        g.setNodeNeighbours();
+
+        assertTrue("setNodeNeighbours re-assigns neighbouring nodes that are already assigned #1.", nodeField.get(node0).equals(nodeNeighbours));
+        assertTrue("setNodeNeighbours re-assigns neighbouring nodes that are already assigned #2.", edgeField.get(node0).equals(edgeNeighbours));
+    }
+
+
 
 
 }
