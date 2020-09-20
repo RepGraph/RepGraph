@@ -217,7 +217,8 @@ public class graph {
     public void setNodeNeighbours(){
         int source;
         int target;
-        if (edges.size() != 0) {
+
+        if (edges.size() == 0) {
             //Graph has no edges
             return;
         } else {
