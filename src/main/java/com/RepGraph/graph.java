@@ -276,7 +276,6 @@ public class graph {
     public ArrayList<ArrayList<Integer>> Dijkstra(int startNode){
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
-        ArrayList<Integer> path = new ArrayList<Integer>();
 
         //If the start node has no neighbours then stop performing the algorithm and return empty path.
         if (nodes.get(startNode).getNodeNeighbours().size() == 0) {
@@ -327,16 +326,22 @@ public class graph {
         }
 
         //Finds node index with the longest viable path. (i.e. most negative distance)
-        int max = 0;
+        int max = dist.get(0);
+        int maxIndex =0;
         for (int i = 0; i < dist.size(); i++) {
-            if (dist.get(max) > dist.get(i)) {
-                max = dist.get(max);
+            if (dist.get(maxIndex) > dist.get(i)) {
+                max = dist.get(i);
+                maxIndex =i;
             }
         }
 
+
+
         //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
+        ArrayList<Integer> path = new ArrayList<>();
         for (int i = 0; i<dist.size();i++){
             if (dist.get(i)==max){
+                path.clear();
                 path.add(i);
                 int prev = prevNode[i];
                 while (prev!=startNode){
@@ -344,7 +349,7 @@ public class graph {
                     prev = prevNode[prev];
                 }
                 path.add(startNode);
-                paths.add(path);
+                paths.add(new ArrayList<Integer>(path));
             }
         }
 
