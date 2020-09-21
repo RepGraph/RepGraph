@@ -111,46 +111,98 @@ public class NodeTest {
         assertEquals("anchors value was not set properly.", field.get(n), anchs);
     }
 
-    /*@Test
+    @Test
     public void test_addNeighbour_AddNeighbourCorrectly() throws NoSuchFieldException, IllegalAccessException{
 
         final node n = new node();
 
-        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        ArrayList<anchors> anchs = new ArrayList<>();
         anchs.add(new anchors(0, 1));
 
         final node n1 = new node(3,"proper_q",anchs);
+        final node n2 = new node(2,"test_q",anchs);
 
-        ArrayList<node> g = new ArrayList<node>();
-        g.add(n1);
+        ArrayList<node> correctResult = new ArrayList<node>();
+        correctResult.add(n1);
+        correctResult.add(n2);
         n.addNeighbour(n1);
+        n.addNeighbour(n2);
 
         //Get field without using getter
         final Field field = n.getClass().getDeclaredField("nodeNeighbours");
         field.setAccessible(true);
 
-        assertEquals("nodeNeighbours was not added to correctly.", field.get(n), g);
+        assertEquals("nodeNeighbours was not added to correctly.", field.get(n), correctResult);
     }
-*/
+
     @Test
     public void test_getNodeNeighbours_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
 
         final node n = new node();
 
-        ArrayList<anchors> anchs = new ArrayList<anchors>();
+        ArrayList<anchors> anchs = new ArrayList<>();
         anchs.add(new anchors(0, 1));
 
         final node n1 = new node(3,"proper_q",anchs);
+        final node n2 = new node(2,"test_q",anchs);
 
-        ArrayList<node> g = new ArrayList<node>();
-        g.add(n1);
+        ArrayList<node> correctResult = new ArrayList<node>();
+        correctResult.add(n1);
+        correctResult.add(n2);
 
         //Get field without using getter
         final Field field = n.getClass().getDeclaredField("nodeNeighbours");
         field.setAccessible(true);
-        field.set(n, g);
+        field.set(n, correctResult);
 
-        assertEquals("nodeNeighbours value was not retrieved correctly.", n.getNodeNeighbours(), g);
+        assertEquals("nodeNeighbours value was not retrieved correctly.", n.getNodeNeighbours(), correctResult);
+    }
+
+    @Test
+    public void test_addEdgeNeighbour_AddEdgeCorectly() throws NoSuchFieldException, IllegalAccessException{
+        final node n = new node();
+
+        ArrayList<anchors> anchs = new ArrayList<>();
+        anchs.add(new anchors(0, 1));
+
+        final edge e1 = new edge(0,1,"testLabel1","testPostLabel1");
+        final edge e2 = new edge(2,3,"testLabel2","testPostLabel2");
+
+        ArrayList<edge> correctResult = new ArrayList<edge>();
+        correctResult.add(e1);
+        correctResult.add(e2);
+
+        n.addEdgeNeighbour(e1);
+        n.addEdgeNeighbour(e2);
+
+        //Get field without using getter
+        final Field field = n.getClass().getDeclaredField("edgeNeighbours");
+        field.setAccessible(true);
+
+        assertEquals("edgeNeighbours was not added to correctly.", field.get(n), correctResult);
+    }
+
+    @Test
+    public void test_getEdgeNeighbours_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+
+        final node n = new node();
+
+        ArrayList<anchors> anchs = new ArrayList<>();
+        anchs.add(new anchors(0, 1));
+
+        final edge e1 = new edge(0,1,"testLabel1","testPostLabel1");
+        final edge e2 = new edge(2,3,"testLabel2","testPostLabel2");
+
+        ArrayList<edge> correctResult = new ArrayList<edge>();
+        correctResult.add(e1);
+        correctResult.add(e2);
+
+        //Get field without using getter
+        final Field field = n.getClass().getDeclaredField("edgeNeighbours");
+        field.setAccessible(true);
+        field.set(n, correctResult);
+
+        assertEquals("edgeNeighbours value was not retrieved correctly.", n.getEdgeNeighbours(), correctResult);
     }
 
     @Test
