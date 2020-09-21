@@ -324,8 +324,8 @@ public class graph {
     }
 
     public boolean isPlanar() {
-        setNodeNeighbours();
         ArrayList<node> ordered = new ArrayList<>(nodes);
+
         Collections.sort(ordered, new Comparator<node>() {
             @Override
             public int compare(node o1, node o2) {
@@ -337,11 +337,6 @@ public class graph {
                 return 1;
             }
         });
-
-        for (node n : ordered) {
-            System.out.println(n.getId());
-        }
-
 
         ArrayList<edge> updated = new ArrayList<>();
 
@@ -366,24 +361,14 @@ public class graph {
 
         }
 
-        System.out.println("***********************************\n");
-
-        for (edge e : updated) {
-            System.out.println(e.getSource() + " --->>> " + e.getTarget());
-        }
 
 
         for (edge e : updated) {
             for (edge other : updated) {
-                System.out.println("\n************************************");
-                System.out.println(Math.min(e.getSource(), e.getTarget()) + " vs " + Math.min(other.getSource(), other.getTarget()));
-                System.out.println(Math.min(other.getSource(), other.getTarget()) + " vs " + Math.max(e.getSource(), e.getTarget()));
-                System.out.println(Math.max(e.getSource(), e.getTarget()) + " vs " + Math.max(other.getSource(), other.getTarget()));
-                System.out.println("************************************\n");
                 if (Math.min(e.getSource(), e.getTarget()) < Math.min(other.getSource(), other.getTarget()) && Math.min(other.getSource(), other.getTarget()) < Math.max(e.getSource(), e.getTarget()) && Math.max(e.getSource(), e.getTarget()) < Math.max(other.getSource(), other.getTarget())) {
                     return false;
                 }
-                System.out.println("planar");
+
             }
         }
         return true;
