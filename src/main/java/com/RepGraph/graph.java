@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class graph {
@@ -318,6 +320,23 @@ public class graph {
         path.add(startNode);
 
         return path;
+
+    }
+
+    public boolean isPlanar() {
+        setNodeNeighbours();
+        ArrayList<node> ordered = new ArrayList<>(nodes);
+        Collections.sort(ordered, new Comparator<node>() {
+            @Override
+            public int compare(node o1, node o2) {
+                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+                    return -1;
+                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+                    return 0;
+                }
+                return 1;
+            }
+        });
 
     }
 
