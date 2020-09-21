@@ -206,20 +206,20 @@ public class graph {
         //Makes each node the start node and finds the longest overall path.
         for (int i =1; i<nodes.size();i++){
             temp = Dijkstra(i);
-            if (temp.get(0).size() > longest.get(0).size()){
-                longest = temp;
-                paths.clear();
-                for (int j=0;j<temp.size();j++){
-                    paths.add(temp.get(j));
+                if (temp.size() != 0) {
+                    if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
+                        longest = temp;
+                        paths.clear();
+                        for (int j = 0; j < temp.size(); j++) {
+                            paths.add(new ArrayList<Integer>(temp.get(j)));
+                        }
+                    } else if (temp.get(0).size() == longest.get(0).size()) {
+                        for (int j = 0; j < temp.size(); j++) {
+                            paths.add(temp.get(j));
+                        }
+                    } else {
+                    }
                 }
-
-            }
-            else if (temp.get(0).size() == longest.get(0).size()){
-                for (int j=0;j<temp.size();j++){
-                    paths.add(temp.get(j));
-                }
-            }
-            else{}
         }
 
         //Reverses the path so that start node is first.
