@@ -509,6 +509,70 @@ public class GraphTest {
         assertTrue("setNodeNeighbours re-assigns neighbouring nodes that are already assigned #2.", edgeField.get(node0).equals(edgeNeighbours));
     }
 
+    @Test
+    public void test_Dijkstra_FindsLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+
+        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
+        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> nodeNeighbours0 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours2 = new ArrayList<>();
+
+        nodeNeighbours0.add(node1);
+        nodeNeighbours0.add(node2);
+        nodeNeighbours2.add(node3);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field nodeField0 = node0.getClass().getDeclaredField("nodeNeighbours");
+        nodeField0.setAccessible(true);
+        nodeField0.set(node0, nodeNeighbours0);
+        final Field nodeField2 = node2.getClass().getDeclaredField("nodeNeighbours");
+        nodeField2.setAccessible(true);
+        nodeField2.set(node2, nodeNeighbours2);
+
+        //Expected results for longest path for each node as the start node.
+        ArrayList<Integer> correctResult0 = new ArrayList<>();
+        ArrayList<Integer> correctResult1 = new ArrayList<>();
+        ArrayList<Integer> correctResult2 = new ArrayList<>();
+        ArrayList<Integer> correctResult3 = new ArrayList<>();
+
+        correctResult0.add(3);
+        correctResult0.add(2);
+        correctResult0.add(0);
+
+        correctResult2.add(3);
+        correctResult2.add(2);
+
+
+        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 0.", g.Dijkstra(0).equals(correctResult0));
+        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 1.", g.Dijkstra(1).equals(correctResult1));
+        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 2.", g.Dijkstra(2).equals(correctResult2));
+        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 3.", g.Dijkstra(3).equals(correctResult3));
+
+    }
+
+
+
 
 
 
