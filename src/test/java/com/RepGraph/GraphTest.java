@@ -825,7 +825,46 @@ public class GraphTest {
 
     @Test
     public void test_findLongest_MultipleLongestPathsFromSingleStartNode() throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
 
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node3", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+
+        edge edge0 =new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge3 =new edge(0, 4, "testlabel3", "testpostlabel3");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+
+
+        //Expected result for longest path.
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<Integer>());
+        correctResult.get(0).add(1);
+        correctResult.get(0).add(2);
+        correctResult.get(0).add(3);
+        correctResult.add(new ArrayList<Integer>());
+        correctResult.get(1).add(1);
+        correctResult.get(1).add(0);
+        correctResult.get(1).add(4);
+
+        assertTrue("findLongest path algorithm does not correctly find multiple longest paths from a single node in a graph.", g.findLongest().equals(correctResult));
     }
 
     @Test

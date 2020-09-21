@@ -215,7 +215,7 @@ public class graph {
                         }
                     } else if (temp.get(0).size() == longest.get(0).size()) {
                         for (int j = 0; j < temp.size(); j++) {
-                            paths.add(temp.get(j));
+                            paths.add(new ArrayList<Integer>(temp.get(j)));
                         }
                     } else {
                     }
@@ -230,7 +230,7 @@ public class graph {
             for (int j = paths.get(i).size() -1; j >= 0; j-- ){
                 item.add(paths.get(i).get(j));
             }
-            reversed.add(item);
+            reversed.add(new ArrayList<>(item));
         }
 
         return reversed;
