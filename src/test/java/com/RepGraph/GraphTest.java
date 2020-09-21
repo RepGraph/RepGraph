@@ -874,7 +874,57 @@ public class GraphTest {
 
     @Test
     public void test_findLongest_MultipleLongestPathsFromSameAndDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
 
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+
+        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
+        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge3 =new edge(3, 0, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Expected results for longest path for each node as the start node.
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+
+        //Cyclic path
+        correctResult.add(new ArrayList<Integer>());
+        correctResult.get(0).add(0);
+        correctResult.get(0).add(2);
+        correctResult.get(0).add(3);
+        correctResult.get(0).add(0);
+        correctResult.add(new ArrayList<Integer>());
+        correctResult.get(1).add(2);
+        correctResult.get(1).add(3);
+        correctResult.get(1).add(0);
+        correctResult.get(1).add(1);
+        correctResult.add(new ArrayList<Integer>());
+        correctResult.get(2).add(2);
+        correctResult.get(2).add(3);
+        correctResult.get(2).add(0);
+        correctResult.get(2).add(2);
+        correctResult.add(new ArrayList<Integer>());
+        correctResult.get(3).add(3);
+        correctResult.get(3).add(0);
+        correctResult.get(3).add(2);
+        correctResult.get(3).add(3);
+
+
+        assertTrue("findLongest path algorithm does not correctly find multiple longest paths from the same and different start nodes in a graph.", g.findLongest().equals(correctResult));
     }
 
 
