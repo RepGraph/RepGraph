@@ -188,24 +188,42 @@ public class graph {
 
     /**
      * Analysis Tool for finding the longest path in the graph.
-     * @return ArrayList The route of the longest path.
+     * @return ArrayList<ArrayList<Integer>> The a list of longest paths in the graph.
      */
-    public ArrayList<Integer> findLongest(){
+    public ArrayList<ArrayList<Integer>> findLongest(){
+
         setNodeNeighbours();
+
+        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+
         //Default longest path set from node 0.
         ArrayList<Integer> longest = Dijkstra(0);
+        paths.add(longest);
         ArrayList<Integer> temp;
+
         //Makes each node the start node and finds the longest overall path.
         for (int i =1; i<nodes.size();i++){
             temp = Dijkstra(i);
             if (temp.size() > longest.size()){
                 longest = temp;
+                paths.clear();
+                paths.add(temp);
             }
+            else if (temp.size() == longest.size()){
+                paths.add(temp);
+            }
+            else{}
         }
+
         //Reverses the path so that start node is first.
-        ArrayList<Integer> reversed = new ArrayList<Integer>();
-        for (int i = longest.size() - 1; i >= 0; i--) {
-            reversed.add(longest.get(i));
+        ArrayList<ArrayList<Integer>> reversed = new ArrayList<>();
+        ArrayList<Integer> item = new ArrayList<>();
+        for (int i = 0; i < paths.size(); i++){
+            item.clear();
+            for (int j = paths.get(i).size() -1; j >= 0; j-- ){
+                item.add(paths.get(i).get(j));
+            }
+            reversed.add(item);
         }
 
         return reversed;
