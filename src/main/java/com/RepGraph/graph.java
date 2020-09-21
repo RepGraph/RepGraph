@@ -338,6 +338,55 @@ public class graph {
             }
         });
 
+        for (node n : ordered) {
+            System.out.println(n.getId());
+        }
+
+
+        ArrayList<edge> updated = new ArrayList<>();
+
+        int source, target;
+
+        for (edge e : edges) {
+
+            source = e.getSource();
+            target = e.getTarget();
+
+            edge newEdge = new edge();
+            for (int i = 0; i < ordered.size(); i++) {
+                node n = ordered.get(i);
+                if (n.getId() == source) {
+                    newEdge.setSource(i);
+                }
+                if (n.getId() == target) {
+                    newEdge.setTarget(i);
+                }
+            }
+            updated.add(newEdge);
+
+        }
+
+        System.out.println("***********************************\n");
+
+        for (edge e : updated) {
+            System.out.println(e.getSource() + " --->>> " + e.getTarget());
+        }
+
+
+        for (edge e : updated) {
+            for (edge other : updated) {
+                System.out.println("\n************************************");
+                System.out.println(Math.min(e.getSource(), e.getTarget()) + " vs " + Math.min(other.getSource(), other.getTarget()));
+                System.out.println(Math.min(other.getSource(), other.getTarget()) + " vs " + Math.max(e.getSource(), e.getTarget()));
+                System.out.println(Math.max(e.getSource(), e.getTarget()) + " vs " + Math.max(other.getSource(), other.getTarget()));
+                System.out.println("************************************\n");
+                if (Math.min(e.getSource(), e.getTarget()) < Math.min(other.getSource(), other.getTarget()) && Math.min(other.getSource(), other.getTarget()) < Math.max(e.getSource(), e.getTarget()) && Math.max(e.getSource(), e.getTarget()) < Math.max(other.getSource(), other.getTarget())) {
+                    return false;
+                }
+                System.out.println("planar");
+            }
+        }
+        return true;
     }
 
     /**

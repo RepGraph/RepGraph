@@ -3,6 +3,7 @@ package com.RepGraph;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.constraints.AssertTrue;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -648,7 +649,50 @@ public class GraphTest {
 
     }
 
+    @Test
+    public void test_isPlanar_IdentifiesPlanarGraph() {
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
 
+        /*
+        for (int i = 0; i < 4; i++) {
+           ArrayList<anchors> anch =  new ArrayList<anchors>();
+           anch.add(new anchors(i,i));
+            nodes.add(new node(i, "node"+(i+1), anch));
+
+        }
+
+         */
+        ArrayList<anchors> anch1 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+        nodes.add(new node(0, "node" + (0 + 1), anch1));
+
+        ArrayList<anchors> anch2 = new ArrayList<anchors>();
+        anch2.add(new anchors(1, 1));
+        nodes.add(new node(1, "node" + (1 + 1), anch2));
+
+        ArrayList<anchors> anch3 = new ArrayList<anchors>();
+        anch3.add(new anchors(2, 2));
+        nodes.add(new node(2, "node" + (2 + 1), anch3));
+
+        ArrayList<anchors> anch4 = new ArrayList<anchors>();
+        anch4.add(new anchors(3, 3));
+        nodes.add(new node(3, "node" + (3 + 1), anch4));
+
+        ArrayList<anchors> anch5 = new ArrayList<anchors>();
+        anch5.add(new anchors(4, 4));
+        nodes.add(new node(4, "node" + (4 + 1), anch5));
+
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
+
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+    }
 
 
 }
