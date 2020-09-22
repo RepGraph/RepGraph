@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.json.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -34,8 +35,8 @@ public class RequestHandler {
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public String UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
-
+    public ArrayList<JSONObject> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+        ArrayList<JSONObject> returninfo = new ArrayList<>();
         try {
             byte[] bytes = file.getBytes();
             //Creates Directory if it does not exist otherwise it finds it in the project folder.
@@ -58,15 +59,19 @@ public class RequestHandler {
             ObjectMapper objectMapper = new ObjectMapper();
             while ((currentLine = reader.readLine()) != null) {
                 graph currgraph = objectMapper.readValue(currentLine, graph.class);
+                JSONObject returnGraph = new JSONObject();
+                returnGraph.put("input", currgraph.getInput());
+                returnGraph.put("id", currgraph.getId());
+                returninfo.add(returnGraph);
                 RepModel.addGraph(currgraph);
             }
             reader.close();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "An Error Has Occurred, Please Try Again";
+            return returninfo;
         }
-        return "File Uploaded";
+        return returninfo;
     }
 
 
