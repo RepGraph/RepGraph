@@ -11,6 +11,7 @@ import org.json.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This is the RestAPI class and controller in the MVC format. This class will handle all communication between
@@ -32,11 +33,14 @@ public class RequestHandler {
      *
      * @param name This is the name that the file will be saved under
      * @param file This is the file data.
+     * @return ArrayList<HashMap < String, String>> This is a list of hashmap objects where each hashmap object contains a graph id and graph input.
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public ArrayList<JSONObject> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
-        ArrayList<JSONObject> returninfo = new ArrayList<>();
+    public ArrayList<HashMap<String, String>> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+        //List of graph ids and graph inputs in a hashmap.
+        ArrayList<HashMap<String, String>> returninfo = new ArrayList<>();
+
         try {
             byte[] bytes = file.getBytes();
             //Creates Directory if it does not exist otherwise it finds it in the project folder.
@@ -59,7 +63,7 @@ public class RequestHandler {
             ObjectMapper objectMapper = new ObjectMapper();
             while ((currentLine = reader.readLine()) != null) {
                 graph currgraph = objectMapper.readValue(currentLine, graph.class);
-                JSONObject returnGraph = new JSONObject();
+                HashMap<String, String> returnGraph = new HashMap<>();
                 returnGraph.put("input", currgraph.getInput());
                 returnGraph.put("id", currgraph.getId());
                 returninfo.add(returnGraph);
@@ -79,12 +83,19 @@ public class RequestHandler {
      * This method is the POST request that takes in a single graph JSON and uploads a single graph to the model object. It is mapped to "/UploadSingle".
      *
      * @param data This is the graph object to be uploaded
+     * @return HashMap<String, String> This is a hashmap object with the graph id and graph input.
      */
     @PostMapping("/UploadSingle")
     @ResponseBody
-    public void UploadDataSingle(@RequestBody graph data) {
+    public HashMap<String, String> UploadDataSingle(@RequestBody graph data) {
+        HashMap<String, String> returninfo = new HashMap<>();
+
+        returninfo.put("input", data.getInput());
+        returninfo.put("id", data.getId());
+
         RepModel.addGraph(data);
 
+        return returninfo;
     }
 
     /**
