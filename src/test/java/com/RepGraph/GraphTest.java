@@ -572,6 +572,7 @@ public class GraphTest {
 
     }
 
+
     @Test
     public void test_Dijkstra_FindsLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
@@ -762,6 +763,5 @@ public class GraphTest {
         assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
 
     }
-
 
 }
