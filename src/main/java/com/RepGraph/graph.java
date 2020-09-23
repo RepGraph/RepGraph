@@ -248,7 +248,7 @@ public class graph {
             return;
         } else {
             source = edges.get(0).getSource();
-            if (nodes.get(source).getNodeNeighbours().size() != 0) {
+            if (nodes.get(source).getDirectedNeighbours().size() != 0) {
                 //Node neighbours have already been set
                 return;
             }
@@ -261,7 +261,7 @@ public class graph {
             target = currentEdge.getTarget();
 
             node currentNode = nodes.get(source);
-            currentNode.addNeighbour(nodes.get(target));
+            currentNode.addDirectedNeighbour(nodes.get(target));
 
             currentNode.addEdgeNeighbour(currentEdge);
 
@@ -278,7 +278,7 @@ public class graph {
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
         //If the start node has no neighbours then stop performing the algorithm and return empty path.
-        if (nodes.get(startNode).getNodeNeighbours().size() == 0) {
+        if (nodes.get(startNode).getDirectedNeighbours().size() == 0) {
             return paths;
         }
 
@@ -315,7 +315,7 @@ public class graph {
 
 
             //Checks all of the chosen node's neighbours to see if their distances can be made longer (i.e. more negative and thus a further distance from the start node).
-            for (node neighbourNodeIDnode : currentNode.getNodeNeighbours()) {
+            for (node neighbourNodeIDnode : currentNode.getDirectedNeighbours()) {
                 int currentNodeID = currentNode.getId();
                 int neighbourNodeID = neighbourNodeIDnode.getId();
                 if (dist.get(neighbourNodeID) > dist.get(currentNodeID) - 1) {

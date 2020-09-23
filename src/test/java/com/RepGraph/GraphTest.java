@@ -234,8 +234,6 @@ public class GraphTest {
         assertEquals("edges value was not retrieved properly.", field.get(g), edges);
     }
 
-
-
     @Test
     public void test_equals_TwoGraphsWithDifferentValues() {
 
