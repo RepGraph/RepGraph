@@ -190,14 +190,14 @@ public class graph {
      * Analysis Tool for finding the longest path in the graph.
      * @return ArrayList<ArrayList<Integer>> The a list of longest paths in the graph.
      */
-    public ArrayList<ArrayList<Integer>> findLongest(){
+    public ArrayList<ArrayList<Integer>> findLongest(boolean directed){
 
         setNodeNeighbours();
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
         //Default longest path set from node 0.
-        ArrayList<ArrayList<Integer>> longest = Dijkstra(0);
+        ArrayList<ArrayList<Integer>> longest = Dijkstra(0,directed);
         for (int i =0 ; i<longest.size();i++) {
             paths.add(longest.get(i));
         }
@@ -205,7 +205,7 @@ public class graph {
 
         //Makes each node the start node and finds the longest overall path.
         for (int i =1; i<nodes.size();i++){
-            temp = Dijkstra(i);
+            temp = Dijkstra(i, directed);
                 if (temp.size() != 0) {
                     if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
                         longest = temp;
@@ -274,12 +274,12 @@ public class graph {
      * @param startNode Number of the start node.
      * @return ArrayList The longest path available from the start node.
      */
-    public ArrayList<ArrayList<Integer>> Dijkstra(int startNode){
+    public ArrayList<ArrayList<Integer>> Dijkstra(int startNode, boolean directed){
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
         //If the start node has no neighbours then stop performing the algorithm and return empty path.
-        if (nodes.get(startNode).getDirectedNeighbours().size() == 0) {
+        if (((nodes.get(startNode).getDirectedNeighbours().size() == 0) && (directed) ) || ((nodes.get(startNode).getUndirectedNeighbours().size() == 0) && (!directed))){
             return paths;
         }
 
@@ -314,9 +314,16 @@ public class graph {
             node currentNode = nodes.get(maxDistIndex);
             nodesLeft.remove(nodesLeft.indexOf(maxDistIndex));
 
+            //Constructs a list of all the nodes neighbours
+            ArrayList<node> neighbours = new ArrayList<>(currentNode.getDirectedNeighbours());
+            if (!directed){
+                for (node n : currentNode.getUndirectedNeighbours()){
+                    neighbours.add(n);
+                }
+            }
 
             //Checks all of the chosen node's neighbours to see if their distances can be made longer (i.e. more negative and thus a further distance from the start node).
-            for (node neighbourNodeIDnode : currentNode.getDirectedNeighbours()) {
+            for (node neighbourNodeIDnode : neighbours) {
                 int currentNodeID = currentNode.getId();
                 int neighbourNodeID = neighbourNodeIDnode.getId();
                 if (dist.get(neighbourNodeID) > dist.get(currentNodeID) - 1) {
