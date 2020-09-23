@@ -237,7 +237,7 @@ public class graph {
     }
 
     /**
-     * Assigns all the nodes in the graph their neighbouring nodes, which will be used for analysis.
+     * Assigns all the nodes in the graph their directed and undirected neighbouring nodes, which will be used for analysis.
      */
     public void setNodeNeighbours(){
         int source;
@@ -260,10 +260,11 @@ public class graph {
             source = currentEdge.getSource();
             target = currentEdge.getTarget();
 
-            node currentNode = nodes.get(source);
-            currentNode.addDirectedNeighbour(nodes.get(target));
+            node sourceNode = nodes.get(source);
+            sourceNode.addDirectedNeighbour(nodes.get(target));
+            nodes.get(target).addUndirectedNeighbour(sourceNode);
 
-            currentNode.addEdgeNeighbour(currentEdge);
+            sourceNode.addEdgeNeighbour(currentEdge);
 
         }
     }

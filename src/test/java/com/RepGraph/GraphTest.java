@@ -336,7 +336,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setNodeNeighbours_setNodesCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setNodeNeighbours_setDirectedNeighbouringNodesCorrectly() throws NoSuchFieldException, IllegalAccessException{
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
 
@@ -364,17 +364,59 @@ public class GraphTest {
         g.setNodeNeighbours();
 
         //Get fields without using getter
-        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("nodeNeighbours");
+        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("directedNeighbours");
         nodeField0.setAccessible(true);
-        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("nodeNeighbours");
+        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("directedNeighbours");
         nodeField1.setAccessible(true);
-        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("nodeNeighbours");
+        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("directedNeighbours");
         nodeField2.setAccessible(true);
 
 
-        assertTrue("setNodeNeighbours does not set nodes correctly #1", nodeField0.get(node0).equals(correctResult0));
-        assertTrue("setNodeNeighbours does not set nodes correctly #2", nodeField1.get(node1).equals(correctResult1));
-        assertTrue("setNodeNeighbours does not set nodes correctly #3", nodeField2.get(node2).equals(correctResult2));
+        assertTrue("setNodeNeighbours does not set directed neighbouring nodes correctly #1", nodeField0.get(node0).equals(correctResult0));
+        assertTrue("setNodeNeighbours does not set directed neighbouring nodes correctly #2", nodeField1.get(node1).equals(correctResult1));
+        assertTrue("setNodeNeighbours does not set directed neighbouring nodes correctly #3", nodeField2.get(node2).equals(correctResult2));
+    }
+
+    @Test
+    public void test_setNodeNeighbours_setUndirectedNeighbouringNodesCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node1", new ArrayList<>());
+        node node1 = new node(1, "node2", new ArrayList<>());
+        node node2 = new node(2, "node3", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 2, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(0, 2, "testlabel2", "testpostlabel2"));
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        ArrayList<node> correctResult0 = new ArrayList<>();
+        ArrayList<node> correctResult1 = new ArrayList<>();
+        ArrayList<node> correctResult2 = new ArrayList<>();
+
+        correctResult1.add(node0);
+        correctResult2.add(node1);
+        correctResult2.add(node0);
+
+        g.setNodeNeighbours();
+
+        //Get fields without using getter
+        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("undirectedNeighbours");
+        nodeField0.setAccessible(true);
+        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("undirectedNeighbours");
+        nodeField1.setAccessible(true);
+        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("undirectedNeighbours");
+        nodeField2.setAccessible(true);
+
+
+        assertTrue("setNodeNeighbours does not set undirected neighbouring nodes correctly #1", nodeField0.get(node0).equals(correctResult0));
+        assertTrue("setNodeNeighbours does not set undirected neighbouring nodes correctly #2", nodeField1.get(node1).equals(correctResult1));
+        assertTrue("setNodeNeighbours does not set undirected neighbouring nodes correctly #3", nodeField2.get(node2).equals(correctResult2));
     }
 
     @Test
@@ -480,35 +522,41 @@ public class GraphTest {
 
         edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(0, 2, "testlabel2", "testpostlabel2");
+        edge edge2 =new edge(2, 0, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        ArrayList<node> nodeNeighbours = new ArrayList<>();
+        ArrayList<node> directedNeighbours = new ArrayList<>();
+        ArrayList<node> undirectedNeighbours = new ArrayList<>();
         ArrayList<edge> edgeNeighbours = new ArrayList<>();
 
-        nodeNeighbours.add(node1);
+        directedNeighbours.add(node1);
+        undirectedNeighbours.add(node2);
         edgeNeighbours.add(edge0);
 
         //Setting without using setter methods
-        final Field nodeField = node0.getClass().getDeclaredField("nodeNeighbours");
-        nodeField.setAccessible(true);
-        nodeField.set(node0, nodeNeighbours);
+        final Field directField = node0.getClass().getDeclaredField("directedNeighbours");
+        directField.setAccessible(true);
+        directField.set(node0, directedNeighbours);
+        final Field undirectField = node0.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField.setAccessible(true);
+        undirectField.set(node0, undirectedNeighbours);
         final Field edgeField = node0.getClass().getDeclaredField("edgeNeighbours");
         edgeField.setAccessible(true);
         edgeField.set(node0, edgeNeighbours);
 
         g.setNodeNeighbours();
 
-        assertTrue("setNodeNeighbours re-assigns neighbouring nodes that are already assigned #1.", nodeField.get(node0).equals(nodeNeighbours));
+        assertTrue("setNodeNeighbours re-assigns directed neighbouring nodes that are already assigned #1.", directField.get(node0).equals(directedNeighbours));
+        assertTrue("setNodeNeighbours re-assigns undirected neighbouring nodes that are already assigned #1.", undirectField.get(node0).equals(undirectedNeighbours));
         assertTrue("setNodeNeighbours re-assigns neighbouring nodes that are already assigned #2.", edgeField.get(node0).equals(edgeNeighbours));
     }
 
     @Test
-    public void test_Dijkstra_SingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_Dijkstra_DirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
