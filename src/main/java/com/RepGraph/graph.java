@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class graph {
 
@@ -47,6 +47,9 @@ public class graph {
      */
     @JsonProperty("tops")
     private ArrayList<Integer> tops;
+
+    private Stack<Integer> stack;
+
     /**
      * Default constructor for the graph class.
      */
@@ -70,6 +73,7 @@ public class graph {
         this.tokens = tokens;
         this.edges= edges;
         this.tops = tops;
+        this.stack = new Stack<Integer>();
     }
 
     /**
@@ -186,10 +190,13 @@ public class graph {
         this.tops = tops;
     }
 
+
+
     /**
      * Analysis Tool for finding the longest path in the graph.
      * @return ArrayList<ArrayList<Integer>> The a list of longest paths in the graph.
      */
+    /*
     public ArrayList<ArrayList<Integer>> findLongest(boolean directed){
 
         setNodeNeighbours();
@@ -269,6 +276,7 @@ public class graph {
         }
     }
 
+
     /**
      * Finds the longest distance from a given start node to all the other nodes in the system and returns the path of the longest path.
      * @param startNode Number of the start node.
@@ -279,10 +287,16 @@ public class graph {
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
         //If the start node has no neighbours then stop performing the algorithm and return empty path.
-        if (((nodes.get(startNode).getDirectedNeighbours().size() == 0) && (directed) ) || ((nodes.get(startNode).getUndirectedNeighbours().size() == 0) && (!directed))){
-            return paths;
+        if (directed){
+            if (nodes.get(startNode).getDirectedNeighbours().size() ==0){
+                return paths;
+            }
         }
-
+        else{
+            if ((nodes.get(startNode).getDirectedNeighbours().size() ==0) && (nodes.get(startNode).getUndirectedNeighbours().size() ==0)){
+                return paths;
+            }
+        }
 
         ArrayList<Integer> nodesLeft = new ArrayList<Integer>(); //Nodes that are yet to be visited.
 
@@ -294,7 +308,6 @@ public class graph {
             dist.add(Integer.MAX_VALUE);
             nodesLeft.add(i);
         }
-
 
         dist.set(startNode, 0);
         int maxDistIndex = startNode;
@@ -310,7 +323,6 @@ public class graph {
                 }
             }
 
-
             node currentNode = nodes.get(maxDistIndex);
             nodesLeft.remove(nodesLeft.indexOf(maxDistIndex));
 
@@ -323,12 +335,24 @@ public class graph {
             }
 
             //Checks all of the chosen node's neighbours to see if their distances can be made longer (i.e. more negative and thus a further distance from the start node).
-            for (node neighbourNodeIDnode : neighbours) {
+            for (node neighbourNode : neighbours) {
                 int currentNodeID = currentNode.getId();
-                int neighbourNodeID = neighbourNodeIDnode.getId();
+                int neighbourNodeID = neighbourNode.getId();
+
+
+
                 if (dist.get(neighbourNodeID) > dist.get(currentNodeID) - 1) {
                     dist.set(neighbourNodeID, dist.get(currentNodeID) - 1); //Sets the neighbour node's distance to the current node's distance minus 1. (each edge has a cost of 1).
                     prevNode[neighbourNodeID] = currentNodeID; //Sets the neighbour node's previous node in the path.
+                    System.out.println("Current Node" + currentNodeID);
+                    System.out.println("Neighbour Node" + neighbourNodeID);
+                    System.out.println("Distances " + dist.toString());
+                    System.out.print("Prev node ");
+                    for (int i = 0; i<prevNode.length; i++) {
+                        System.out.print(prevNode[i] + "  ");
+                    }
+                    System.out.println("\n\n");
+
                 }
             }
         }
@@ -342,8 +366,6 @@ public class graph {
                 maxIndex =i;
             }
         }
-
-
 
         //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
         ArrayList<Integer> path = new ArrayList<>();
@@ -366,9 +388,96 @@ public class graph {
 
     }
 
+
+    public ArrayList<ArrayList<Integer>> findLongest(boolean directed){
+        return null;
+    }
+
+    public ArrayList<ArrayList<Integer>> longestDistances(int startNode){
+
+        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+        if (nodes.get(startNode).getDirectedNeighbours().size()==0){
+            return paths;
+        }
+
+        ArrayList<Integer> dist = new ArrayList<>();
+        int[] prevNode = new int[nodes.size()];
+
+        boolean [] visisted = new boolean[nodes.size()];
+        for (int i =0; i<nodes.size();i++){
+            visisted[i] = false;
+        }
+
+        for (int i =0; i<nodes.size();i++){
+            if (!visisted[i]){
+                topologicalSort(i, visisted);
+            }
+        }
+
+        for (int i =0; i<nodes.size();i++){
+            dist.add(Integer.MIN_VALUE);
+        }
+        dist.set(startNode,0);
+
+        while (!stack.empty()){
+            int u = stack.pop();
+
+            if (dist.get(u) != Integer.MIN_VALUE){
+                for (node n : nodes.get(u).getDirectedNeighbours()){
+                    if (dist.get(n.getId()) < dist.get(u) + 1){
+                        dist.set(n.getId(), dist.get(u) + 1);
+                        prevNode[n.getId()] = u;
+                    }
+                }
+            }
+        }
+
+        //Finds node index with the longest viable path. (i.e. most negative distance)
+        int max = dist.get(0);
+        int maxIndex =0;
+        for (int i = 0; i < dist.size(); i++) {
+            if (dist.get(maxIndex) < dist.get(i)) {
+                max = dist.get(i);
+                maxIndex = i;
+            }
+        }
+
+        //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
+        ArrayList<Integer> path = new ArrayList<>();
+        for (int i = 0; i<dist.size();i++){
+            if (dist.get(i)==max){
+                path.clear();
+                path.add(i);
+                int prev = prevNode[i];
+                while (prev!=startNode){
+                    path.add(prev);
+                    prev = prevNode[prev];
+                }
+                path.add(startNode);
+                paths.add(new ArrayList<Integer>(path));
+            }
+        }
+
+
+        return paths;
+
+    }
+
+    public void topologicalSort(int nodeID, boolean visited[]){
+        visited[nodeID] = true;
+
+        for (node neighbourNode : nodes.get(nodeID).getDirectedNeighbours()){
+            if (!visited[neighbourNode.getId()]){
+                topologicalSort(neighbourNode.getId(),visited);
+            }
+        }
+
+        stack.push(nodeID);
+    }
+
+
     /**
      * Equals method for the graph class.
-     *
      * @param o Object
      * @return boolean Whether to two classes being compared are equal.
      */
