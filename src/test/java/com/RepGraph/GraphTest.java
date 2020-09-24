@@ -556,7 +556,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_Dijkstra_DirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_directedLongestPaths_DirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -612,15 +612,15 @@ public class GraphTest {
         correctResult2.get(0).add(2);
 
 
-        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest directed path for node 0.", g.longestDistances(0).equals(correctResult0));
-        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest directed path for node 1.", g.longestDistances(1).equals(correctResult1));
-        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest directed path for node 2.", g.longestDistances(2).equals(correctResult2));
-        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest directed path for node 3.", g.longestDistances(3).equals(correctResult3));
+        assertTrue("directedLongestPaths method does not correctly finds the longest directed path for node 0.", g.directedLongestPaths(0).equals(correctResult0));
+        assertTrue("directedLongestPaths method does not correctly finds the longest directed path for node 1.", g.directedLongestPaths(1).equals(correctResult1));
+        assertTrue("directedLongestPaths method does not correctly finds the longest directed path for node 2.", g.directedLongestPaths(2).equals(correctResult2));
+        assertTrue("directedLongestPaths method does not correctly finds the longest directed path for node 3.", g.directedLongestPaths(3).equals(correctResult3));
 
     }
 
     @Test
-    public void test_Dijkstra_DirectedSingleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_directedLongestPaths_DirectedSingleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -681,12 +681,12 @@ public class GraphTest {
         correctResult0.get(0).add(2);
         correctResult0.get(0).add(0);
 
-        assertTrue("Dijkstra's longest path algorithm does not correctly find the longest directed path from a start node in a cyclic graph.", g.Dijkstra(0, true).equals(correctResult0));
+        assertTrue("directedLongestPaths method does not correctly find the longest directed path from a start node in a cyclic graph.", g.directedLongestPaths(0).equals(correctResult0));
 
     }
 
     @Test
-    public void test_Dijkstra_DirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_directedLongestPaths_DirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -756,12 +756,12 @@ public class GraphTest {
         correctResult0.get(1).add(0);
 
 
-        assertTrue("Dijkstra's longest path algorithm does not correctly find multiple longest directed paths from a start node.", g.Dijkstra(0, true).equals(correctResult0));
+        assertTrue("directedLongestPaths method does not correctly find multiple longest directed paths from a start node.", g.directedLongestPaths(0).equals(correctResult0));
 
     }
 
     @Test
-    public void test_Dijkstra_DirectedMultipleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_directedLongestPaths_DirectedMultipleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -827,12 +827,12 @@ public class GraphTest {
         correctResult2.get(1).add(3);
         correctResult2.get(1).add(2);
 
-        assertTrue("Dijkstra's longest path algorithm does not correctly find multiple longest directed paths from a start node in a cyclic graph.", g.Dijkstra(2, true).equals(correctResult2));
+        assertTrue("directedLongestPaths method does not correctly find multiple longest directed paths from a start node in a cyclic graph.", g.directedLongestPaths(2).equals(correctResult2));
 
     }
 
     @Test
-    public void test_Dijkstra_UndirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_BFS_UndirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -923,10 +923,10 @@ public class GraphTest {
 
         System.out.println("undirected");
 
-        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest undirected path for node 0.", g.Dijkstra(0, false).equals(correctResult0));
-        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest undirected path for node 1.", g.Dijkstra(1, false).equals(correctResult1));
-        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest undirected path for node 2.", g.Dijkstra(2, false).equals(correctResult2));
-        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest undirected path for node 3.", g.Dijkstra(3, false).equals(correctResult3));
+        assertTrue("BFS longest path algorithm does not correctly finds the longest undirected path for node 0.", g.directedLongestPaths(0).equals(correctResult0));
+        assertTrue("BFS longest path algorithm does not correctly finds the longest undirected path for node 1.", g.directedLongestPaths(1).equals(correctResult1));
+        assertTrue("BFS longest path algorithm does not correctly finds the longest undirected path for node 2.", g.directedLongestPaths(2).equals(correctResult2));
+        assertTrue("BFS longest path algorithm does not correctly finds the longest undirected path for node 3.", g.directedLongestPaths(3).equals(correctResult3));
 
     }
 
@@ -978,7 +978,7 @@ public class GraphTest {
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
-        node node4 = new node(4, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
         nodes.add(node0);
         nodes.add(node1);
         nodes.add(node2);
@@ -1062,19 +1062,25 @@ public class GraphTest {
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
         nodes.add(node0);
         nodes.add(node1);
         nodes.add(node2);
         nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
 
         edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
         edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edge edge3 =new edge(3, 0, "testlabel2", "testpostlabel2");
+        edge edge3 =new edge(5, 2, "testlabel2", "testpostlabel2");
+        edge edge4 =new edge(1, 4, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
         edges.add(edge3);
+        edges.add(edge4);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
@@ -1086,23 +1092,14 @@ public class GraphTest {
         correctResult.get(0).add(0);
         correctResult.get(0).add(2);
         correctResult.get(0).add(3);
-        correctResult.get(0).add(0);
         correctResult.add(new ArrayList<Integer>());
-        correctResult.get(1).add(2);
-        correctResult.get(1).add(3);
         correctResult.get(1).add(0);
         correctResult.get(1).add(1);
+        correctResult.get(1).add(4);
         correctResult.add(new ArrayList<Integer>());
+        correctResult.get(2).add(5);
         correctResult.get(2).add(2);
         correctResult.get(2).add(3);
-        correctResult.get(2).add(0);
-        correctResult.get(2).add(2);
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(3).add(3);
-        correctResult.get(3).add(0);
-        correctResult.get(3).add(2);
-        correctResult.get(3).add(3);
-
 
         assertTrue("findLongest path algorithm does not correctly find multiple longest directed paths from the same and different start nodes in a graph.", g.findLongest(true).equals(correctResult));
     }
