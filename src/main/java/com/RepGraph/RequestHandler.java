@@ -188,8 +188,8 @@ public class RequestHandler {
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public void TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam boolean connected) {
-        RepModel.runFormalTests(graphID, planar, longestpath, connected);
+    public HashMap<String, Object> TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam boolean connected) {
+        return RepModel.runFormalTests(graphID, planar, longestpath, connected);
 
     }
 

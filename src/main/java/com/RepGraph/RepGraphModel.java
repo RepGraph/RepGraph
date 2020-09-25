@@ -236,8 +236,12 @@ public class RepGraphModel {
      * @param connected Boolean to decide if to test for if the graph is connected.
      * @return String Results of the tests.
      */
-    public String runFormalTests(String graphID, boolean planar, boolean directed, boolean connected){
-        return null;
+    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean directed, boolean connected) {
+        HashMap<String, Object> returnObj = new HashMap<>();
+        returnObj.put("Planar", false);
+        returnObj.put("LongestPath", graphs.get(graphID).findLongest());
+        returnObj.put("Connected", false);
+        return returnObj;
     }
 
 
