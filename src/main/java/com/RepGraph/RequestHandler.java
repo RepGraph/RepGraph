@@ -131,6 +131,12 @@ public class RequestHandler {
         return RepModel.getGraph(graphID);
     }
 
+    @GetMapping("/DisplaySubset")
+    @ResponseBody
+    public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID) {
+        return RepModel.displaySubset(graphID, NodeID);
+    }
+
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
      * The Request URL also requires the "graphID" and "NodeID" list Request Params to be present.
@@ -188,8 +194,8 @@ public class RequestHandler {
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public HashMap<String, Object> TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam boolean connected) {
-        return RepModel.runFormalTests(graphID, planar, longestpath, connected);
+    public HashMap<String, Object> TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam(required = false) boolean directed, @RequestParam boolean connected) {
+        return RepModel.runFormalTests(graphID, planar, longestpath, directed, connected);
 
     }
 

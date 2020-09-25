@@ -1,7 +1,7 @@
 /**
  * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
- * @since 29/08/2020
  *
+ * @since 29/08/2020
  */
 
 package com.RepGraph;
@@ -28,7 +28,7 @@ public class RepGraphModel {
      * @param graphID A graph's ID.
      * @return graph The requested graph.
      */
-    public graph getGraph(String graphID){
+    public graph getGraph(String graphID) {
         return graphs.get(graphID);
     }
 
@@ -55,8 +55,8 @@ public class RepGraphModel {
      * @param headNodeID The graph's node which will be the head node of the subset.
      * @return graph The subset of the graph.
      */
-    public graph displaySubset(String graphID, String headNodeID){
-        return null;
+    public graph displaySubset(String graphID, int headNodeID) {
+        return new graph();
     }
 
     public ArrayList<String> searchSubgraphPattern(String graphID, int[] NodeId, int[] EdgeIndices) {
@@ -156,8 +156,6 @@ public class RepGraphModel {
     }
 
 
-
-
     /**
      * Uses a graph ID and a set of Node IDS which will be used to search for which graphs have the requested node labels present .
      *
@@ -218,13 +216,14 @@ public class RepGraphModel {
 
         return true;
     }
+
     /**
      * Compares two graphs and searches for similarities and differences.
      * @param graphID1 Graph ID of the first graph.
      * @param graphID2 Graph ID of the second graph.
      * @return String The differences and similarities of the two graphs.
      */
-    public String compareTwoGraphs(String graphID1, String graphID2){
+    public String compareTwoGraphs(String graphID1, String graphID2) {
         return graphID1 + " " + graphID2;
     }
 
@@ -232,15 +231,21 @@ public class RepGraphModel {
      * Runs formal tests on a graph.
      * @param graphID The graph ID which the tests will be run.
      * @param planar Boolean to decide if to test for if the graph is planar.
-     * @param directed Boolean to decide if to find the longest directed or undirected path.
+     * @param longestpath Boolean to decide if to find the longest directed or undirected path.
      * @param connected Boolean to decide if to test for if the graph is connected.
      * @return String Results of the tests.
      */
-    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean directed, boolean connected) {
+    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestpath, boolean directed, boolean connected) {
         HashMap<String, Object> returnObj = new HashMap<>();
-        returnObj.put("Planar", false);
-        returnObj.put("LongestPath", graphs.get(graphID).findLongest());
-        returnObj.put("Connected", false);
+        if (planar) {
+            returnObj.put("Planar", false);
+        }
+        if (longestpath) {
+            returnObj.put("LongestPath", graphs.get(graphID).findLongest());
+        }
+        if (connected) {
+            returnObj.put("Connected", false);
+        }
         return returnObj;
     }
 
