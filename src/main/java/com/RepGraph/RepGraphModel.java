@@ -59,6 +59,24 @@ public class RepGraphModel {
         return null;
     }
 
+    public ArrayList<String> searchSubgraphPattern(String graphID, int[] NodeId, int[] EdgeIndices) {
+        graph parent = graphs.get(graphID);
+        ArrayList<node> subnodes = new ArrayList<>();
+        ArrayList<edge> subedges = new ArrayList<>();
+        for (int n : NodeId) {
+            subnodes.add(parent.getNodes().get(n));
+        }
+        for (int n : EdgeIndices) {
+            subedges.add(parent.getEdges().get(n));
+        }
+        graph subgraph = new graph();
+        subgraph.setNodes(subnodes);
+        subgraph.setEdges(subedges);
+
+        return searchSubgraphPattern(subgraph);
+
+    }
+
     /**
      * This method searches through the graph objects in the hashmap to find graphs that contain a
      * subgraph pattern.
@@ -207,7 +225,7 @@ public class RepGraphModel {
      * @return String The differences and similarities of the two graphs.
      */
     public String compareTwoGraphs(String graphID1, String graphID2){
-        return null;
+        return graphID1 + " " + graphID2;
     }
 
     /**

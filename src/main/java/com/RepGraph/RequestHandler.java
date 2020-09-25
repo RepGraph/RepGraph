@@ -137,8 +137,7 @@ public class RequestHandler {
      * This method searches the model's dataset for graphs containing the specified list of node labels and
      * returns a list of graph IDs where the set of node labels have been found.
      *
-     * @param graphID This is the graph containing the nodes and their corresponding labels to be searched for
-     * @param NodeID  This is the list of node indexes
+     * @param labels list of labels to be searched for.
      * @return ArrayList<String> This is the list of graph ids of graphs that have matching node labels
      */
     @GetMapping("/SearchSubgraphNodeSet")
@@ -154,13 +153,12 @@ public class RequestHandler {
      * This method searches the model's dataset for graphs containing the specified subgraph pattern and
      * returns a list of graph IDs where the subgraph pattern has been found.
      *
-     * @param subgraph This is the graph object containing the subgraph information.
      * @return ArrayList<String> This is a list a graph IDs with matching subgraph patterns
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphPattern(@RequestBody graph subgraph) {
-        return RepModel.searchSubgraphPattern(subgraph);
+    public ArrayList<String> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam int[] NodeId, @RequestParam int[] EdgeIndices) {
+        return RepModel.searchSubgraphPattern(graphID, NodeId, EdgeIndices);
     }
 
     /**
@@ -174,9 +172,8 @@ public class RequestHandler {
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public void CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
-        RepModel.compareTwoGraphs(graphID1, graphID2);
-
+    public String CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
+        return RepModel.compareTwoGraphs(graphID1, graphID2);
     }
 
     /**
