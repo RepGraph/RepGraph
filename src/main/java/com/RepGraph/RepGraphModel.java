@@ -145,29 +145,14 @@ public class RepGraphModel {
      *
      * @return ArrayList<String> An arraylist of strings that contain the graph IDs who have matching node labels.
      */
-    public ArrayList<String> searchSubgraphNodeSet(String graphID, int[] NodeID) {
+    public ArrayList<String> searchSubgraphNodeSet(ArrayList<String> labels) {
 
 
         ArrayList<String> FoundGraphs = new ArrayList<String>();
-        if (NodeID.length == 0) {
+        if (labels.size() == 0) {
             return FoundGraphs;
         }
 
-        //Following code is only if nodeIDs are given - we could remove if method is given node labels directly
-        //***********************************************************
-        //This following code creates a list and populates it with the labels of the nodes specified to be searched for
-        ArrayList<String> labels = new ArrayList<String>();
-        for (int i = 0; i < NodeID.length; i++) {
-            String currLabel;
-            try {
-                currLabel = graphs.get(graphID).getNodes().get(NodeID[i]).getLabel();
-            } catch (IndexOutOfBoundsException e) {
-                return FoundGraphs;
-            }
-            if (!labels.contains(currLabel)) {
-                labels.add(currLabel);
-            }
-        }
 
         //***********************************************************
         //boolean array that checks if certain nodes are found
@@ -176,16 +161,18 @@ public class RepGraphModel {
         boolean[] checks = new boolean[labels.size()];
 
         for (graph g : graphs.values()) {
-            for (node n : g.getNodes()) {
-                //could use indexOf to get rid of forloop
-                for (int i = 0; i < labels.size(); i++) {
-
+            ArrayList<node> tempNodes = new ArrayList<>(g.getNodes());
+            for (int i = 0; i < labels.size(); i++) {
+                for (node n : tempNodes) {
                     if (n.getLabel().equals(labels.get(i))) {
-
                         checks[i] = true;
+                        //removes node so that it wont be checked again in case two or more of the same labels are required in the set
+                        tempNodes.remove(n);
+                        break;
                     }
                 }
             }
+
             //checks if all node labels have been found
             if (areAllTrue(checks)) {
 

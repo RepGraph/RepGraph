@@ -143,9 +143,9 @@ public class RequestHandler {
      */
     @GetMapping("/SearchSubgraphNodeSet")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphNodeSet(@RequestParam String graphID, @RequestParam int[] NodeID) {
+    public ArrayList<String> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
 
-        return RepModel.searchSubgraphNodeSet(graphID, NodeID);
+        return RepModel.searchSubgraphNodeSet(labels);
     }
 
     /**
