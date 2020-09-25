@@ -41,6 +41,14 @@ public class RepGraphModel {
 
     }
 
+    public boolean containsKey(String graphID) {
+        return graphs.containsKey(graphID);
+    }
+
+    public void clearGraphs() {
+        graphs.clear();
+    }
+
     /**
      * Uses a graph ID and the number of a node in the graph and returns a subset of the graph.
      * @param graphID The graph ID.

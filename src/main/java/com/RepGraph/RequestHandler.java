@@ -1,13 +1,10 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.json.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -33,11 +30,14 @@ public class RequestHandler {
      *
      * @param name This is the name that the file will be saved under
      * @param file This is the file data.
-     * @return ArrayList<HashMap < String, String>> This is a list of hashmap objects where each hashmap object contains a graph id and graph input.
+     * @return HashMap<String, Object> This is a hashmap to return the necessary uploaded file information and a response.
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public ArrayList<HashMap<String, String>> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+    public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+        RepModel.clearGraphs();
+        HashMap<String, Object> returnobj = new HashMap<>();
+
         //List of graph ids and graph inputs in a hashmap.
         ArrayList<HashMap<String, String>> returninfo = new ArrayList<>();
 
@@ -61,21 +61,38 @@ public class RequestHandler {
             BufferedReader reader = new BufferedReader(new FileReader(serverFile));
             String currentLine;
             ObjectMapper objectMapper = new ObjectMapper();
+            boolean duplicates = false;
             while ((currentLine = reader.readLine()) != null) {
                 graph currgraph = objectMapper.readValue(currentLine, graph.class);
-                HashMap<String, String> returnGraph = new HashMap<>();
-                returnGraph.put("input", currgraph.getInput());
-                returnGraph.put("id", currgraph.getId());
-                returninfo.add(returnGraph);
-                RepModel.addGraph(currgraph);
+
+                if (!RepModel.containsKey(currgraph.getId())) {
+
+                    RepModel.addGraph(currgraph);
+
+                    HashMap<String, String> returnGraph = new HashMap<>();
+                    returnGraph.put("id", currgraph.getId());
+                    returnGraph.put("input", currgraph.getInput());
+                    returninfo.add(returnGraph);
+                } else {
+                    duplicates = true;
+                }
             }
             reader.close();
+            HashMap<String, String> response = new HashMap<>();
+            if (duplicates) {
+                returnobj.put("response", "Duplicates Found");
 
+            } else {
+                returnobj.put("response", "No Duplicates Found");
+
+            }
+
+            returnobj.put("data", returninfo);
         } catch (Exception e) {
             e.printStackTrace();
-            return returninfo;
+            return returnobj;
         }
-        return returninfo;
+        return returnobj;
     }
 
 
