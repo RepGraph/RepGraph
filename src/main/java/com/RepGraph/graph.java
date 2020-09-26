@@ -48,6 +48,7 @@ public class graph {
     @JsonProperty("tops")
     private ArrayList<Integer> tops;
 
+    //Stack used for topological sorting of a graph.
     private Stack<Integer> stack;
 
     /**
@@ -190,8 +191,6 @@ public class graph {
         this.tops = tops;
     }
 
-
-
     /**
      * Analysis Tool for finding the longest path in the graph.
      * @return ArrayList<ArrayList<Integer>> The a list of longest paths in the graph.
@@ -276,7 +275,6 @@ public class graph {
         }
     }
 
-
     /**
      * Finds the longest distance from a given start node to all the other nodes in the system and returns the path of the longest path.
      * @param startNode Number of the start node.
@@ -352,6 +350,11 @@ public class graph {
 
     }
 
+    /**
+     * Topologically Sorts the graph.
+     * @param nodeID The current node.
+     * @param visited A list of booleans, representing whether a node has already been visited or not.
+     */
     public void topologicalSort(int nodeID, boolean visited[]){
         visited[nodeID] = true;
 
@@ -364,6 +367,28 @@ public class graph {
         stack.push(nodeID);
     }
 
+    /**
+     * Breadth First Search algorithm for finding the longest path from a given start node in a graph.
+     * @param startNode The starting node ID.
+     * @return ArrayList<Integer> The path of the longest route from the given start node.
+     */
+    public ArrayList<Integer> BFS(int startNode){
+
+        ArrayList<Integer> paths = new ArrayList<>();
+
+        //Creates a list of all undirected neighbours of the start node.
+        ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNode).getDirectedNeighbours().size());
+        ArrayList<node> undirectedNeighbours = nodes.get(startNode).getUndirectedNeighbours();
+        for (int i = 0; i < undirectedNeighbours.size(); i++){
+            allNeighbours.add(undirectedNeighbours.get(i));
+        }
+
+        //Checks to see if the node has any neighbours.
+        if (allNeighbours.size()==0){
+            return paths;
+        }
+        return paths;
+    }
 
     /**
      * Equals method for the graph class.

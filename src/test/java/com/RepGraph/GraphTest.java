@@ -619,6 +619,7 @@ public class GraphTest {
 
     }
 
+    /*
     @Test
     public void test_directedLongestPaths_DirectedSingleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
@@ -684,6 +685,7 @@ public class GraphTest {
         assertTrue("directedLongestPaths method does not correctly find the longest directed path from a start node in a cyclic graph.", g.directedLongestPaths(0).equals(correctResult0));
 
     }
+    */
 
     @Test
     public void test_directedLongestPaths_DirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
@@ -760,6 +762,7 @@ public class GraphTest {
 
     }
 
+    /*
     @Test
     public void test_directedLongestPaths_DirectedMultipleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
@@ -830,6 +833,7 @@ public class GraphTest {
         assertTrue("directedLongestPaths method does not correctly find multiple longest directed paths from a start node in a cyclic graph.", g.directedLongestPaths(2).equals(correctResult2));
 
     }
+     */
 
     @Test
     public void test_BFS_UndirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
@@ -920,8 +924,6 @@ public class GraphTest {
         correctResult3.get(0).add(0);
         correctResult3.get(0).add(2);
         correctResult3.get(0).add(3);
-
-        System.out.println("undirected");
 
         assertTrue("BFS longest path algorithm does not correctly finds the longest undirected path for node 0.", g.directedLongestPaths(0).equals(correctResult0));
         assertTrue("BFS longest path algorithm does not correctly finds the longest undirected path for node 1.", g.directedLongestPaths(1).equals(correctResult1));
