@@ -383,7 +383,7 @@ public class graph {
         ArrayList< ArrayList<Integer>> paths = new ArrayList<>();
 
         //Creates a list of all directed and undirected neighbours of the start node.
-        ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNodeID).getDirectedNeighbours().size());
+        ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNodeID).getDirectedNeighbours());
         ArrayList<node> undirectedNeighbours = nodes.get(startNodeID).getUndirectedNeighbours();
         for (int i = 0; i < undirectedNeighbours.size(); i++){
             allNeighbours.add(undirectedNeighbours.get(i));
@@ -407,7 +407,7 @@ public class graph {
 
         q.add(startNodeID);
 
-        while(q.isEmpty()){
+        while(!q.isEmpty()){
             int currentNodeID = q.poll();
 
             //Combine the lists of all directed and undirected neighbours of the current node.
