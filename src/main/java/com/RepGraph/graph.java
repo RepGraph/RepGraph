@@ -200,16 +200,17 @@ public class graph {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
-        //Default longest path set from node 0.
-        ArrayList<ArrayList<Integer>> longest = directedLongestPaths(0);
-        for (int i =0 ; i<longest.size();i++) {
-            paths.add(longest.get(i));
-        }
-        ArrayList<ArrayList<Integer>> temp;
+        if (directed) {
+            //Default longest path set from node 0.
+            ArrayList<ArrayList<Integer>> longest = directedLongestPaths(0);
+            for (int i = 0; i < longest.size(); i++) {
+                paths.add(longest.get(i));
+            }
+            ArrayList<ArrayList<Integer>> temp;
 
-        //Makes each node the start node and finds the longest overall path.
-        for (int i =1; i<nodes.size();i++){
-            temp = directedLongestPaths(i);
+            //Makes each node the start node and finds the longest overall path/s.
+            for (int i = 1; i < nodes.size(); i++) {
+                temp = directedLongestPaths(i);
                 if (temp.size() != 0) {
                     if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
                         longest = temp;
@@ -224,7 +225,19 @@ public class graph {
                     } else {
                     }
                 }
+            }
         }
+        else{
+
+            //First BFS to find end point of longest path
+            ArrayList<ArrayList<Integer>> longestpaths = BFS(0);
+
+            int endpoint = longestpaths.get(0).get(longestpaths.size()-1);
+
+            longestpaths = BFS(endpoint);
+        }
+
+
 
 
         //Reverses the path so that start node is first.
