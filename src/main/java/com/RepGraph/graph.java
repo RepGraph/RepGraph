@@ -230,11 +230,11 @@ public class graph {
         else{
 
             //First BFS to find end point of longest path
-            ArrayList<ArrayList<Integer>> longestpaths = BFS(0);
+            paths = BFS(0);
 
-            int endpoint = longestpaths.get(0).get(longestpaths.size()-1);
+            int endpoint = paths.get(0).get(paths.size()-1);
 
-            longestpaths = BFS(endpoint);
+            paths = BFS(endpoint);
         }
 
 
