@@ -61,7 +61,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getId_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getId_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
         final graph g = new graph();
 
         //Set field without using setter
@@ -73,7 +73,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getSource_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getSource_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
         final graph g = new graph();
 
         //Set field without using setter
@@ -85,7 +85,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getInput_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getInput_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
         final graph g = new graph();
 
         //Set field without using setter
@@ -97,7 +97,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getNodes_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getNodes_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
         final graph g = new graph();
 
         ArrayList<node> nodes = new ArrayList<>();
@@ -112,7 +112,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getTokens_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getTokens_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
         final graph g = new graph();
 
         ArrayList<token> tokens = new ArrayList<token>();
@@ -127,7 +127,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getEdges_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getEdges_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
         final graph g = new graph();
 
         ArrayList<edge> edges = new ArrayList<edge>();
@@ -142,7 +142,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setId_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setId_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final graph g = new graph();
 
@@ -156,7 +156,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setSource_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setSource_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final graph g = new graph();
 
@@ -170,7 +170,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setInput_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setInput_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final graph g = new graph();
 
@@ -184,7 +184,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setNodes_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setNodes_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final graph g = new graph();
 
@@ -201,7 +201,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setTokens_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setTokens_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final graph g = new graph();
 
@@ -218,7 +218,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setEdges_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setEdges_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final graph g = new graph();
 
@@ -246,8 +246,8 @@ public class GraphTest {
         ArrayList<token> tokens2 = new ArrayList<>();
 
 
-        ArrayList<anchors> anchs = new  ArrayList<>();
-        anchs.add(new anchors(1,2));
+        ArrayList<anchors> anchs = new ArrayList<>();
+        anchs.add(new anchors(1, 2));
 
         nodes1.add(new node(0, "node1", anchs));
         nodes1.add(new node(1, "node2", anchs));
@@ -281,10 +281,10 @@ public class GraphTest {
         ArrayList<edge> edges2 = new ArrayList<>();
         ArrayList<token> tokens2 = new ArrayList<>();
 
-        ArrayList<anchors> anchs = new  ArrayList<>();
-        anchs.add(new anchors(1,2));
+        ArrayList<anchors> anchs = new ArrayList<>();
+        anchs.add(new anchors(1, 2));
 
-        nodes1.add(new node(0, "node1",anchs));
+        nodes1.add(new node(0, "node1", anchs));
         nodes2.add(new node(0, "node1", anchs));
 
         edges1.add(new edge(0, 1, "testlabel", "testpostlabel"));
@@ -336,7 +336,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setNodeNeighbours_setDirectedNeighbouringNodesCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setNodeNeighbours_setDirectedNeighbouringNodesCorrectly() throws NoSuchFieldException, IllegalAccessException {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
 
@@ -378,7 +378,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setNodeNeighbours_setUndirectedNeighbouringNodesCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setNodeNeighbours_setUndirectedNeighbouringNodesCorrectly() throws NoSuchFieldException, IllegalAccessException {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
 
@@ -420,7 +420,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setNodeNeighbours_setEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setNodeNeighbours_setEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
 
@@ -432,9 +432,9 @@ public class GraphTest {
         nodes.add(node2);
 
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(0, 2, "testlabel2", "testpostlabel2");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(0, 2, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -508,7 +508,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setNodeNeighbours_NodesAlreadyHaveNodeNeighbours() throws NoSuchFieldException, IllegalAccessException{
+    public void test_setNodeNeighbours_NodesAlreadyHaveNodeNeighbours() throws NoSuchFieldException, IllegalAccessException {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
 
@@ -520,9 +520,9 @@ public class GraphTest {
         nodes.add(node2);
 
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 0, "testlabel2", "testpostlabel2");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 0, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -556,7 +556,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_directedLongestPaths_DirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_directedLongestPaths_DirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -571,9 +571,9 @@ public class GraphTest {
         nodes.add(node2);
         nodes.add(node3);
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -620,7 +620,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_directedLongestPaths_DirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_directedLongestPaths_DirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -639,11 +639,11 @@ public class GraphTest {
         nodes.add(node4);
         nodes.add(node5);
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel", "testpostlabel");
-        edge edge2 =new edge(0, 3, "testlabel", "testpostlabel");
-        edge edge3 =new edge(3, 4, "testlabel", "testpostlabel");
-        edge edge4 =new edge(0, 5, "testlabel", "testpostlabel");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
+        edge edge2 = new edge(0, 3, "testlabel", "testpostlabel");
+        edge edge3 = new edge(3, 4, "testlabel", "testpostlabel");
+        edge edge4 = new edge(0, 5, "testlabel", "testpostlabel");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -833,7 +833,7 @@ public class GraphTest {
      */
 
     @Test
-    public void test_BFS_UndirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_BFS_UndirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -848,9 +848,9 @@ public class GraphTest {
         nodes.add(node2);
         nodes.add(node3);
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(2, 0, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(2, 0, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -886,11 +886,11 @@ public class GraphTest {
         undirectedField1.setAccessible(true);
         undirectedField1.set(node1, undirectedNeighbours1);
 
-        final Field  undirectedField2 = node2.getClass().getDeclaredField("undirectedNeighbours");
+        final Field undirectedField2 = node2.getClass().getDeclaredField("undirectedNeighbours");
         undirectedField2.setAccessible(true);
         undirectedField2.set(node2, undirectedNeighbours2);
 
-        final Field  undirectedField3 = node3.getClass().getDeclaredField("undirectedNeighbours");
+        final Field undirectedField3 = node3.getClass().getDeclaredField("undirectedNeighbours");
         undirectedField3.setAccessible(true);
         undirectedField3.set(node3, undirectedNeighbours3);
 
@@ -930,7 +930,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_BFS_UndirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_BFS_UndirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -949,11 +949,11 @@ public class GraphTest {
         nodes.add(node4);
         nodes.add(node5);
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel", "testpostlabel");
-        edge edge2 =new edge(3, 0, "testlabel", "testpostlabel");
-        edge edge3 =new edge(3, 4, "testlabel", "testpostlabel");
-        edge edge4 =new edge(0, 5, "testlabel", "testpostlabel");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
+        edge edge2 = new edge(3, 0, "testlabel", "testpostlabel");
+        edge edge3 = new edge(3, 4, "testlabel", "testpostlabel");
+        edge edge4 = new edge(0, 5, "testlabel", "testpostlabel");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -1199,7 +1199,7 @@ public class GraphTest {
     */
 
     @Test
-    public void test_findLongest_DirectedSingleLongestPath() throws NoSuchFieldException, IllegalAccessException{
+    public void test_findLongest_DirectedSingleLongestPath() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -1214,15 +1214,14 @@ public class GraphTest {
         nodes.add(node2);
         nodes.add(node3);
 
-        edge edge0 =new edge(1, 0, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
 
 
         //Expected result for longest path.
@@ -1253,17 +1252,16 @@ public class GraphTest {
         nodes.add(node3);
         nodes.add(node4);
 
-        edge edge0 =new edge(1, 0, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edge edge3 =new edge(0, 4, "testlabel3", "testpostlabel3");
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(0, 4, "testlabel3", "testpostlabel3");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
         edges.add(edge3);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
 
 
         //Expected result for longest path.
@@ -1295,15 +1293,14 @@ public class GraphTest {
         nodes.add(node2);
         nodes.add(node3);
 
-        edge edge0 =new edge(0, 2, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge0 = new edge(0, 2, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
 
 
         //Expected result for longest path.
@@ -1339,11 +1336,11 @@ public class GraphTest {
         nodes.add(node4);
         nodes.add(node5);
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edge edge3 =new edge(5, 2, "testlabel2", "testpostlabel2");
-        edge edge4 =new edge(1, 4, "testlabel2", "testpostlabel2");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(5, 2, "testlabel2", "testpostlabel2");
+        edge edge4 = new edge(1, 4, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -1373,7 +1370,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedSingleLongestPath() throws NoSuchFieldException, IllegalAccessException{
+    public void test_findLongest_UndirectedSingleLongestPath() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -1388,15 +1385,14 @@ public class GraphTest {
         nodes.add(node2);
         nodes.add(node3);
 
-        edge edge0 =new edge(1, 0, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(3, 2, "testlabel2", "testpostlabel2");
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(3, 2, "testlabel2", "testpostlabel2");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
 
 
         //Expected result for longest path.
@@ -1432,12 +1428,12 @@ public class GraphTest {
         nodes.add(node5);
         nodes.add(node6);
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edge edge3 =new edge(0, 4, "testlabel3", "testpostlabel3");
-        edge edge4 =new edge(4, 5, "testlabel3", "testpostlabel3");
-        edge edge5 =new edge(4, 6, "testlabel3", "testpostlabel3");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(0, 4, "testlabel3", "testpostlabel3");
+        edge edge4 = new edge(4, 5, "testlabel3", "testpostlabel3");
+        edge edge5 = new edge(4, 6, "testlabel3", "testpostlabel3");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -1446,7 +1442,6 @@ public class GraphTest {
         edges.add(edge5);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
 
 
         //Expected result for longest path.
@@ -1486,17 +1481,16 @@ public class GraphTest {
         nodes.add(node3);
         nodes.add(node4);
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge3 =new edge(0, 2, "testlabel3", "testpostlabel3");
-        edge edge4 =new edge(2, 3, "testlabel3", "testpostlabel3");
-        edge edge5 =new edge(2, 4, "testlabel3", "testpostlabel3");
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge3 = new edge(0, 2, "testlabel3", "testpostlabel3");
+        edge edge4 = new edge(2, 3, "testlabel3", "testpostlabel3");
+        edge edge5 = new edge(2, 4, "testlabel3", "testpostlabel3");
         edges.add(edge0);
         edges.add(edge3);
         edges.add(edge4);
         edges.add(edge5);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
 
 
         //Expected result for longest path.
@@ -1534,11 +1528,11 @@ public class GraphTest {
         nodes.add(node4);
         nodes.add(node5);
 
-        edge edge0 =new edge(0, 2, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edge edge3 =new edge(4, 3, "testlabel3", "testpostlabel3");
-        edge edge4 =new edge(3, 5, "testlabel3", "testpostlabel3");
+        edge edge0 = new edge(0, 2, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(4, 3, "testlabel3", "testpostlabel3");
+        edge edge4 = new edge(3, 5, "testlabel3", "testpostlabel3");
         edges.add(edge0);
         edges.add(edge1);
         edges.add(edge2);
@@ -1573,6 +1567,7 @@ public class GraphTest {
         assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths from a single node in a graph.", g.findLongest(false).equals(correctResult));
     }
 
+    /*
     @Test
     public void test_findLongest_UndirectedMultipleLongestPathsInSymmetricalGraphEdgeCase() throws NoSuchFieldException, IllegalAccessException {
         //Creating the nodes and edges for the graph
@@ -1639,4 +1634,67 @@ public class GraphTest {
 
         assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a graph that is perfectly symmetrical around node 0.", g.findLongest(false).equals(correctResult));
     }
+    */
+
+    @Test
+    public void test_findLongest_OneEdgeInGraph() throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edges.add(edge0);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Expected result for longest path.
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<Integer>());
+        correctResult.get(0).add(0);
+        correctResult.get(0).add(1);
+
+        assertTrue("findLongest path algorithm does not correctly return the path of a single edged directed graph.", g.findLongest(true).equals(correctResult));
+        assertTrue("findLongest path algorithm does not correctly return the path of a single edged undirected graph.", g.findLongest(false).equals(correctResult));
     }
+
+    @Test
+    public void test_findLongest_NoNodes() throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), new ArrayList<>(), new ArrayList<Integer>());
+
+        //Expected result for longest path.
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+
+        assertTrue("findLongest path algorithm does not correctly return the path in a directed graph with no nodes.", g.findLongest(true).equals(correctResult));
+        assertTrue("findLongest path algorithm does not correctly return the path in an undirected graph with no nodes.", g.findLongest(false).equals(correctResult));
+    }
+
+    @Test
+    public void test_findLongest_NoEdges() throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), new ArrayList<>(), new ArrayList<Integer>());
+
+        //Expected result for longest path.
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+
+        assertTrue("findLongest path algorithm does not correctly return the path in a directed graph with no edges", g.findLongest(true).equals(correctResult));
+        assertTrue("findLongest path algorithm does not correctly return the path in an undirected graph with no edges.", g.findLongest(false).equals(correctResult));
+    }
+
+
+}

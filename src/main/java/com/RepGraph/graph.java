@@ -200,63 +200,73 @@ public class graph {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
-        if (directed) {
-            //Default longest path set from node 0.
-            ArrayList<ArrayList<Integer>> longest = directedLongestPaths(0);
-            for (int i = 0; i < longest.size(); i++) {
-                paths.add(longest.get(i));
-            }
-            ArrayList<ArrayList<Integer>> temp;
+        if ((nodes.size()==0) || (edges.size()==0)){
+            return paths;
+        }
 
-            //Makes each node the start node and finds the longest overall path/s.
-            for (int i = 1; i < nodes.size(); i++) {
-                temp = directedLongestPaths(i);
-                if (temp.size() != 0) {
-                    if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
-                        longest = temp;
-                        paths.clear();
-                        for (int j = 0; j < temp.size(); j++) {
-                            paths.add(new ArrayList<Integer>(temp.get(j)));
+        else if (edges.size() == 1){
+            paths.add(new ArrayList<Integer>());
+            paths.get(0).add(edges.get(0).getSource());
+            paths.get(0).add(edges.get(0).getTarget());
+            return paths;
+        }
+        else {
+
+            if (directed) {
+                //Default longest path set from node 0.
+                ArrayList<ArrayList<Integer>> longest = directedLongestPaths(0);
+                for (int i = 0; i < longest.size(); i++) {
+                    paths.add(longest.get(i));
+                }
+                ArrayList<ArrayList<Integer>> temp;
+
+                //Makes each node the start node and finds the longest overall path/s.
+                for (int i = 1; i < nodes.size(); i++) {
+                    temp = directedLongestPaths(i);
+                    if (temp.size() != 0) {
+                        if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
+                            longest = temp;
+                            paths.clear();
+                            for (int j = 0; j < temp.size(); j++) {
+                                paths.add(new ArrayList<Integer>(temp.get(j)));
+                            }
+                        } else if (temp.get(0).size() == longest.get(0).size()) {
+                            for (int j = 0; j < temp.size(); j++) {
+                                paths.add(new ArrayList<Integer>(temp.get(j)));
+                            }
+                        } else {
                         }
-                    } else if (temp.get(0).size() == longest.get(0).size()) {
-                        for (int j = 0; j < temp.size(); j++) {
-                            paths.add(new ArrayList<Integer>(temp.get(j)));
-                        }
-                    } else {
+                    }
+                }
+            } else {
+
+                //First BFS to find end point of longest path
+                ArrayList<ArrayList<Integer>> endpoints = BFS(0);
+                ArrayList<ArrayList<Integer>> temp;
+                int endpoint;
+                for (int i = 0; i < endpoints.size(); i++) {
+                    endpoint = endpoints.get(i).get(0);
+                    temp = BFS(endpoint);
+                    for (int j = 0; j < temp.size(); j++) {
+                        paths.add(new ArrayList<Integer>(temp.get(j)));
                     }
                 }
             }
-        }
-        else{
 
-            //First BFS to find end point of longest path
-            ArrayList<ArrayList<Integer>> endpoints = BFS(0);
-            ArrayList<ArrayList<Integer>> temp;
-            int endpoint;
-            for (int i =0; i<endpoints.size();i++){
-                endpoint = endpoints.get(i).get(0);
-                temp = BFS(endpoint);
-                for (int j = 0; j < temp.size(); j++) {
-                    paths.add(new ArrayList<Integer>(temp.get(j)));
+
+            //Reverses the path so that start node is first.
+            ArrayList<ArrayList<Integer>> reversed = new ArrayList<>();
+            ArrayList<Integer> item = new ArrayList<>();
+            for (int i = 0; i < paths.size(); i++) {
+                item.clear();
+                for (int j = paths.get(i).size() - 1; j >= 0; j--) {
+                    item.add(paths.get(i).get(j));
                 }
+                reversed.add(new ArrayList<>(item));
             }
+
+            return reversed;
         }
-
-
-
-
-        //Reverses the path so that start node is first.
-        ArrayList<ArrayList<Integer>> reversed = new ArrayList<>();
-        ArrayList<Integer> item = new ArrayList<>();
-        for (int i = 0; i < paths.size(); i++){
-            item.clear();
-            for (int j = paths.get(i).size() -1; j >= 0; j-- ){
-                item.add(paths.get(i).get(j));
-            }
-            reversed.add(new ArrayList<>(item));
-        }
-
-        return reversed;
     }
 
     /**
