@@ -233,7 +233,6 @@ public class graph {
             ArrayList<ArrayList<Integer>> endpoints = BFS(0);
             ArrayList<ArrayList<Integer>> temp;
             int endpoint;
-            System.out.println(endpoints.toString());
             for (int i =0; i<endpoints.size();i++){
                 endpoint = endpoints.get(i).get(0);
                 temp = BFS(endpoint);
