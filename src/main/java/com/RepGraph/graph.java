@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class graph {
@@ -188,24 +190,49 @@ public class graph {
 
     /**
      * Analysis Tool for finding the longest path in the graph.
-     * @return ArrayList The route of the longest path.
+     * @return ArrayList<ArrayList<Integer>> The a list of longest paths in the graph.
      */
-    public ArrayList<Integer> findLongest(){
+    public ArrayList<ArrayList<Integer>> findLongest(){
+
         setNodeNeighbours();
+
+        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+
         //Default longest path set from node 0.
-        ArrayList<Integer> longest = Dijkstra(0);
-        ArrayList<Integer> temp;
+        ArrayList<ArrayList<Integer>> longest = Dijkstra(0);
+        for (int i =0 ; i<longest.size();i++) {
+            paths.add(longest.get(i));
+        }
+        ArrayList<ArrayList<Integer>> temp;
+
         //Makes each node the start node and finds the longest overall path.
         for (int i =1; i<nodes.size();i++){
             temp = Dijkstra(i);
-            if (temp.size() > longest.size()){
-                longest = temp;
-            }
+                if (temp.size() != 0) {
+                    if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
+                        longest = temp;
+                        paths.clear();
+                        for (int j = 0; j < temp.size(); j++) {
+                            paths.add(new ArrayList<Integer>(temp.get(j)));
+                        }
+                    } else if (temp.get(0).size() == longest.get(0).size()) {
+                        for (int j = 0; j < temp.size(); j++) {
+                            paths.add(new ArrayList<Integer>(temp.get(j)));
+                        }
+                    } else {
+                    }
+                }
         }
+
         //Reverses the path so that start node is first.
-        ArrayList<Integer> reversed = new ArrayList<Integer>();
-        for (int i = longest.size() - 1; i >= 0; i--) {
-            reversed.add(longest.get(i));
+        ArrayList<ArrayList<Integer>> reversed = new ArrayList<>();
+        ArrayList<Integer> item = new ArrayList<>();
+        for (int i = 0; i < paths.size(); i++){
+            item.clear();
+            for (int j = paths.get(i).size() -1; j >= 0; j-- ){
+                item.add(paths.get(i).get(j));
+            }
+            reversed.add(new ArrayList<>(item));
         }
 
         return reversed;
@@ -248,13 +275,13 @@ public class graph {
      * @param startNode Number of the start node.
      * @return ArrayList The longest path available from the start node.
      */
-    public ArrayList<Integer> Dijkstra(int startNode){
+    public ArrayList<ArrayList<Integer>> Dijkstra(int startNode){
 
-        ArrayList<Integer> path = new ArrayList<Integer>();
+        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
         //If the start node has no neighbours then stop performing the algorithm and return empty path.
         if (nodes.get(startNode).getNodeNeighbours().size() == 0) {
-            return path;
+            return paths;
         }
 
 
@@ -301,24 +328,87 @@ public class graph {
         }
 
         //Finds node index with the longest viable path. (i.e. most negative distance)
-        int max = 0;
+        int max = dist.get(0);
+        int maxIndex =0;
         for (int i = 0; i < dist.size(); i++) {
-            if (dist.get(max) > dist.get(i)) {
-                max = i;
+            if (dist.get(maxIndex) > dist.get(i)) {
+                max = dist.get(i);
+                maxIndex =i;
             }
         }
 
+
+
         //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
-        path.add(max);
-        int prev = prevNode[max];
-        while (prev!=startNode){
-            path.add(prev);
-            prev = prevNode[prev];
+        ArrayList<Integer> path = new ArrayList<>();
+        for (int i = 0; i<dist.size();i++){
+            if (dist.get(i)==max){
+                path.clear();
+                path.add(i);
+                int prev = prevNode[i];
+                while (prev!=startNode){
+                    path.add(prev);
+                    prev = prevNode[prev];
+                }
+                path.add(startNode);
+                paths.add(new ArrayList<Integer>(path));
+            }
         }
-        path.add(startNode);
 
-        return path;
 
+        return paths;
+
+    }
+
+    public boolean isPlanar() {
+        ArrayList<node> ordered = new ArrayList<>(nodes);
+
+        Collections.sort(ordered, new Comparator<node>() {
+            @Override
+            public int compare(node o1, node o2) {
+                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+                    return -1;
+                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+                    return 0;
+                }
+                return 1;
+            }
+        });
+
+        ArrayList<edge> updated = new ArrayList<>();
+
+        int source, target;
+
+        for (edge e : edges) {
+
+            source = e.getSource();
+            target = e.getTarget();
+
+            edge newEdge = new edge();
+            for (int i = 0; i < ordered.size(); i++) {
+                node n = ordered.get(i);
+                if (n.getId() == source) {
+                    newEdge.setSource(i);
+                }
+                if (n.getId() == target) {
+                    newEdge.setTarget(i);
+                }
+            }
+            updated.add(newEdge);
+
+        }
+
+
+
+        for (edge e : updated) {
+            for (edge other : updated) {
+                if (Math.min(e.getSource(), e.getTarget()) < Math.min(other.getSource(), other.getTarget()) && Math.min(other.getSource(), other.getTarget()) < Math.max(e.getSource(), e.getTarget()) && Math.max(e.getSource(), e.getTarget()) < Math.max(other.getSource(), other.getTarget())) {
+                    return false;
+                }
+
+            }
+        }
+        return true;
     }
 
     /**

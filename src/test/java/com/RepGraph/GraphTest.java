@@ -3,6 +3,7 @@ package com.RepGraph;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.constraints.AssertTrue;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -510,7 +511,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_Dijkstra_FindsLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_Dijkstra_SingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -551,28 +552,31 @@ public class GraphTest {
         nodeField2.set(node2, nodeNeighbours2);
 
         //Expected results for longest path for each node as the start node.
-        ArrayList<Integer> correctResult0 = new ArrayList<>();
-        ArrayList<Integer> correctResult1 = new ArrayList<>();
-        ArrayList<Integer> correctResult2 = new ArrayList<>();
-        ArrayList<Integer> correctResult3 = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> correctResult0 = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> correctResult1 = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> correctResult2 = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> correctResult3 = new ArrayList<>();
 
-        correctResult0.add(3);
-        correctResult0.add(2);
-        correctResult0.add(0);
+        correctResult0.add(new ArrayList<Integer>());
+        correctResult0.get(0).add(3);
+        correctResult0.get(0).add(2);
+        correctResult0.get(0).add(0);
 
-        correctResult2.add(3);
-        correctResult2.add(2);
+        correctResult2.add(new ArrayList<Integer>());
+        correctResult2.get(0).add(3);
+        correctResult2.get(0).add(2);
 
 
-        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 0.", g.Dijkstra(0).equals(correctResult0));
-        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 1.", g.Dijkstra(1).equals(correctResult1));
-        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 2.", g.Dijkstra(2).equals(correctResult2));
-        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 3.", g.Dijkstra(3).equals(correctResult3));
+        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest path for node 0.", g.Dijkstra(0).equals(correctResult0));
+        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest path for node 1.", g.Dijkstra(1).equals(correctResult1));
+        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest path for node 2.", g.Dijkstra(2).equals(correctResult2));
+        assertTrue("Dijkstra's longest path algorithm does not correctly finds the longest path for node 3.", g.Dijkstra(3).equals(correctResult3));
 
     }
 
+
     @Test
-    public void test_Dijkstra_FindsLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_Dijkstra_SingleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -600,6 +604,7 @@ public class GraphTest {
 
         //Creating the array of node neighbours for the nodes in the graph.
         ArrayList<node> nodeNeighbours0 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours1 = new ArrayList<>();
         ArrayList<node> nodeNeighbours2 = new ArrayList<>();
         ArrayList<node> nodeNeighbours3 = new ArrayList<>();
 
@@ -612,6 +617,9 @@ public class GraphTest {
         final Field nodeField0 = node0.getClass().getDeclaredField("nodeNeighbours");
         nodeField0.setAccessible(true);
         nodeField0.set(node0, nodeNeighbours0);
+        final Field nodeField1 = node1.getClass().getDeclaredField("nodeNeighbours");
+        nodeField1.setAccessible(true);
+        nodeField1.set(node1, nodeNeighbours1);
         final Field nodeField2 = node2.getClass().getDeclaredField("nodeNeighbours");
         nodeField2.setAccessible(true);
         nodeField2.set(node2, nodeNeighbours2);
@@ -620,35 +628,206 @@ public class GraphTest {
         nodeField3.set(node3, nodeNeighbours3);
 
         //Expected results for longest path for each node as the start node.
-        ArrayList<Integer> correctResult0 = new ArrayList<>();
-        ArrayList<Integer> correctResult1 = new ArrayList<>();
-        ArrayList<Integer> correctResult2 = new ArrayList<>();
-        ArrayList<Integer> correctResult3 = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> correctResult0 = new ArrayList<>();
 
-        correctResult0.add(0);
-        correctResult0.add(3);
-        correctResult0.add(2);
-        correctResult0.add(0);
+        //Cyclic path
+        correctResult0.add(new ArrayList<Integer>());
+        correctResult0.get(0).add(0);
+        correctResult0.get(0).add(3);
+        correctResult0.get(0).add(2);
+        correctResult0.get(0).add(0);
 
-        correctResult2.add(1);
-        correctResult2.add(0);
-        correctResult2.add(3);
-        correctResult2.add(2);
-
-        correctResult3.add(3);
-        correctResult3.add(2);
-        correctResult3.add(0);
-        correctResult3.add(3);
-
-
-        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 0.", g.Dijkstra(0).equals(correctResult0));
-        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 1.", g.Dijkstra(1).equals(correctResult1));
-        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 2.", g.Dijkstra(2).equals(correctResult2));
-        assertTrue("Dijkstra's longest path algorithm correctly finds the longest path for node 3.", g.Dijkstra(3).equals(correctResult3));
+        assertTrue("Dijkstra's longest path algorithm does not correctly find the longest path from a start node in a cyclic graph.", g.Dijkstra(0).equals(correctResult0));
 
     }
 
+    @Test
+    public void test_Dijkstra_MultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException{
+
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 =new edge(1, 2, "testlabel", "testpostlabel");
+        edge edge2 =new edge(0, 3, "testlabel", "testpostlabel");
+        edge edge3 =new edge(3, 4, "testlabel", "testpostlabel");
+        edge edge4 =new edge(0, 5, "testlabel", "testpostlabel");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> nodeNeighbours0 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours1 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours2 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours3 = new ArrayList<>();
+
+        nodeNeighbours0.add(node1);
+        nodeNeighbours0.add(node3);
+        nodeNeighbours0.add(node5);
+        nodeNeighbours1.add(node2);
+        nodeNeighbours3.add(node4);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field nodeField0 = node0.getClass().getDeclaredField("nodeNeighbours");
+        nodeField0.setAccessible(true);
+        nodeField0.set(node0, nodeNeighbours0);
+        final Field nodeField1 = node1.getClass().getDeclaredField("nodeNeighbours");
+        nodeField1.setAccessible(true);
+        nodeField1.set(node1, nodeNeighbours1);
+        final Field nodeField2 = node2.getClass().getDeclaredField("nodeNeighbours");
+        nodeField2.setAccessible(true);
+        nodeField2.set(node2, nodeNeighbours2);
+        final Field nodeField3 = node3.getClass().getDeclaredField("nodeNeighbours");
+        nodeField3.setAccessible(true);
+        nodeField3.set(node3, nodeNeighbours3);
+
+        //Expected results for longest path for each node as the start node.
+        ArrayList<ArrayList<Integer>> correctResult0 = new ArrayList<>();
+        correctResult0.add(new ArrayList<Integer>());
+        correctResult0.get(0).add(2);
+        correctResult0.get(0).add(1);
+        correctResult0.get(0).add(0);
+        correctResult0.add(new ArrayList<Integer>());
+        correctResult0.get(1).add(4);
+        correctResult0.get(1).add(3);
+        correctResult0.get(1).add(0);
 
 
+        assertTrue("Dijkstra's longest path algorithm does not correctly find multiple longest paths from a start node.", g.Dijkstra(0).equals(correctResult0));
+
+    }
+
+    @Test
+    public void test_isPlanar_IdentifiesPlanarGraph() {
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
+
+
+        ArrayList<anchors> anch1 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+        nodes.add(new node(0, "node" + (0 + 1), anch1));
+
+        ArrayList<anchors> anch2 = new ArrayList<anchors>();
+        anch2.add(new anchors(1, 1));
+        nodes.add(new node(1, "node" + (1 + 1), anch2));
+
+        ArrayList<anchors> anch3 = new ArrayList<anchors>();
+        anch3.add(new anchors(2, 2));
+        nodes.add(new node(2, "node" + (2 + 1), anch3));
+
+        ArrayList<anchors> anch4 = new ArrayList<anchors>();
+        anch4.add(new anchors(3, 3));
+        nodes.add(new node(3, "node" + (3 + 1), anch4));
+
+        ArrayList<anchors> anch5 = new ArrayList<anchors>();
+        anch5.add(new anchors(4, 4));
+        nodes.add(new node(4, "node" + (4 + 1), anch5));
+
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+        edges.clear();
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 2, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 3, "testlabel2", "testpostlabel2"));
+        edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+        edges.clear();
+        edges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
+
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+        edges.clear();
+        edges.add(new edge(0, 4, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 4, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
+        edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+        edges.clear();
+        edges.add(new edge(4, 0, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 0, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 0, "testlabel2", "testpostlabel2"));
+        edges.add(new edge(3, 0, "testlabel2", "testpostlabel2"));
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+
+    }
+
+    @Test
+    public void test_isPlanar_HandlesNoEdgesInGraph() {
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
+
+
+        ArrayList<anchors> anch1 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+        nodes.add(new node(0, "node" + (0 + 1), anch1));
+
+        ArrayList<anchors> anch2 = new ArrayList<anchors>();
+        anch2.add(new anchors(1, 1));
+        nodes.add(new node(1, "node" + (1 + 1), anch2));
+
+        ArrayList<anchors> anch3 = new ArrayList<anchors>();
+        anch3.add(new anchors(2, 2));
+        nodes.add(new node(2, "node" + (2 + 1), anch3));
+
+        ArrayList<anchors> anch4 = new ArrayList<anchors>();
+        anch4.add(new anchors(3, 3));
+        nodes.add(new node(3, "node" + (3 + 1), anch4));
+
+        ArrayList<anchors> anch5 = new ArrayList<anchors>();
+        anch5.add(new anchors(4, 4));
+        nodes.add(new node(4, "node" + (4 + 1), anch5));
+
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+    }
+
+    @Test
+    public void test_isPlanar_HandlesNoNodesInGraph() {
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+    }
 
 }
