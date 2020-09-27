@@ -3,6 +3,8 @@ package com.RepGraph;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -414,7 +416,6 @@ public class RepGraphModelTest {
 
     }
 
-
     @Test
     public void test_SearchSubgraphPattern_HandlesIncorrectEdgeData() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
@@ -445,6 +446,64 @@ public class RepGraphModelTest {
         Collections.sort(correctResults);
         assertEquals("Graphs were searched for a non connected subgraph and it was not handled correctly.", correctResults, results);
 
+    }
+
+    @Test
+    public void test_compareTwoGraphs_FindsSimilarNodesAndEdgesCorrectly(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g1 = new graph("1", "testsource1", "testInput1", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        ArrayList<node> nodes2 = new ArrayList<>();
+        ArrayList<edge> edges2 = new ArrayList<>();
+
+        node node3 = new node(0, "node0", new ArrayList<>());
+        node node4 = new node(1, "node3", new ArrayList<>());
+        node node5 = new node(2, "node2", new ArrayList<>());
+        nodes2.add(node3);
+        nodes2.add(node4);
+        nodes2.add(node5);
+
+        edge edge3 = new edge(2, 3, "testlabel3", "testpostlabel3");
+
+        edges2.add(edge3);
+        edges2.add(edge1);
+        edges2.add(edge0);
+
+        graph g2 = new graph("2", "testsource2", "testInput2", nodes2, new ArrayList<token>(), edges2, new ArrayList<Integer>());
+        RepGraphModel model = new RepGraphModel();
+        model.addGraph(g1);
+        model.addGraph(g2);
+
+
+        ArrayList<node> similarNodes = new ArrayList<>();
+        ArrayList<edge> similarEdges = new ArrayList<>();
+        similarNodes.add(node0);
+        similarNodes.add(node2);
+        similarEdges.add(edge0);
+        similarEdges.add(edge1);
+
+        HashMap<String,Object> expected = new HashMap<>();
+        expected.put("Nodes", similarNodes);
+        expected.put("Edges", similarEdges);
+
+        assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges.",expected,model.compareTwoGraphs("1","2"));
     }
 
 }
