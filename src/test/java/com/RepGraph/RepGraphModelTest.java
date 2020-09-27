@@ -13,22 +13,25 @@ import static junit.framework.TestCase.assertEquals;
 
 public class RepGraphModelTest {
 
-    private graph g1, g2, g3;
+    private graph g1, g2, g3, g4;
 
     @Before
     public void construct_test_graph(){
         ArrayList<node> nodes1 = new ArrayList<>();
         ArrayList<node> nodes2 = new ArrayList<>();
         ArrayList<node> nodes3 = new ArrayList<>();
+        ArrayList<node> nodes4 = new ArrayList<>();
         ArrayList<edge> edges1 = new ArrayList<>();
         ArrayList<token> tokens1 = new ArrayList<>();
         ArrayList<token> tokens2 = new ArrayList<>();
         ArrayList<token> tokens3 = new ArrayList<>();
+        ArrayList<token> tokens4 = new ArrayList<>();
 
         for (int i = 0; i < 4; i++) {
             nodes1.add(new node(i, "node" + (i + 1), new ArrayList<anchors>()));
             nodes2.add(new node(i, "node" + (i + 2), new ArrayList<anchors>()));
             nodes3.add(new node(i, "node" + (i + 3), new ArrayList<anchors>()));
+            nodes4.add(new node(i, "node" + (7), new ArrayList<anchors>()));
         }
 
         edges1.add(new edge(0, 1, "testlabel", "testpostlabel"));
@@ -37,15 +40,17 @@ public class RepGraphModelTest {
 
 
         for (int i = 0; i < 4; i++) {
-            tokens1.add(new token(i, "node" + (i + 1) + " form", "node1" + (i + 1) + " lemma", "node1" + (i + 1) + " carg"));
-            tokens2.add(new token(i + 1, "node" + (i + 2) + " form", "node1" + (i + 2) + " lemma", "node1" + (i + 2) + " carg"));
-            tokens3.add(new token(i + 2, "node" + (i + 3) + " form", "node1" + (i + 3) + " lemma", "node1" + (i + 3) + " carg"));
+            tokens1.add(new token(i, "node" + (i + 1) + " form", "node" + (i + 1) + " lemma", "node" + (i + 1) + " carg"));
+            tokens2.add(new token(i + 1, "node" + (i + 2) + " form", "node" + (i + 2) + " lemma", "node" + (i + 2) + " carg"));
+            tokens3.add(new token(i + 2, "node" + (i + 3) + " form", "node" + (i + 3) + " lemma", "node" + (i + 3) + " carg"));
+            tokens3.add(new token(6, "node" + (7) + " form", "node" + (7) + " lemma", "node" + (7) + " carg"));
+
         }
 
         g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1, new ArrayList<Integer>());
         g2 = new graph("22222", "testsource", "node2 node3 node4 node5", nodes2, tokens2, edges1, new ArrayList<Integer>());
         g3 = new graph("33333", "testsource", "node3 node4 node5 node6", nodes3, tokens3, edges1, new ArrayList<Integer>());
-
+        g4 = new graph("44444", "testsource", "node7 node7 node7 node7", nodes4, tokens4, edges1, new ArrayList<Integer>());
 
 
     }
@@ -97,6 +102,9 @@ public class RepGraphModelTest {
         graphs.put("22222", g2);
         graphs.put("33333", g3);
 
+        ArrayList<String> labels = new ArrayList<>();
+
+
         //Set field without using setter
         final Field field = model.getClass().getDeclaredField("graphs");
         field.setAccessible(true);
@@ -104,7 +112,8 @@ public class RepGraphModelTest {
 
         ArrayList<String> correctResults = new ArrayList<>();
         correctResults.add("11111");
-        ArrayList<String> results = model.searchSubgraphNodeSet("11111", new int[]{0});
+        labels.add("node1");
+        ArrayList<String> results = model.searchSubgraphNodeSet(labels);
 
         Collections.sort(results);
         Collections.sort(correctResults);
@@ -113,7 +122,9 @@ public class RepGraphModelTest {
         correctResults.clear();
         correctResults.add("11111");
         correctResults.add("22222");
-        results = model.searchSubgraphNodeSet("11111", new int[]{1, 2});
+        labels.clear();
+        labels.add("node2");
+        results = model.searchSubgraphNodeSet(labels);
 
         Collections.sort(results);
         Collections.sort(correctResults);
@@ -121,7 +132,12 @@ public class RepGraphModelTest {
 
         correctResults.clear();
         correctResults.add("22222");
-        results = model.searchSubgraphNodeSet("22222", new int[]{0, 1, 2, 3});
+        labels.clear();
+        labels.add("node2");
+        labels.add("node3");
+        labels.add("node4");
+        labels.add("node5");
+        results = model.searchSubgraphNodeSet(labels);
 
         Collections.sort(results);
         Collections.sort(correctResults);
@@ -131,7 +147,10 @@ public class RepGraphModelTest {
         correctResults.add("11111");
         correctResults.add("22222");
         correctResults.add("33333");
-        results = model.searchSubgraphNodeSet("22222", new int[]{1, 2});
+        labels.clear();
+        labels.add("node3");
+        labels.add("node4");
+        results = model.searchSubgraphNodeSet(labels);
 
         Collections.sort(results);
         Collections.sort(correctResults);
@@ -140,7 +159,9 @@ public class RepGraphModelTest {
         correctResults.clear();
 
         correctResults.add("33333");
-        results = model.searchSubgraphNodeSet("33333", new int[]{1, 2, 3});
+        labels.clear();
+        labels.add("node6");
+        results = model.searchSubgraphNodeSet(labels);
 
         Collections.sort(results);
         Collections.sort(correctResults);
@@ -153,7 +174,7 @@ public class RepGraphModelTest {
     public void test_SearchSubgraphNodeSet_HandlesEmptyNodeSetArray() throws NoSuchFieldException, IllegalAccessException {
 
         RepGraphModel model = new RepGraphModel();
-
+        ArrayList<String> labels = new ArrayList<>();
         HashMap<String, graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
@@ -165,7 +186,7 @@ public class RepGraphModelTest {
         field.set(model, graphs);
 
         ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphNodeSet("11111", new int[]{});
+        ArrayList<String> results = model.searchSubgraphNodeSet(labels);
 
         Collections.sort(results);
         Collections.sort(correctResults);
@@ -177,7 +198,8 @@ public class RepGraphModelTest {
     public void test_SearchSubgraphNodeSet_HandlesIncorrectNodeData() throws NoSuchFieldException, IllegalAccessException {
 
         RepGraphModel model = new RepGraphModel();
-
+        ArrayList<String> labels = new ArrayList<>();
+        labels.add("node7");
         HashMap<String, graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
@@ -189,13 +211,70 @@ public class RepGraphModelTest {
         field.set(model, graphs);
 
         ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphNodeSet("11111", new int[]{5, 6});
+        ArrayList<String> results = model.searchSubgraphNodeSet(labels);
 
         Collections.sort(results);
         Collections.sort(correctResults);
         assertEquals("Graphs were searched for an empty set of labels and the method did not function correctly.", correctResults, results);
 
     }
+
+    @Test
+    public void test_SearchSubgraphNodeSet_HandlesDuplicateLabels() throws NoSuchFieldException, IllegalAccessException {
+
+        RepGraphModel model = new RepGraphModel();
+        ArrayList<String> labels = new ArrayList<>();
+
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g1);
+        graphs.put("22222", g2);
+        graphs.put("33333", g3);
+        graphs.put("44444", g4);
+
+        //Set field without using setter
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        ArrayList<String> correctResults = new ArrayList<>();
+        labels.add("node1");
+        labels.add("node1");
+        ArrayList<String> results = model.searchSubgraphNodeSet(labels);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched for an empty set of labels and the method did not function correctly.", correctResults, results);
+
+        correctResults.clear();
+
+        correctResults.add("44444");
+        labels.clear();
+        labels.add("node7");
+        labels.add("node7");
+        labels.add("node7");
+        labels.add("node7");
+        results = model.searchSubgraphNodeSet(labels);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+
+        correctResults.clear();
+        labels.clear();
+        labels.add("node7");
+        labels.add("node7");
+        labels.add("node7");
+        labels.add("node7");
+        labels.add("node7");
+        results = model.searchSubgraphNodeSet(labels);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+
+
+    }
+
 
     @Test
     public void test_SearchSubgraphPattern_FindsGraphsCorrectly() throws NoSuchFieldException, IllegalAccessException {

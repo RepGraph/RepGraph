@@ -1,13 +1,10 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.json.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -33,11 +30,14 @@ public class RequestHandler {
      *
      * @param name This is the name that the file will be saved under
      * @param file This is the file data.
-     * @return ArrayList<HashMap < String, String>> This is a list of hashmap objects where each hashmap object contains a graph id and graph input.
+     * @return HashMap<String, Object> This is a hashmap to return the necessary uploaded file information and a response.
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public ArrayList<HashMap<String, String>> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+    public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+        RepModel.clearGraphs();
+        HashMap<String, Object> returnobj = new HashMap<>();
+
         //List of graph ids and graph inputs in a hashmap.
         ArrayList<HashMap<String, String>> returninfo = new ArrayList<>();
 
@@ -61,21 +61,38 @@ public class RequestHandler {
             BufferedReader reader = new BufferedReader(new FileReader(serverFile));
             String currentLine;
             ObjectMapper objectMapper = new ObjectMapper();
+            boolean duplicates = false;
             while ((currentLine = reader.readLine()) != null) {
                 graph currgraph = objectMapper.readValue(currentLine, graph.class);
-                HashMap<String, String> returnGraph = new HashMap<>();
-                returnGraph.put("input", currgraph.getInput());
-                returnGraph.put("id", currgraph.getId());
-                returninfo.add(returnGraph);
-                RepModel.addGraph(currgraph);
+
+                if (!RepModel.containsKey(currgraph.getId())) {
+
+                    RepModel.addGraph(currgraph);
+
+                    HashMap<String, String> returnGraph = new HashMap<>();
+                    returnGraph.put("id", currgraph.getId());
+                    returnGraph.put("input", currgraph.getInput());
+                    returninfo.add(returnGraph);
+                } else {
+                    duplicates = true;
+                }
             }
             reader.close();
+            HashMap<String, String> response = new HashMap<>();
+            if (duplicates) {
+                returnobj.put("response", "Duplicates Found");
 
+            } else {
+                returnobj.put("response", "No Duplicates Found");
+
+            }
+
+            returnobj.put("data", returninfo);
         } catch (Exception e) {
             e.printStackTrace();
-            return returninfo;
+            return returnobj;
         }
-        return returninfo;
+        return returnobj;
     }
 
 
@@ -114,21 +131,26 @@ public class RequestHandler {
         return RepModel.getGraph(graphID);
     }
 
+    @GetMapping("/DisplaySubset")
+    @ResponseBody
+    public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID) {
+        return RepModel.displaySubset(graphID, NodeID);
+    }
+
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
      * The Request URL also requires the "graphID" and "NodeID" list Request Params to be present.
      * This method searches the model's dataset for graphs containing the specified list of node labels and
      * returns a list of graph IDs where the set of node labels have been found.
      *
-     * @param graphID This is the graph containing the nodes and their corresponding labels to be searched for
-     * @param NodeID  This is the list of node indexes
+     * @param labels list of labels to be searched for.
      * @return ArrayList<String> This is the list of graph ids of graphs that have matching node labels
      */
     @GetMapping("/SearchSubgraphNodeSet")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphNodeSet(@RequestParam String graphID, @RequestParam int[] NodeID) {
+    public ArrayList<String> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
 
-        return RepModel.searchSubgraphNodeSet(graphID, NodeID);
+        return RepModel.searchSubgraphNodeSet(labels);
     }
 
     /**
@@ -137,13 +159,12 @@ public class RequestHandler {
      * This method searches the model's dataset for graphs containing the specified subgraph pattern and
      * returns a list of graph IDs where the subgraph pattern has been found.
      *
-     * @param subgraph This is the graph object containing the subgraph information.
      * @return ArrayList<String> This is a list a graph IDs with matching subgraph patterns
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphPattern(@RequestBody graph subgraph) {
-        return RepModel.searchSubgraphPattern(subgraph);
+    public ArrayList<String> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam int[] NodeId, @RequestParam int[] EdgeIndices) {
+        return RepModel.searchSubgraphPattern(graphID, NodeId, EdgeIndices);
     }
 
     /**
@@ -157,9 +178,8 @@ public class RequestHandler {
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public void CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
-        RepModel.compareTwoGraphs(graphID1, graphID2);
-
+    public String CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
+        return RepModel.compareTwoGraphs(graphID1, graphID2);
     }
 
     /**
@@ -174,8 +194,8 @@ public class RequestHandler {
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public void TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam boolean connected) {
-        RepModel.runFormalTests(graphID, planar, longestpath, connected);
+    public HashMap<String, Object> TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam(required = false) boolean directed, @RequestParam boolean connected) {
+        return RepModel.runFormalTests(graphID, planar, longestpath, directed, connected);
 
     }
 
