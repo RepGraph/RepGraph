@@ -112,36 +112,41 @@ public class RepGraphModel {
      * @param graphID2 Graph ID of the second graph.
      * @return String The differences and similarities of the two graphs.
      */
-    public String compareTwoGraphs(String graphID1, String graphID2){
+    public HashMap<String, Object> compareTwoGraphs(String graphID1, String graphID2) {
 
         ArrayList<node> nodes1 = graphs.get(graphID1).getNodes();
-        ArrayList<node> nodes2 = graphs.get(graphID2).getNodes();
+        ArrayList<node> nodes2 = new ArrayList<>(graphs.get(graphID2).getNodes());
         ArrayList<node> similarNodes = new ArrayList<node>();
 
-        for (int i = 0; i<nodes1.size(); i++){
-            for (int j = 0; j<nodes2.size(); j++){
-                if (nodes1.get(i).getLabel().equals(nodes2.get(j).getLabel())){
-                    similarNodes.add(nodes1.get(i));
+        for (node n1 : nodes1) {
+            for (node n2 : nodes2) {
+                if (n1.getLabel().equals(n2.getLabel())) {
+                    similarNodes.add(n1);
+                    nodes2.remove(n2);
                     break;
                 }
             }
         }
 
         ArrayList<edge> edges1 = graphs.get(graphID1).getEdges();
-        ArrayList<edge> edges2 = graphs.get(graphID2).getEdges();
+        ArrayList<edge> edges2 = new ArrayList<>(graphs.get(graphID2).getEdges());
         ArrayList<edge> similarEdges = new ArrayList<>();
 
-        for (int i = 0; i<edges1.size(); i++){
-            for (int j = 0; j<edges2.size(); j++){
-                if ((edges1.get(i).getLabel().equals(edges2.get(j).getLabel())) && (edges1.get(i).getPostLabel().equals(edges2.get(j).getPostLabel()))){
-                    similarEdges.add(edges1.get(i));
+        for (edge e1 : edges1) {
+            for (edge e2 : edges2) {
+                if ((e1.getLabel().equals(e2.getLabel())) && (e1.getPostLabel().equals(e2.getPostLabel()))) {
+                    similarEdges.add(e1);
+                    edges2.remove(e2);
                     break;
                 }
             }
         }
 
+        HashMap<String, Object> returnObj = new HashMap<>();
+        returnObj.put("Nodes", similarNodes);
+        returnObj.put("Edges", similarEdges);
 
-        return null;
+        return returnObj;
     }
 
     /**
