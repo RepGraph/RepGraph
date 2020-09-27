@@ -506,4 +506,25 @@ public class RepGraphModelTest {
         assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges.",expected,model.compareTwoGraphs("1","2"));
     }
 
+    @Test
+    public void test_compareTwoGraphs_NoNodesOrEdgesInGraph(){
+
+
+        graph g1 = new graph("1", "testsource1", "testInput1", new ArrayList<node>(), new ArrayList<token>(), new ArrayList<edge>(), new ArrayList<Integer>());
+
+        graph g2 = new graph("2", "testsource2", "testInput2", new ArrayList<node>(), new ArrayList<token>(), new ArrayList<edge>(), new ArrayList<Integer>());
+        RepGraphModel model = new RepGraphModel();
+        model.addGraph(g1);
+        model.addGraph(g2);
+
+
+        ArrayList<node> similarNodes = new ArrayList<>();
+        ArrayList<edge> similarEdges = new ArrayList<>();
+        HashMap<String,Object> expected = new HashMap<>();
+        expected.put("Nodes", similarNodes);
+        expected.put("Edges", similarEdges);
+
+        assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges in an empty graph.",expected,model.compareTwoGraphs("1","2"));
+    }
+
 }
