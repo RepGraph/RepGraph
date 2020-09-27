@@ -178,7 +178,7 @@ public class RequestHandler {
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public String CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
+    public HashMap<String, Object> CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
         return RepModel.compareTwoGraphs(graphID1, graphID2);
     }
 
