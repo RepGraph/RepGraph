@@ -507,7 +507,7 @@ public class RepGraphModelTest {
     }
 
     @Test
-    public void test_compareTwoGraphs_NoNodesOrEdgesInGraph(){
+    public void test_compareTwoGraphs_EmptyGraphs(){
 
 
         graph g1 = new graph("1", "testsource1", "testInput1", new ArrayList<node>(), new ArrayList<token>(), new ArrayList<edge>(), new ArrayList<Integer>());
@@ -525,6 +525,62 @@ public class RepGraphModelTest {
         expected.put("Edges", similarEdges);
 
         assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges in an empty graph.",expected,model.compareTwoGraphs("1","2"));
+    }
+
+    @Test
+    public void test_compareTwoGraphs_NoSimilarEdgesOrNodes(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g1 = new graph("1", "testsource1", "testInput1", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        ArrayList<node> nodes2 = new ArrayList<>();
+        ArrayList<edge> edges2 = new ArrayList<>();
+
+        node node3 = new node(0, "node3", new ArrayList<>());
+        node node4 = new node(1, "node4", new ArrayList<>());
+        node node5 = new node(2, "node5", new ArrayList<>());
+        nodes2.add(node3);
+        nodes2.add(node4);
+        nodes2.add(node5);
+
+        edge edge3 = new edge(2, 3, "testlabel3", "testpostlabel3");
+        edge edge4 = new edge(0, 2, "testlabel4", "testpostlabel4");
+        edge edge5 = new edge(2, 3, "testlabel5", "testpostlabel5");
+
+        edges2.add(edge3);
+        edges2.add(edge4);
+        edges2.add(edge5);
+
+        graph g2 = new graph("2", "testsource2", "testInput2", nodes2, new ArrayList<token>(), edges2, new ArrayList<Integer>());
+        RepGraphModel model = new RepGraphModel();
+        model.addGraph(g1);
+        model.addGraph(g2);
+
+
+        ArrayList<node> similarNodes = new ArrayList<>();
+        ArrayList<edge> similarEdges = new ArrayList<>();
+
+        HashMap<String,Object> expected = new HashMap<>();
+        expected.put("Nodes", similarNodes);
+        expected.put("Edges", similarEdges);
+
+        assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges in two graphs that do not have any similarities.",expected,model.compareTwoGraphs("1","2"));
     }
 
 }
