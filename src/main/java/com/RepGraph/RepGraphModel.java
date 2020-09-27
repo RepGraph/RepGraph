@@ -275,7 +275,7 @@ public class RepGraphModel {
             returnObj.put("Planar", false);
         }
         if (longestpath) {
-            returnObj.put("LongestPath", graphs.get(graphID).findLongest());
+            returnObj.put("LongestPath", graphs.get(graphID).findLongest(directed));
         }
         if (connected) {
             returnObj.put("Connected", false);
