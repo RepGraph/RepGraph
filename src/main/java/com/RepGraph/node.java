@@ -25,25 +25,25 @@ public class node {
     private ArrayList<anchors> anchors;
 
     /**
-     * An array list of directed neighbouring nodes.
+     * An array list of neighbouring nodes.
      */
-    private ArrayList<node> directedNeighbours;
-
-    /**
-     * An array list of undirected neighbouring nodes.
-     */
-    private ArrayList<node> undirectedNeighbours;
+    private ArrayList<node> nodeNeighbours;
 
     /**
      * An array list of edges to the neighbouring nodes.
      */
     private ArrayList<edge> edgeNeighbours;
+
+    /**
+     * When calculating longest path, prevNode will be the previous node in the path.
+     */
+    private int prevNode;
+
     /**
      * Default constructor for the node class.
      */
     public node() {
-        this.directedNeighbours = new ArrayList<>();
-        this.undirectedNeighbours = new ArrayList<>();
+        this.nodeNeighbours = new ArrayList<>();
         this.edgeNeighbours = new ArrayList<>();
     }
 
@@ -57,8 +57,7 @@ public class node {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
-        this.undirectedNeighbours = new ArrayList<>();
-        this.directedNeighbours = new ArrayList<>();
+        this.nodeNeighbours = new ArrayList<>();
         this.edgeNeighbours = new ArrayList<>();
     }
 
@@ -111,35 +110,19 @@ public class node {
     }
 
     /**
-     * Adds a directed neighbouring node.
-     * @param neighbour A direct neighbouring node.
+     * Adds a neighbouring node.
+     * @param neighbour A neighbouring node.
      */
-    public void addDirectedNeighbour(node neighbour) {
-        directedNeighbours.add(neighbour);
+    public void addNeighbour(node neighbour) {
+        nodeNeighbours.add(neighbour);
     }
 
     /**
-     * Adds an undirected neighbouring node.
-     * @param neighbour An undirected neighbouring node.
+     * Getter method for a node's neighbours.
+     * @return ArrayList The node's neighbours.
      */
-    public void addUndirectedNeighbour(node neighbour) {
-        undirectedNeighbours.add(neighbour);
-    }
-
-    /**
-     * Getter method for a node's directed neighbours.
-     * @return ArrayList The node's direct neighbours.
-     */
-    public ArrayList<node> getDirectedNeighbours() {
-        return directedNeighbours;
-    }
-
-    /**
-     * Getter method for a node's undirected neighbours.
-     * @return ArrayList The node's undirected neighbours.
-     */
-    public ArrayList<node> getUndirectedNeighbours() {
-        return undirectedNeighbours;
+    public ArrayList<node> getNodeNeighbours() {
+        return nodeNeighbours;
     }
 
 
