@@ -487,6 +487,11 @@ public class graph {
         return paths;
     }
 
+    /**
+     * Method to check if a graph is planar
+     *
+     * @return boolean returns true if the graph is planar
+     */
     public boolean isPlanar() {
         ArrayList<node> ordered = new ArrayList<>(nodes);
 
@@ -526,7 +531,6 @@ public class graph {
         }
 
 
-
         for (edge e : updated) {
             for (edge other : updated) {
                 if (Math.min(e.getSource(), e.getTarget()) < Math.min(other.getSource(), other.getTarget()) && Math.min(other.getSource(), other.getTarget()) < Math.max(e.getSource(), e.getTarget()) && Math.max(e.getSource(), e.getTarget()) < Math.max(other.getSource(), other.getTarget())) {
@@ -538,6 +542,12 @@ public class graph {
         return true;
     }
 
+    /**
+     * Creates a list of tokens in a range starting at "from" and ending at "end"
+     * @param from The start of the range of tokens
+     * @param end The End of the range of tokens
+     * @return ArrayList<token> Returns a list of token objects
+     */
     public ArrayList<token> getTokenSpan(int from, int end) {
         ArrayList<token> returnTokens = new ArrayList<>();
         for (int i = from; i < end + 1; i++) {
@@ -546,6 +556,11 @@ public class graph {
         return returnTokens;
     }
 
+    /**
+     * gets the form of tokens and turns them into a string
+     * @param tokenIn List of tokens to become a string
+     * @return String This is the string of all token's form.
+     */
     public String getTokenInput(ArrayList<token> tokenIn) {
         String output = "";
 
