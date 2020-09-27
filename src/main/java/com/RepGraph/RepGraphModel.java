@@ -42,10 +42,19 @@ public class RepGraphModel {
 
     }
 
+    /**
+     * Checks to see if hashmap of graphs contains a certain ID
+     *
+     * @param graphID This is the key value to be checked
+     * @return boolean This is true if the hashmap of graphs contains the graphID
+     */
     public boolean containsKey(String graphID) {
         return graphs.containsKey(graphID);
     }
 
+    /**
+     * Clears all graphs in the hashmap of graphs
+     */
     public void clearGraphs() {
         graphs.clear();
     }
@@ -107,6 +116,13 @@ public class RepGraphModel {
 
     }
 
+    /**
+     * Overloaded method to search for subgraph pattern using different parameters
+     * @param graphID ID of graph that contains the selected pattern
+     * @param NodeId Int array of node IDs of the pattern selected
+     * @param EdgeIndices int array of the edge indices of the pattern selected
+     * @return ArrayList Returns an arraylist of strings containing the graph IDs where the pattern was found
+     */
     public ArrayList<String> searchSubgraphPattern(String graphID, int[] NodeId, int[] EdgeIndices) {
         graph parent = graphs.get(graphID);
         ArrayList<node> subnodes = new ArrayList<>();
