@@ -453,11 +453,11 @@ public class GraphTest {
         g.setNodeNeighbours();
 
         //Get fields without using getter
-        final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("edgeNeighbours");
+        final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField0.setAccessible(true);
-        final Field edgeField1 = nodes.get(1).getClass().getDeclaredField("edgeNeighbours");
+        final Field edgeField1 = nodes.get(1).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField1.setAccessible(true);
-        final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("edgeNeighbours");
+        final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField2.setAccessible(true);
 
 
@@ -485,18 +485,18 @@ public class GraphTest {
         g.setNodeNeighbours();
 
         //Get fields without using getter
-        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("edgeNeighbours");
+        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
         nodeField0.setAccessible(true);
-        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("edgeNeighbours");
+        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("directedEdgeNeighbours");
         nodeField1.setAccessible(true);
-        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("edgeNeighbours");
+        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
         nodeField2.setAccessible(true);
 
-        final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("edgeNeighbours");
+        final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField0.setAccessible(true);
-        final Field edgeField1 = nodes.get(1).getClass().getDeclaredField("edgeNeighbours");
+        final Field edgeField1 = nodes.get(1).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField1.setAccessible(true);
-        final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("edgeNeighbours");
+        final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField2.setAccessible(true);
 
 
@@ -545,7 +545,7 @@ public class GraphTest {
         final Field undirectField = node0.getClass().getDeclaredField("undirectedNeighbours");
         undirectField.setAccessible(true);
         undirectField.set(node0, undirectedNeighbours);
-        final Field edgeField = node0.getClass().getDeclaredField("edgeNeighbours");
+        final Field edgeField = node0.getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField.setAccessible(true);
         edgeField.set(node0, edgeNeighbours);
 

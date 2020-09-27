@@ -293,7 +293,8 @@ public class graph {
             sourceNode.addDirectedNeighbour(nodes.get(target));
             nodes.get(target).addUndirectedNeighbour(sourceNode);
 
-            sourceNode.addEdgeNeighbour(currentEdge);
+            sourceNode.addDirectedEdgeNeighbour(currentEdge);
+            nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
 
         }
     }
@@ -535,6 +536,24 @@ public class graph {
             }
         }
         return true;
+    }
+
+    public ArrayList<token> getTokenSpan(int from, int end) {
+        ArrayList<token> returnTokens = new ArrayList<>();
+        for (int i = from; i < end + 1; i++) {
+            returnTokens.add(tokens.get(i));
+        }
+        return returnTokens;
+    }
+
+    public String getTokenInput(ArrayList<token> tokenIn) {
+        String output = "";
+
+        for (token t : tokenIn) {
+            output += t.getForm() + " ";
+
+        }
+        return output;
     }
 
     /**

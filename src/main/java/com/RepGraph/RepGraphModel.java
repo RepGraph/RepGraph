@@ -57,7 +57,54 @@ public class RepGraphModel {
      * @return graph The subset of the graph.
      */
     public graph displaySubset(String graphID, int headNodeID) {
-        return new graph();
+
+        graph subset = new graph();
+        ArrayList<node> adjacentNodes = new ArrayList<>();
+        ArrayList<edge> adjacentEdges = new ArrayList<>();
+
+        graph parent = getGraph(graphID);
+        parent.setNodeNeighbours();
+
+        ArrayList<token> SubsetTokens = new ArrayList<>();
+
+        //DONT NEED FOR LOOP IF NODE ID IS ALWAYS THE SAME AS INDEX
+        for (node n : parent.getNodes()) {
+
+            if (n.getId() == headNodeID) {
+                adjacentNodes.add(n);
+                int minFrom = n.getAnchors().get(0).getFrom();
+                int maxEnd = n.getAnchors().get(0).getEnd();
+                ArrayList<node> nodeNeighbours = new ArrayList<>(n.getDirectedNeighbours());
+                ArrayList<edge> edgeNeighbours = new ArrayList<>(n.getDirectedEdgeNeighbours());
+
+                nodeNeighbours.addAll(n.getUndirectedNeighbours());
+                edgeNeighbours.addAll(n.getUndirectedEdgeNeighbours());
+                for (node nn : nodeNeighbours) {
+                    adjacentNodes.add(nn);
+                    if (nn.getAnchors().get(0).getFrom() < minFrom) {
+                        minFrom = nn.getAnchors().get(0).getFrom();
+                    }
+                    if (nn.getAnchors().get(0).getEnd() > maxEnd) {
+                        maxEnd = nn.getAnchors().get(0).getEnd();
+                    }
+
+
+                }
+                for (edge ne : edgeNeighbours) {
+                    adjacentEdges.add(ne);
+                }
+                SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
+            }
+        }
+        subset.setId(parent.getId());
+        subset.setSource(parent.getSource());
+        subset.setNodes(adjacentNodes);
+        subset.setEdges(adjacentEdges);
+        subset.setTokens(SubsetTokens);
+        subset.setInput(parent.getTokenInput(SubsetTokens));
+
+        return subset;
+
     }
 
     public ArrayList<String> searchSubgraphPattern(String graphID, int[] NodeId, int[] EdgeIndices) {
@@ -272,10 +319,10 @@ public class RepGraphModel {
     public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestpath, boolean directed, boolean connected) {
         HashMap<String, Object> returnObj = new HashMap<>();
         if (planar) {
-            returnObj.put("Planar", false);
+            returnObj.put("Planar", graphs.get(graphID).isPlanar());
         }
         if (longestpath) {
-            returnObj.put("LongestPath", graphs.get(graphID).findLongest());
+            returnObj.put("LongestPath", graphs.get(graphID).findLongest(directed));
         }
         if (connected) {
             returnObj.put("Connected", false);
