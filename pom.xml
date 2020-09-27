@@ -5,7 +5,7 @@
 
 	<groupId>com.RepGraph</groupId>
 	<artifactId>RepGraph</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+    <version>1</version>
 	<packaging>jar</packaging>
 
 	<name>RepGraph</name>
@@ -36,12 +36,8 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20180130</version>
-		</dependency>
-	</dependencies>
+
+    </dependencies>
 
 	<build>
 		<plugins>

@@ -1,11 +1,12 @@
 /**
  * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
- * @since 29/08/2020
  *
+ * @since 29/08/2020
  */
 
 package com.RepGraph;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,7 +29,7 @@ public class RepGraphModel {
      * @param graphID A graph's ID.
      * @return graph The requested graph.
      */
-    public graph getGraph(String graphID){
+    public graph getGraph(String graphID) {
         return graphs.get(graphID);
     }
 
@@ -41,14 +42,40 @@ public class RepGraphModel {
 
     }
 
+    public boolean containsKey(String graphID) {
+        return graphs.containsKey(graphID);
+    }
+
+    public void clearGraphs() {
+        graphs.clear();
+    }
+
     /**
      * Uses a graph ID and the number of a node in the graph and returns a subset of the graph.
      * @param graphID The graph ID.
      * @param headNodeID The graph's node which will be the head node of the subset.
      * @return graph The subset of the graph.
      */
-    public graph displaySubset(String graphID, String headNodeID){
-        return null;
+    public graph displaySubset(String graphID, int headNodeID) {
+        return new graph();
+    }
+
+    public ArrayList<String> searchSubgraphPattern(String graphID, int[] NodeId, int[] EdgeIndices) {
+        graph parent = graphs.get(graphID);
+        ArrayList<node> subnodes = new ArrayList<>();
+        ArrayList<edge> subedges = new ArrayList<>();
+        for (int n : NodeId) {
+            subnodes.add(parent.getNodes().get(n));
+        }
+        for (int n : EdgeIndices) {
+            subedges.add(parent.getEdges().get(n));
+        }
+        graph subgraph = new graph();
+        subgraph.setNodes(subnodes);
+        subgraph.setEdges(subedges);
+
+        return searchSubgraphPattern(subgraph);
+
     }
 
     /**
@@ -130,36 +157,19 @@ public class RepGraphModel {
     }
 
 
-
-
     /**
      * Uses a graph ID and a set of Node IDS which will be used to search for which graphs have the requested node labels present .
      *
      * @return ArrayList<String> An arraylist of strings that contain the graph IDs who have matching node labels.
      */
-    public ArrayList<String> searchSubgraphNodeSet(String graphID, int[] NodeID) {
+    public ArrayList<String> searchSubgraphNodeSet(ArrayList<String> labels) {
 
 
         ArrayList<String> FoundGraphs = new ArrayList<String>();
-        if (NodeID.length == 0) {
+        if (labels.size() == 0) {
             return FoundGraphs;
         }
 
-        //Following code is only if nodeIDs are given - we could remove if method is given node labels directly
-        //***********************************************************
-        //This following code creates a list and populates it with the labels of the nodes specified to be searched for
-        ArrayList<String> labels = new ArrayList<String>();
-        for (int i = 0; i < NodeID.length; i++) {
-            String currLabel;
-            try {
-                currLabel = graphs.get(graphID).getNodes().get(NodeID[i]).getLabel();
-            } catch (IndexOutOfBoundsException e) {
-                return FoundGraphs;
-            }
-            if (!labels.contains(currLabel)) {
-                labels.add(currLabel);
-            }
-        }
 
         //***********************************************************
         //boolean array that checks if certain nodes are found
@@ -168,16 +178,18 @@ public class RepGraphModel {
         boolean[] checks = new boolean[labels.size()];
 
         for (graph g : graphs.values()) {
-            for (node n : g.getNodes()) {
-                //could use indexOf to get rid of forloop
-                for (int i = 0; i < labels.size(); i++) {
-
+            ArrayList<node> tempNodes = new ArrayList<>(g.getNodes());
+            for (int i = 0; i < labels.size(); i++) {
+                for (node n : tempNodes) {
                     if (n.getLabel().equals(labels.get(i))) {
-
                         checks[i] = true;
+                        //removes node so that it wont be checked again in case two or more of the same labels are required in the set
+                        tempNodes.remove(n);
+                        break;
                     }
                 }
             }
+
             //checks if all node labels have been found
             if (areAllTrue(checks)) {
 
@@ -205,26 +217,70 @@ public class RepGraphModel {
 
         return true;
     }
+
     /**
      * Compares two graphs and searches for similarities and differences.
      * @param graphID1 Graph ID of the first graph.
      * @param graphID2 Graph ID of the second graph.
      * @return String The differences and similarities of the two graphs.
      */
-    public String compareTwoGraphs(String graphID1, String graphID2){
-        return null;
+    public HashMap<String, Object> compareTwoGraphs(String graphID1, String graphID2) {
+
+        ArrayList<node> nodes1 = graphs.get(graphID1).getNodes();
+        ArrayList<node> nodes2 = new ArrayList<>(graphs.get(graphID2).getNodes());
+        ArrayList<node> similarNodes = new ArrayList<node>();
+
+        for (node n1 : nodes1) {
+            for (node n2 : nodes2) {
+                if (n1.getLabel().equals(n2.getLabel())) {
+                    similarNodes.add(n1);
+                    nodes2.remove(n2);
+                    break;
+                }
+            }
+        }
+
+        ArrayList<edge> edges1 = graphs.get(graphID1).getEdges();
+        ArrayList<edge> edges2 = new ArrayList<>(graphs.get(graphID2).getEdges());
+        ArrayList<edge> similarEdges = new ArrayList<>();
+
+        for (edge e1 : edges1) {
+            for (edge e2 : edges2) {
+                if ((e1.getLabel().equals(e2.getLabel())) && (e1.getPostLabel().equals(e2.getPostLabel()))) {
+                    similarEdges.add(e1);
+                    edges2.remove(e2);
+                    break;
+                }
+            }
+        }
+
+        HashMap<String, Object> returnObj = new HashMap<>();
+        returnObj.put("Nodes", similarNodes);
+        returnObj.put("Edges", similarEdges);
+
+        return returnObj;
     }
 
     /**
      * Runs formal tests on a graph.
      * @param graphID The graph ID which the tests will be run.
      * @param planar Boolean to decide if to test for if the graph is planar.
-     * @param directed Boolean to decide if to find the longest directed or undirected path.
+     * @param longestpath Boolean to decide if to find the longest directed or undirected path.
      * @param connected Boolean to decide if to test for if the graph is connected.
      * @return String Results of the tests.
      */
-    public String runFormalTests(String graphID, boolean planar, boolean directed, boolean connected){
-        return null;
+    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestpath, boolean directed, boolean connected) {
+        HashMap<String, Object> returnObj = new HashMap<>();
+        if (planar) {
+            returnObj.put("Planar", false);
+        }
+        if (longestpath) {
+            returnObj.put("LongestPath", graphs.get(graphID).findLongest());
+        }
+        if (connected) {
+            returnObj.put("Connected", false);
+        }
+        return returnObj;
     }
 
 
