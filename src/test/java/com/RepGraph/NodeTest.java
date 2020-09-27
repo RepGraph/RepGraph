@@ -206,7 +206,7 @@ public class NodeTest {
     }
 
     @Test
-    public void test_addEdgeNeighbour_AddEdgeCorectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_addDirectedEdgeNeighbour_AddEdgeCorectly() throws NoSuchFieldException, IllegalAccessException {
         final node n = new node();
 
         ArrayList<anchors> anchs = new ArrayList<>();
@@ -219,18 +219,18 @@ public class NodeTest {
         correctResult.add(e1);
         correctResult.add(e2);
 
-        n.addEdgeNeighbour(e1);
-        n.addEdgeNeighbour(e2);
+        n.addDirectedEdgeNeighbour(e1);
+        n.addDirectedEdgeNeighbour(e2);
 
         //Get field without using getter
-        final Field field = n.getClass().getDeclaredField("edgeNeighbours");
+        final Field field = n.getClass().getDeclaredField("directedEdgeNeighbours");
         field.setAccessible(true);
 
         assertEquals("edgeNeighbours was not added to correctly.", field.get(n), correctResult);
     }
 
     @Test
-    public void test_getEdgeNeighbours_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getDirectedEdgeNeighbours_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final node n = new node();
 
@@ -245,11 +245,11 @@ public class NodeTest {
         correctResult.add(e2);
 
         //Get field without using getter
-        final Field field = n.getClass().getDeclaredField("edgeNeighbours");
+        final Field field = n.getClass().getDeclaredField("directedEdgeNeighbours");
         field.setAccessible(true);
         field.set(n, correctResult);
 
-        assertEquals("edgeNeighbours value was not retrieved correctly.", n.getEdgeNeighbours(), correctResult);
+        assertEquals("edgeNeighbours value was not retrieved correctly.", n.getDirectedEdgeNeighbours(), correctResult);
     }
 
     @Test
