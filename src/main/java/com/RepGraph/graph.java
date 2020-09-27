@@ -47,9 +47,6 @@ public class graph {
     @JsonProperty("tops")
     private ArrayList<Integer> tops;
 
-    //Stack used for topological sorting of a graph.
-    private Stack<Integer> stack;
-
     /**
      * Default constructor for the graph class.
      */
@@ -73,7 +70,6 @@ public class graph {
         this.tokens = tokens;
         this.edges= edges;
         this.tops = tops;
-        this.stack = new Stack<Integer>();
     }
 
     /**
@@ -311,7 +307,7 @@ public class graph {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
-        //Check if the start node has any nerighbours
+        //Check if the start node has any neighbours
         if (nodes.get(startNode).getDirectedNeighbours().size()==0){
             return paths;
         }
@@ -326,9 +322,10 @@ public class graph {
         }
 
         //Topologically sort every unvisited node.
+        Stack<Integer> stack = new Stack<Integer>();
         for (int i =0; i<nodes.size();i++){
             if (!visisted[i]){
-                topologicalSort(i, visisted);
+                topologicalSort(i, visisted, stack);
             }
         }
 
@@ -388,17 +385,18 @@ public class graph {
      * @param nodeID The current node.
      * @param visited A list of booleans, representing whether a node has already been visited or not.
      */
-    public void topologicalSort(int nodeID, boolean visited[]){
+    public Stack<Integer> topologicalSort(int nodeID, boolean visited[], Stack<Integer> stack){
         visited[nodeID] = true;
 
         //Iterate through every neighbouring node of the given node.
         for (node neighbourNode : nodes.get(nodeID).getDirectedNeighbours()){
             if (!visited[neighbourNode.getId()]){
-                topologicalSort(neighbourNode.getId(),visited);
+                topologicalSort(neighbourNode.getId(),visited, stack);
             }
         }
 
         stack.push(nodeID);
+        return stack;
     }
 
     /**
