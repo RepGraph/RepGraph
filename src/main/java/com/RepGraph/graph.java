@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class graph {
@@ -356,6 +358,57 @@ public class graph {
 
         return paths;
 
+    }
+
+    public boolean isPlanar() {
+        ArrayList<node> ordered = new ArrayList<>(nodes);
+
+        Collections.sort(ordered, new Comparator<node>() {
+            @Override
+            public int compare(node o1, node o2) {
+                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+                    return -1;
+                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+                    return 0;
+                }
+                return 1;
+            }
+        });
+
+        ArrayList<edge> updated = new ArrayList<>();
+
+        int source, target;
+
+        for (edge e : edges) {
+
+            source = e.getSource();
+            target = e.getTarget();
+
+            edge newEdge = new edge();
+            for (int i = 0; i < ordered.size(); i++) {
+                node n = ordered.get(i);
+                if (n.getId() == source) {
+                    newEdge.setSource(i);
+                }
+                if (n.getId() == target) {
+                    newEdge.setTarget(i);
+                }
+            }
+            updated.add(newEdge);
+
+        }
+
+
+
+        for (edge e : updated) {
+            for (edge other : updated) {
+                if (Math.min(e.getSource(), e.getTarget()) < Math.min(other.getSource(), other.getTarget()) && Math.min(other.getSource(), other.getTarget()) < Math.max(e.getSource(), e.getTarget()) && Math.max(e.getSource(), e.getTarget()) < Math.max(other.getSource(), other.getTarget())) {
+                    return false;
+                }
+
+            }
+        }
+        return true;
     }
 
     /**

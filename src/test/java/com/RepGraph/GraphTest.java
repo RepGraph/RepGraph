@@ -3,6 +3,7 @@ package com.RepGraph;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.constraints.AssertTrue;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -573,6 +574,7 @@ public class GraphTest {
 
     }
 
+
     @Test
     public void test_Dijkstra_SingleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
@@ -715,253 +717,117 @@ public class GraphTest {
     }
 
     @Test
-    public void test_Dijkstra_MultipleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
-
-        //Creating the nodes and edges for the graph
+    public void test_isPlanar_IdentifiesPlanarGraph() {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
 
-        node node0 = new node(0, "node0", new ArrayList<>());
-        node node1 = new node(1, "node1", new ArrayList<>());
-        node node2 = new node(2, "node2", new ArrayList<>());
-        node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
 
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edge edge3 =new edge(3, 0, "testlabel2", "testpostlabel2");
-        edges.add(edge0);
-        edges.add(edge1);
-        edges.add(edge2);
-        edges.add(edge3);
+        ArrayList<anchors> anch1 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+        nodes.add(new node(0, "node" + (0 + 1), anch1));
 
-        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+        ArrayList<anchors> anch2 = new ArrayList<anchors>();
+        anch2.add(new anchors(1, 1));
+        nodes.add(new node(1, "node" + (1 + 1), anch2));
 
-        //Creating the array of node neighbours for the nodes in the graph.
-        ArrayList<node> nodeNeighbours0 = new ArrayList<>();
-        ArrayList<node> nodeNeighbours1 = new ArrayList<>();
-        ArrayList<node> nodeNeighbours2 = new ArrayList<>();
-        ArrayList<node> nodeNeighbours3 = new ArrayList<>();
+        ArrayList<anchors> anch3 = new ArrayList<anchors>();
+        anch3.add(new anchors(2, 2));
+        nodes.add(new node(2, "node" + (2 + 1), anch3));
 
-        nodeNeighbours0.add(node1);
-        nodeNeighbours0.add(node2);
-        nodeNeighbours2.add(node3);
-        nodeNeighbours3.add(node0);
+        ArrayList<anchors> anch4 = new ArrayList<anchors>();
+        anch4.add(new anchors(3, 3));
+        nodes.add(new node(3, "node" + (3 + 1), anch4));
 
-        //Setting node neighbours without using setNodeNeighbours method.
-        final Field nodeField0 = node0.getClass().getDeclaredField("nodeNeighbours");
-        nodeField0.setAccessible(true);
-        nodeField0.set(node0, nodeNeighbours0);
-        final Field nodeField1 = node1.getClass().getDeclaredField("nodeNeighbours");
-        nodeField1.setAccessible(true);
-        nodeField1.set(node1, nodeNeighbours1);
-        final Field nodeField2 = node2.getClass().getDeclaredField("nodeNeighbours");
-        nodeField2.setAccessible(true);
-        nodeField2.set(node2, nodeNeighbours2);
-        final Field nodeField3 = node3.getClass().getDeclaredField("nodeNeighbours");
-        nodeField3.setAccessible(true);
-        nodeField3.set(node3, nodeNeighbours3);
+        ArrayList<anchors> anch5 = new ArrayList<anchors>();
+        anch5.add(new anchors(4, 4));
+        nodes.add(new node(4, "node" + (4 + 1), anch5));
 
-        //Expected results for longest path for each node as the start node.
-        ArrayList<ArrayList<Integer>> correctResult2 = new ArrayList<>();
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
 
-        //Cyclic path
-        correctResult2.add(new ArrayList<Integer>());
-        correctResult2.get(0).add(1);
-        correctResult2.get(0).add(0);
-        correctResult2.get(0).add(3);
-        correctResult2.get(0).add(2);
-        correctResult2.add(new ArrayList<Integer>());
-        correctResult2.get(1).add(2);
-        correctResult2.get(1).add(0);
-        correctResult2.get(1).add(3);
-        correctResult2.get(1).add(2);
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        assertTrue("Dijkstra's longest path algorithm does not correctly find multiple longest paths from a start node in a cyclic graph.", g.Dijkstra(2).equals(correctResult2));
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+        edges.clear();
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 2, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 3, "testlabel2", "testpostlabel2"));
+        edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+        edges.clear();
+        edges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
+
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+        edges.clear();
+        edges.add(new edge(0, 4, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 4, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
+        edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
+        edges.clear();
+        edges.add(new edge(4, 0, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 0, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 0, "testlabel2", "testpostlabel2"));
+        edges.add(new edge(3, 0, "testlabel2", "testpostlabel2"));
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+
 
     }
 
     @Test
-    public void test_findLongest_SingleLongestPath() throws NoSuchFieldException, IllegalAccessException{
-
-        //Creating the nodes and edges for the graph
+    public void test_isPlanar_HandlesNoEdgesInGraph() {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
-
-        node node0 = new node(0, "node0", new ArrayList<>());
-        node node1 = new node(1, "node1", new ArrayList<>());
-        node node2 = new node(2, "node2", new ArrayList<>());
-        node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-
-        edge edge0 =new edge(1, 0, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edges.add(edge0);
-        edges.add(edge1);
-        edges.add(edge2);
-
-        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+        ArrayList<token> tokens = new ArrayList<>();
 
 
+        ArrayList<anchors> anch1 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+        nodes.add(new node(0, "node" + (0 + 1), anch1));
 
-        //Expected result for longest path.
-        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(0).add(1);
-        correctResult.get(0).add(2);
-        correctResult.get(0).add(3);
+        ArrayList<anchors> anch2 = new ArrayList<anchors>();
+        anch2.add(new anchors(1, 1));
+        nodes.add(new node(1, "node" + (1 + 1), anch2));
 
-        assertTrue("findLongest path algorithm does not correctly find a single longest path in a graph.", g.findLongest().equals(correctResult));
+        ArrayList<anchors> anch3 = new ArrayList<anchors>();
+        anch3.add(new anchors(2, 2));
+        nodes.add(new node(2, "node" + (2 + 1), anch3));
+
+        ArrayList<anchors> anch4 = new ArrayList<anchors>();
+        anch4.add(new anchors(3, 3));
+        nodes.add(new node(3, "node" + (3 + 1), anch4));
+
+        ArrayList<anchors> anch5 = new ArrayList<anchors>();
+        anch5.add(new anchors(4, 4));
+        nodes.add(new node(4, "node" + (4 + 1), anch5));
+
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
 
     }
 
     @Test
-    public void test_findLongest_MultipleLongestPathsFromSingleStartNode() throws NoSuchFieldException, IllegalAccessException {
-        //Creating the nodes and edges for the graph
+    public void test_isPlanar_HandlesNoNodesInGraph() {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
 
-        node node0 = new node(0, "node0", new ArrayList<>());
-        node node1 = new node(1, "node1", new ArrayList<>());
-        node node2 = new node(2, "node2", new ArrayList<>());
-        node node3 = new node(3, "node3", new ArrayList<>());
-        node node4 = new node(4, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        edge edge0 =new edge(1, 0, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edge edge3 =new edge(0, 4, "testlabel3", "testpostlabel3");
-        edges.add(edge0);
-        edges.add(edge1);
-        edges.add(edge2);
-        edges.add(edge3);
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
 
-        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
-
-
-        //Expected result for longest path.
-        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(0).add(1);
-        correctResult.get(0).add(2);
-        correctResult.get(0).add(3);
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(1).add(1);
-        correctResult.get(1).add(0);
-        correctResult.get(1).add(4);
-
-        assertTrue("findLongest path algorithm does not correctly find multiple longest paths from a single node in a graph.", g.findLongest().equals(correctResult));
     }
-
-    @Test
-    public void test_findLongest_MultipleLongestPathsFromDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
-        //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
-        ArrayList<edge> edges = new ArrayList<>();
-
-        node node0 = new node(0, "node0", new ArrayList<>());
-        node node1 = new node(1, "node1", new ArrayList<>());
-        node node2 = new node(2, "node2", new ArrayList<>());
-        node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-
-        edge edge0 =new edge(0, 2, "testlabel", "testpostlabel");
-        edge edge1 =new edge(1, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edges.add(edge0);
-        edges.add(edge1);
-        edges.add(edge2);
-
-        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
-
-
-        //Expected result for longest path.
-        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(0).add(0);
-        correctResult.get(0).add(2);
-        correctResult.get(0).add(3);
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(1).add(1);
-        correctResult.get(1).add(2);
-        correctResult.get(1).add(3);
-
-        assertTrue("findLongest path algorithm does not correctly find multiple longest paths from different start nodes in a graph.", g.findLongest().equals(correctResult));
-    }
-
-    @Test
-    public void test_findLongest_MultipleLongestPathsFromSameAndDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
-        //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
-        ArrayList<edge> edges = new ArrayList<>();
-
-        node node0 = new node(0, "node0", new ArrayList<>());
-        node node1 = new node(1, "node1", new ArrayList<>());
-        node node2 = new node(2, "node2", new ArrayList<>());
-        node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-
-        edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
-        edge edge2 =new edge(2, 3, "testlabel2", "testpostlabel2");
-        edge edge3 =new edge(3, 0, "testlabel2", "testpostlabel2");
-        edges.add(edge0);
-        edges.add(edge1);
-        edges.add(edge2);
-        edges.add(edge3);
-
-        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
-
-        //Expected results for longest path for each node as the start node.
-        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
-
-        //Cyclic path
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(0).add(0);
-        correctResult.get(0).add(2);
-        correctResult.get(0).add(3);
-        correctResult.get(0).add(0);
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(1).add(2);
-        correctResult.get(1).add(3);
-        correctResult.get(1).add(0);
-        correctResult.get(1).add(1);
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(2).add(2);
-        correctResult.get(2).add(3);
-        correctResult.get(2).add(0);
-        correctResult.get(2).add(2);
-        correctResult.add(new ArrayList<Integer>());
-        correctResult.get(3).add(3);
-        correctResult.get(3).add(0);
-        correctResult.get(3).add(2);
-        correctResult.get(3).add(3);
-
-
-        assertTrue("findLongest path algorithm does not correctly find multiple longest paths from the same and different start nodes in a graph.", g.findLongest().equals(correctResult));
-    }
-
-
 
 }
