@@ -597,7 +597,62 @@ public class graph {
      * @return boolean Whether the graph is connected or not.
      */
     public boolean connectedBFS(){
-        return false;
+
+        int startNodeID = 0;
+
+        //Creates a list of all directed and undirected neighbours of the start node.
+        ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNodeID).getDirectedNeighbours());
+        ArrayList<node> undirectedNeighbours = nodes.get(startNodeID).getUndirectedNeighbours();
+        for (int i = 0; i < undirectedNeighbours.size(); i++){
+            allNeighbours.add(undirectedNeighbours.get(i));
+        }
+
+        //Checks to see if the node has any neighbours.
+        if (allNeighbours.size()==0){
+            return false;
+        }
+
+        //All distances from start node start at -1, except the start node.
+        ArrayList<Integer> dist = new ArrayList<>();
+        for (int i =0; i<nodes.size();i++){
+            dist.add(-1);
+        }
+        dist.set(startNodeID,0);
+
+        int nodesVisited =0;
+
+        Queue<Integer> q = new LinkedList<>();
+        q.add(startNodeID);
+
+
+        while(!q.isEmpty()){
+            int currentNodeID = q.poll();
+            nodesVisited++;
+
+            //Combine the lists of all directed and undirected neighbours of the current node.
+            allNeighbours = nodes.get(currentNodeID).getDirectedNeighbours();
+            undirectedNeighbours = nodes.get(currentNodeID).getUndirectedNeighbours();
+            for (int i = 0; i < undirectedNeighbours.size(); i++){
+                allNeighbours.add(undirectedNeighbours.get(i));
+            }
+
+            //Iterate through all neighbouring nodes
+            for (int i=0;i<allNeighbours.size();i++){
+                int neighbourNodeID = allNeighbours.get(i).getId();
+
+                if (dist.get(neighbourNodeID)==-1){
+                    q.add(neighbourNodeID);
+                    dist.set(neighbourNodeID, dist.get(currentNodeID)+1);
+                }
+            }
+        }
+
+        if (nodesVisited < nodes.size()){
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
 }
