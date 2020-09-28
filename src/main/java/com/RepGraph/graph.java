@@ -565,10 +565,11 @@ public class graph {
         String output = "";
 
         for (token t : tokenIn) {
-            output += t.getForm() + " ";
+            output += " " + t.getForm();
 
         }
-        return output;
+
+        return output.trim();
     }
 
     /**

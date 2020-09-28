@@ -111,6 +111,7 @@ public class RepGraphModel {
         subset.setEdges(adjacentEdges);
         subset.setTokens(SubsetTokens);
         subset.setInput(parent.getTokenInput(SubsetTokens));
+        subset.setTops(parent.getTops());
 
         return subset;
 

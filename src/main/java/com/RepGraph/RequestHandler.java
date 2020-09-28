@@ -16,7 +16,6 @@ import java.util.HashMap;
  * It also handles automatic serialisation and deserialization of JSON to Java objects and vice versa.
  *
  * @author TLDEDA001
- *
  */
 @CrossOrigin
 @SpringBootApplication
@@ -121,20 +120,26 @@ public class RequestHandler {
      * This method finds the graph in the model dataset and constructs it into the required
      * format according to the format type specified.
      *
-     * @param graphID  This refers to which graph the user wants to be visualised on the front end.
-     * @param format This refers to which format the user wants the graph to be visualised in.
+     * @param graphID This refers to which graph the user wants to be visualised on the front end.
+     * @param format  This refers to which format the user wants the graph to be visualised in.
      * @return graph This method returns a graph object of the requested graph.
      */
     @GetMapping("/Visualise")
     @ResponseBody
     public graph Visualise(@RequestParam String graphID, @RequestParam int format) {
-        return RepModel.getGraph(graphID);
+        if (RepModel.containsKey(graphID)) {
+            return RepModel.getGraph(graphID);
+        }
+        return null;
     }
 
     @GetMapping("/DisplaySubset")
     @ResponseBody
     public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID) {
-        return RepModel.displaySubset(graphID, NodeID);
+        if (RepModel.containsKey(graphID)) {
+            return RepModel.displaySubset(graphID, NodeID);
+        }
+        return null;
     }
 
     /**
@@ -164,7 +169,10 @@ public class RequestHandler {
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
     public ArrayList<String> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam int[] NodeId, @RequestParam int[] EdgeIndices) {
-        return RepModel.searchSubgraphPattern(graphID, NodeId, EdgeIndices);
+        if (RepModel.containsKey(graphID)) {
+            return RepModel.searchSubgraphPattern(graphID, NodeId, EdgeIndices);
+        }
+        return null;
     }
 
     /**
@@ -179,7 +187,10 @@ public class RequestHandler {
     @GetMapping("/CompareGraphs")
     @ResponseBody
     public HashMap<String, Object> CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
-        return RepModel.compareTwoGraphs(graphID1, graphID2);
+        if (RepModel.containsKey(graphID1) && RepModel.containsKey(graphID2)) {
+            return RepModel.compareTwoGraphs(graphID1, graphID2);
+        }
+        return null;
     }
 
     /**
@@ -187,7 +198,7 @@ public class RequestHandler {
      * The Request URL also requires the "index" and "test" Request Params to be present.
      * This method runs the formal tests requested on the model specified and returns the results.
      *
-     * @param graphID          This refers to the id of the graph that will be tested.
+     * @param graphID     This refers to the id of the graph that will be tested.
      * @param planar      This refers to whether its getting tested for the graph being planar
      * @param connected   This refers to whether its getting tested for being connected
      * @param longestpath This refers to finding the longest path
@@ -195,7 +206,10 @@ public class RequestHandler {
     @GetMapping("/TestGraph")
     @ResponseBody
     public HashMap<String, Object> TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam(required = false) boolean directed, @RequestParam boolean connected) {
-        return RepModel.runFormalTests(graphID, planar, longestpath, directed, connected);
+        if (RepModel.containsKey(graphID)) {
+            return RepModel.runFormalTests(graphID, planar, longestpath, directed, connected);
+        }
+        return null;
 
     }
 
