@@ -341,7 +341,7 @@ public class RepGraphModel {
             returnObj.put("LongestPath", graphs.get(graphID).findLongest(directed));
         }
         if (connected) {
-            returnObj.put("Connected", false);
+            returnObj.put("Connected", graphs.get(graphID).connectedBFS());
         }
         return returnObj;
     }

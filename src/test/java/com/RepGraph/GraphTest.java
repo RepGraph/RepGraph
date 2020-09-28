@@ -1811,5 +1811,221 @@ public class GraphTest {
 
     }
 
+    @Test
+    public void test_connectedBFS_IdentifiesConnectedGraph() throws NoSuchFieldException, IllegalAccessException{
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
 
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
+        edge edge2 = new edge(3, 0, "testlabel", "testpostlabel");
+        edge edge3 = new edge(3, 4, "testlabel", "testpostlabel");
+        edge edge4 = new edge(0, 5, "testlabel", "testpostlabel");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> directNeighbours0 = new ArrayList<>();
+        ArrayList<node> directNeighbours1 = new ArrayList<>();
+        ArrayList<node> directNeighbours3 = new ArrayList<>();
+
+        directNeighbours0.add(node1);
+        directNeighbours0.add(node3);
+        directNeighbours0.add(node5);
+        directNeighbours1.add(node2);
+        directNeighbours3.add(node4);
+
+        ArrayList<node> undirectNeighbours1 = new ArrayList<>();
+        ArrayList<node> undirectNeighbours2 = new ArrayList<>();
+        ArrayList<node> undirectNeighbours5 = new ArrayList<>();
+        ArrayList<node> undirectNeighbours3 = new ArrayList<>();
+        ArrayList<node> undirectNeighbours4 = new ArrayList<>();
+
+        undirectNeighbours1.add(node0);
+        undirectNeighbours2.add(node1);
+        undirectNeighbours5.add(node0);
+        undirectNeighbours3.add(node0);
+        undirectNeighbours4.add(node3);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        directField0.setAccessible(true);
+        directField0.set(node0, directNeighbours0);
+        final Field directField1 = node1.getClass().getDeclaredField("directedNeighbours");
+        directField1.setAccessible(true);
+        directField1.set(node1, directNeighbours1);
+        final Field directField3 = node3.getClass().getDeclaredField("directedNeighbours");
+        directField3.setAccessible(true);
+        directField3.set(node3, directNeighbours3);
+        final Field undirectField1 = node1.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField1.setAccessible(true);
+        undirectField1.set(node1, undirectNeighbours1);
+        final Field undirectField2 = node2.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField2.setAccessible(true);
+        undirectField2.set(node2, undirectNeighbours2);
+        final Field undirectField3 = node3.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField3.setAccessible(true);
+        undirectField3.set(node3, undirectNeighbours3);
+        final Field undirectField4 = node4.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField4.setAccessible(true);
+        undirectField4.set(node4, undirectNeighbours4);
+        final Field undirectField5 = node5.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField5.setAccessible(true);
+        undirectField5.set(node5, undirectNeighbours5);
+
+
+        assertTrue("connectedBFS method does not correctly identify a connected graph.", g.connectedBFS());
+
+    }
+
+    @Test
+    public void test_connectedBFS_IdentifiesDisconnectedGraph() throws NoSuchFieldException, IllegalAccessException{
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
+        edge edge2 = new edge(3, 0, "testlabel", "testpostlabel");
+        edge edge3 = new edge(3, 4, "testlabel", "testpostlabel");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> directNeighbours0 = new ArrayList<>();
+        ArrayList<node> directNeighbours1 = new ArrayList<>();
+        ArrayList<node> directNeighbours3 = new ArrayList<>();
+
+        directNeighbours0.add(node1);
+        directNeighbours0.add(node3);
+        directNeighbours1.add(node2);
+        directNeighbours3.add(node4);
+
+        ArrayList<node> undirectNeighbours1 = new ArrayList<>();
+        ArrayList<node> undirectNeighbours2 = new ArrayList<>();
+        ArrayList<node> undirectNeighbours3 = new ArrayList<>();
+        ArrayList<node> undirectNeighbours4 = new ArrayList<>();
+
+        undirectNeighbours1.add(node0);
+        undirectNeighbours2.add(node1);
+        undirectNeighbours3.add(node0);
+        undirectNeighbours4.add(node3);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        directField0.setAccessible(true);
+        directField0.set(node0, directNeighbours0);
+        final Field directField1 = node1.getClass().getDeclaredField("directedNeighbours");
+        directField1.setAccessible(true);
+        directField1.set(node1, directNeighbours1);
+        final Field directField3 = node3.getClass().getDeclaredField("directedNeighbours");
+        directField3.setAccessible(true);
+        directField3.set(node3, directNeighbours3);
+        final Field undirectField1 = node1.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField1.setAccessible(true);
+        undirectField1.set(node1, undirectNeighbours1);
+        final Field undirectField2 = node2.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField2.setAccessible(true);
+        undirectField2.set(node2, undirectNeighbours2);
+        final Field undirectField3 = node3.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField3.setAccessible(true);
+        undirectField3.set(node3, undirectNeighbours3);
+        final Field undirectField4 = node4.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField4.setAccessible(true);
+        undirectField4.set(node4, undirectNeighbours4);
+
+
+        assertFalse("connectedBFS method does not correctly identify a disconnected graph.", g.connectedBFS());
+
+    }
+
+    @Test
+    public void test_connectedBFS_Node0IsDisconnected() throws NoSuchFieldException, IllegalAccessException{
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+        edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
+        edges.add(edge1);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> directNeighbours1 = new ArrayList<>();
+
+        directNeighbours1.add(node2);
+
+        ArrayList<node> undirectNeighbours2 = new ArrayList<>();
+
+        undirectNeighbours2.add(node1);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field directField1 = node1.getClass().getDeclaredField("directedNeighbours");
+        directField1.setAccessible(true);
+        directField1.set(node1, directNeighbours1);
+        final Field undirectField2 = node2.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField2.setAccessible(true);
+        undirectField2.set(node2, undirectNeighbours2);
+
+
+        assertFalse("connectedBFS method does not correctly identify a disconnected graph where node 0 is disconnected.", g.connectedBFS());
+
+    }
+    @Test
+    public void test_connectedBFS_SingleNodeGraph() throws NoSuchFieldException, IllegalAccessException{
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        nodes.add(node0);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), new ArrayList<edge>(), new ArrayList<Integer>());
+
+        assertTrue("connectedBFS method does not correctly identify a connected graph with a single node.", g.connectedBFS());
+
+    }
 }
