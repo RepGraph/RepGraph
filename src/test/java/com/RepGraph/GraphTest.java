@@ -1811,5 +1811,63 @@ public class GraphTest {
 
     }
 
+    @Test
+    public void test_connectedBFS_IdentifiesConnectedGraph() throws NoSuchFieldException, IllegalAccessException{
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
+        edge edge2 = new edge(0, 3, "testlabel", "testpostlabel");
+        edge edge3 = new edge(3, 4, "testlabel", "testpostlabel");
+        edge edge4 = new edge(0, 5, "testlabel", "testpostlabel");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> nodeNeighbours0 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours1 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours3 = new ArrayList<>();
+
+        nodeNeighbours0.add(node1);
+        nodeNeighbours0.add(node3);
+        nodeNeighbours0.add(node5);
+        nodeNeighbours1.add(node2);
+        nodeNeighbours3.add(node4);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field nodeField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        nodeField0.setAccessible(true);
+        nodeField0.set(node0, nodeNeighbours0);
+        final Field nodeField1 = node1.getClass().getDeclaredField("directedNeighbours");
+        nodeField1.setAccessible(true);
+        nodeField1.set(node1, nodeNeighbours1);
+        final Field nodeField3 = node3.getClass().getDeclaredField("directedNeighbours");
+        nodeField3.setAccessible(true);
+        nodeField3.set(node3, nodeNeighbours3);
+
+
+        assertTrue("connectedBFS method does not correctly identify a connected graph.", g.connectedBFS());
+
+    }
 
 }
