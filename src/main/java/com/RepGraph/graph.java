@@ -592,5 +592,12 @@ public class graph {
         return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes())) && (tokens.equals(g.getTokens())) && (edges.equals(g.getEdges())) && tops.equals(g.getTops()));
     }
 
+    /**
+     * Breadth First Search algorithm for determining whether a graph is connected or not.
+     * @return boolean Whether the graph is connected or not.
+     */
+    public boolean connectedBFS(){
+        return false;
+    }
 
 }
