@@ -600,6 +600,9 @@ public class graph {
 
         int startNodeID = 0;
 
+        if (nodes.size()<=1){
+            return true;
+        }
         //Creates a list of all directed and undirected neighbours of the start node.
         ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNodeID).getDirectedNeighbours());
         ArrayList<node> undirectedNeighbours = nodes.get(startNodeID).getUndirectedNeighbours();
@@ -608,7 +611,7 @@ public class graph {
         }
 
         //Checks to see if the node has any neighbours.
-        if (allNeighbours.size()==0){
+        if (allNeighbours.size()==0) {
             return false;
         }
 
