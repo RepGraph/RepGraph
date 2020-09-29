@@ -1970,8 +1970,22 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getTokenSpan_OneTokenInGraph()throws NoSuchFieldException, IllegalAccessException{
+    public void test_getTokenSpan_GetOneTokenOnly()throws NoSuchFieldException, IllegalAccessException{
+        ArrayList<token> tokens = new ArrayList<>();
 
+        token token0 = new token(0,"form0", "lemma0", "carg0");
+        token token1 = new token(1,"form1", "lemma1", "carg1");
+        token token2 = new token(2,"form2", "lemma2", "carg2");
+        tokens.add(token0);
+        tokens.add(token1);
+        tokens.add(token2);
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+
+        ArrayList<token> expected = new ArrayList<>();
+        expected.add(token1);
+
+        assertTrue("getTokenSpan does not get a single token correctly.",g.getTokenSpan(1,1).equals(expected));
     }
 
     @Test
