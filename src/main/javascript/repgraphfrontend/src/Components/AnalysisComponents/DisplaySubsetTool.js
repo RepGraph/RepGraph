@@ -18,6 +18,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import { AppContext } from "../../Store/AppContextProvider.js";
 import {useHistory} from "react-router-dom";
 import GraphVisualisation from "../Main/GraphVisualisation";
+import Chip from "@material-ui/core/Chip";
+
+import {layoutGraph} from "../App";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -51,7 +54,27 @@ function DisplaySubsetTool(props){
     const classes = useStyles();
 
     function handleDisplaySubset(){
-        console.log();
+        setOpen(false);
+
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        console.log(state.selectedSentenceID, state.selectedNodeAndEdges.nodes[0]);
+
+        fetch(state.APIendpoint+"/DisplaySubset?graphID="+state.selectedSentenceID+"&NodeID="+state.selectedNodeAndEdges.nodes[0], requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+                console.log(result);//debugging
+                const jsonResult = JSON.parse(result);
+                const formattedGraph = layoutGraph(jsonResult);
+                dispatch({ type: "SET_SENTENCE", payload: { selectedSentence: formattedGraph } });
+            })
+            .catch((error) => {
+                console.log("error", error);
+                history.push("/404"); //for debugging
+            });
     }
 
     return(
@@ -69,7 +92,7 @@ function DisplaySubsetTool(props){
                     <FormControlLabel value="descendent" control={<Radio color="primary"/>} label="Display Descendent Nodes" />
                 </RadioGroup>
                 <Button
-                    variant="outlined" color="primary" onClick={handleClickOpen}
+                    variant="contained" color="primary" onClick={handleClickOpen}
                     endIcon={<LocationSearchingIcon/>}
                 >
                     Select Subset
@@ -89,11 +112,9 @@ function DisplaySubsetTool(props){
                         )}
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose} color="primary">
-                            Disagree
-                        </Button>
-                        <Button onClick={handleClose} color="primary" autoFocus>
-                            Agree
+                        <Chip label= {`Selected Node: ${JSON.stringify(state.selectedNodeAndEdges)}`} />
+                        <Button onClick={handleDisplaySubset} color="primary" autoFocus>
+                            Display
                         </Button>
                     </DialogActions>
                 </Dialog>
