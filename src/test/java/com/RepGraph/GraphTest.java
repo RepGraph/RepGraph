@@ -143,6 +143,22 @@ public class GraphTest {
     }
 
     @Test
+    public void test_getTops_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+        final graph g = new graph();
+
+        ArrayList<Integer> tops = new ArrayList<>();
+        tops.add(2);
+        tops.add(0);
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("tops");
+        field.setAccessible(true);
+        field.set(g, tops);
+
+        assertEquals("tops value was not retrieved properly.", g.getTops(), tops);
+    }
+
+    @Test
     public void test_setId_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final graph g = new graph();
@@ -233,6 +249,24 @@ public class GraphTest {
         field.setAccessible(true);
 
         assertEquals("edges value was not retrieved properly.", field.get(g), edges);
+    }
+
+    @Test
+    public void test_setTops_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final graph g = new graph();
+
+        ArrayList<Integer> tops = new ArrayList<>();
+        tops.add(0);
+        tops.add(2);
+
+        g.setTops(tops);
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("tops");
+        field.setAccessible(true);
+
+        assertEquals("tops value was not retrieved properly.", field.get(g), tops);
     }
 
     @Test
@@ -1850,7 +1884,6 @@ public class GraphTest {
 
 
     }
-
 
     @Test
     public void test_isPlanar_HandlesNoEdgesInGraph() {
