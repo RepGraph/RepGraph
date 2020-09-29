@@ -5,6 +5,7 @@
  */
 package com.RepGraph;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.reflect.Array;
@@ -486,12 +487,14 @@ public class graph {
         return paths;
     }
 
+
     /**
      * Method to check if a graph is planar
      *
      * @return boolean returns true if the graph is planar
      */
-    public boolean isPlanar() {
+
+    public boolean GraphIsPlanar() {
         ArrayList<node> ordered = new ArrayList<>(nodes);
 
         Collections.sort(ordered, new Comparator<node>() {
