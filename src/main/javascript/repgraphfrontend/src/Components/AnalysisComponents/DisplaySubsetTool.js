@@ -62,6 +62,7 @@ function DisplaySubsetTool(props){
         };
 
         console.log(state.selectedSentenceID, state.selectedNodeAndEdges.nodes[0]);
+        dispatch({ type: "SET_LOADING", payload: { isLoading: true } });
 
         fetch(state.APIendpoint+"/DisplaySubset?graphID="+state.selectedSentenceID+"&NodeID="+state.selectedNodeAndEdges.nodes[0], requestOptions)
             .then((response) => response.text())
@@ -70,8 +71,10 @@ function DisplaySubsetTool(props){
                 const jsonResult = JSON.parse(result);
                 const formattedGraph = layoutGraph(jsonResult);
                 dispatch({ type: "SET_SENTENCE", payload: { selectedSentence: formattedGraph } });
+                dispatch({ type: "SET_LOADING", payload: { isLoading: false } });
             })
             .catch((error) => {
+                dispatch({ type: "SET_LOADING", payload: { isLoading: false } });
                 console.log("error", error);
                 history.push("/404"); //for debugging
             });

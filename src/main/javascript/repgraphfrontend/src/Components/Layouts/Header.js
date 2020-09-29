@@ -27,7 +27,6 @@ function Header(props) {
                     <IconButton
                         edge="start"
                         className={classes.menuButton}
-                        color="black"
                         style={{ color: "black" }}
                         aria-label="menu"
                     >

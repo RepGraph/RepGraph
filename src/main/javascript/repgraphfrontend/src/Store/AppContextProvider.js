@@ -6,7 +6,8 @@ export const AppContext = React.createContext();
 const initialState = {
   dataSet: null,
   selectedSentence: null,
-  selectedSentenceIDs: null,
+  selectedSentenceID: null,
+  selectedNodeAndEdges: null,
   isLoading: false,
   APIendpoint: "http://localhost:8080"
 };
@@ -17,8 +18,12 @@ const reducer = (state, action) => {
       return { ...state, dataSet: action.payload.dataSet };
     case "SET_SENTENCE":
       return { ...state, selectedSentence: action.payload.selectedSentence };
+    case "SET_SELECTED_SENTENCE_ID":
+      return { ...state, selectedSentenceID: action.payload.selectedSentenceID };
     case "SET_LOADING":
       return { ...state, isLoading: action.payload.isLoading };
+    case "SET_SELECT_NODE_EDGE":
+      return { ...state, selectedNodeAndEdges: action.payload.selectedNodeAndEdges };
     default:
       break;
   }

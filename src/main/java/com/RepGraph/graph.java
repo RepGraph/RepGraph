@@ -438,7 +438,7 @@ public class graph {
             int currentNodeID = q.poll();
 
             //Combine the lists of all directed and undirected neighbours of the current node.
-            allNeighbours = nodes.get(currentNodeID).getDirectedNeighbours();
+            allNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getDirectedNeighbours());
             undirectedNeighbours = nodes.get(currentNodeID).getUndirectedNeighbours();
             for (int i = 0; i < undirectedNeighbours.size(); i++){
                 allNeighbours.add(undirectedNeighbours.get(i));
@@ -598,6 +598,8 @@ public class graph {
      */
     public boolean connectedBFS(){
 
+        setNodeNeighbours();
+
         int startNodeID = 0;
 
         if (nodes.size()<=1){
@@ -633,7 +635,7 @@ public class graph {
             nodesVisited++;
 
             //Combine the lists of all directed and undirected neighbours of the current node.
-            allNeighbours = nodes.get(currentNodeID).getDirectedNeighbours();
+            allNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getDirectedNeighbours());
             undirectedNeighbours = nodes.get(currentNodeID).getUndirectedNeighbours();
             for (int i = 0; i < undirectedNeighbours.size(); i++){
                 allNeighbours.add(undirectedNeighbours.get(i));

@@ -41,15 +41,18 @@ const options = {
   interaction: { hover: true }
 };
 
-const events = {
-  select: function (event) {
-    var { nodes, edges } = event;
-    console.log(nodes, edges);
-  }
-};
+
 
 const GraphVisualisation = (props) => {
   const { state, dispatch } = useContext(AppContext);
+
+  const events = {
+    select: function (event) {
+      let { nodes, edges } = event;
+      console.log(nodes, edges);
+      dispatch({ type: "SET_SELECT_NODE_EDGE", payload: { selectedNodeAndEdges: { nodes, edges }} });
+    }
+  };
 
   return (
     <Graph
@@ -60,7 +63,7 @@ const GraphVisualisation = (props) => {
       getNetwork={(network) => {
         //  if you want access to vis.js network api you can set the state in a parent component using this property
         network.on("beforeDrawing", function (ctx) {
-          console.log(state.selectedSentence.nodes);
+          //console.log(state.selectedSentence.nodes);
           /*
           for (let node of state.selectedSentence.nodes) {
             if (node.type === "node") {

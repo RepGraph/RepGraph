@@ -31,6 +31,8 @@ export default function HomePage(props) {
       redirect: "follow"
     };
 
+    dispatch({ type: "SET_LOADING", payload: { isLoading: true } });
+
     fetch(
       testingEndpoint + "/UploadData?FileName=SupremeLeaderJanBuys",
       requestOptions
@@ -41,11 +43,13 @@ export default function HomePage(props) {
         console.log(jsonResult);
         console.log(jsonResult.response);
         dispatch({ type: "SET_DATASET", payload: { dataSet: jsonResult.data } });
+        dispatch({ type: "SET_LOADING", payload: { isLoading: false } });
         //this.setState({sentences: jsonResult.data, sentence: jsonResult.data[0]});
         history.push("/main");
       })
       .catch((error) => {
         console.log("error", error);
+        dispatch({ type: "SET_LOADING", payload: { isLoading: false } });
         history.push("/404"); //for debugging
       });
   }

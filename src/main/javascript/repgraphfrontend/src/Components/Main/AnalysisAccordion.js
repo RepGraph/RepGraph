@@ -12,6 +12,8 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { AppContext } from "../../Store/AppContextProvider.js";
+import DisplaySubsetTool from "../AnalysisComponents/DisplaySubsetTool";
+import FormalTestsTool from "../AnalysisComponents/FormalTestsTool";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,6 +47,7 @@ export default function AnalysisAccordion() {
               Select a node on the graph displayed in the visualization area to
               see the corresponding subset of the graph:
             </Typography>
+            <DisplaySubsetTool />
           </AccordionDetails>
         </Accordion>
         <Accordion>
@@ -93,6 +96,7 @@ export default function AnalysisAccordion() {
               Select a number of graph properties with which to test the
               currently displayed graph:
             </Typography>
+            <FormalTestsTool/>
           </AccordionDetails>
         </Accordion>
       </Paper>
