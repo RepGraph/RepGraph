@@ -5,6 +5,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Zoom from "@material-ui/core/Zoom";
+import { Link, useHistory } from "react-router-dom";
 
 import {
   Accordion,
@@ -215,13 +216,34 @@ const layoutGraph = (sentence) => {
 
 export default function SentenceList() {
   const { state, dispatch } = useContext(AppContext);
+  const history = useHistory();
 
   function handleSelectSentence(sentenceId) {
     //Request formatted sentence data from the back-end
     //Set the Context state accordingly through dispatch
 
+    let requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    fetch(state.APIendpoint+"/Visualise?graphID="+sentenceId+"&format=1", requestOptions)
+        .then((response) => response.text())
+        .then((result) => {
+          console.log(result);
+          const jsonResult = JSON.parse(result);
+          //console.log(jsonResult);
+          //console.log(jsonResult.response);
+          const formattedGraph = layoutGraph(jsonResult);
+          dispatch({ type: "SET_SENTENCE", payload: { selectedSentence: formattedGraph } });
+        })
+        .catch((error) => {
+          console.log("error", error);
+          history.push("/404"); //for debugging
+        });
+
     //Just for debugging:
-    const selectedSentence = state.dataSet.find(
+    /*const selectedSentence = state.dataSet.find(
       (sentence) => sentence.id === sentenceId
     );
 
@@ -231,7 +253,7 @@ export default function SentenceList() {
     dispatch({
       type: "SET_SENTENCE",
       payload: { selectedSentence: formattedGraph }
-    });
+    });*/
   }
 
   return (
