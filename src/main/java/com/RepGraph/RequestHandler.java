@@ -131,10 +131,16 @@ public class RequestHandler {
         return RepModel.getGraph(graphID);
     }
 
-    @GetMapping("/DisplaySubset")
+    @GetMapping("/DisplaySubsetAdjacent")
     @ResponseBody
-    public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID) {
-        return RepModel.displaySubset(graphID, NodeID);
+    public graph DisplaySubsetAdjacent(@RequestParam String graphID, @RequestParam int NodeID) {
+        return RepModel.DisplaySubsetAdjacent(graphID, NodeID);
+    }
+
+    @GetMapping("/DisplaySubsetDescendant")
+    @ResponseBody
+    public graph DisplaySubsetDescendant(@RequestParam String graphID, @RequestParam int NodeID) {
+        return RepModel.DisplaySubsetDescendant(graphID, NodeID);
     }
 
     /**

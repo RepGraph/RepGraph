@@ -1730,7 +1730,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
@@ -1738,13 +1738,13 @@ public class GraphTest {
         edges.add(new edge(2, 3, "testlabel2", "testpostlabel2"));
         edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(0, 2, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
 
-        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(0, 4, "testlabel", "testpostlabel"));
@@ -1752,7 +1752,7 @@ public class GraphTest {
         edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
         edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(4, 0, "testlabel", "testpostlabel"));
@@ -1760,7 +1760,7 @@ public class GraphTest {
         edges.add(new edge(2, 0, "testlabel2", "testpostlabel2"));
         edges.add(new edge(3, 0, "testlabel2", "testpostlabel2"));
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
 
     }
@@ -1798,7 +1798,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(0, 3, "testlabel", "testpostlabel"));
@@ -1806,7 +1806,7 @@ public class GraphTest {
         edges.add(new edge(1, 3, "testlabel2", "testpostlabel2"));
         edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.GraphIsPlanar());
 
         anch1 = new ArrayList<anchors>();
         anch1.add(new anchors(0, 0));
@@ -1838,7 +1838,7 @@ public class GraphTest {
         edges.add(new edge(1, 4, "testlabel1", "testpostlabel1"));
         edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(0, 3, "testlabel", "testpostlabel"));
@@ -1846,7 +1846,7 @@ public class GraphTest {
         edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
         edges.add(new edge(3, 5, "testlabel2", "testpostlabel2"));
 
-        assertFalse("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.isPlanar());
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.GraphIsPlanar());
 
 
     }
@@ -1882,7 +1882,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
     }
 
@@ -1894,7 +1894,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
     }
 
