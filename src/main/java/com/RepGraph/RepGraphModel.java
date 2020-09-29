@@ -328,17 +328,21 @@ public class RepGraphModel {
      * Runs formal tests on a graph.
      * @param graphID The graph ID which the tests will be run.
      * @param planar Boolean to decide if to test for if the graph is planar.
-     * @param longestpath Boolean to decide if to find the longest directed or undirected path.
+     * @param longestPathDirected Boolean to decide if to find the longest directed path.
+     * @param longestPathUndirected Boolean to decide if to find the longest undirected path.
      * @param connected Boolean to decide if to test for if the graph is connected.
      * @return String Results of the tests.
      */
-    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestpath, boolean directed, boolean connected) {
+    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestPathDirected, boolean longestPathUndirected, boolean connected) {
         HashMap<String, Object> returnObj = new HashMap<>();
         if (planar) {
             returnObj.put("Planar", graphs.get(graphID).isPlanar());
         }
-        if (longestpath) {
-            returnObj.put("LongestPath", graphs.get(graphID).findLongest(directed));
+        if (longestPathDirected) {
+            returnObj.put("LongestPathDirected", graphs.get(graphID).findLongest(true));
+        }
+        if (longestPathUndirected) {
+            returnObj.put("LongestPathUndirected", graphs.get(graphID).findLongest(false));
         }
         if (connected) {
             returnObj.put("Connected", graphs.get(graphID).connectedBFS());

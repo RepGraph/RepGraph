@@ -190,12 +190,13 @@ public class RequestHandler {
      * @param graphID          This refers to the id of the graph that will be tested.
      * @param planar      This refers to whether its getting tested for the graph being planar
      * @param connected   This refers to whether its getting tested for being connected
-     * @param longestpath This refers to finding the longest path
+     * @param longestPathDirected This refers to finding the longest directed path
+     * @param longestPathUndirected This refers to finding the longest undirected path
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public HashMap<String, Object> TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestpath, @RequestParam(required = false) boolean directed, @RequestParam boolean connected) {
-        return RepModel.runFormalTests(graphID, planar, longestpath, directed, connected);
+    public HashMap<String, Object> TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestPathDirected, @RequestParam boolean longestPathUndirected, @RequestParam boolean connected) {
+        return RepModel.runFormalTests(graphID, planar, longestPathDirected, longestPathUndirected, connected);
 
     }
 
