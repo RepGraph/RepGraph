@@ -1,71 +1,128 @@
-import React from 'react';
-import "./App.css";
-import Grid from '@material-ui/core/Grid';
-import Header from "./Layouts/Header";
-import InputArea from "./Main/InputArea";
-import VisualizerArea from "./Main/VisualizerArea";
+import React, { useContext } from "react";
+import "../../src/styles.css";
+import Routes from "../../src/Routes";
+import { BrowserRouter as Router } from "react-router-dom";
 
-import {dmrsData} from "../store";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
+import { AppContext } from "../../src/Store/AppContextProvider";
 
-class App extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            sentences: dmrsData,
-            sentence: dmrsData[0],
-            selectingSubset: false
-        };
-        this.handleSentenceSelected.bind(this);
-        this.handleClose.bind(this);
-        this.handleToggle.bind(this);
+//import { AppContext } from "./Store/AppContext.js";
+
+const font = "'Open Sans', 'Helvetica', 'Arial', sans-serif";
+
+const palette = {
+    primary: {},
+    secondary: {},
+    error: {},
+    warning: {},
+    success: {}
+};
+
+const theme = createMuiTheme({
+    typography: {
+        fontFamily: font,
+        fontSize: 14,
+        fontWeightBold: 700,
+        fontWeightLight: 300,
+        fontWeightMedium: 600,
+        fontWeightRegular: 400,
+        body1: {
+            fontFamily: font,
+            fontSize: "1rem",
+            fontWeight: 400,
+            letterSpacing: "0.00938em",
+            lineHeight: 1.5
+        },
+        body2: {
+            fontFamily: font,
+            fontSize: "0.875rem",
+            fontWeight: 400,
+            letterSpacing: "0.01071em",
+            lineHeight: 1.43
+        },
+        button: {
+            fontFamily: font,
+            fontSize: "0.875rem",
+            fontWeight: 500,
+            letterSpacing: "0.02857em",
+            lineHeight: 1.75,
+            textTransform: "uppercase"
+        },
+        caption: {
+            fontFamily: font,
+            fontSize: "0.75rem",
+            fontWeight: 400,
+            letterSpacing: "0.03333em",
+            lineHeight: 1.66
+        },
+        h1: {
+            fontFamily: font,
+            fontSize: "6rem",
+            fontWeight: 300,
+            letterSpacing: "-0.01562em",
+            lineHeight: 1.167
+        },
+        h2: {
+            fontFamily: font,
+            fontSize: "3.75rem",
+            fontWeight: 300,
+            letterSpacing: "-0.00833em",
+            lineHeight: 1.2
+        },
+        h3: {
+            fontFamily: font,
+            fontSize: "3rem",
+            fontWeight: 400,
+            letterSpacing: "0em",
+            lineHeight: 1.167
+        },
+        h4: {
+            fontFamily: font,
+            fontSize: "2.125rem",
+            fontWeight: 400,
+            letterSpacing: "0.00735em",
+            lineHeight: 1.235
+        },
+        h5: {
+            fontFamily: font,
+            fontSize: "1.5rem",
+            fontWeight: 400,
+            letterSpacing: "0em",
+            lineHeight: 1.334
+        },
+        h6: {
+            fontFamily: font,
+            fontSize: "1.25rem",
+            fontWeight: 500,
+            letterSpacing: "0.0075em",
+            lineHeight: 1.6
+        },
+        subtitle1: {
+            fontFamily: font,
+            fontSize: "1rem",
+            fontWeight: 400,
+            letterSpacing: "0.00938em",
+            lineHeight: 1.75
+        },
+        subtitle2: {
+            fontFamily: font,
+            fontSize: "0.875rem",
+            fontWeight: 500,
+            letterSpacing: "0.00714em",
+            lineHeight: 1.57
+        }
     }
+});
 
-    handleSentenceSelected = (id) => {
-        this.setState((prevState)=> (
-                {sentence: prevState.sentences.find(sentence => sentence.id === id)}
-            )
-        );
-    }
+export default function App() {
+    const context = useContext(AppContext);
 
-    handleClose = () => {
-        this.setState({selectingSubset: false});
-    };
-
-    handleToggle = () => {
-        this.setState((prevState)=> (
-                {selectingSubset: !prevState.selectingSubset}
-            )
-        );
-    }
-
-    render() {
-
-        const {sentences, sentence, selectingSubset} = this.state; //destructure internal state
-
-        return (
-            <React.Fragment>
-                <Header/>
-                <Grid container spacing={1}>
-                    <Grid item xs={5}>
-                        <InputArea sentences={sentences}
-                                   sentence={sentence}
-                                   onSelect={this.handleSentenceSelected}
-                                   subsetHandleToggle={this.handleToggle}/>
-
-                    </Grid>
-                    <Grid item xs={7}>
-                        <VisualizerArea
-                            sentence={sentence}
-                            selectingSubset={selectingSubset}
-                            subsetHandleClose={this.handleClose}
-                        />
-                    </Grid>
-                </Grid>
-            </React.Fragment>
-        );
-    }
-
+    return (
+        <MuiThemeProvider theme={theme}>
+            <Router>
+                <Routes />
+            </Router>
+        </MuiThemeProvider>
+    );
 }
-
-export default App;
