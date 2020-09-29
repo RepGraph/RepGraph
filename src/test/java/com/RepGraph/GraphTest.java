@@ -1932,6 +1932,44 @@ public class GraphTest {
     }
 
     @Test
+    public void test_getTokenSpan_getTokensCorrectly()throws NoSuchFieldException, IllegalAccessException{
+        ArrayList<token> tokens = new ArrayList<>();
+
+        token token0 = new token(0,"form0", "lemma0", "carg0");
+        token token1 = new token(1,"form1", "lemma1", "carg1");
+        token token2 = new token(2,"form2", "lemma2", "carg2");
+        token token3 = new token(3,"form3", "lemma3", "carg3");
+        token token4 = new token(4,"form4", "lemma4", "carg4");
+        token token5 = new token(5,"form5", "lemma5", "carg5");
+        tokens.add(token0);
+        tokens.add(token1);
+        tokens.add(token2);
+        tokens.add(token3);
+        tokens.add(token4);
+        tokens.add(token5);
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+
+        ArrayList<token> expected = new ArrayList<>();
+        expected.add(token1);
+        expected.add(token2);
+        expected.add(token3);
+
+        assertTrue("getTokenSpan does not get a range of tokens correctly.",g.getTokenSpan(1,3).equals(expected));
+
+    }
+
+    @Test
+    public void test_getTokenSpan_noTokensInGraph()throws NoSuchFieldException, IllegalAccessException{
+
+    }
+
+    @Test
+    public void test_getTokenSpan_OneTokenInGraph()throws NoSuchFieldException, IllegalAccessException{
+
+    }
+
+    @Test
     public void test_connectedBFS_IdentifiesConnectedGraph() throws NoSuchFieldException, IllegalAccessException{
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
