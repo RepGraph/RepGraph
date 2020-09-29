@@ -8,7 +8,7 @@ import { AppContext } from "./Store/AppContextProvider.js";
 
 import { dmrsData } from "./store.js";
 
-const testingEndpoint = "";
+const testingEndpoint = "http://localhost:8080";
 
 export default function HomePage(props) {
   const [isUploading, setIsUploading] = useState(false);
@@ -30,7 +30,7 @@ export default function HomePage(props) {
       body: formData,
       redirect: "follow"
     };
-    /*
+
     fetch(
       testingEndpoint + "/UploadData?FileName=SupremeLeaderJanBuys",
       requestOptions
@@ -40,16 +40,14 @@ export default function HomePage(props) {
         const jsonResult = JSON.parse(result);
         console.log(jsonResult);
         console.log(jsonResult.response);
-        dispatch({ type: "SET_DATASET", payload: { dataSet: jsonResult } });
+        dispatch({ type: "SET_DATASET", payload: { dataSet: jsonResult.data } });
         //this.setState({sentences: jsonResult.data, sentence: jsonResult.data[0]});
         history.push("/main");
       })
       .catch((error) => {
         console.log("error", error);
-        history.push("/main"); //for debugging
-      });*/
-    dispatch({ type: "SET_DATASET", payload: { dataSet: dmrsData } });
-    history.push("/main");
+        history.push("/404"); //for debugging
+      });
   }
 
   return (

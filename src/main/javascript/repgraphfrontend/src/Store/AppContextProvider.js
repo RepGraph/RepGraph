@@ -4,10 +4,11 @@ import { dmrsData } from "../store.js";
 export const AppContext = React.createContext();
 
 const initialState = {
-  dataSet: dmrsData,
+  dataSet: null,
   selectedSentence: null,
   selectedSentenceIDs: null,
-  isLoading: false
+  isLoading: false,
+  APIendpoint: "http://localhost:8080"
 };
 
 const reducer = (state, action) => {
