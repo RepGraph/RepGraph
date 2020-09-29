@@ -152,6 +152,7 @@ public class RequestHandler {
     public ArrayList<String> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
 
         return RepModel.searchSubgraphNodeSet(labels);
+
     }
 
     /**

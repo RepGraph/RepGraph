@@ -65,8 +65,8 @@ public class RepGraphModel {
     public graph DisplaySubset(String graphId, int headNodeID, String SubsetType) {
         if (SubsetType.equals("adjacent")) {
             return DisplaySubsetAdjacent(graphId, headNodeID);
-        } else if (SubsetType.equals("descendant")) {
-            return DisplaySubsetDescendant(graphId, headNodeID);
+        } else if (SubsetType.equals("descendent")) {
+            return DisplaySubsetDescendent(graphId, headNodeID);
         }
         return null;
     }
@@ -129,18 +129,18 @@ public class RepGraphModel {
     }
 
     /**
-     * Uses a graph ID and the number of a node in the graph and returns a subset of the graph. The subset is all the descendant nodes from the head node id given
+     * Uses a graph ID and the number of a node in the graph and returns a subset of the graph. The subset is all the descendent nodes from the head node id given
      *
      * @param graphID    The graph ID.
      * @param headNodeID The graph's node which will be the head node of the subset.
      * @return graph The subset of the graph.
      */
-    public graph DisplaySubsetDescendant(String graphID, int headNodeID) {
+    public graph DisplaySubsetDescendent(String graphID, int headNodeID) {
 
         graph subset = new graph();
 
-        ArrayList<node> DescendantNodes = new ArrayList<>();
-        ArrayList<edge> DescendantEdges = new ArrayList<>();
+        ArrayList<node> DescendentNodes = new ArrayList<>();
+        ArrayList<edge> DescendentEdges = new ArrayList<>();
         ArrayList<token> SubsetTokens = new ArrayList<>();
 
         graph parent = getGraph(graphID);
@@ -151,8 +151,8 @@ public class RepGraphModel {
         for (node n : parent.getNodes()) {
 
             if (n.getId() == headNodeID) {
-                DescendantNodes.add(n);
-                DescendantEdges.addAll(n.getDirectedEdgeNeighbours());
+                DescendentNodes.add(n);
+                DescendentEdges.addAll(n.getDirectedEdgeNeighbours());
 
                 int minFrom = n.getAnchors().get(0).getFrom();
                 int maxEnd = n.getAnchors().get(0).getEnd();
@@ -162,11 +162,11 @@ public class RepGraphModel {
 
                 DiscoverNodesAndEdges(n, descNode, descEdge);
 
-                DescendantNodes.addAll(descNode.values());
+                DescendentNodes.addAll(descNode.values());
 
-                DescendantEdges.addAll(descEdge.values());
+                DescendentEdges.addAll(descEdge.values());
 
-                for (node nn : DescendantNodes) {
+                for (node nn : DescendentNodes) {
                     if (nn.getAnchors().get(0).getFrom() < minFrom) {
                         minFrom = nn.getAnchors().get(0).getFrom();
                     }
@@ -181,8 +181,8 @@ public class RepGraphModel {
 
         subset.setId(parent.getId());
         subset.setSource(parent.getSource());
-        subset.setNodes(DescendantNodes);
-        subset.setEdges(DescendantEdges);
+        subset.setNodes(DescendentNodes);
+        subset.setEdges(DescendentEdges);
         subset.setTokens(SubsetTokens);
         subset.setInput(parent.getTokenInput(SubsetTokens));
 
