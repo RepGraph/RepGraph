@@ -1234,7 +1234,7 @@ public class GraphTest {
     */
 
     @Test
-    public void test_findLongest_DirectedSingleLongestPath() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_DirectedSingleLongestPath(){
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -1271,7 +1271,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_DirectedMultipleLongestPathsFromSingleStartNode() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_DirectedMultipleLongestPathsFromSingleStartNode()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1314,7 +1314,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_DirectedMultipleLongestPathsFromDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_DirectedMultipleLongestPathsFromDifferentStartNodes() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1353,7 +1353,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_DirectedMultipleLongestPathsFromSameAndDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_DirectedMultipleLongestPathsFromSameAndDifferentStartNodes()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1405,7 +1405,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedSingleLongestPath() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedSingleLongestPath()  {
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -1443,7 +1443,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedMultipleLongestPathsFromSingleStartNode() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedMultipleLongestPathsFromSingleStartNode()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1500,7 +1500,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedMultipleLongestPathsFromDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedMultipleLongestPathsFromDifferentStartNodes()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1545,7 +1545,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedMultipleLongestPathsFromSameAndDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedMultipleLongestPathsFromSameAndDifferentStartNodes() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1672,7 +1672,7 @@ public class GraphTest {
     */
 
     @Test
-    public void test_findLongest_OneEdgeInGraph() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_OneEdgeInGraph() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1698,7 +1698,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_NoNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_NoNodes() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
 
@@ -1712,7 +1712,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_NoEdges() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_NoEdges()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
 
@@ -1932,7 +1932,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getTokenSpan_getTokensCorrectly()throws NoSuchFieldException, IllegalAccessException{
+    public void test_getTokenSpan_getTokensCorrectly(){
         ArrayList<token> tokens = new ArrayList<>();
 
         token token0 = new token(0,"form0", "lemma0", "carg0");
@@ -1960,7 +1960,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getTokenSpan_noTokensInGraph()throws NoSuchFieldException, IllegalAccessException{
+    public void test_getTokenSpan_noTokensInGraph(){
 
         graph g = new graph("1","source","input",new ArrayList<node>(),new ArrayList<token>(),new ArrayList<edge>(),new ArrayList<Integer>());
 
@@ -1970,7 +1970,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_getTokenSpan_GetOneTokenOnly()throws NoSuchFieldException, IllegalAccessException{
+    public void test_getTokenSpan_GetOneTokenOnly(){
         ArrayList<token> tokens = new ArrayList<>();
 
         token token0 = new token(0,"form0", "lemma0", "carg0");
@@ -1989,7 +1989,31 @@ public class GraphTest {
     }
 
     @Test
-    public void test_connectedBFS_IdentifiesConnectedGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getTokenInput_GetsTokenInputCorrectly(){
+        ArrayList<token> tokens = new ArrayList<>();
+
+        token token0 = new token(0,"form0", "lemma0", "carg0");
+        token token1 = new token(1,"form1", "lemma1", "carg1");
+        token token2 = new token(2,"form2", "lemma2", "carg2");
+        token token3 = new token(3,"form3", "lemma3", "carg3");
+        token token4 = new token(4,"form4", "lemma4", "carg4");
+        token token5 = new token(5,"form5", "lemma5", "carg5");
+        tokens.add(token0);
+        tokens.add(token1);
+        tokens.add(token2);
+        tokens.add(token3);
+        tokens.add(token4);
+        tokens.add(token5);
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+
+        String expected = "form0 form1 form2 form3 form4 form5 " ;
+
+        assertTrue("getTokenInput does not get tokens' forms correctly.",g.getTokenInput(tokens).equals(expected));
+    }
+
+    @Test
+    public void test_connectedBFS_IdentifiesConnectedGraph(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -2025,7 +2049,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_connectedBFS_IdentifiesDisconnectedGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_connectedBFS_IdentifiesDisconnectedGraph(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -2059,7 +2083,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_connectedBFS_Node0IsDisconnected() throws NoSuchFieldException, IllegalAccessException{
+    public void test_connectedBFS_Node0IsDisconnected(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -2081,7 +2105,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_connectedBFS_SingleNodeGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_connectedBFS_SingleNodeGraph(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
