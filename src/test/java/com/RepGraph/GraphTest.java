@@ -7,6 +7,8 @@ import javax.validation.constraints.AssertTrue;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Stack;
 
 import static junit.framework.TestCase.*;
 
@@ -723,6 +725,115 @@ public class GraphTest {
 
 
         assertTrue("directedLongestPaths method does not correctly find multiple longest directed paths from a start node.", g.directedLongestPaths(0).equals(correctResult0));
+
+    }
+
+    @Test
+    public void test_topologicalSort_SortsCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        node node7 = new node(7, "node7", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+        nodes.add(node7);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> nodeNeighbours0 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours1 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours3 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours4 = new ArrayList<>();
+
+        nodeNeighbours0.add(node2);
+        nodeNeighbours0.add(node3);
+        nodeNeighbours0.add(node4);
+        nodeNeighbours1.add(node2);
+        nodeNeighbours1.add(node5);
+        nodeNeighbours3.add(node5);
+        nodeNeighbours4.add(node7);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field nodeField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        nodeField0.setAccessible(true);
+        nodeField0.set(node0, nodeNeighbours0);
+        final Field nodeField1 = node1.getClass().getDeclaredField("directedNeighbours");
+        nodeField1.setAccessible(true);
+        nodeField1.set(node1, nodeNeighbours1);
+        final Field nodeField3 = node3.getClass().getDeclaredField("directedNeighbours");
+        nodeField3.setAccessible(true);
+        nodeField3.set(node3, nodeNeighbours3);
+        final Field nodeField4 = node4.getClass().getDeclaredField("directedNeighbours");
+        nodeField4.setAccessible(true);
+        nodeField4.set(node4, nodeNeighbours4);
+
+        Stack<Integer> stack = new Stack<Integer>();
+        boolean [] visited = new boolean[8];
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        Stack<Integer> expectedResult = new Stack<Integer>();
+        expectedResult.push(2);
+        expectedResult.push(5);
+        expectedResult.push(3);
+        expectedResult.push(7);
+        expectedResult.push(4);
+        expectedResult.push(0);
+
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 0.", g.topologicalSort(0,visited,stack).equals(expectedResult));
+
+        stack.clear();
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        expectedResult.clear();
+        expectedResult.push(2);
+        expectedResult.push(5);
+        expectedResult.push(1);
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 1.", g.topologicalSort(1,visited,stack).equals(expectedResult));
+
+        stack.clear();
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        expectedResult.clear();
+        expectedResult.push(2);
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 2.", g.topologicalSort(2,visited,stack).equals(expectedResult));
+
+        stack.clear();
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        expectedResult.clear();
+        expectedResult.push(6);
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 6.", g.topologicalSort(6,visited,stack).equals(expectedResult));
+
+        stack.clear();
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        expectedResult.clear();
+        expectedResult.push(7);
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 7.", g.topologicalSort(7,visited,stack).equals(expectedResult));
 
     }
 
