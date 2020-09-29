@@ -411,7 +411,7 @@ public class graph {
 
         //Creates a list of all directed and undirected neighbours of the start node.
         ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNodeID).getDirectedNeighbours());
-        ArrayList<node> undirectedNeighbours = nodes.get(startNodeID).getUndirectedNeighbours();
+        ArrayList<node> undirectedNeighbours = new ArrayList<node>(nodes.get(startNodeID).getUndirectedNeighbours());
         for (int i = 0; i < undirectedNeighbours.size(); i++){
             allNeighbours.add(undirectedNeighbours.get(i));
         }
@@ -438,8 +438,8 @@ public class graph {
             int currentNodeID = q.poll();
 
             //Combine the lists of all directed and undirected neighbours of the current node.
-            allNeighbours = nodes.get(currentNodeID).getDirectedNeighbours();
-            undirectedNeighbours = nodes.get(currentNodeID).getUndirectedNeighbours();
+            allNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getDirectedNeighbours());
+            undirectedNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getUndirectedNeighbours());
             for (int i = 0; i < undirectedNeighbours.size(); i++){
                 allNeighbours.add(undirectedNeighbours.get(i));
             }
@@ -598,6 +598,8 @@ public class graph {
      */
     public boolean connectedBFS(){
 
+        setNodeNeighbours();
+
         int startNodeID = 0;
 
         if (nodes.size()<=1){
@@ -605,7 +607,7 @@ public class graph {
         }
         //Creates a list of all directed and undirected neighbours of the start node.
         ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNodeID).getDirectedNeighbours());
-        ArrayList<node> undirectedNeighbours = nodes.get(startNodeID).getUndirectedNeighbours();
+        ArrayList<node> undirectedNeighbours = new ArrayList<node>(nodes.get(startNodeID).getUndirectedNeighbours());
         for (int i = 0; i < undirectedNeighbours.size(); i++){
             allNeighbours.add(undirectedNeighbours.get(i));
         }
@@ -633,8 +635,8 @@ public class graph {
             nodesVisited++;
 
             //Combine the lists of all directed and undirected neighbours of the current node.
-            allNeighbours = nodes.get(currentNodeID).getDirectedNeighbours();
-            undirectedNeighbours = nodes.get(currentNodeID).getUndirectedNeighbours();
+            allNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getDirectedNeighbours());
+            undirectedNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getUndirectedNeighbours());
             for (int i = 0; i < undirectedNeighbours.size(); i++){
                 allNeighbours.add(undirectedNeighbours.get(i));
             }
