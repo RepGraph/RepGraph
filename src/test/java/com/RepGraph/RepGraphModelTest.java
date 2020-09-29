@@ -100,7 +100,7 @@ public class RepGraphModelTest {
 
 
     @Test
-    public void test_DisplaySubset_CorrectlyConstructsSubsetGraph() throws NoSuchFieldException, IllegalAccessException {
+    public void test_DisplaySubsetAdjacent_CorrectlyConstructsSubsetGraph() throws NoSuchFieldException, IllegalAccessException {
 
         RepGraphModel model = new RepGraphModel();
 
@@ -143,7 +143,7 @@ public class RepGraphModelTest {
 
         graph expected = new graph("11111", g1.getSource(), "node1 form node2 form node3 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
 
-        graph subset = model.displaySubset("11111", 0);
+        graph subset = model.DisplaySubsetAdjacent("11111", 0);
 
         assertEquals("Subset Not Constructed Properly", subset, expected);
 
