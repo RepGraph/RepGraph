@@ -1730,7 +1730,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
@@ -1738,13 +1738,13 @@ public class GraphTest {
         edges.add(new edge(2, 3, "testlabel2", "testpostlabel2"));
         edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(0, 2, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
 
-        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(0, 4, "testlabel", "testpostlabel"));
@@ -1752,7 +1752,7 @@ public class GraphTest {
         edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
         edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
         edges.clear();
         edges.add(new edge(4, 0, "testlabel", "testpostlabel"));
@@ -1760,10 +1760,97 @@ public class GraphTest {
         edges.add(new edge(2, 0, "testlabel2", "testpostlabel2"));
         edges.add(new edge(3, 0, "testlabel2", "testpostlabel2"));
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
 
     }
+
+    @Test
+    public void test_isPlanar_HandlesNodesWithSameToken() {
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
+
+
+        ArrayList<anchors> anch1 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+        nodes.add(new node(0, "node" + (0 + 1), anch1));
+
+        ArrayList<anchors> anch2 = new ArrayList<anchors>();
+        anch2.add(new anchors(0, 0));
+        nodes.add(new node(1, "node" + (1 + 1), anch2));
+
+        ArrayList<anchors> anch3 = new ArrayList<anchors>();
+        anch3.add(new anchors(1, 1));
+        nodes.add(new node(2, "node" + (2 + 1), anch3));
+
+        ArrayList<anchors> anch4 = new ArrayList<anchors>();
+        anch4.add(new anchors(2, 2));
+        nodes.add(new node(3, "node" + (3 + 1), anch4));
+
+        ArrayList<anchors> anch5 = new ArrayList<anchors>();
+        anch5.add(new anchors(3, 3));
+        nodes.add(new node(4, "node" + (4 + 1), anch5));
+
+        edges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
+
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.GraphIsPlanar());
+
+        edges.clear();
+        edges.add(new edge(0, 3, "testlabel", "testpostlabel"));
+        edges.add(new edge(2, 3, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(1, 3, "testlabel2", "testpostlabel2"));
+        edges.add(new edge(3, 4, "testlabel2", "testpostlabel2"));
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.GraphIsPlanar());
+
+        anch1 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+        nodes.clear();
+        nodes.add(new node(0, "node" + (0 + 1), anch1));
+
+        anch2 = new ArrayList<anchors>();
+        anch2.add(new anchors(0, 0));
+        nodes.add(new node(1, "node" + (1 + 1), anch2));
+
+        anch3 = new ArrayList<anchors>();
+        anch3.add(new anchors(1, 1));
+        nodes.add(new node(2, "node" + (2 + 1), anch3));
+
+        anch4 = new ArrayList<anchors>();
+        anch4.add(new anchors(1, 1));
+        nodes.add(new node(3, "node" + (3 + 1), anch4));
+
+        anch5 = new ArrayList<anchors>();
+        anch5.add(new anchors(2, 2));
+        nodes.add(new node(4, "node" + (4 + 1), anch5));
+
+        ArrayList<anchors> anch6 = new ArrayList<anchors>();
+        anch6.add(new anchors(3, 3));
+        nodes.add(new node(5, "node" + (5 + 1), anch6));
+
+        edges.clear();
+        edges.add(new edge(0, 3, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 4, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
+
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.GraphIsPlanar());
+
+        edges.clear();
+        edges.add(new edge(0, 3, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 4, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(2, 4, "testlabel2", "testpostlabel2"));
+        edges.add(new edge(3, 5, "testlabel2", "testpostlabel2"));
+
+        assertFalse("isPlanar Correctly identifies planar and non-planar graphs with duplicate token references", g.GraphIsPlanar());
+
+
+    }
+
 
     @Test
     public void test_isPlanar_HandlesNoEdgesInGraph() {
@@ -1795,7 +1882,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
     }
 
@@ -1807,7 +1894,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.isPlanar());
+        assertTrue("isPlanar Correctly identifies planar and non-planar graphs", g.GraphIsPlanar());
 
     }
 
@@ -1843,56 +1930,6 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        //Creating the array of node neighbours for the nodes in the graph.
-        ArrayList<node> directNeighbours0 = new ArrayList<>();
-        ArrayList<node> directNeighbours1 = new ArrayList<>();
-        ArrayList<node> directNeighbours3 = new ArrayList<>();
-
-        directNeighbours0.add(node1);
-        directNeighbours0.add(node3);
-        directNeighbours0.add(node5);
-        directNeighbours1.add(node2);
-        directNeighbours3.add(node4);
-
-        ArrayList<node> undirectNeighbours1 = new ArrayList<>();
-        ArrayList<node> undirectNeighbours2 = new ArrayList<>();
-        ArrayList<node> undirectNeighbours5 = new ArrayList<>();
-        ArrayList<node> undirectNeighbours3 = new ArrayList<>();
-        ArrayList<node> undirectNeighbours4 = new ArrayList<>();
-
-        undirectNeighbours1.add(node0);
-        undirectNeighbours2.add(node1);
-        undirectNeighbours5.add(node0);
-        undirectNeighbours3.add(node0);
-        undirectNeighbours4.add(node3);
-
-        //Setting node neighbours without using setNodeNeighbours method.
-        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
-        directField0.setAccessible(true);
-        directField0.set(node0, directNeighbours0);
-        final Field directField1 = node1.getClass().getDeclaredField("directedNeighbours");
-        directField1.setAccessible(true);
-        directField1.set(node1, directNeighbours1);
-        final Field directField3 = node3.getClass().getDeclaredField("directedNeighbours");
-        directField3.setAccessible(true);
-        directField3.set(node3, directNeighbours3);
-        final Field undirectField1 = node1.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField1.setAccessible(true);
-        undirectField1.set(node1, undirectNeighbours1);
-        final Field undirectField2 = node2.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField2.setAccessible(true);
-        undirectField2.set(node2, undirectNeighbours2);
-        final Field undirectField3 = node3.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField3.setAccessible(true);
-        undirectField3.set(node3, undirectNeighbours3);
-        final Field undirectField4 = node4.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField4.setAccessible(true);
-        undirectField4.set(node4, undirectNeighbours4);
-        final Field undirectField5 = node5.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField5.setAccessible(true);
-        undirectField5.set(node5, undirectNeighbours5);
-
-
         assertTrue("connectedBFS method does not correctly identify a connected graph.", g.connectedBFS());
 
     }
@@ -1927,50 +1964,6 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        //Creating the array of node neighbours for the nodes in the graph.
-        ArrayList<node> directNeighbours0 = new ArrayList<>();
-        ArrayList<node> directNeighbours1 = new ArrayList<>();
-        ArrayList<node> directNeighbours3 = new ArrayList<>();
-
-        directNeighbours0.add(node1);
-        directNeighbours0.add(node3);
-        directNeighbours1.add(node2);
-        directNeighbours3.add(node4);
-
-        ArrayList<node> undirectNeighbours1 = new ArrayList<>();
-        ArrayList<node> undirectNeighbours2 = new ArrayList<>();
-        ArrayList<node> undirectNeighbours3 = new ArrayList<>();
-        ArrayList<node> undirectNeighbours4 = new ArrayList<>();
-
-        undirectNeighbours1.add(node0);
-        undirectNeighbours2.add(node1);
-        undirectNeighbours3.add(node0);
-        undirectNeighbours4.add(node3);
-
-        //Setting node neighbours without using setNodeNeighbours method.
-        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
-        directField0.setAccessible(true);
-        directField0.set(node0, directNeighbours0);
-        final Field directField1 = node1.getClass().getDeclaredField("directedNeighbours");
-        directField1.setAccessible(true);
-        directField1.set(node1, directNeighbours1);
-        final Field directField3 = node3.getClass().getDeclaredField("directedNeighbours");
-        directField3.setAccessible(true);
-        directField3.set(node3, directNeighbours3);
-        final Field undirectField1 = node1.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField1.setAccessible(true);
-        undirectField1.set(node1, undirectNeighbours1);
-        final Field undirectField2 = node2.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField2.setAccessible(true);
-        undirectField2.set(node2, undirectNeighbours2);
-        final Field undirectField3 = node3.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField3.setAccessible(true);
-        undirectField3.set(node3, undirectNeighbours3);
-        final Field undirectField4 = node4.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField4.setAccessible(true);
-        undirectField4.set(node4, undirectNeighbours4);
-
-
         assertFalse("connectedBFS method does not correctly identify a disconnected graph.", g.connectedBFS());
 
     }
@@ -1993,27 +1986,10 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        //Creating the array of node neighbours for the nodes in the graph.
-        ArrayList<node> directNeighbours1 = new ArrayList<>();
-
-        directNeighbours1.add(node2);
-
-        ArrayList<node> undirectNeighbours2 = new ArrayList<>();
-
-        undirectNeighbours2.add(node1);
-
-        //Setting node neighbours without using setNodeNeighbours method.
-        final Field directField1 = node1.getClass().getDeclaredField("directedNeighbours");
-        directField1.setAccessible(true);
-        directField1.set(node1, directNeighbours1);
-        final Field undirectField2 = node2.getClass().getDeclaredField("undirectedNeighbours");
-        undirectField2.setAccessible(true);
-        undirectField2.set(node2, undirectNeighbours2);
-
-
         assertFalse("connectedBFS method does not correctly identify a disconnected graph where node 0 is disconnected.", g.connectedBFS());
 
     }
+
     @Test
     public void test_connectedBFS_SingleNodeGraph() throws NoSuchFieldException, IllegalAccessException{
         //Creating the nodes and edges for the graph
