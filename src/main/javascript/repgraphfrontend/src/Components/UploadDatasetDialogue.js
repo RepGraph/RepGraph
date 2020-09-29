@@ -3,7 +3,7 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
 
-function DropZoneUploadDataset(){
+function DropZoneUploadDataset(props){
     const [open, setOpen] = React.useState(false);
     const [fileObjects, setFileObjects] = React.useState([]);
 
@@ -25,11 +25,13 @@ function DropZoneUploadDataset(){
             onDelete={deleteFileObj => {
                 console.log('onDelete', deleteFileObj);
             }}
-            onClose={() => setOpen(false)}
+            onClose={() => {
+                setOpen(false)}}
             onSave={() => {
+                //Fired when the user clicks the Submit button
+                props.handleUploadDataset(fileObjects[0]);
                 console.log('onSave', fileObjects);
-                setOpen(false);
-            }}
+                setOpen(false);}}
             showPreviews={true}
             showFileNamesInPreview={true}
         />

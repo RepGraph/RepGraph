@@ -9,6 +9,7 @@ package com.RepGraph;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class RepGraphModel {
 
@@ -26,6 +27,7 @@ public class RepGraphModel {
 
     /**
      * Getter method for a graph given the graph's ID.
+     *
      * @param graphID A graph's ID.
      * @return graph The requested graph.
      */
@@ -35,6 +37,7 @@ public class RepGraphModel {
 
     /**
      * Adds graph to hashmap.
+     *
      * @param value Graph object
      */
     public void addGraph(graph value) {
@@ -60,12 +63,13 @@ public class RepGraphModel {
     }
 
     /**
-     * Uses a graph ID and the number of a node in the graph and returns a subset of the graph.
-     * @param graphID The graph ID.
+     * Uses a graph ID and the number of a node in the graph and returns a subset of the graph. The subset is all the adjacent nodes around the head node id given
+     *
+     * @param graphID    The graph ID.
      * @param headNodeID The graph's node which will be the head node of the subset.
      * @return graph The subset of the graph.
      */
-    public graph displaySubset(String graphID, int headNodeID) {
+    public graph DisplaySubsetAdjacent(String graphID, int headNodeID) {
 
         graph subset = new graph();
         ArrayList<node> adjacentNodes = new ArrayList<>();
@@ -114,13 +118,107 @@ public class RepGraphModel {
         subset.setTops(parent.getTops());
 
         return subset;
-
     }
 
     /**
+     * Uses a graph ID and the number of a node in the graph and returns a subset of the graph. The subset is all the descendant nodes from the head node id given
+     *
+     * @param graphID    The graph ID.
+     * @param headNodeID The graph's node which will be the head node of the subset.
+     * @return graph The subset of the graph.
+     */
+    public graph DisplaySubsetDescendant(String graphID, int headNodeID) {
+
+        graph subset = new graph();
+
+        ArrayList<node> DescendantNodes = new ArrayList<>();
+        ArrayList<edge> DescendantEdges = new ArrayList<>();
+        ArrayList<token> SubsetTokens = new ArrayList<>();
+
+        graph parent = getGraph(graphID);
+        parent.setNodeNeighbours();
+
+
+        //DONT NEED FOR LOOP IF NODE ID IS ALWAYS THE SAME AS INDEX
+        for (node n : parent.getNodes()) {
+
+            if (n.getId() == headNodeID) {
+                DescendantNodes.add(n);
+                DescendantEdges.addAll(n.getDirectedEdgeNeighbours());
+
+                int minFrom = n.getAnchors().get(0).getFrom();
+                int maxEnd = n.getAnchors().get(0).getEnd();
+
+                HashMap<Integer, node> descNode = new HashMap<>();
+                HashMap<String, edge> descEdge = new HashMap<>();
+
+                DiscoverNodesAndEdges(n, descNode, descEdge);
+
+                DescendantNodes.addAll(descNode.values());
+
+                DescendantEdges.addAll(descEdge.values());
+
+                for (node nn : DescendantNodes) {
+                    if (nn.getAnchors().get(0).getFrom() < minFrom) {
+                        minFrom = nn.getAnchors().get(0).getFrom();
+                    }
+                    if (nn.getAnchors().get(0).getEnd() > maxEnd) {
+                        maxEnd = nn.getAnchors().get(0).getEnd();
+                    }
+                }
+
+                SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
+            }
+        }
+
+        subset.setId(parent.getId());
+        subset.setSource(parent.getSource());
+        subset.setNodes(DescendantNodes);
+        subset.setEdges(DescendantEdges);
+        subset.setTokens(SubsetTokens);
+        subset.setInput(parent.getTokenInput(SubsetTokens));
+
+        return subset;
+    }
+
+    public void DiscoverNodesAndEdges(node root, HashMap<Integer, node> descendants, HashMap<String, edge> descendantsEdges) {
+
+        if (root == null)
+            return;
+
+        Stack<node> s = new Stack<>();
+        node curr = root;
+
+        // traverse the tree
+        while (curr != null || s.size() > 0) {
+
+            for (node n : curr.getDirectedNeighbours()) {
+                s.push(n);
+                descendants.put(n.getId(), n);
+
+                for (edge e : n.getDirectedEdgeNeighbours()) {
+
+                    descendantsEdges.put(e.getSource() + " " + e.getTarget(), e);
+                }
+            }
+
+            try {
+                curr = s.pop();
+            } catch (Exception e) {
+                curr = null;
+            }
+
+        }
+
+
+    }
+
+
+    /**
      * Overloaded method to search for subgraph pattern using different parameters
-     * @param graphID ID of graph that contains the selected pattern
-     * @param NodeId Int array of node IDs of the pattern selected
+     *
+     * @param graphID     ID of graph that contains the selected pattern
+     * @param NodeId      Int array of node IDs of the pattern selected
      * @param EdgeIndices int array of the edge indices of the pattern selected
      * @return ArrayList Returns an arraylist of strings containing the graph IDs where the pattern was found
      */
@@ -145,6 +243,7 @@ public class RepGraphModel {
     /**
      * This method searches through the graph objects in the hashmap to find graphs that contain a
      * subgraph pattern.
+     *
      * @return String A string of graph IDs who have matching subgraphs.
      */
     public ArrayList<String> searchSubgraphPattern(graph subgraph) {
@@ -284,6 +383,7 @@ public class RepGraphModel {
 
     /**
      * Compares two graphs and searches for similarities and differences.
+     *
      * @param graphID1 Graph ID of the first graph.
      * @param graphID2 Graph ID of the second graph.
      * @return String The differences and similarities of the two graphs.
@@ -327,22 +427,27 @@ public class RepGraphModel {
 
     /**
      * Runs formal tests on a graph.
-     * @param graphID The graph ID which the tests will be run.
-     * @param planar Boolean to decide if to test for if the graph is planar.
-     * @param longestpath Boolean to decide if to find the longest directed or undirected path.
-     * @param connected Boolean to decide if to test for if the graph is connected.
+     *
+     * @param graphID               The graph ID which the tests will be run.
+     * @param planar                Boolean to decide if to test for if the graph is planar.
+     * @param longestPathDirected   Boolean to decide if to find the longest directed path.
+     * @param longestPathUndirected Boolean to decide if to find the longest undirected path.
+     * @param connected             Boolean to decide if to test for if the graph is connected.
      * @return String Results of the tests.
      */
-    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestpath, boolean directed, boolean connected) {
+    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestPathDirected, boolean longestPathUndirected, boolean connected) {
         HashMap<String, Object> returnObj = new HashMap<>();
         if (planar) {
-            returnObj.put("Planar", graphs.get(graphID).isPlanar());
+            returnObj.put("Planar", graphs.get(graphID).GraphIsPlanar());
         }
-        if (longestpath) {
-            returnObj.put("LongestPath", graphs.get(graphID).findLongest(directed));
+        if (longestPathDirected) {
+            returnObj.put("LongestPathDirected", graphs.get(graphID).findLongest(true));
+        }
+        if (longestPathUndirected) {
+            returnObj.put("LongestPathUndirected", graphs.get(graphID).findLongest(false));
         }
         if (connected) {
-            returnObj.put("Connected", false);
+            returnObj.put("Connected", graphs.get(graphID).connectedBFS());
         }
         return returnObj;
     }
