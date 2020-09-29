@@ -2013,6 +2013,18 @@ public class GraphTest {
     }
 
     @Test
+    public void test_getTokenInput_EmptyTokenArray(){
+        ArrayList<token> tokens = new ArrayList<>();
+
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+
+        String expected = "" ;
+
+        assertTrue("getTokenInput does not get tokens' forms correctly from an empty array of tokens.",g.getTokenInput(tokens).equals(expected));
+    }
+
+    @Test
     public void test_connectedBFS_IdentifiesConnectedGraph(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
