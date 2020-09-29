@@ -203,7 +203,7 @@ public class RepGraphModel {
 
             try {
                 curr = s.pop();
-            } catch (NullPointerException e) {
+            } catch (Exception e) {
                 curr = null;
             }
 
