@@ -1962,6 +1962,11 @@ public class GraphTest {
     @Test
     public void test_getTokenSpan_noTokensInGraph()throws NoSuchFieldException, IllegalAccessException{
 
+        graph g = new graph("1","source","input",new ArrayList<node>(),new ArrayList<token>(),new ArrayList<edge>(),new ArrayList<Integer>());
+
+        ArrayList<token> expected = new ArrayList<>();
+
+        assertTrue("getTokenSpan does not correctly retrieve tokens from an empty graph.",g.getTokenSpan(0,-1).equals(expected));
     }
 
     @Test
