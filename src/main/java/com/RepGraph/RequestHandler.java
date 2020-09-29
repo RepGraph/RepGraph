@@ -143,6 +143,12 @@ public class RequestHandler {
         return RepModel.DisplaySubsetDescendant(graphID, NodeID);
     }
 
+    @GetMapping("/DisplayPlanarGraph")
+    @ResponseBody
+    public graph DisplayPlanarGraph(@RequestParam String graphID) {
+        return RepModel.getGraph(graphID).PlanarVisualisation();
+    }
+
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
      * The Request URL also requires the "graphID" and "NodeID" list Request Params to be present.
