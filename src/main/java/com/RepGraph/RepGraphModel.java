@@ -62,6 +62,15 @@ public class RepGraphModel {
         graphs.clear();
     }
 
+    public graph DisplaySubset(String graphId, int headNodeID, String SubsetType) {
+        if (SubsetType.equals("adjacent")) {
+            return DisplaySubsetAdjacent(graphId, headNodeID);
+        } else if (SubsetType.equals("descendant")) {
+            return DisplaySubsetDescendant(graphId, headNodeID);
+        }
+        return null;
+    }
+
     /**
      * Uses a graph ID and the number of a node in the graph and returns a subset of the graph. The subset is all the adjacent nodes around the head node id given
      *

@@ -131,17 +131,12 @@ public class RequestHandler {
         return RepModel.getGraph(graphID);
     }
 
-    @GetMapping("/DisplaySubsetAdjacent")
+    @GetMapping("/DisplaySubset")
     @ResponseBody
-    public graph DisplaySubsetAdjacent(@RequestParam String graphID, @RequestParam int NodeID) {
-        return RepModel.DisplaySubsetAdjacent(graphID, NodeID);
+    public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType) {
+        return RepModel.DisplaySubset(graphID, NodeID, SubsetType);
     }
 
-    @GetMapping("/DisplaySubsetDescendant")
-    @ResponseBody
-    public graph DisplaySubsetDescendant(@RequestParam String graphID, @RequestParam int NodeID) {
-        return RepModel.DisplaySubsetDescendant(graphID, NodeID);
-    }
 
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
