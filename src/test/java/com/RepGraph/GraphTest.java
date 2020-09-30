@@ -1841,6 +1841,61 @@ public class GraphTest {
     }
 
     @Test
+    public void test_combineNeighbours_CombinesNeighboursCorrectly()throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> directNeighbours0 = new ArrayList<>();
+        ArrayList<node> directNeighbours1 = new ArrayList<>();
+        ArrayList<node> directNeighbours3 = new ArrayList<>();
+
+        directNeighbours0.add(node1);
+        directNeighbours0.add(node3);
+        directNeighbours0.add(node5);
+        ArrayList<node> undirectNeighbours0 = new ArrayList<>();
+
+        undirectNeighbours0.add(node2);
+        undirectNeighbours0.add(node4);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        directField0.setAccessible(true);
+        directField0.set(node0, directNeighbours0);
+        final Field undirectField0= node0.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField0.setAccessible(true);
+        undirectField0.set(node0, undirectNeighbours0);
+
+        //Expected results for longest path for each node as the start node.
+        ArrayList<node> correctResult0 = new ArrayList<>();
+        correctResult0.add(node1);
+        correctResult0.add(node3);
+        correctResult0.add(node5);
+        correctResult0.add(node2);
+        correctResult0.add(node4);
+
+        assertTrue("combineNodeNeighbours does not correclty combine undirected and directed node neighbours", g.combineNeighbours(0).equals(correctResult0));
+
+    }
+
+
+    @Test
     public void test_isPlanar_IdentifiesPlanarGraph() {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
