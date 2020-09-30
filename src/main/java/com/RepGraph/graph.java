@@ -59,13 +59,14 @@ public class graph {
 
     /**
      * Fully parameterised constructor for the graph class.
-     * @param id The graph's ID number.
+     *
+     * @param id     The graph's ID number.
      * @param source The graph's source.
-     * @param input The graph's input/sentence.
-     * @param nodes An array list of the graph's nodes.
+     * @param input  The graph's input/sentence.
+     * @param nodes  An array list of the graph's nodes.
      * @param tokens An array list of the graph's tokens.
-     * @param edges An array list of the graph's edges.
-     * @param tops An array list of the graph's top node ids.
+     * @param edges  An array list of the graph's edges.
+     * @param tops   An array list of the graph's top node ids.
      */
     public graph(String id, String source, String input, ArrayList<node> nodes, ArrayList<token> tokens, ArrayList<edge> edges, ArrayList<Integer> tops) {
         this.id = id;
@@ -79,6 +80,7 @@ public class graph {
 
     /**
      * Getter method for the graph's ID number.
+     *
      * @return String The graph's ID number.
      */
     public String getId() {
@@ -87,6 +89,7 @@ public class graph {
 
     /**
      * Setter method for the graph's ID number.
+     *
      * @param id The graph's ID number.
      */
     public void setId(String id) {
@@ -95,6 +98,7 @@ public class graph {
 
     /**
      * Getter method for the graph's source.
+     *
      * @return String The graph's source.
      */
     public String getSource() {
@@ -103,6 +107,7 @@ public class graph {
 
     /**
      * Setter method for the graph's source.
+     *
      * @param source The graph's source.
      */
     public void setSource(String source) {
@@ -111,6 +116,7 @@ public class graph {
 
     /**
      * Getter method for the graph's input.
+     *
      * @return String The graph's input.
      */
     public String getInput() {
@@ -119,6 +125,7 @@ public class graph {
 
     /**
      * Setter method for the graph's input.
+     *
      * @param input The graph's input.
      */
     public void setInput(String input) {
@@ -127,6 +134,7 @@ public class graph {
 
     /**
      * Getter method for the graph's nodes.
+     *
      * @return ArrayList The graph's nodes.
      */
     public ArrayList<node> getNodes() {
@@ -135,6 +143,7 @@ public class graph {
 
     /**
      * Setter method for the graph's nodes.
+     *
      * @param nodes The graph's nodes.
      */
     public void setNodes(ArrayList<node> nodes) {
@@ -143,6 +152,7 @@ public class graph {
 
     /**
      * Getter method for the graph's tokens.
+     *
      * @return ArrayList The graph's tokens.
      */
     public ArrayList<token> getTokens() {
@@ -151,6 +161,7 @@ public class graph {
 
     /**
      * Setter method for the graph's tokens.
+     *
      * @param tokens The graph's tokens.
      */
     public void setTokens(ArrayList<token> tokens) {
@@ -159,6 +170,7 @@ public class graph {
 
     /**
      * Getter method for the graph's edges.
+     *
      * @return ArrayList The graph's edges.
      */
     public ArrayList<edge> getEdges() {
@@ -167,6 +179,7 @@ public class graph {
 
     /**
      * Setter method for the graph's edges.
+     *
      * @param edges The graph's edges.
      */
     public void setEdges(ArrayList<edge> edges) {
@@ -193,6 +206,7 @@ public class graph {
 
     /**
      * Analysis Tool for finding the longest path in the graph.
+     *
      * @return ArrayList<ArrayList < Integer>> The a list of longest paths in the graph.
      */
     public ArrayList<ArrayList<Integer>> findLongest(boolean directed) {
@@ -202,83 +216,86 @@ public class graph {
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
         if ((nodes.size() == 0) || (edges.size() == 0)) {
+
             return paths;
+
         } else if (edges.size() == 1) {
+
             paths.add(new ArrayList<Integer>());
             paths.get(0).add(edges.get(0).getSource());
             paths.get(0).add(edges.get(0).getTarget());
             return paths;
+
         } else {
 
-            if (directed) {
+            if ((!directed) && (connectedBFS())) {
+
+                ArrayList<ArrayList<Integer>> endpoints = BFS(0);
+                ArrayList<ArrayList<Integer>> temp;
+                ArrayList<Integer> pathEnds = new ArrayList<>();
+                int endpoint;
+                for (int i = 0; i < endpoints.size(); i++) {
+                    if (!pathEnds.contains(endpoints.get(i).get(0))) {
+                        endpoint = endpoints.get(i).get(0);
+                        temp = BFS(endpoint);
+                        for (int j = 0; j < temp.size(); j++) {
+                            paths.add(new ArrayList<>(temp.get(j)));
+                            pathEnds.add(temp.get(j).get(0));
+                        }
+                    }
+
+                }
+            } else {
+
                 //Default longest path set from node 0.
-                ArrayList<ArrayList<Integer>> longest = directedLongestPaths(0);
+                ArrayList<ArrayList<Integer>> longest;
+                ArrayList<Integer> pathEnds = new ArrayList<>();
+                if (directed) {
+                    longest = directedLongestPaths(0);
+                } else {
+                    longest = BFS(0);
+                }
+
                 for (int i = 0; i < longest.size(); i++) {
                     paths.add(longest.get(i));
                 }
+
                 ArrayList<ArrayList<Integer>> temp;
 
                 //Makes each node the start node and finds the longest overall path/s.
                 for (int i = 1; i < nodes.size(); i++) {
-                    temp = directedLongestPaths(i);
-                    if (temp.size() != 0) {
-                        if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
-                            longest = temp;
-                            paths.clear();
-                            for (int j = 0; j < temp.size(); j++) {
-                                paths.add(new ArrayList<Integer>(temp.get(j)));
-                            }
-                        } else if (temp.get(0).size() == longest.get(0).size()) {
-                            for (int j = 0; j < temp.size(); j++) {
-                                paths.add(new ArrayList<Integer>(temp.get(j)));
-                            }
+                    if (!pathEnds.contains(i)){
+                        if (directed) {
+                            temp = directedLongestPaths(i);
                         } else {
+                            temp = BFS(i);
                         }
-                    }
-                }
-            } else {
-
-                if (connectedBFS()){
-                    //First BFS to find end point of longest path
-                    ArrayList<ArrayList<Integer>> endpoints = BFS(0);
-                   // System.out.println("endpoints: " + endpoints.toString());
-                    ArrayList<ArrayList<Integer>> temp;
-                    ArrayList<Integer> pathEnds = new ArrayList<>();
-                    int endpoint;
-                    for (int i = 0; i < endpoints.size(); i++) {
-                        if (!pathEnds.contains(endpoints.get(i).get(0))){
-                            endpoint = endpoints.get(i).get(0);
-                            //System.out.println("endpoint: " + endpoint);
-                            //System.out.println(pathEnds.toString());
-                            temp = BFS(endpoint);
-                            for (int j = 0; j < temp.size(); j++) {
-                                //System.out.println("Adding path: " + temp.get(j).toString());
-                                paths.add(new ArrayList<Integer>(temp.get(j)));
-                                pathEnds.add(temp.get(j).get(0));
+                        if (temp.size() != 0) {
+                            if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
+                                longest = temp;
+                                paths.clear();
+                                for (int j = 0; j < temp.size(); j++) {
+                                    paths.add(new ArrayList<>(temp.get(j)));
+                                    pathEnds.add(temp.get(j).get(0));
+                                }
+                            } else if (temp.get(0).size() == longest.get(0).size()) {
+                                for (int j = 0; j < temp.size(); j++) {
+                                    paths.add(new ArrayList<>(temp.get(j)));
+                                    pathEnds.add(temp.get(j).get(0));
+                                }
+                            } else {
                             }
                         }
-
                     }
                 }
-                else{
-
-                }
-
             }
-
 
             //Reverses the path so that start node is first.
-            ArrayList<ArrayList<Integer>> reversed = new ArrayList<>();
-            ArrayList<Integer> item = new ArrayList<>();
-            for (int i = 0; i < paths.size(); i++) {
-                item.clear();
-                for (int j = paths.get(i).size() - 1; j >= 0; j--) {
-                    item.add(paths.get(i).get(j));
-                }
-                reversed.add(new ArrayList<>(item));
+            for (ArrayList<Integer> item : paths) {
+                Collections.reverse(item);
             }
 
-            return reversed;
+            return paths;
         }
     }
 
@@ -318,6 +335,7 @@ public class graph {
 
     /**
      * Finds the longest distance from a given start node to all the other nodes in the system and returns the path of the longest path.
+     *
      * @param startNodeID Number of the start node.
      * @return ArrayList<ArrayList < Integer>> The longest paths available from the start node.
      */
@@ -366,13 +384,14 @@ public class graph {
                 }
             }
         }
-        return traverseLongestPath(dist,prevNode,startNodeID);
+        return traverseLongestPath(dist, prevNode, startNodeID);
 
     }
 
     /**
      * Recursive function that Topologically Sorts a graph.
-     * @param nodeID The current node.
+     *
+     * @param nodeID  The current node.
      * @param visited A list of booleans, representing whether a node has already been visited or not.
      */
     public Stack<Integer> topologicalSort(int nodeID, boolean visited[], Stack<Integer> stack) {
@@ -391,6 +410,7 @@ public class graph {
 
     /**
      * Breadth First Search algorithm for finding the longest path from a given start node in a graph.
+     *
      * @param startNodeID The starting node ID.
      * @return ArrayList<Integer> The path of the longest route from the given start node.
      */
@@ -437,15 +457,16 @@ public class graph {
             }
         }
 
-        return traverseLongestPath(dist,prevNode,startNodeID);
+        return traverseLongestPath(dist, prevNode, startNodeID);
     }
 
     /**
      * Combines the directed and undirected node neighbours of a given node.
+     *
      * @param nodeID The ID of the node.
      * @return ArrayList<node> List of the node's directed and undirected neighbours.
      */
-    public ArrayList<node> combineNeighbours(int nodeID){
+    public ArrayList<node> combineNeighbours(int nodeID) {
         ArrayList<node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
         ArrayList<node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
         for (int i = 0; i < undirectedNeighbours.size(); i++) {
@@ -456,12 +477,13 @@ public class graph {
 
     /**
      * Returns the longest paths given a list of distances and an array of each node's previous node in the path.
-     * @param dist ArrayList of each nodes maximum distance.
-     * @param prevNode Array of each node's previous node in a path.
+     *
+     * @param dist        ArrayList of each nodes maximum distance.
+     * @param prevNode    Array of each node's previous node in a path.
      * @param startNodeID The node ID of the start node.
-     * @return ArrayList<ArrayList<Integer>> The longest paths.
+     * @return ArrayList<ArrayList < Integer>> The longest paths.
      */
-    public ArrayList<ArrayList<Integer>> traverseLongestPath(ArrayList<Integer> dist, int[] prevNode, int startNodeID){
+    public ArrayList<ArrayList<Integer>> traverseLongestPath(ArrayList<Integer> dist, int[] prevNode, int startNodeID) {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
         int max = Collections.max(dist);
@@ -550,8 +572,9 @@ public class graph {
 
     /**
      * Creates a list of tokens in a range starting at "from" and ending at "end"
+     *
      * @param from The start of the range of tokens
-     * @param end The End of the range of tokens
+     * @param end  The End of the range of tokens
      * @return ArrayList<token> Returns a list of token objects
      */
     public ArrayList<token> getTokenSpan(int from, int end) {
@@ -564,6 +587,7 @@ public class graph {
 
     /**
      * gets the form of tokens and turns them into a string
+     *
      * @param tokenIn List of tokens to become a string
      * @return String This is the string of all token's form.
      */
@@ -579,6 +603,7 @@ public class graph {
 
     /**
      * Equals method for the graph class.
+     *
      * @param o Object
      * @return boolean Whether to two classes being compared are equal.
      */
@@ -600,6 +625,7 @@ public class graph {
 
     /**
      * Breadth First Search algorithm for determining whether a graph is connected or not.
+     *
      * @return boolean Whether the graph is connected or not.
      */
     public boolean connectedBFS() {
