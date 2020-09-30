@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.lang.reflect.Array;
 import java.util.*;
 
+import static java.util.Collections.max;
+
 public class graph {
 
     /**
@@ -462,16 +464,7 @@ public class graph {
     public ArrayList<ArrayList<Integer>> traverseLongestPath(ArrayList<Integer> dist, int[] prevNode, int startNodeID){
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
-        int max = dist.get(0);
-        int maxIndex = 0;
-
-        //Finds node index with the longest viable path. (i.e. biggest distance)
-        for (int i = 0; i < dist.size(); i++) {
-            if (dist.get(maxIndex) < dist.get(i)) {
-                max = dist.get(i);
-                maxIndex = i;
-            }
-        }
+        int max = Collections.max(dist);
 
         //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
         ArrayList<Integer> path = new ArrayList<>();
@@ -485,7 +478,7 @@ public class graph {
                     prev = prevNode[prev];
                 }
                 path.add(startNodeID);
-                paths.add(new ArrayList<Integer>(path));
+                paths.add(new ArrayList<>(path));
             }
         }
 
@@ -619,11 +612,7 @@ public class graph {
             return true;
         }
         //Creates a list of all directed and undirected neighbours of the start node.
-        ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNodeID).getDirectedNeighbours());
-        ArrayList<node> undirectedNeighbours = new ArrayList<node>(nodes.get(startNodeID).getUndirectedNeighbours());
-        for (int i = 0; i < undirectedNeighbours.size(); i++) {
-            allNeighbours.add(undirectedNeighbours.get(i));
-        }
+        ArrayList<node> allNeighbours = combineNeighbours(startNodeID);
 
         //Checks to see if the node has any neighbours.
         if (allNeighbours.size() == 0) {
@@ -648,11 +637,7 @@ public class graph {
             nodesVisited++;
 
             //Combine the lists of all directed and undirected neighbours of the current node.
-            allNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getDirectedNeighbours());
-            undirectedNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getUndirectedNeighbours());
-            for (int i = 0; i < undirectedNeighbours.size(); i++) {
-                allNeighbours.add(undirectedNeighbours.get(i));
-            }
+            allNeighbours = combineNeighbours(currentNodeID);
 
             //Iterate through all neighbouring nodes
             for (int i = 0; i < allNeighbours.size(); i++) {

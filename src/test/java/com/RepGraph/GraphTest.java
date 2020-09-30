@@ -2092,7 +2092,6 @@ public class GraphTest {
 
     }
 
-
     @Test
     public void test_isPlanar_IdentifiesPlanarGraph() {
         ArrayList<node> nodes = new ArrayList<>();
