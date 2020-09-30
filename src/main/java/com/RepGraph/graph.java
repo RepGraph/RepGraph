@@ -236,17 +236,32 @@ public class graph {
                 }
             } else {
 
-                //First BFS to find end point of longest path
-                ArrayList<ArrayList<Integer>> endpoints = BFS(0);
-                ArrayList<ArrayList<Integer>> temp;
-                int endpoint;
-                for (int i = 0; i < endpoints.size(); i++) {
-                    endpoint = endpoints.get(i).get(0);
-                    temp = BFS(endpoint);
-                    for (int j = 0; j < temp.size(); j++) {
-                        paths.add(new ArrayList<Integer>(temp.get(j)));
+                if (connectedBFS()){
+                    //First BFS to find end point of longest path
+                    ArrayList<ArrayList<Integer>> endpoints = BFS(0);
+                   // System.out.println("endpoints: " + endpoints.toString());
+                    ArrayList<ArrayList<Integer>> temp;
+                    ArrayList<Integer> pathEnds = new ArrayList<>();
+                    int endpoint;
+                    for (int i = 0; i < endpoints.size(); i++) {
+                        if (!pathEnds.contains(endpoints.get(i).get(0))){
+                            endpoint = endpoints.get(i).get(0);
+                            //System.out.println("endpoint: " + endpoint);
+                            //System.out.println(pathEnds.toString());
+                            temp = BFS(endpoint);
+                            for (int j = 0; j < temp.size(); j++) {
+                                //System.out.println("Adding path: " + temp.get(j).toString());
+                                paths.add(new ArrayList<Integer>(temp.get(j)));
+                                pathEnds.add(temp.get(j).get(0));
+                            }
+                        }
+
                     }
                 }
+                else{
+
+                }
+
             }
 
 
@@ -487,13 +502,11 @@ public class graph {
         return paths;
     }
 
-
     /**
      * Method to check if a graph is planar
      *
      * @return boolean returns true if the graph is planar
      */
-
     public boolean GraphIsPlanar() {
         ArrayList<node> ordered = new ArrayList<>(nodes);
 

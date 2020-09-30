@@ -1713,9 +1713,9 @@ public class GraphTest {
         assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths from a single node in a graph.", g.findLongest(false).equals(correctResult));
     }
 
-    /*
+
     @Test
-    public void test_findLongest_UndirectedMultipleLongestPathsInSymmetricalGraphEdgeCase() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedMultipleLongestPathsInSymmetricalGraphEdgeCase(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1766,21 +1766,21 @@ public class GraphTest {
         correctResult.get(1).add(1);
         correctResult.get(1).add(5);
         correctResult.add(new ArrayList<Integer>());
-        correctResult.get(2).add(4);
-        correctResult.get(2).add(1);
-        correctResult.get(2).add(0);
+        correctResult.get(2).add(6);
         correctResult.get(2).add(2);
-        correctResult.get(2).add(3);
+        correctResult.get(2).add(0);
+        correctResult.get(2).add(1);
+        correctResult.get(2).add(4);
         correctResult.add(new ArrayList<Integer>());
-        correctResult.get(3).add(4);
-        correctResult.get(3).add(1);
-        correctResult.get(3).add(0);
-        correctResult.get(3).add(2);
         correctResult.get(3).add(6);
+        correctResult.get(3).add(2);
+        correctResult.get(3).add(0);
+        correctResult.get(3).add(1);
+        correctResult.get(3).add(5);
 
-        assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a graph that is perfectly symmetrical around node 0.", g.findLongest(false).equals(correctResult));
+       assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a graph that is perfectly symmetrical around node 0.", g.findLongest(false).equals(correctResult));
     }
-    */
+
 
     @Test
     public void test_findLongest_OneEdgeInGraph() {
