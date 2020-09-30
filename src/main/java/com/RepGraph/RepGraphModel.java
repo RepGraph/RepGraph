@@ -233,6 +233,22 @@ public class RepGraphModel {
             subedges.add(parent.getEdges().get(n));
         }
         graph subgraph = new graph();
+
+
+        for (int i = 0; i < subnodes.size(); i++) {
+            for (edge e : subedges) {
+                if (e.getSource() == subnodes.get(i).getId()) {
+                    e.setSource(i);
+
+                }
+                if (e.getTarget() == subnodes.get(i).getId()) {
+                    e.setTarget(i);
+
+                }
+            }
+            subnodes.get(i).setId(i);
+        }
+
         subgraph.setNodes(subnodes);
         subgraph.setEdges(subedges);
 
@@ -264,6 +280,7 @@ public class RepGraphModel {
         } catch (IndexOutOfBoundsException e) {
             return FoundGraphs;
         }
+
         //Iterate over each graph in the dataset
         for (graph g : graphs.values()) {
             try {

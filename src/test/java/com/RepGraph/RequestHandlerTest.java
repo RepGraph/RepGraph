@@ -39,7 +39,7 @@ public class RequestHandlerTest {
 
     private final String BASE_URL = "localhost:8080";
 
-    private graph testgraph;
+    private graph testgraph, testgraph2;
 
 
     @Before
@@ -56,7 +56,7 @@ public class RequestHandlerTest {
 
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel", "testpostlabel"));
-        edges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        edges.add(new edge(2, 3, "testlabel", "testpostlabel"));
 
         tokens.add(new token(0, "node 1", "node1", "node1"));
         tokens.add(new token(1, "node 2", "node2", "node2"));
@@ -64,6 +64,26 @@ public class RequestHandlerTest {
         tokens.add(new token(3, "node 4", "node4", "node4"));
 
         testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+
+        ArrayList<node> nodes2 = new ArrayList<>();
+        ArrayList<edge> edges2 = new ArrayList<>();
+        ArrayList<token> tokens2 = new ArrayList<>();
+
+        nodes2.add(new node(0, "node3", new ArrayList<anchors>()));
+        nodes2.add(new node(1, "node4", new ArrayList<anchors>()));
+        nodes2.add(new node(2, "node5", new ArrayList<anchors>()));
+        nodes2.add(new node(3, "node6", new ArrayList<anchors>()));
+
+        edges2.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges2.add(new edge(1, 3, "testlabel", "testpostlabel"));
+        edges2.add(new edge(0, 2, "testlabel", "testpostlabel"));
+
+        tokens2.add(new token(0, "node3", "node3", "node3"));
+        tokens2.add(new token(1, "node4", "node4", "node4"));
+        tokens2.add(new token(2, "node5", "node5", "node5"));
+        tokens2.add(new token(3, "node6", "node6", "node6"));
+
+        testgraph2 = new graph("22222", "testsource", "node3 node4 node5 node6", nodes2, tokens2, edges2, new ArrayList<Integer>());
 
     }
 
@@ -78,9 +98,7 @@ public class RequestHandlerTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart(URL)
                 .file(file)
                 .param("FileName", "UploadUnitTestData"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("File Uploaded"));
-
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -94,10 +112,82 @@ public class RequestHandlerTest {
 
         String requestJSON = writer.writeValueAsString(testgraph);
 
-
         mockMvc.perform(post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON))
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    public void test_Visualise_returnsGraph() throws Exception {
+        String URL = "/Visualise";
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+
+        String requestJSON = writer.writeValueAsString(testgraph);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
+
+        String graphID = "11111";
+        String format = "1";
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID)
+                .param("format", format))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json(requestJSON));
+    }
+
+    @Test
+    public void test_SearchSubgraphNodeSet_CorrectlyReturnsList() throws Exception {
+        String URL = "/SearchSubgraphNodeSet";
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String requestJSON = writer.writeValueAsString(testgraph);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
+
+        String requestJSON2 = writer.writeValueAsString(testgraph2);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON2));
+
+        String[] labels = new String[]{"node3", "node4"};
+
+
+        mockMvc.perform(get(URL)
+                .param("labels", labels))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json("[\"11111\",\"22222\"]"));
+    }
+
+    @Test
+    public void test_SearchSubgraphPattern_CorrectlyReturnsList() throws Exception {
+        String URL = "/SearchSubgraphPattern";
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String requestJSON = writer.writeValueAsString(testgraph);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
+
+        String requestJSON2 = writer.writeValueAsString(testgraph2);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON2));
+
+
+        mockMvc.perform(get(URL)
+                .param("graphID", "11111")
+                .param("NodeId", new String[]{"2", "3"})
+                .param("EdgeIndices", new String[]{"2"}))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json("[\"11111\",\"22222\"]"));
     }
 
 }
