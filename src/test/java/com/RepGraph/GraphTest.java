@@ -587,11 +587,11 @@ public class GraphTest {
         g.setNodeNeighbours();
 
         //Get fields without using getter
-        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("directedNeighbours");
         nodeField0.setAccessible(true);
-        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("directedNeighbours");
         nodeField1.setAccessible(true);
-        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("directedNeighbours");
         nodeField2.setAccessible(true);
 
         final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
@@ -601,6 +601,13 @@ public class GraphTest {
         final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField2.setAccessible(true);
 
+        final Field UnedgeField0 = nodes.get(0).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField0.setAccessible(true);
+        final Field UnedgeField1 = nodes.get(1).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField1.setAccessible(true);
+        final Field UnedgeField2 = nodes.get(2).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField2.setAccessible(true);
+
 
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField0.get(node0).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField1.get(node1).equals(emptyArray));
@@ -608,6 +615,10 @@ public class GraphTest {
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField0.get(node0).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField1.get(node1).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField2.get(node2).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField0.get(node0).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField1.get(node1).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField2.get(node2).equals(emptyArray));
+
     }
 
     @Test
