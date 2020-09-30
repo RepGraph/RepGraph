@@ -457,7 +457,7 @@ public class graph {
      * @param dist ArrayList of each nodes maximum distance.
      * @param prevNode Array of each node's previous node in a path.
      * @param startNodeID The node ID of the start node.
-     * @return
+     * @return ArrayList<ArrayList<Integer>> The longest paths.
      */
     public ArrayList<ArrayList<Integer>> traverseLongestPath(ArrayList<Integer> dist, int[] prevNode, int startNodeID){
 
