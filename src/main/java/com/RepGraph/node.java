@@ -5,6 +5,8 @@
 
 package com.RepGraph;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 
 public class node {
@@ -25,26 +27,37 @@ public class node {
     private ArrayList<anchors> anchors;
 
     /**
-     * An array list of neighbouring nodes.
+     * An array list of directed neighbouring nodes.
      */
-    private ArrayList<node> nodeNeighbours;
+    @JsonIgnore
+    private ArrayList<node> directedNeighbours;
 
     /**
-     * An array list of edges to the neighbouring nodes.
+     * An array list of undirected neighbouring nodes.
      */
-    private ArrayList<edge> edgeNeighbours;
+    @JsonIgnore
+    private ArrayList<node> undirectedNeighbours;
 
     /**
-     * When calculating longest path, prevNode will be the previous node in the path.
+     * An array list of edges to the directed neighbouring nodes.
      */
-    private int prevNode;
+    @JsonIgnore
+    private ArrayList<edge> directedEdgeNeighbours;
+
+    /**
+     * An array list of edges to the undirected neighbouring nodes.
+     */
+    @JsonIgnore
+    private ArrayList<edge> undirectedEdgeNeighbours;
 
     /**
      * Default constructor for the node class.
      */
     public node() {
-        this.nodeNeighbours = new ArrayList<>();
-        this.edgeNeighbours = new ArrayList<>();
+        this.directedNeighbours = new ArrayList<>();
+        this.undirectedNeighbours = new ArrayList<>();
+        this.directedEdgeNeighbours = new ArrayList<>();
+        this.undirectedEdgeNeighbours = new ArrayList<>();
     }
 
     /**
@@ -57,8 +70,10 @@ public class node {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
-        this.nodeNeighbours = new ArrayList<>();
-        this.edgeNeighbours = new ArrayList<>();
+        this.undirectedNeighbours = new ArrayList<>();
+        this.directedNeighbours = new ArrayList<>();
+        this.directedEdgeNeighbours = new ArrayList<>();
+        this.undirectedEdgeNeighbours = new ArrayList<>();
     }
 
     /**
@@ -110,19 +125,35 @@ public class node {
     }
 
     /**
-     * Adds a neighbouring node.
-     * @param neighbour A neighbouring node.
+     * Adds a directed neighbouring node.
+     * @param neighbour A direct neighbouring node.
      */
-    public void addNeighbour(node neighbour) {
-        nodeNeighbours.add(neighbour);
+    public void addDirectedNeighbour(node neighbour) {
+        directedNeighbours.add(neighbour);
     }
 
     /**
-     * Getter method for a node's neighbours.
-     * @return ArrayList The node's neighbours.
+     * Adds an undirected neighbouring node.
+     * @param neighbour An undirected neighbouring node.
      */
-    public ArrayList<node> getNodeNeighbours() {
-        return nodeNeighbours;
+    public void addUndirectedNeighbour(node neighbour) {
+        undirectedNeighbours.add(neighbour);
+    }
+
+    /**
+     * Getter method for a node's directed neighbours.
+     * @return ArrayList The node's direct neighbours.
+     */
+    public ArrayList<node> getDirectedNeighbours() {
+        return directedNeighbours;
+    }
+
+    /**
+     * Getter method for a node's undirected neighbours.
+     * @return ArrayList The node's undirected neighbours.
+     */
+    public ArrayList<node> getUndirectedNeighbours() {
+        return undirectedNeighbours;
     }
 
 
@@ -131,17 +162,37 @@ public class node {
      *
      * @return ArrayList The edges connected from this node.
      */
-    public ArrayList<edge> getEdgeNeighbours() {
-        return edgeNeighbours;
+    public ArrayList<edge> getDirectedEdgeNeighbours() {
+        return directedEdgeNeighbours;
     }
+
 
     /**
      * Adds an edge to the EdgeNeighbours ArrayList
      *
      * @param e This is the edge that will be added to the EdgeNeighbours ArrayList
      */
-    public void addEdgeNeighbour(edge e) {
-        edgeNeighbours.add(e);
+    public void addDirectedEdgeNeighbour(edge e) {
+        directedEdgeNeighbours.add(e);
+    }
+
+    /**
+     * Getter method for EdgeNeighbours.
+     *
+     * @return ArrayList The edges connected from this node.
+     */
+    public ArrayList<edge> getUndirectedEdgeNeighbours() {
+        return undirectedEdgeNeighbours;
+    }
+
+
+    /**
+     * Adds an edge to the EdgeNeighbours ArrayList
+     *
+     * @param e This is the edge that will be added to the EdgeNeighbours ArrayList
+     */
+    public void addUndirectedEdgeNeighbour(edge e) {
+        undirectedEdgeNeighbours.add(e);
     }
 
     /**
