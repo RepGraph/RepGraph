@@ -29,11 +29,14 @@ public class RepGraphModelTest {
         ArrayList<token> tokens3 = new ArrayList<>();
         ArrayList<token> tokens4 = new ArrayList<>();
 
+
         for (int i = 0; i < 4; i++) {
-            nodes1.add(new node(i, "node" + (i + 1), new ArrayList<anchors>()));
-            nodes2.add(new node(i, "node" + (i + 2), new ArrayList<anchors>()));
-            nodes3.add(new node(i, "node" + (i + 3), new ArrayList<anchors>()));
-            nodes4.add(new node(i, "node" + (7), new ArrayList<anchors>()));
+            ArrayList<anchors> anch1 = new ArrayList<anchors>();
+            anch1.add(new anchors(i, i));
+            nodes1.add(new node(i, "node" + (i + 1), anch1));
+            nodes2.add(new node(i, "node" + (i + 2), anch1));
+            nodes3.add(new node(i, "node" + (i + 3), anch1));
+            nodes4.add(new node(i, "node" + (7), anch1));
         }
 
         edges1.add(new edge(0, 1, "testlabel", "testpostlabel"));
@@ -43,9 +46,9 @@ public class RepGraphModelTest {
 
         for (int i = 0; i < 4; i++) {
             tokens1.add(new token(i, "node" + (i + 1) + " form", "node" + (i + 1) + " lemma", "node" + (i + 1) + " carg"));
-            tokens2.add(new token(i + 1, "node" + (i + 2) + " form", "node" + (i + 2) + " lemma", "node" + (i + 2) + " carg"));
-            tokens3.add(new token(i + 2, "node" + (i + 3) + " form", "node" + (i + 3) + " lemma", "node" + (i + 3) + " carg"));
-            tokens3.add(new token(6, "node" + (7) + " form", "node" + (7) + " lemma", "node" + (7) + " carg"));
+            tokens2.add(new token(i, "node" + (i + 2) + " form", "node" + (i + 2) + " lemma", "node" + (i + 2) + " carg"));
+            tokens3.add(new token(i, "node" + (i + 3) + " form", "node" + (i + 3) + " lemma", "node" + (i + 3) + " carg"));
+            tokens4.add(new token(6, "node" + (7) + " form", "node" + (7) + " lemma", "node" + (7) + " carg"));
 
         }
 
@@ -93,6 +96,57 @@ public class RepGraphModelTest {
         field.setAccessible(true);
 
         assertEquals("graph value was not added correctly.", field.get(r) , graphs);
+    }
+
+
+    @Test
+    public void test_DisplaySubsetAdjacent_CorrectlyConstructsSubsetGraph() throws NoSuchFieldException, IllegalAccessException {
+
+        RepGraphModel model = new RepGraphModel();
+
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g1);
+        graphs.put("22222", g2);
+        graphs.put("33333", g3);
+
+
+        //Set field without using setter
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        ArrayList<node> correctNodes = new ArrayList<>();
+        ArrayList<edge> correctEdges = new ArrayList<>();
+        ArrayList<token> correctTokens = new ArrayList<>();
+
+
+        ArrayList<anchors> anch1 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+
+        ArrayList<anchors> anch2 = new ArrayList<anchors>();
+        anch2.add(new anchors(1, 1));
+
+        ArrayList<anchors> anch3 = new ArrayList<anchors>();
+        anch3.add(new anchors(2, 2));
+
+        correctNodes.add(new node(0, "node" + (0 + 1), anch1));
+        correctNodes.add(new node(1, "node" + (1 + 1), anch2));
+        correctNodes.add(new node(2, "node" + (2 + 1), anch3));
+
+        correctEdges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        correctEdges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+
+        for (int i = 0; i < 3; i++) {
+            correctTokens.add(new token(i, "node" + (i + 1) + " form", "node" + (i + 1) + " lemma", "node" + (i + 1) + " carg"));
+
+        }
+
+        graph expected = new graph("11111", g1.getSource(), "node1 form node2 form node3 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
+
+        graph subset = model.DisplaySubsetAdjacent("11111", 0);
+
+        assertEquals("Subset Not Constructed Properly", subset, expected);
+
     }
 
     @Test(timeout = 10)
