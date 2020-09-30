@@ -2058,6 +2058,42 @@ public class GraphTest {
     }
 
     @Test
+    public void test_traverseLongestPath_FindsMultipleLongestPathsCorrectly(){
+        ArrayList<Integer> distances = new ArrayList<>();
+        int [] prevNode = new int[6];
+
+        distances.add(0);
+        distances.add(1);
+        distances.add(1);
+        distances.add(2);
+        distances.add(Integer.MIN_VALUE);
+        distances.add(2);
+
+        prevNode[0] = 0;
+        prevNode[1] = 0;
+        prevNode[2] = 0;
+        prevNode[3] = 2;
+        prevNode[5] = 1;
+
+        graph g = new graph();
+
+        ArrayList<ArrayList<Integer>> expected = new ArrayList<>();
+        expected.add(new ArrayList<>());
+        expected.get(0).add(3);
+        expected.get(0).add(2);
+        expected.get(0).add(0);
+        expected.add(new ArrayList<>());
+        expected.get(1).add(5);
+        expected.get(1).add(1);
+        expected.get(1).add(0);
+
+
+        assertTrue("traverseLongeestPath does not correctly find a single longest path",g.traverseLongestPath(distances,prevNode,0).equals(expected));
+
+    }
+
+
+    @Test
     public void test_isPlanar_IdentifiesPlanarGraph() {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
