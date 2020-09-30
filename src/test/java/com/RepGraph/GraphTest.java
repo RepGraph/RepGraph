@@ -6,9 +6,7 @@ import org.junit.Test;
 import javax.validation.constraints.AssertTrue;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Stack;
+import java.util.*;
 
 import static junit.framework.TestCase.*;
 
@@ -457,7 +455,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setNodeNeighbours_setEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
+    public void test_setNodeNeighbours_setDirectedEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
 
@@ -503,6 +501,74 @@ public class GraphTest {
     }
 
     @Test
+    public void test_setNodeNeighbours_setUndirectedEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node1", new ArrayList<>());
+        node node1 = new node(1, "node2", new ArrayList<>());
+        node node2 = new node(2, "node3", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(0, 2, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        ArrayList<edge> correctResult0 = new ArrayList<>();
+        ArrayList<edge> correctResult1 = new ArrayList<>();
+        ArrayList<edge> correctResult2 = new ArrayList<>();
+
+
+        correctResult1.add(edge0);
+        correctResult2.add(edge1);
+        correctResult2.add(edge2);
+
+        g.setNodeNeighbours();
+
+
+        Comparator<edge> comp = new Comparator<edge>() {
+            @Override
+            public int compare(edge o1, edge o2) {
+                if (o1.getSource() < o2.getSource()) {
+                    return -1;
+                } else if (o1.getSource() > o2.getSource()) {
+                    return 1;
+                }
+                return 0;
+            }
+        };
+
+        Collections.sort(correctResult0, comp);
+        Collections.sort(correctResult1, comp);
+        Collections.sort(correctResult2, comp);
+        Collections.sort(g.getNodes().get(0).getUndirectedEdgeNeighbours(), comp);
+        Collections.sort(g.getNodes().get(1).getUndirectedEdgeNeighbours(), comp);
+        Collections.sort(g.getNodes().get(2).getUndirectedEdgeNeighbours(), comp);
+
+//Get fields without using getter
+        final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        edgeField0.setAccessible(true);
+        final Field edgeField1 = nodes.get(1).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        edgeField1.setAccessible(true);
+        final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        edgeField2.setAccessible(true);
+
+
+        assertTrue("setNodeNeighbours does not set edges correctly #1", edgeField0.get(node0).equals(correctResult0));
+        assertTrue("setNodeNeighbours does not set edges correctly #2", edgeField1.get(node1).equals(correctResult1));
+        assertTrue("setNodeNeighbours does not set edges correctly #3", edgeField2.get(node2).equals(correctResult2));
+    }
+
+
+    @Test
     public void test_setNodeNeighbours_NoEdgesInGraph() throws NoSuchFieldException, IllegalAccessException {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -521,11 +587,11 @@ public class GraphTest {
         g.setNodeNeighbours();
 
         //Get fields without using getter
-        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("directedNeighbours");
         nodeField0.setAccessible(true);
-        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("directedNeighbours");
         nodeField1.setAccessible(true);
-        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("directedNeighbours");
         nodeField2.setAccessible(true);
 
         final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
@@ -535,6 +601,13 @@ public class GraphTest {
         final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField2.setAccessible(true);
 
+        final Field UnedgeField0 = nodes.get(0).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField0.setAccessible(true);
+        final Field UnedgeField1 = nodes.get(1).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField1.setAccessible(true);
+        final Field UnedgeField2 = nodes.get(2).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField2.setAccessible(true);
+
 
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField0.get(node0).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField1.get(node1).equals(emptyArray));
@@ -542,6 +615,10 @@ public class GraphTest {
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField0.get(node0).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField1.get(node1).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField2.get(node2).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField0.get(node0).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField1.get(node1).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField2.get(node2).equals(emptyArray));
+
     }
 
     @Test
@@ -2118,7 +2195,7 @@ public class GraphTest {
 
         graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
 
-        String expected = "form0 form1 form2 form3 form4 form5 " ;
+        String expected = "form0 form1 form2 form3 form4 form5";
 
         assertTrue("getTokenInput does not get tokens' forms correctly.",g.getTokenInput(tokens).equals(expected));
     }
