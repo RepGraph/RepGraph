@@ -2195,7 +2195,7 @@ public class GraphTest {
 
         graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
 
-        String expected = "form0 form1 form2 form3 form4 form5 " ;
+        String expected = "form0 form1 form2 form3 form4 form5";
 
         assertTrue("getTokenInput does not get tokens' forms correctly.",g.getTokenInput(tokens).equals(expected));
     }
