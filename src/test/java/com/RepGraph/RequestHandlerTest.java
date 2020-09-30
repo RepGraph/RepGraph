@@ -49,10 +49,19 @@ public class RequestHandlerTest {
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
 
-        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
-        nodes.add(new node(1, "node2", new ArrayList<anchors>()));
-        nodes.add(new node(2, "node3", new ArrayList<anchors>()));
-        nodes.add(new node(3, "node4", new ArrayList<anchors>()));
+        ArrayList<anchors> anch1 = new ArrayList<anchors>();
+        ArrayList<anchors> anch2 = new ArrayList<anchors>();
+        ArrayList<anchors> anch3 = new ArrayList<anchors>();
+        ArrayList<anchors> anch4 = new ArrayList<anchors>();
+        anch1.add(new anchors(0, 0));
+        anch2.add(new anchors(1, 1));
+        anch3.add(new anchors(2, 2));
+        anch4.add(new anchors(3, 3));
+
+        nodes.add(new node(0, "node1", anch1));
+        nodes.add(new node(1, "node2", anch2));
+        nodes.add(new node(2, "node3", anch3));
+        nodes.add(new node(3, "node4", anch4));
 
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel", "testpostlabel"));
@@ -69,10 +78,10 @@ public class RequestHandlerTest {
         ArrayList<edge> edges2 = new ArrayList<>();
         ArrayList<token> tokens2 = new ArrayList<>();
 
-        nodes2.add(new node(0, "node3", new ArrayList<anchors>()));
-        nodes2.add(new node(1, "node4", new ArrayList<anchors>()));
-        nodes2.add(new node(2, "node5", new ArrayList<anchors>()));
-        nodes2.add(new node(3, "node6", new ArrayList<anchors>()));
+        nodes2.add(new node(0, "node3", anch1));
+        nodes2.add(new node(1, "node4", anch2));
+        nodes2.add(new node(2, "node5", anch3));
+        nodes2.add(new node(3, "node6", anch4));
 
         edges2.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges2.add(new edge(1, 3, "testlabel", "testpostlabel"));
@@ -189,5 +198,60 @@ public class RequestHandlerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json("[\"11111\",\"22222\"]"));
     }
+
+    @Test
+    public void test_CompareGraphs_CorrectlyComparesGraphs() throws Exception {
+        String URL = "/CompareGraphs";
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String requestJSON = writer.writeValueAsString(testgraph);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
+
+        String requestJSON2 = writer.writeValueAsString(testgraph2);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON2));
+
+
+        mockMvc.perform(get(URL)
+                .param("graphID1", "11111")
+                .param("graphID2", "22222"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
+    public void test_TestGraph_CorrectlyRunsFormalTests() throws Exception {
+        String URL = "/TestGraph";
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String requestJSON = writer.writeValueAsString(testgraph);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
+
+        String requestJSON2 = writer.writeValueAsString(testgraph2);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON2));
+
+        String planar = "true";
+        String longestPathDirected = "true";
+        String longestPathUndirected = "true";
+        String connected = "true";
+
+        mockMvc.perform(get(URL)
+                .param("graphID", "11111")
+                .param("planar", planar)
+                .param("longestPathDirected", longestPathDirected)
+                .param("longestPathUndirected", longestPathUndirected)
+                .param("connected", connected))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+
 
 }
