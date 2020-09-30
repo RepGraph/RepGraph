@@ -1713,7 +1713,6 @@ public class GraphTest {
         assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths from a single node in a graph.", g.findLongest(false).equals(correctResult));
     }
 
-
     @Test
     public void test_findLongest_UndirectedMultipleLongestPathsInSymmetricalGraphEdgeCase(){
         //Creating the nodes and edges for the graph
@@ -1780,7 +1779,6 @@ public class GraphTest {
 
        assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a graph that is perfectly symmetrical around node 0.", g.findLongest(false).equals(correctResult));
     }
-
 
     @Test
     public void test_findLongest_OneEdgeInGraph() {

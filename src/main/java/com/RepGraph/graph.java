@@ -425,11 +425,7 @@ public class graph {
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
         //Creates a list of all directed and undirected neighbours of the start node.
-        ArrayList<node> allNeighbours = new ArrayList<node>(nodes.get(startNodeID).getDirectedNeighbours());
-        ArrayList<node> undirectedNeighbours = new ArrayList<node>(nodes.get(startNodeID).getUndirectedNeighbours());
-        for (int i = 0; i < undirectedNeighbours.size(); i++) {
-            allNeighbours.add(undirectedNeighbours.get(i));
-        }
+        ArrayList<node> allNeighbours = combineNeighbours(startNodeID);
 
         //Checks to see if the node has any neighbours.
         if (allNeighbours.size() == 0) {
@@ -453,13 +449,9 @@ public class graph {
             int currentNodeID = q.poll();
 
             //Combine the lists of all directed and undirected neighbours of the current node.
-            allNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getDirectedNeighbours());
-            undirectedNeighbours = new ArrayList<node>(nodes.get(currentNodeID).getUndirectedNeighbours());
-            for (int i = 0; i < undirectedNeighbours.size(); i++) {
-                allNeighbours.add(undirectedNeighbours.get(i));
-            }
+            allNeighbours = combineNeighbours(currentNodeID);
 
-            //Iterate through all neighbouring nodes
+            //Iterate through all neighbouring nodes.
             for (int i = 0; i < allNeighbours.size(); i++) {
                 int neighbourNodeID = allNeighbours.get(i).getId();
 
@@ -500,6 +492,20 @@ public class graph {
         }
 
         return paths;
+    }
+
+    /**
+     * Combines the directed and undirected node neighbours of a given node.
+     * @param nodeID The ID of the node.
+     * @return ArrayList<node> List of the node's directed and undirected neighbours.
+     */
+    public ArrayList<node> combineNeighbours(int nodeID){
+        ArrayList<node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
+        ArrayList<node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
+        for (int i = 0; i < undirectedNeighbours.size(); i++) {
+            allNeighbours.add(undirectedNeighbours.get(i));
+        }
+        return allNeighbours;
     }
 
     /**
