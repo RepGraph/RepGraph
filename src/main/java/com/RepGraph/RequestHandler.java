@@ -131,16 +131,17 @@ public class RequestHandler {
         return RepModel.getGraph(graphID);
     }
 
-    @GetMapping("/DisplaySubsetAdjacent")
+    @GetMapping("/DisplaySubset")
     @ResponseBody
-    public graph DisplaySubsetAdjacent(@RequestParam String graphID, @RequestParam int NodeID) {
-        return RepModel.DisplaySubsetAdjacent(graphID, NodeID);
+    public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType) {
+        return RepModel.DisplaySubset(graphID, NodeID, SubsetType);
     }
 
-    @GetMapping("/DisplaySubsetDescendant")
+
+    @GetMapping("/DisplayPlanarGraph")
     @ResponseBody
-    public graph DisplaySubsetDescendant(@RequestParam String graphID, @RequestParam int NodeID) {
-        return RepModel.DisplaySubsetDescendant(graphID, NodeID);
+    public graph DisplayPlanarGraph(@RequestParam String graphID) {
+        return RepModel.getGraph(graphID).PlanarVisualisation();
     }
 
     /**
@@ -157,6 +158,7 @@ public class RequestHandler {
     public ArrayList<String> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
 
         return RepModel.searchSubgraphNodeSet(labels);
+
     }
 
     /**

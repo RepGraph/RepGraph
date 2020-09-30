@@ -7,6 +7,8 @@ import javax.validation.constraints.AssertTrue;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Stack;
 
 import static junit.framework.TestCase.*;
 
@@ -143,6 +145,22 @@ public class GraphTest {
     }
 
     @Test
+    public void test_getTops_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+        final graph g = new graph();
+
+        ArrayList<Integer> tops = new ArrayList<>();
+        tops.add(2);
+        tops.add(0);
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("tops");
+        field.setAccessible(true);
+        field.set(g, tops);
+
+        assertEquals("tops value was not retrieved properly.", g.getTops(), tops);
+    }
+
+    @Test
     public void test_setId_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final graph g = new graph();
@@ -233,6 +251,24 @@ public class GraphTest {
         field.setAccessible(true);
 
         assertEquals("edges value was not retrieved properly.", field.get(g), edges);
+    }
+
+    @Test
+    public void test_setTops_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final graph g = new graph();
+
+        ArrayList<Integer> tops = new ArrayList<>();
+        tops.add(0);
+        tops.add(2);
+
+        g.setTops(tops);
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("tops");
+        field.setAccessible(true);
+
+        assertEquals("tops value was not retrieved properly.", field.get(g), tops);
     }
 
     @Test
@@ -689,6 +725,115 @@ public class GraphTest {
 
 
         assertTrue("directedLongestPaths method does not correctly find multiple longest directed paths from a start node.", g.directedLongestPaths(0).equals(correctResult0));
+
+    }
+
+    @Test
+    public void test_topologicalSort_SortsCorrectly() throws NoSuchFieldException, IllegalAccessException{
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        node node7 = new node(7, "node7", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+        nodes.add(node7);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> nodeNeighbours0 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours1 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours3 = new ArrayList<>();
+        ArrayList<node> nodeNeighbours4 = new ArrayList<>();
+
+        nodeNeighbours0.add(node2);
+        nodeNeighbours0.add(node3);
+        nodeNeighbours0.add(node4);
+        nodeNeighbours1.add(node2);
+        nodeNeighbours1.add(node5);
+        nodeNeighbours3.add(node5);
+        nodeNeighbours4.add(node7);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field nodeField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        nodeField0.setAccessible(true);
+        nodeField0.set(node0, nodeNeighbours0);
+        final Field nodeField1 = node1.getClass().getDeclaredField("directedNeighbours");
+        nodeField1.setAccessible(true);
+        nodeField1.set(node1, nodeNeighbours1);
+        final Field nodeField3 = node3.getClass().getDeclaredField("directedNeighbours");
+        nodeField3.setAccessible(true);
+        nodeField3.set(node3, nodeNeighbours3);
+        final Field nodeField4 = node4.getClass().getDeclaredField("directedNeighbours");
+        nodeField4.setAccessible(true);
+        nodeField4.set(node4, nodeNeighbours4);
+
+        Stack<Integer> stack = new Stack<Integer>();
+        boolean [] visited = new boolean[8];
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        Stack<Integer> expectedResult = new Stack<Integer>();
+        expectedResult.push(2);
+        expectedResult.push(5);
+        expectedResult.push(3);
+        expectedResult.push(7);
+        expectedResult.push(4);
+        expectedResult.push(0);
+
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 0.", g.topologicalSort(0,visited,stack).equals(expectedResult));
+
+        stack.clear();
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        expectedResult.clear();
+        expectedResult.push(2);
+        expectedResult.push(5);
+        expectedResult.push(1);
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 1.", g.topologicalSort(1,visited,stack).equals(expectedResult));
+
+        stack.clear();
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        expectedResult.clear();
+        expectedResult.push(2);
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 2.", g.topologicalSort(2,visited,stack).equals(expectedResult));
+
+        stack.clear();
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        expectedResult.clear();
+        expectedResult.push(6);
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 6.", g.topologicalSort(6,visited,stack).equals(expectedResult));
+
+        stack.clear();
+        Arrays.fill(visited,false);
+
+        //Expected results for longest path for each node as the start node.
+        expectedResult.clear();
+        expectedResult.push(7);
+
+        assertTrue("topologicalSort does not sort a graph correctly for node 7.", g.topologicalSort(7,visited,stack).equals(expectedResult));
 
     }
 
@@ -1200,7 +1345,7 @@ public class GraphTest {
     */
 
     @Test
-    public void test_findLongest_DirectedSingleLongestPath() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_DirectedSingleLongestPath(){
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -1237,7 +1382,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_DirectedMultipleLongestPathsFromSingleStartNode() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_DirectedMultipleLongestPathsFromSingleStartNode()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1280,7 +1425,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_DirectedMultipleLongestPathsFromDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_DirectedMultipleLongestPathsFromDifferentStartNodes() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1319,7 +1464,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_DirectedMultipleLongestPathsFromSameAndDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_DirectedMultipleLongestPathsFromSameAndDifferentStartNodes()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1371,7 +1516,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedSingleLongestPath() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedSingleLongestPath()  {
 
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
@@ -1409,7 +1554,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedMultipleLongestPathsFromSingleStartNode() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedMultipleLongestPathsFromSingleStartNode()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1466,7 +1611,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedMultipleLongestPathsFromDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedMultipleLongestPathsFromDifferentStartNodes()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1511,7 +1656,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_UndirectedMultipleLongestPathsFromSameAndDifferentStartNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedMultipleLongestPathsFromSameAndDifferentStartNodes() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1638,7 +1783,7 @@ public class GraphTest {
     */
 
     @Test
-    public void test_findLongest_OneEdgeInGraph() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_OneEdgeInGraph() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1664,7 +1809,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_NoNodes() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_NoNodes() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
 
@@ -1678,7 +1823,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_findLongest_NoEdges() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_NoEdges()  {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
 
@@ -1851,7 +1996,6 @@ public class GraphTest {
 
     }
 
-
     @Test
     public void test_isPlanar_HandlesNoEdgesInGraph() {
         ArrayList<node> nodes = new ArrayList<>();
@@ -1899,7 +2043,100 @@ public class GraphTest {
     }
 
     @Test
-    public void test_connectedBFS_IdentifiesConnectedGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_getTokenSpan_getTokensCorrectly(){
+        ArrayList<token> tokens = new ArrayList<>();
+
+        token token0 = new token(0,"form0", "lemma0", "carg0");
+        token token1 = new token(1,"form1", "lemma1", "carg1");
+        token token2 = new token(2,"form2", "lemma2", "carg2");
+        token token3 = new token(3,"form3", "lemma3", "carg3");
+        token token4 = new token(4,"form4", "lemma4", "carg4");
+        token token5 = new token(5,"form5", "lemma5", "carg5");
+        tokens.add(token0);
+        tokens.add(token1);
+        tokens.add(token2);
+        tokens.add(token3);
+        tokens.add(token4);
+        tokens.add(token5);
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+
+        ArrayList<token> expected = new ArrayList<>();
+        expected.add(token1);
+        expected.add(token2);
+        expected.add(token3);
+
+        assertTrue("getTokenSpan does not get a range of tokens correctly.",g.getTokenSpan(1,3).equals(expected));
+
+    }
+
+    @Test
+    public void test_getTokenSpan_noTokensInGraph(){
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),new ArrayList<token>(),new ArrayList<edge>(),new ArrayList<Integer>());
+
+        ArrayList<token> expected = new ArrayList<>();
+
+        assertTrue("getTokenSpan does not correctly retrieve tokens from an empty graph.",g.getTokenSpan(0,-1).equals(expected));
+    }
+
+    @Test
+    public void test_getTokenSpan_GetOneTokenOnly(){
+        ArrayList<token> tokens = new ArrayList<>();
+
+        token token0 = new token(0,"form0", "lemma0", "carg0");
+        token token1 = new token(1,"form1", "lemma1", "carg1");
+        token token2 = new token(2,"form2", "lemma2", "carg2");
+        tokens.add(token0);
+        tokens.add(token1);
+        tokens.add(token2);
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+
+        ArrayList<token> expected = new ArrayList<>();
+        expected.add(token1);
+
+        assertTrue("getTokenSpan does not get a single token correctly.",g.getTokenSpan(1,1).equals(expected));
+    }
+
+    @Test
+    public void test_getTokenInput_GetsTokenInputCorrectly(){
+        ArrayList<token> tokens = new ArrayList<>();
+
+        token token0 = new token(0,"form0", "lemma0", "carg0");
+        token token1 = new token(1,"form1", "lemma1", "carg1");
+        token token2 = new token(2,"form2", "lemma2", "carg2");
+        token token3 = new token(3,"form3", "lemma3", "carg3");
+        token token4 = new token(4,"form4", "lemma4", "carg4");
+        token token5 = new token(5,"form5", "lemma5", "carg5");
+        tokens.add(token0);
+        tokens.add(token1);
+        tokens.add(token2);
+        tokens.add(token3);
+        tokens.add(token4);
+        tokens.add(token5);
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+
+        String expected = "form0 form1 form2 form3 form4 form5 " ;
+
+        assertTrue("getTokenInput does not get tokens' forms correctly.",g.getTokenInput(tokens).equals(expected));
+    }
+
+    @Test
+    public void test_getTokenInput_EmptyTokenArray(){
+        ArrayList<token> tokens = new ArrayList<>();
+
+
+        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+
+        String expected = "" ;
+
+        assertTrue("getTokenInput does not get tokens' forms correctly from an empty array of tokens.",g.getTokenInput(tokens).equals(expected));
+    }
+
+    @Test
+    public void test_connectedBFS_IdentifiesConnectedGraph(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1935,7 +2172,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_connectedBFS_IdentifiesDisconnectedGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_connectedBFS_IdentifiesDisconnectedGraph(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1969,7 +2206,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_connectedBFS_Node0IsDisconnected() throws NoSuchFieldException, IllegalAccessException{
+    public void test_connectedBFS_Node0IsDisconnected(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1991,7 +2228,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_connectedBFS_SingleNodeGraph() throws NoSuchFieldException, IllegalAccessException{
+    public void test_connectedBFS_SingleNodeGraph(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();

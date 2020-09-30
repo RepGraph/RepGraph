@@ -122,26 +122,28 @@ export const layoutGraph = (sentence) => {
 
     //Map the nodes in each level to the correct format
 
-    const totalGraphHeight = height * 50 + (height - 1) * 30; //number of levels times the height of each node and the spaces between them
+    const totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
 
     for (let level = 0; level < nodesInFinalLevels.length; level++) {
         nodesInFinalLevels[level] = nodesInFinalLevels[level].map((node) => ({
             id: node.id,
-            x: node.anchors[0].from * 90,
+            x: node.anchors[0].from * 110,
             y: totalGraphHeight - level * (totalGraphHeight / height),
             label: node.label,
             type: "node",
             nodeLevel: level,
-            anchors: node.anchors[0]
+            anchors: node.anchors[0],
+            group: 'node'
         }));
     }
 
     const tokens = graph.tokens.map((token) => ({
         index: token.index,
-        x: token.index * 90,
+        x: token.index * 110,
         y: totalGraphHeight + 100,
         label: token.form,
-        type: "token"
+        type: "token",
+        group: 'token'
     }));
 
     //this.setState({graphData: nodesInFinalLevels.flat().concat(tokens)});
@@ -153,27 +155,34 @@ export const layoutGraph = (sentence) => {
             id: node.id,
             x: node.x,
             y: node.y,
-            label: node.id +" "+ node.label,
-            title: node.label + " tootip text",
-            type: node.type,
+            label: node.label,
+            title: node.label + " tooltip text",
+            group: node.group,
             anchors: node.anchors,
             fixed: true,
-            nodeLevel: node.nodeLevel
+            nodeLevel: node.nodeLevel,
+
         }));
 
     const finalGraphEdges = graph.edges.map((edge, index) => {
-        const fromID =
+        /*const fromID =
             finalGraphNodes[
                 finalGraphNodes.findIndex((node) => node.id === edge.source)
                 ].id;
         const toID =
             finalGraphNodes[
                 finalGraphNodes.findIndex((node) => node.id === edge.target)
-                ].id;
+                ].id;*/
+
+        const fromNode = finalGraphNodes.find((node) => node.id === edge.source);
+        const toNode = finalGraphNodes.find((node) => node.id === edge.target);
+
+        const fromID = fromNode.id;
+        const toID = toNode.id;
 
         let edgeType = "";
 
-        if (fromID === toID) {
+        if ((fromNode.nodeLevel === toNode.nodeLevel) && (fromNode.nodeLevel == 0)) {
             edgeType = "curvedCW";
         } else {
             edgeType = "dynamic";
@@ -184,7 +193,11 @@ export const layoutGraph = (sentence) => {
             from: fromID,
             to: toID,
             label: edge.label,
-            smooth: { type: edgeType, roundness: 1 }
+            smooth: { type: edgeType, roundness: 0.4 },
+            endPointOffset: {
+                from: 20,
+                to: 0,
+            }
         };
         /*source: testGraphNodes[edge.source],
                     target: testGraphNodes[edge.target],*/

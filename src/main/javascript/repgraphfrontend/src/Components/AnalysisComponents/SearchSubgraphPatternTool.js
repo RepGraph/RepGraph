@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Chip from '@material-ui/core/Chip';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Grid from "@material-ui/core/Grid";
 import {Typography} from "@material-ui/core";
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
             marginTop: theme.spacing(3),
         },
     },
-    autoComplete :{
+    autoComplete: {
         marginBottom: 10
     }
 }));
@@ -23,7 +23,11 @@ const useStyles = makeStyles((theme) => ({
 function SearchSubgraphPatternTool(props) {
     const classes = useStyles();
 
-    const nodeLabels = props.sentence.nodes.map(node => node.label);
+    const [selectedLabels, setSelectedLabels] = useState([]);
+
+    const {sentence} = props;
+
+    //const nodeLabels = props.sentence.nodes.map(node => node.label);
 
     return (
         <Grid
@@ -32,24 +36,35 @@ function SearchSubgraphPatternTool(props) {
             justify="center"
             alignItems="center"
         >
-        <div className={classes.root}>
-            <Autocomplete className={classes.autoComplete}
-                          multiple
-                          id="tags-outlined"
-                          options={nodeLabels}
-                          getOptionLabel={(option) => option}
-                          defaultValue={[nodeLabels[0]]}
-                          filterSelectedOptions
-                          renderInput={(params) => (
-                              <TextField
-                                  {...params}
-                                  variant="outlined"
-                                  label="Node Labels:"
-                                  placeholder="Selected Node Labels"
-                              />
-                          )}
-            />
-        </div>
+            {(sentence.nodes === undefined) ? <div>Please select sentence.</div>:
+            <div className={classes.root}>
+                <Autocomplete className={classes.autoComplete}
+                              onChange={(event, value) => {
+                                  console.log(value);
+                                  setSelectedLabels(value)}}
+                              multiple
+                              id="tags-outlined"
+                              options={sentence.nodes.map(node => node.label)}
+                              getOptionLabel={(option) => option}
+                              filterSelectedOptions
+                              renderInput={(params) => (
+                                  <TextField
+                                      {...params}
+                                      variant="outlined"
+                                      label="Node Labels:"
+                                      placeholder="Selected Node Labels"
+                                  />
+                              )}
+                />
+            </div>}
+            <Button variant="contained" color="primary" onClick={
+                () => {
+                    console.log("Search pressed: "+selectedLabels); //Debugging
+                    props.handleSearchNodeSet(selectedLabels);
+                }
+            }>
+                Search
+            </Button>
             <Typography>Or visually select a sub-graph pattern on the currently displayed graph:</Typography>
             <Button
                 variant="contained"
@@ -61,6 +76,8 @@ function SearchSubgraphPatternTool(props) {
                 Select sub-graph pattern
             </Button>
         </Grid>
+
     );
 }
+
 export default SearchSubgraphPatternTool;
