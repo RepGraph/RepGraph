@@ -316,15 +316,15 @@ public class graph {
 
     /**
      * Finds the longest distance from a given start node to all the other nodes in the system and returns the path of the longest path.
-     * @param startNode Number of the start node.
+     * @param startNodeID Number of the start node.
      * @return ArrayList<ArrayList < Integer>> The longest paths available from the start node.
      */
-    public ArrayList<ArrayList<Integer>> directedLongestPaths(int startNode) {
+    public ArrayList<ArrayList<Integer>> directedLongestPaths(int startNodeID) {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
         //Check if the start node has any neighbours
-        if (nodes.get(startNode).getDirectedNeighbours().size() == 0) {
+        if (nodes.get(startNodeID).getDirectedNeighbours().size() == 0) {
             return paths;
         }
 
@@ -349,7 +349,7 @@ public class graph {
         for (int i = 0; i < nodes.size(); i++) {
             dist.add(Integer.MIN_VALUE);
         }
-        dist.set(startNode, 0);
+        dist.set(startNodeID, 0);
 
         //Iterate through the stack to find longest path.
         while (!stack.empty()) {
@@ -364,35 +364,7 @@ public class graph {
                 }
             }
         }
-
-        //Finds node index with the longest viable path. (i.e. most negative distance)
-        int max = dist.get(0);
-        int maxIndex = 0;
-        for (int i = 0; i < dist.size(); i++) {
-            if (dist.get(maxIndex) < dist.get(i)) {
-                max = dist.get(i);
-                maxIndex = i;
-            }
-        }
-
-        //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
-        ArrayList<Integer> path = new ArrayList<>();
-        for (int i = 0; i < dist.size(); i++) {
-            if (dist.get(i) == max) {
-                path.clear();
-                path.add(i);
-                int prev = prevNode[i];
-                while (prev != startNode) {
-                    path.add(prev);
-                    prev = prevNode[prev];
-                }
-                path.add(startNode);
-                paths.add(new ArrayList<Integer>(path));
-            }
-        }
-
-
-        return paths;
+        return traverseLongestPath(dist,prevNode,startNodeID);
 
     }
 
@@ -463,7 +435,33 @@ public class graph {
             }
         }
 
+        return traverseLongestPath(dist,prevNode,startNodeID);
+    }
 
+    /**
+     * Combines the directed and undirected node neighbours of a given node.
+     * @param nodeID The ID of the node.
+     * @return ArrayList<node> List of the node's directed and undirected neighbours.
+     */
+    public ArrayList<node> combineNeighbours(int nodeID){
+        ArrayList<node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
+        ArrayList<node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
+        for (int i = 0; i < undirectedNeighbours.size(); i++) {
+            allNeighbours.add(undirectedNeighbours.get(i));
+        }
+        return allNeighbours;
+    }
+
+    /**
+     * Returns the longest paths given a list of distances and an array of each node's previous node in the path.
+     * @param dist ArrayList of each nodes maximum distance.
+     * @param prevNode Array of each node's previous node in a path.
+     * @param startNodeID The node ID of the start node.
+     * @return
+     */
+    public ArrayList<ArrayList<Integer>> traverseLongestPath(ArrayList<Integer> dist, int[] prevNode, int startNodeID){
+
+        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
         int max = dist.get(0);
         int maxIndex = 0;
 
@@ -492,20 +490,6 @@ public class graph {
         }
 
         return paths;
-    }
-
-    /**
-     * Combines the directed and undirected node neighbours of a given node.
-     * @param nodeID The ID of the node.
-     * @return ArrayList<node> List of the node's directed and undirected neighbours.
-     */
-    public ArrayList<node> combineNeighbours(int nodeID){
-        ArrayList<node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
-        ArrayList<node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
-        for (int i = 0; i < undirectedNeighbours.size(); i++) {
-            allNeighbours.add(undirectedNeighbours.get(i));
-        }
-        return allNeighbours;
     }
 
     /**
