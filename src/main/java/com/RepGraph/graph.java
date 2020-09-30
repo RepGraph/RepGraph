@@ -228,69 +228,73 @@ public class graph {
 
         } else {
 
-            if ((!directed) && (connectedBFS())) {
+            if (!directed) {
 
-                ArrayList<ArrayList<Integer>> endpoints = BFS(0);
-                ArrayList<ArrayList<Integer>> temp;
-                ArrayList<Integer> pathEnds = new ArrayList<>();
-                int endpoint;
-                for (int i = 0; i < endpoints.size(); i++) {
-                    if (!pathEnds.contains(endpoints.get(i).get(0))) {
-                        endpoint = endpoints.get(i).get(0);
-                        temp = BFS(endpoint);
-                        for (int j = 0; j < temp.size(); j++) {
-                            paths.add(new ArrayList<>(temp.get(j)));
-                            pathEnds.add(temp.get(j).get(0));
+                if (connectedBFS()) {
+                    ArrayList<ArrayList<Integer>> endpoints = BFS(0);
+                    ArrayList<ArrayList<Integer>> temp;
+                    ArrayList<Integer> pathEnds = new ArrayList<>();
+                    int endpoint;
+                    for (int i = 0; i < endpoints.size(); i++) {
+                        if (!pathEnds.contains(endpoints.get(i).get(0))) {
+                            endpoint = endpoints.get(i).get(0);
+                            temp = BFS(endpoint);
+                            for (int j = 0; j < temp.size(); j++) {
+                                paths.add(new ArrayList<>(temp.get(j)));
+                                pathEnds.add(temp.get(j).get(0));
+                            }
                         }
                     }
-
+                }
+                else{
+                    //Disconnected
                 }
             } else {
 
                 //Default longest path set from node 0.
                 ArrayList<ArrayList<Integer>> longest;
-                ArrayList<Integer> pathEnds = new ArrayList<>();
-                if (directed) {
-                    longest = directedLongestPaths(0);
-                } else {
-                    longest = BFS(0);
-                }
+                Set<Integer> nodesInPath = new HashSet<Integer>();
+                longest = directedLongestPaths(0);
 
                 for (int i = 0; i < longest.size(); i++) {
                     paths.add(longest.get(i));
+                    for (int n : longest.get(i)) {
+                        nodesInPath.add(n);
+                    }
                 }
 
                 ArrayList<ArrayList<Integer>> temp;
 
                 //Makes each node the start node and finds the longest overall path/s.
                 for (int i = 1; i < nodes.size(); i++) {
-                    if (!pathEnds.contains(i)){
-                        if (directed) {
-                            temp = directedLongestPaths(i);
-                        } else {
-                            temp = BFS(i);
-                        }
+                    if (!nodesInPath.contains(i)) {
+                        temp = directedLongestPaths(i);
+
                         if (temp.size() != 0) {
                             if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
                                 longest = temp;
                                 paths.clear();
                                 for (int j = 0; j < temp.size(); j++) {
                                     paths.add(new ArrayList<>(temp.get(j)));
-                                    pathEnds.add(temp.get(j).get(0));
+                                    for (int n : temp.get(j)) {
+                                        nodesInPath.add(n);
+                                    }
                                 }
                             } else if (temp.get(0).size() == longest.get(0).size()) {
                                 for (int j = 0; j < temp.size(); j++) {
                                     paths.add(new ArrayList<>(temp.get(j)));
-                                    pathEnds.add(temp.get(j).get(0));
+                                    for (int n : temp.get(j)) {
+                                        nodesInPath.add(n);
+                                    }
                                 }
                             } else {
                             }
                         }
                     }
                 }
-            }
 
-            //Reverses the path so that start node is first.
+            }
+//Reverses the path so that start node is first.
             for (ArrayList<Integer> item : paths) {
                 Collections.reverse(item);
             }

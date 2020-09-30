@@ -1549,6 +1549,7 @@ public class GraphTest {
         correctResult.get(0).add(1);
         correctResult.get(0).add(0);
 
+
         assertTrue("findLongest path algorithm does not correctly find a single longest undirected path in a graph.", g.findLongest(false).equals(correctResult));
 
     }
@@ -1778,6 +1779,94 @@ public class GraphTest {
         correctResult.get(3).add(5);
 
        assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a graph that is perfectly symmetrical around node 0.", g.findLongest(false).equals(correctResult));
+    }
+
+    @Test
+    public void test_findLongest_UndirectedSingleLongestPathInDisconnectedGraphCase1(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(4, 5, "testlabel2", "testpostlabel2");
+
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+
+        //Expected result for longest path.
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<>());
+        correctResult.get(0).add(0);
+        correctResult.get(0).add(1);
+        correctResult.get(0).add(2);
+
+
+        assertTrue("findLongest path algorithm does not correctly find a single longest undirected path in a disconnected graph #1.", g.findLongest(false).equals(correctResult));
+
+    }
+
+    @Test
+    public void test_findLongest_UndirectedSingleLongestPathInDisconnectedGraphCase2(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(4, 5, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(6, 4, "testlabel2", "testpostlabel2");
+        edge edge4 = new edge(5, 3, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+
+        graph g2 = new graph("11111", "testsource", "testInput", new ArrayList<>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<>());
+        correctResult.get(0).add(3);
+        correctResult.get(0).add(5);
+        correctResult.get(0).add(4);
+        correctResult.get(0).add(6);
+
+        assertTrue("findLongest path algorithm does not correctly find a single longest undirected path in a disconnected graph #2.", g2.findLongest(false).equals(correctResult));
     }
 
     @Test
