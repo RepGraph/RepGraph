@@ -8,7 +8,6 @@ package com.RepGraph;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static java.util.Collections.max;
@@ -221,7 +220,7 @@ public class graph {
 
         } else if (edges.size() == 1) {
 
-            paths.add(new ArrayList<Integer>());
+            paths.add(new ArrayList<>());
             paths.get(0).add(edges.get(0).getSource());
             paths.get(0).add(edges.get(0).getTarget());
             return paths;
@@ -245,15 +244,52 @@ public class graph {
                             }
                         }
                     }
-                }
-                else{
-                    //Disconnected
+                } else {
+                    //Default longest path set from node 0.
+                    ArrayList<ArrayList<Integer>> longest;
+                    longest = BFS(0);
+
+                    for (ArrayList<Integer> al : longest) {
+                        paths.add(al);
+                    }
+
+                    ArrayList<ArrayList<Integer>> temp;
+
+                    //Makes each node the start node and finds the longest overall path/s.
+                    for (int i = 1; i < nodes.size(); i++) {
+                        temp = BFS(i);
+
+                        if (temp.size() != 0) {
+                            if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
+                                longest = temp;
+                                paths.clear();
+                                for (ArrayList<Integer> al : temp) {
+                                    paths.add(new ArrayList<>(al));
+                                }
+                            } else if (temp.get(0).size() == longest.get(0).size()) {
+                                for (ArrayList<Integer> al : temp) {
+                                    paths.add(new ArrayList<>(al));
+                                }
+                            }
+                        }
+                    }
+
+                    ArrayList<ArrayList<Integer>> newPaths = new ArrayList<>();
+                    for (ArrayList<Integer> al : paths){
+                        if (!newPaths.contains(al)){
+                            Collections.reverse(al);
+                            if (!newPaths.contains(al)){
+                                newPaths.add(al);
+                            }
+                        }
+                    }
+                    return newPaths;
                 }
             } else {
 
                 //Default longest path set from node 0.
                 ArrayList<ArrayList<Integer>> longest;
-                Set<Integer> nodesInPath = new HashSet<Integer>();
+                Set<Integer> nodesInPath = new HashSet<>();
                 longest = directedLongestPaths(0);
 
                 for (int i = 0; i < longest.size(); i++) {
@@ -274,33 +310,33 @@ public class graph {
                             if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
                                 longest = temp;
                                 paths.clear();
-                                for (int j = 0; j < temp.size(); j++) {
-                                    paths.add(new ArrayList<>(temp.get(j)));
-                                    for (int n : temp.get(j)) {
+                                for (ArrayList<Integer> al : temp) {
+                                    paths.add(new ArrayList<>(al));
+                                    for (int n : al) {
                                         nodesInPath.add(n);
                                     }
                                 }
                             } else if (temp.get(0).size() == longest.get(0).size()) {
-                                for (int j = 0; j < temp.size(); j++) {
-                                    paths.add(new ArrayList<>(temp.get(j)));
-                                    for (int n : temp.get(j)) {
+                                for (ArrayList<Integer> al : temp) {
+                                    paths.add(new ArrayList<>(al));
+                                    for (int n : al) {
                                         nodesInPath.add(n);
                                     }
                                 }
-                            } else {
                             }
                         }
                     }
                 }
-
             }
-//Reverses the path so that start node is first.
+
+            //Reverses the path so that start node is first.
             for (ArrayList<Integer> item : paths) {
                 Collections.reverse(item);
             }
 
             return paths;
         }
+
     }
 
     /**
@@ -356,16 +392,16 @@ public class graph {
         int[] prevNode = new int[nodes.size()];
 
         //Set all nodes in the graph to unvisited (i.e. visited[nodeID] = false)
-        boolean[] visisted = new boolean[nodes.size()];
+        boolean[] visited = new boolean[nodes.size()];
         for (int i = 0; i < nodes.size(); i++) {
-            visisted[i] = false;
+            visited[i] = false;
         }
 
         //Topologically sort every unvisited node.
         Stack<Integer> stack = new Stack<Integer>();
         for (int i = 0; i < nodes.size(); i++) {
-            if (!visisted[i]) {
-                topologicalSort(i, visisted, stack);
+            if (!visited[i]) {
+                topologicalSort(i, visited, stack);
             }
         }
 
@@ -487,7 +523,8 @@ public class graph {
      * @param startNodeID The node ID of the start node.
      * @return ArrayList<ArrayList < Integer>> The longest paths.
      */
-    public ArrayList<ArrayList<Integer>> traverseLongestPath(ArrayList<Integer> dist, int[] prevNode, int startNodeID) {
+    public ArrayList<ArrayList<Integer>> traverseLongestPath(ArrayList<Integer> dist, int[] prevNode,
+                                                             int startNodeID) {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
         int max = Collections.max(dist);
