@@ -1,120 +1,116 @@
-import React, { useContext } from "react";
+import React, {useContext} from "react";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import Tooltip from "@material-ui/core/Tooltip";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Zoom from "@material-ui/core/Zoom";
-import { Link, useHistory } from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Grid,
-  Paper,
-  Typography
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Grid,
+    Paper,
+    Typography
 } from "@material-ui/core";
 
-import { AppContext } from "../../Store/AppContextProvider.js";
+import {AppContext} from "../../Store/AppContextProvider.js";
 
 import {layoutGraph} from "../App";
+import {Virtuoso} from "react-virtuoso";
 
 const styles = {
-  Paper: {
-    padding: 20,
-    marginBottom: 10,
-    height: "100%",
-    overflow: "auto"
-  },
-  SentencePaper: {
-    height: 300,
-    overflow: "auto"
-  }
+    Paper: {
+        padding: 20,
+        marginBottom: 10,
+        height: "100%",
+        overflow: "auto"
+    },
+    SentencePaper: {
+        height: 300,
+        overflow: "auto"
+    }
 };
 
 export default function SentenceList() {
-  const { state, dispatch } = useContext(AppContext);
-  const history = useHistory();
+    const {state, dispatch} = useContext(AppContext);
+    const history = useHistory();
 
-  function handleSelectSentence(sentenceId) {
-    //Request formatted sentence data from the back-end
-    //Set the Context state accordingly through dispatch
+    function handleSelectSentence(sentenceId) {
+        //Request formatted sentence data from the back-end
+        //Set the Context state accordingly through dispatch
 
-    let requestOptions = {
-      method: 'GET',
-      redirect: 'follow'
-    };
 
-    dispatch({ type: "SET_LOADING", payload: { isLoading: true } });
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
 
-    fetch(state.APIendpoint+"/Visualise?graphID="+sentenceId+"&format=1", requestOptions)
-        .then((response) => response.text())
-        .then((result) => {
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}});
 
-          const jsonResult = JSON.parse(result);
-          console.log(jsonResult);
-          //console.log(jsonResult);
-          //console.log(jsonResult.response);
-          const formattedGraph = layoutGraph(jsonResult);
-          dispatch({ type: "SET_SENTENCE", payload: { selectedSentence: formattedGraph } });
-          dispatch({ type: "SET_SELECTED_SENTENCE_ID", payload: { selectedSentenceID: jsonResult.id} });
+        //state.APIendpoint+"/DisplayPlanarGraph?graphID=20001001
 
-            dispatch({ type: "SET_LOADING", payload: { isLoading: false } });
-        })
-        .catch((error) => {
-            dispatch({ type: "SET_LOADING", payload: { isLoading: false } });
-          console.log("error", error);
-          history.push("/404"); //for debugging
+        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=1", requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
 
-        });
+                const jsonResult = JSON.parse(result);
+                console.log(jsonResult);
+                //console.log(jsonResult);
+                //console.log(jsonResult.response);
+                const formattedGraph = layoutGraph(jsonResult);
+                dispatch({type: "SET_SENTENCE", payload: {selectedSentence: formattedGraph}});
+                dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: jsonResult.id}});
 
-    //Just for debugging:
-    /*const selectedSentence = state.dataSet.find(
-      (sentence) => sentence.id === sentenceId
-    );
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+            })
+            .catch((error) => {
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                console.log("error", error);
+                history.push("/404"); //for debugging
 
-    //const randomSentence = state.dataSet[Math.floor(Math.random() * 5)];
-    const formattedGraph = layoutGraph(selectedSentence);
-    console.log(selectedSentence);
-    dispatch({
-      type: "SET_SENTENCE",
-      payload: { selectedSentence: formattedGraph }
-    });*/
-  }
+            });
 
-  return (
-    <Grid item style={{ width: "100%" }}>
-      <Paper style={styles.SentencePaper}>
-        <List component="nav" aria-label="features">
-          <List component="ul">
+        //Just for debugging:
+        /*const selectedSentence = state.dataSet.find(
+          (sentence) => sentence.id === sentenceId
+        );
+
+        //const randomSentence = state.dataSet[Math.floor(Math.random() * 5)];
+        const formattedGraph = layoutGraph(selectedSentence);
+        console.log(selectedSentence);
+        dispatch({
+          type: "SET_SENTENCE",
+          payload: { selectedSentence: formattedGraph }
+        });*/
+    }
+
+    return (
+        <Grid item style={{width: "100%"}}>
             {state.dataSet === null ? (
-              <div>No data-set has been uploaded yet</div>
+                <div>No data-set has been uploaded yet</div>
             ) : (
-              state.dataSet.map((sentence) => (
-                <Tooltip
-                  key={sentence.id}
-                  TransitionComponent={Zoom}
-                  title="Display Graph"
-                  placement="top"
-                >
-                  <div>
-                    <ListItem
-                      button
-                      onClick={() => handleSelectSentence(sentence.id)}
-                    >
-                      <ListItemText primary={sentence.input}></ListItemText>
-                    </ListItem>
-                    <Divider />
-                  </div>
-                </Tooltip>
-              ))
+                <Virtuoso
+                    style={{width: "100%", height: "400px"}}
+                    totalCount={state.dataSet.length}
+                    item={(index) => {
+                        return (
+                            <ListItem button key={state.dataSet[index].id}
+                                      onClick={() => handleSelectSentence(state.dataSet[index].id)}>
+                                <Typography>{state.dataSet[index].input}</Typography>
+                            </ListItem>
+                        );
+                    }}
+                    footer={() => (
+                        <div style={{padding: "1rem", textAlign: "center"}}>
+                            -- end of dataset --
+                        </div>
+                    )}
+                />
             )}
-          </List>
-        </List>
-      </Paper>
-
-      <Divider />
-    </Grid>
-  );
+            <Divider/>
+        </Grid>
+    );
 }
