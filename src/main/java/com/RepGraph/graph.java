@@ -233,14 +233,12 @@ public class graph {
                     ArrayList<ArrayList<Integer>> endpoints = BFS(0);
                     ArrayList<ArrayList<Integer>> temp;
                     ArrayList<Integer> pathEnds = new ArrayList<>();
-                    int endpoint;
-                    for (int i = 0; i < endpoints.size(); i++) {
-                        if (!pathEnds.contains(endpoints.get(i).get(0))) {
-                            endpoint = endpoints.get(i).get(0);
-                            temp = BFS(endpoint);
-                            for (int j = 0; j < temp.size(); j++) {
-                                paths.add(new ArrayList<>(temp.get(j)));
-                                pathEnds.add(temp.get(j).get(0));
+                    for (ArrayList<Integer> end : endpoints){
+                        if (!pathEnds.contains(end.get(0))) {
+                            temp = BFS(end.get(0));
+                            for (ArrayList<Integer> al : temp) {
+                                paths.add(new ArrayList<>(al));
+                                pathEnds.add(al.get(0));
                             }
                         }
                     }
@@ -292,9 +290,9 @@ public class graph {
                 Set<Integer> nodesInPath = new HashSet<>();
                 longest = directedLongestPaths(0);
 
-                for (int i = 0; i < longest.size(); i++) {
-                    paths.add(longest.get(i));
-                    for (int n : longest.get(i)) {
+                for (ArrayList<Integer> integers : longest) {
+                    paths.add(integers);
+                    for (int n : integers) {
                         nodesInPath.add(n);
                     }
                 }
