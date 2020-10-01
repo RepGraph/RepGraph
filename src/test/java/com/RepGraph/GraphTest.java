@@ -1913,6 +1913,100 @@ public class GraphTest {
     }
 
     @Test
+    public void test_findLongest_UndirectedMultipleLongestPathInComplexDisconnectedGraph(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        node node7 = new node(7, "node7", new ArrayList<>());
+        node node8 = new node(8, "node8", new ArrayList<>());
+        node node9 = new node(9, "node0", new ArrayList<>());
+        node node10 = new node(10, "node10", new ArrayList<>());
+        node node11 = new node(11, "node11", new ArrayList<>());
+        node node12 = new node(12, "node11", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+        nodes.add(node7);
+        nodes.add(node8);
+        nodes.add(node9);
+        nodes.add(node10);
+        nodes.add(node11);
+        nodes.add(node12);
+
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(12, 5, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(6, 1, "testlabel2", "testpostlabel2");
+        edge edge4 = new edge(5, 3, "testlabel2", "testpostlabel2");
+        edge edge5 = new edge(7, 3, "testlabel2", "testpostlabel2");
+        edge edge6 = new edge(8, 3, "testlabel2", "testpostlabel2");
+        edge edge7 = new edge(2, 10, "testlabel2", "testpostlabel2");
+        edge edge8 = new edge(9, 6, "testlabel2", "testpostlabel2");
+        edge edge9 = new edge(0, 11, "testlabel2", "testpostlabel2");
+        edge edge10 = new edge(4, 12, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+        edges.add(edge5);
+        edges.add(edge6);
+        edges.add(edge7);
+        edges.add(edge8);
+        edges.add(edge9);
+        edges.add(edge10);
+
+        graph g2 = new graph("11111", "testsource", "testInput", new ArrayList<>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<>());
+        correctResult.get(0).add(4);
+        correctResult.get(0).add(12);
+        correctResult.get(0).add(5);
+        correctResult.get(0).add(3);
+        correctResult.get(0).add(7);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(1).add(4);
+        correctResult.get(1).add(12);
+        correctResult.get(1).add(5);
+        correctResult.get(1).add(3);
+        correctResult.get(1).add(8);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(2).add(9);
+        correctResult.get(2).add(6);
+        correctResult.get(2).add(1);
+        correctResult.get(2).add(2);
+        correctResult.get(2).add(10);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(3).add(9);
+        correctResult.get(3).add(6);
+        correctResult.get(3).add(1);
+        correctResult.get(3).add(0);
+        correctResult.get(3).add(11);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(4).add(10);
+        correctResult.get(4).add(2);
+        correctResult.get(4).add(1);
+        correctResult.get(4).add(0);
+        correctResult.get(4).add(11);
+
+
+        assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a complex disconnected graph.", g2.findLongest(false).equals(correctResult));
+    }
+
+    @Test
     public void test_findLongest_OneEdgeInGraph() {
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
