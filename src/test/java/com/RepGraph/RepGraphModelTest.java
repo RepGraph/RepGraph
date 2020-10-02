@@ -373,6 +373,18 @@ public class RepGraphModelTest {
 
         graph subgraph4 = new graph("77777", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
+        subedges = new ArrayList<>();
+        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        subedges.add(new edge(1, 3, "testlabel", "testpostlabel"));
+        subedges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+
+        subnodes = new ArrayList<>();
+        subnodes.add(new node(0, "node" + (1), new ArrayList<anchors>()));
+        subnodes.add(new node(1, "node" + (2), new ArrayList<anchors>()));
+        subnodes.add(new node(2, "node" + (3), new ArrayList<anchors>()));
+        subnodes.add(new node(3, "node" + (4), new ArrayList<anchors>()));
+        graph subgraph5 = new graph("88888", "testsource", "node1 node2 node3 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+
 
         ArrayList<String> correctResults = new ArrayList<>();
         correctResults.add("11111");
@@ -407,6 +419,48 @@ public class RepGraphModelTest {
         Collections.sort(results);
         Collections.sort(correctResults);
         assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
+
+        correctResults.clear();
+        correctResults.add("11111");
+        results = model.searchSubgraphPattern(subgraph5);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
+
+    }
+
+    @Test
+    public void test_SearchSubgraphPattern_HandlesDisconnectedSubGraphPattern() throws NoSuchFieldException, IllegalAccessException {
+        RepGraphModel model = new RepGraphModel();
+
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g1);
+        graphs.put("22222", g2);
+        graphs.put("33333", g3);
+
+        //Set field without using setter
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        ArrayList<node> subnodes = new ArrayList<>();
+        subnodes.add(new node(0, "node" + (1), new ArrayList<anchors>()));
+        subnodes.add(new node(1, "node" + (2), new ArrayList<anchors>()));
+        subnodes.add(new node(2, "node" + (3), new ArrayList<anchors>()));
+
+        ArrayList<edge> subedges = new ArrayList<>();
+        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        subedges.add(new edge(1, 0, "testlabel", "testpostlabel"));
+
+        graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+
+        ArrayList<String> correctResults = new ArrayList<>();
+        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched using an empty subgraph pattern and the method did not handle it correctly.", correctResults, results);
 
     }
 
