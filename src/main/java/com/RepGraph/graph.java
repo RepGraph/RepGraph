@@ -723,6 +723,7 @@ public class graph {
 
         graph g = (graph) o;
 
+
         return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes())) && (tokens.equals(g.getTokens())) && (edges.equals(g.getEdges())) && tops.equals(g.getTops()));
     }
 
