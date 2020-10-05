@@ -553,6 +553,68 @@ public class graph {
         return true;
     }
 
+    public graph PlanarVisualisation() {
+
+        ArrayList<node> ordered = new ArrayList<>(nodes);
+
+        Collections.sort(ordered, new Comparator<node>() {
+            @Override
+            public int compare(node o1, node o2) {
+                o1.getAnchors().get(0).setEnd(o1.getAnchors().get(0).getFrom());
+                o2.getAnchors().get(0).setEnd(o2.getAnchors().get(0).getFrom());
+                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+
+                    return -1;
+                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+
+                    return 0;
+                }
+                return 1;
+            }
+        });
+
+
+        HashMap<Integer, Integer> nodeToToken = new HashMap<>();
+
+        for (int i = 0; i < ordered.size(); i++) {
+            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom());
+        }
+
+        ArrayList<edge> updated = new ArrayList<>();
+
+        int source, target;
+
+        for (edge e : edges) {
+
+            source = e.getSource();
+            target = e.getTarget();
+
+            edge newEdge = new edge();
+            for (int i = 0; i < ordered.size(); i++) {
+                node n = ordered.get(i);
+                if (n.getId() == source) {
+
+                    newEdge.setSource(nodeToToken.get(i));
+                }
+                if (n.getId() == target) {
+
+                    newEdge.setTarget(nodeToToken.get(i));
+                }
+            }
+            updated.add(newEdge);
+
+        }
+
+        for (int i = 0; i < ordered.size(); i++) {
+            ordered.get(i).setId(i);
+        }
+
+        graph planarVisualisation = new graph(this.getId(), this.getSource(), this.input, ordered, this.tokens, updated, this.tops);
+
+        return planarVisualisation;
+
+    }
+
     /**
      * Creates a list of tokens in a range starting at "from" and ending at "end"
      * @param from The start of the range of tokens
