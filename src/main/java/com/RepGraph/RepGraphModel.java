@@ -124,6 +124,7 @@ public class RepGraphModel {
         subset.setEdges(adjacentEdges);
         subset.setTokens(SubsetTokens);
         subset.setInput(parent.getTokenInput(SubsetTokens));
+        subset.setTops(parent.getTops());
 
         return subset;
     }
@@ -185,6 +186,7 @@ public class RepGraphModel {
         subset.setEdges(DescendentEdges);
         subset.setTokens(SubsetTokens);
         subset.setInput(parent.getTokenInput(SubsetTokens));
+        subset.setTops(parent.getTops());
 
         return subset;
     }
@@ -241,6 +243,22 @@ public class RepGraphModel {
             subedges.add(parent.getEdges().get(n));
         }
         graph subgraph = new graph();
+
+
+        for (int i = 0; i < subnodes.size(); i++) {
+            for (edge e : subedges) {
+                if (e.getSource() == subnodes.get(i).getId()) {
+                    e.setSource(i);
+
+                }
+                if (e.getTarget() == subnodes.get(i).getId()) {
+                    e.setTarget(i);
+
+                }
+            }
+            subnodes.get(i).setId(i);
+        }
+
         subgraph.setNodes(subnodes);
         subgraph.setEdges(subedges);
 
@@ -256,11 +274,20 @@ public class RepGraphModel {
      */
     public ArrayList<String> searchSubgraphPattern(graph subgraph) {
 
+        //subgraph pattern must be connected
+
         //Empty Arraylist for the graph ids that have the subgraph pattern specified.
         ArrayList<String> FoundGraphs = new ArrayList<String>();
+        //If no nodes there is no pattern, if there are no edges it is not connected, and if there are less edges than number of nodes -1 then it is not connected
         if (subgraph.getNodes().size() == 0 || subgraph.getEdges().size() == 0 || subgraph.getEdges().size() < subgraph.getNodes().size() - 1) {
             return FoundGraphs;
         }
+
+        //checks more advanced situations of graph not being connected
+        if (!subgraph.connectedBFS()) {
+            return FoundGraphs;
+        }
+
         // Hashmap with a string key and boolean value - this is used to confirm that each unique edge in the subgraph has been found in the graph being checked.
         //This is necessary because there can be multiple of the same two node links so a counter or an array cant be used.
         HashMap<String, Boolean> checks = new HashMap<>();
@@ -272,6 +299,7 @@ public class RepGraphModel {
         } catch (IndexOutOfBoundsException e) {
             return FoundGraphs;
         }
+
         //Iterate over each graph in the dataset
         for (graph g : graphs.values()) {
             try {

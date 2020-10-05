@@ -6,9 +6,7 @@ import org.junit.Test;
 import javax.validation.constraints.AssertTrue;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Stack;
+import java.util.*;
 
 import static junit.framework.TestCase.*;
 
@@ -457,7 +455,7 @@ public class GraphTest {
     }
 
     @Test
-    public void test_setNodeNeighbours_setEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
+    public void test_setNodeNeighbours_setDirectedEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
 
@@ -503,6 +501,74 @@ public class GraphTest {
     }
 
     @Test
+    public void test_setNodeNeighbours_setUndirectedEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node1", new ArrayList<>());
+        node node1 = new node(1, "node2", new ArrayList<>());
+        node node2 = new node(2, "node3", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(0, 2, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        ArrayList<edge> correctResult0 = new ArrayList<>();
+        ArrayList<edge> correctResult1 = new ArrayList<>();
+        ArrayList<edge> correctResult2 = new ArrayList<>();
+
+
+        correctResult1.add(edge0);
+        correctResult2.add(edge1);
+        correctResult2.add(edge2);
+
+        g.setNodeNeighbours();
+
+
+        Comparator<edge> comp = new Comparator<edge>() {
+            @Override
+            public int compare(edge o1, edge o2) {
+                if (o1.getSource() < o2.getSource()) {
+                    return -1;
+                } else if (o1.getSource() > o2.getSource()) {
+                    return 1;
+                }
+                return 0;
+            }
+        };
+
+        Collections.sort(correctResult0, comp);
+        Collections.sort(correctResult1, comp);
+        Collections.sort(correctResult2, comp);
+        Collections.sort(g.getNodes().get(0).getUndirectedEdgeNeighbours(), comp);
+        Collections.sort(g.getNodes().get(1).getUndirectedEdgeNeighbours(), comp);
+        Collections.sort(g.getNodes().get(2).getUndirectedEdgeNeighbours(), comp);
+
+//Get fields without using getter
+        final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        edgeField0.setAccessible(true);
+        final Field edgeField1 = nodes.get(1).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        edgeField1.setAccessible(true);
+        final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        edgeField2.setAccessible(true);
+
+
+        assertTrue("setNodeNeighbours does not set edges correctly #1", edgeField0.get(node0).equals(correctResult0));
+        assertTrue("setNodeNeighbours does not set edges correctly #2", edgeField1.get(node1).equals(correctResult1));
+        assertTrue("setNodeNeighbours does not set edges correctly #3", edgeField2.get(node2).equals(correctResult2));
+    }
+
+
+    @Test
     public void test_setNodeNeighbours_NoEdgesInGraph() throws NoSuchFieldException, IllegalAccessException {
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -521,11 +587,11 @@ public class GraphTest {
         g.setNodeNeighbours();
 
         //Get fields without using getter
-        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField0 = nodes.get(0).getClass().getDeclaredField("directedNeighbours");
         nodeField0.setAccessible(true);
-        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField1 = nodes.get(1).getClass().getDeclaredField("directedNeighbours");
         nodeField1.setAccessible(true);
-        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
+        final Field nodeField2 = nodes.get(2).getClass().getDeclaredField("directedNeighbours");
         nodeField2.setAccessible(true);
 
         final Field edgeField0 = nodes.get(0).getClass().getDeclaredField("directedEdgeNeighbours");
@@ -535,6 +601,13 @@ public class GraphTest {
         final Field edgeField2 = nodes.get(2).getClass().getDeclaredField("directedEdgeNeighbours");
         edgeField2.setAccessible(true);
 
+        final Field UnedgeField0 = nodes.get(0).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField0.setAccessible(true);
+        final Field UnedgeField1 = nodes.get(1).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField1.setAccessible(true);
+        final Field UnedgeField2 = nodes.get(2).getClass().getDeclaredField("undirectedEdgeNeighbours");
+        UnedgeField2.setAccessible(true);
+
 
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField0.get(node0).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", edgeField1.get(node1).equals(emptyArray));
@@ -542,6 +615,10 @@ public class GraphTest {
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField0.get(node0).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField1.get(node1).equals(emptyArray));
         assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", nodeField2.get(node2).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField0.get(node0).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField1.get(node1).equals(emptyArray));
+        assertTrue("setNodeNeighbours does not handle edgeless graphs correctly.", UnedgeField2.get(node2).equals(emptyArray));
+
     }
 
     @Test
@@ -1549,6 +1626,7 @@ public class GraphTest {
         correctResult.get(0).add(1);
         correctResult.get(0).add(0);
 
+
         assertTrue("findLongest path algorithm does not correctly find a single longest undirected path in a graph.", g.findLongest(false).equals(correctResult));
 
     }
@@ -1713,9 +1791,8 @@ public class GraphTest {
         assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths from a single node in a graph.", g.findLongest(false).equals(correctResult));
     }
 
-    /*
     @Test
-    public void test_findLongest_UndirectedMultipleLongestPathsInSymmetricalGraphEdgeCase() throws NoSuchFieldException, IllegalAccessException {
+    public void test_findLongest_UndirectedMultipleLongestPathsInSymmetricalGraphEdgeCase(){
         //Creating the nodes and edges for the graph
         ArrayList<node> nodes = new ArrayList<>();
         ArrayList<edge> edges = new ArrayList<>();
@@ -1766,21 +1843,245 @@ public class GraphTest {
         correctResult.get(1).add(1);
         correctResult.get(1).add(5);
         correctResult.add(new ArrayList<Integer>());
-        correctResult.get(2).add(4);
-        correctResult.get(2).add(1);
-        correctResult.get(2).add(0);
+        correctResult.get(2).add(6);
         correctResult.get(2).add(2);
-        correctResult.get(2).add(3);
+        correctResult.get(2).add(0);
+        correctResult.get(2).add(1);
+        correctResult.get(2).add(4);
         correctResult.add(new ArrayList<Integer>());
-        correctResult.get(3).add(4);
+        correctResult.get(3).add(6);
+        correctResult.get(3).add(2);
+        correctResult.get(3).add(0);
+        correctResult.get(3).add(1);
+        correctResult.get(3).add(5);
+
+       assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a graph that is perfectly symmetrical around node 0.", g.findLongest(false).equals(correctResult));
+    }
+
+    @Test
+    public void test_findLongest_UndirectedSingleLongestPathInDisconnectedGraphCase1(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(4, 5, "testlabel2", "testpostlabel2");
+
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+
+        //Expected result for longest path.
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<>());
+        correctResult.get(0).add(0);
+        correctResult.get(0).add(1);
+        correctResult.get(0).add(2);
+
+
+        assertTrue("findLongest path algorithm does not correctly find a single longest undirected path in a disconnected graph #1.", g.findLongest(false).equals(correctResult));
+
+    }
+
+    @Test
+    public void test_findLongest_UndirectedSingleLongestPathInDisconnectedGraphCase2(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(4, 5, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(6, 4, "testlabel2", "testpostlabel2");
+        edge edge4 = new edge(5, 3, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+
+        graph g2 = new graph("11111", "testsource", "testInput", new ArrayList<>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<>());
+        correctResult.get(0).add(3);
+        correctResult.get(0).add(5);
+        correctResult.get(0).add(4);
+        correctResult.get(0).add(6);
+
+        assertTrue("findLongest path algorithm does not correctly find a single longest undirected path in a disconnected graph #2.", g2.findLongest(false).equals(correctResult));
+    }
+
+    @Test
+    public void test_findLongest_UndirectedMultipleLongestPathInDisconnectedGraph(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(4, 5, "testlabel2", "testpostlabel2");
+        edge edge4 = new edge(5, 3, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge4);
+
+        graph g2 = new graph("11111", "testsource", "testInput", new ArrayList<>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<>());
+        correctResult.get(0).add(1);
+        correctResult.get(0).add(0);
+        correctResult.get(0).add(2);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(1).add(3);
+        correctResult.get(1).add(5);
+        correctResult.get(1).add(4);
+
+        assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a disconnected graph.", g2.findLongest(false).equals(correctResult));
+    }
+
+    @Test
+    public void test_findLongest_UndirectedMultipleLongestPathInComplexDisconnectedGraph(){
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        node node7 = new node(7, "node7", new ArrayList<>());
+        node node8 = new node(8, "node8", new ArrayList<>());
+        node node9 = new node(9, "node0", new ArrayList<>());
+        node node10 = new node(10, "node10", new ArrayList<>());
+        node node11 = new node(11, "node11", new ArrayList<>());
+        node node12 = new node(12, "node11", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+        nodes.add(node7);
+        nodes.add(node8);
+        nodes.add(node9);
+        nodes.add(node10);
+        nodes.add(node11);
+        nodes.add(node12);
+
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(12, 5, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(6, 1, "testlabel2", "testpostlabel2");
+        edge edge4 = new edge(5, 3, "testlabel2", "testpostlabel2");
+        edge edge5 = new edge(7, 3, "testlabel2", "testpostlabel2");
+        edge edge6 = new edge(8, 3, "testlabel2", "testpostlabel2");
+        edge edge7 = new edge(2, 10, "testlabel2", "testpostlabel2");
+        edge edge8 = new edge(9, 6, "testlabel2", "testpostlabel2");
+        edge edge9 = new edge(0, 11, "testlabel2", "testpostlabel2");
+        edge edge10 = new edge(4, 12, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+        edges.add(edge5);
+        edges.add(edge6);
+        edges.add(edge7);
+        edges.add(edge8);
+        edges.add(edge9);
+        edges.add(edge10);
+
+        graph g2 = new graph("11111", "testsource", "testInput", new ArrayList<>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+
+        ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
+        correctResult.add(new ArrayList<>());
+        correctResult.get(0).add(4);
+        correctResult.get(0).add(12);
+        correctResult.get(0).add(5);
+        correctResult.get(0).add(3);
+        correctResult.get(0).add(7);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(1).add(4);
+        correctResult.get(1).add(12);
+        correctResult.get(1).add(5);
+        correctResult.get(1).add(3);
+        correctResult.get(1).add(8);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(2).add(9);
+        correctResult.get(2).add(6);
+        correctResult.get(2).add(1);
+        correctResult.get(2).add(2);
+        correctResult.get(2).add(10);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(3).add(9);
+        correctResult.get(3).add(6);
         correctResult.get(3).add(1);
         correctResult.get(3).add(0);
-        correctResult.get(3).add(2);
-        correctResult.get(3).add(6);
+        correctResult.get(3).add(11);
+        correctResult.add(new ArrayList<>());
+        correctResult.get(4).add(10);
+        correctResult.get(4).add(2);
+        correctResult.get(4).add(1);
+        correctResult.get(4).add(0);
+        correctResult.get(4).add(11);
 
-        assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a graph that is perfectly symmetrical around node 0.", g.findLongest(false).equals(correctResult));
+
+        assertTrue("findLongest path algorithm does not correctly find multiple longest undirected paths in a complex disconnected graph.", g2.findLongest(false).equals(correctResult));
     }
-    */
 
     @Test
     public void test_findLongest_OneEdgeInGraph() {
@@ -1840,6 +2141,258 @@ public class GraphTest {
 
         assertTrue("findLongest path algorithm does not correctly return the path in a directed graph with no edges", g.findLongest(true).equals(correctResult));
         assertTrue("findLongest path algorithm does not correctly return the path in an undirected graph with no edges.", g.findLongest(false).equals(correctResult));
+    }
+
+    @Test
+    public void test_combineNeighbours_CombinesNeighboursCorrectly()throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> directNeighbours0 = new ArrayList<>();
+
+        directNeighbours0.add(node1);
+        directNeighbours0.add(node3);
+        directNeighbours0.add(node5);
+        ArrayList<node> undirectNeighbours0 = new ArrayList<>();
+
+        undirectNeighbours0.add(node2);
+        undirectNeighbours0.add(node4);
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        directField0.setAccessible(true);
+        directField0.set(node0, directNeighbours0);
+        final Field undirectField0= node0.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField0.setAccessible(true);
+        undirectField0.set(node0, undirectNeighbours0);
+
+        //Expected results for longest path for each node as the start node.
+        ArrayList<node> correctResult0 = new ArrayList<>();
+        correctResult0.add(node1);
+        correctResult0.add(node3);
+        correctResult0.add(node5);
+        correctResult0.add(node2);
+        correctResult0.add(node4);
+
+        assertTrue("combineNodeNeighbours does not correctly combine undirected and directed node neighbours", g.combineNeighbours(0).equals(correctResult0));
+
+    }
+
+    @Test
+    public void test_combineNeighbours_NoUndirectedNeighbours()throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> directNeighbours0 = new ArrayList<>();
+
+        directNeighbours0.add(node1);
+        directNeighbours0.add(node3);
+        directNeighbours0.add(node5);
+        ArrayList<node> undirectNeighbours0 = new ArrayList<>();
+
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        directField0.setAccessible(true);
+        directField0.set(node0, directNeighbours0);
+        final Field undirectField0= node0.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField0.setAccessible(true);
+        undirectField0.set(node0, undirectNeighbours0);
+
+        //Expected results for longest path for each node as the start node.
+        ArrayList<node> correctResult0 = new ArrayList<>();
+        correctResult0.add(node1);
+        correctResult0.add(node3);
+        correctResult0.add(node5);
+
+        assertTrue("combineNodeNeighbours does not correctly combine undirected and directed node neighbours when a node has no undirected neighbours", g.combineNeighbours(0).equals(correctResult0));
+
+    }
+
+    @Test
+    public void test_combineNeighbours_NoDirectedNeighbours()throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> directNeighbours0 = new ArrayList<>();
+
+        ArrayList<node> undirectNeighbours0 = new ArrayList<>();
+        undirectNeighbours0.add(node2);
+        undirectNeighbours0.add(node4);
+
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        directField0.setAccessible(true);
+        directField0.set(node0, directNeighbours0);
+        final Field undirectField0= node0.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField0.setAccessible(true);
+        undirectField0.set(node0, undirectNeighbours0);
+
+        //Expected results for longest path for each node as the start node.
+        ArrayList<node> correctResult0 = new ArrayList<>();
+        correctResult0.add(node2);
+        correctResult0.add(node4);
+
+        assertTrue("combineNodeNeighbours does not correctly combine undirected and directed node neighbours when a node has no directed neighbours", g.combineNeighbours(0).equals(correctResult0));
+
+    }
+
+    @Test
+    public void test_combineNeighbours_NoNeighbours()throws NoSuchFieldException, IllegalAccessException {
+        //Creating the nodes and edges for the graph
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        nodes.add(node0);
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        //Creating the array of node neighbours for the nodes in the graph.
+        ArrayList<node> directNeighbours0 = new ArrayList<>();
+
+        ArrayList<node> undirectNeighbours0 = new ArrayList<>();
+
+
+        //Setting node neighbours without using setNodeNeighbours method.
+        final Field directField0 = node0.getClass().getDeclaredField("directedNeighbours");
+        directField0.setAccessible(true);
+        directField0.set(node0, directNeighbours0);
+        final Field undirectField0= node0.getClass().getDeclaredField("undirectedNeighbours");
+        undirectField0.setAccessible(true);
+        undirectField0.set(node0, undirectNeighbours0);
+
+        //Expected results for longest path for each node as the start node.
+        ArrayList<node> correctResult0 = new ArrayList<>();
+
+        assertTrue("combineNodeNeighbours does not correctly combine undirected and directed node neighbours when a node has no neighbours", g.combineNeighbours(0).equals(correctResult0));
+
+    }
+
+    @Test
+    public void test_traverseLongestPath_FindsSingleLongestPathCorrectly(){
+        ArrayList<Integer> distances = new ArrayList<>();
+        int [] prevNode = new int[5];
+
+        distances.add(0);
+        distances.add(1);
+        distances.add(1);
+        distances.add(2);
+        distances.add(Integer.MIN_VALUE);
+
+        prevNode[0] = 0;
+        prevNode[1] = 0;
+        prevNode[2] = 0;
+        prevNode[3] = 2;
+
+        graph g = new graph();
+
+        ArrayList<ArrayList<Integer>> expected = new ArrayList<>();
+        expected.add(new ArrayList<>());
+        expected.get(0).add(3);
+        expected.get(0).add(2);
+        expected.get(0).add(0);
+
+
+        assertTrue("traverseLongeestPath does not correctly find a single longest path",g.traverseLongestPath(distances,prevNode,0).equals(expected));
+
+    }
+
+    @Test
+    public void test_traverseLongestPath_FindsMultipleLongestPathsCorrectly(){
+        ArrayList<Integer> distances = new ArrayList<>();
+        int [] prevNode = new int[6];
+
+        distances.add(0);
+        distances.add(1);
+        distances.add(1);
+        distances.add(2);
+        distances.add(Integer.MIN_VALUE);
+        distances.add(2);
+
+        prevNode[0] = 0;
+        prevNode[1] = 0;
+        prevNode[2] = 0;
+        prevNode[3] = 2;
+        prevNode[5] = 1;
+
+        graph g = new graph();
+
+        ArrayList<ArrayList<Integer>> expected = new ArrayList<>();
+        expected.add(new ArrayList<>());
+        expected.get(0).add(3);
+        expected.get(0).add(2);
+        expected.get(0).add(0);
+        expected.add(new ArrayList<>());
+        expected.get(1).add(5);
+        expected.get(1).add(1);
+        expected.get(1).add(0);
+
+
+        assertTrue("traverseLongeestPath does not correctly find a single longest path",g.traverseLongestPath(distances,prevNode,0).equals(expected));
+
     }
 
     @Test
@@ -2118,7 +2671,7 @@ public class GraphTest {
 
         graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
 
-        String expected = "form0 form1 form2 form3 form4 form5 " ;
+        String expected = "form0 form1 form2 form3 form4 form5";
 
         assertTrue("getTokenInput does not get tokens' forms correctly.",g.getTokenInput(tokens).equals(expected));
     }
