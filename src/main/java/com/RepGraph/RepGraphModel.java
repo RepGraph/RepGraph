@@ -224,6 +224,7 @@ public class RepGraphModel {
     }
 
 
+    //CHANGE MEMORY LEAK MAKE INDEPENDANT
     /**
      * Overloaded method to search for subgraph pattern using different parameters
      *
@@ -237,10 +238,10 @@ public class RepGraphModel {
         ArrayList<node> subnodes = new ArrayList<>();
         ArrayList<edge> subedges = new ArrayList<>();
         for (int n : NodeId) {
-            subnodes.add(parent.getNodes().get(n));
+            subnodes.add(new node(parent.getNodes().get(n)));
         }
         for (int n : EdgeIndices) {
-            subedges.add(parent.getEdges().get(n));
+            subedges.add(new edge(parent.getEdges().get(n)));
         }
         graph subgraph = new graph();
 
