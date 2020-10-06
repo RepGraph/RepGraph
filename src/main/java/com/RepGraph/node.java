@@ -76,6 +76,20 @@ public class node {
         this.undirectedEdgeNeighbours = new ArrayList<>();
     }
 
+    public node(node n) {
+        this.label = n.label;
+        this.id = n.id;
+        anchors anch = new anchors(n.anchors.get(0).getFrom(), n.anchors.get(0).getEnd());
+        ArrayList<anchors> anchorsarr = new ArrayList<>();
+        anchorsarr.add(anch);
+        this.anchors = anchorsarr;
+        this.undirectedEdgeNeighbours = new ArrayList<>();
+        this.directedEdgeNeighbours = new ArrayList<>();
+        this.directedNeighbours = new ArrayList<>();
+        this.undirectedNeighbours = new ArrayList<>();
+
+    }
+
     /**
      * Getter method for the node's ID number.
      * @return Integer The node's ID number.

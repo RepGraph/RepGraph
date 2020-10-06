@@ -508,9 +508,7 @@ public class graph {
     public ArrayList<node> combineNeighbours(int nodeID) {
         ArrayList<node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
         ArrayList<node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
-        for (int i = 0; i < undirectedNeighbours.size(); i++) {
-            allNeighbours.add(undirectedNeighbours.get(i));
-        }
+        allNeighbours.addAll(undirectedNeighbours);
         return allNeighbours;
     }
 
@@ -547,13 +545,17 @@ public class graph {
         return paths;
     }
 
+
     /**
      * Method to check if a graph is planar
      *
      * @return boolean returns true if the graph is planar
      */
     public boolean GraphIsPlanar() {
-        ArrayList<node> ordered = new ArrayList<>(nodes);
+        ArrayList<node> ordered = new ArrayList<>();
+        for (node n : nodes) {
+            ordered.add(new node(n));
+        }
 
         Collections.sort(ordered, new Comparator<node>() {
             @Override
@@ -610,9 +612,13 @@ public class graph {
         return true;
     }
 
+    //CHANGE MEMORY LEAK MAKE INDEPENDANT
     public graph PlanarVisualisation() {
 
-        ArrayList<node> ordered = new ArrayList<>(nodes);
+        ArrayList<node> ordered = new ArrayList<>();
+        for (node n : nodes) {
+            ordered.add(new node(n));
+        }
 
         Collections.sort(ordered, new Comparator<node>() {
             @Override
