@@ -127,8 +127,8 @@ public class RequestHandler {
      */
     @GetMapping("/Visualise")
     @ResponseBody
-    public graph Visualise(@RequestParam String graphID, @RequestParam int format) {
-        return RepModel.getGraph(graphID);
+    public HashMap<String, Object> Visualise(@RequestParam String graphID, @RequestParam int format) {
+        return RepModel.VisualiseHierarchy(graphID);
     }
 
     @GetMapping("/DisplaySubset")

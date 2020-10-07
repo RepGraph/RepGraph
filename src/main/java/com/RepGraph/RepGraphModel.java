@@ -6,8 +6,10 @@
 
 package com.RepGraph;
 
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -223,8 +225,6 @@ public class RepGraphModel {
 
     }
 
-
-    //CHANGE MEMORY LEAK MAKE INDEPENDANT
     /**
      * Overloaded method to search for subgraph pattern using different parameters
      *
@@ -485,5 +485,234 @@ public class RepGraphModel {
         return returnObj;
     }
 
+    public HashMap<String, Object> VisualiseHierarchy(String graphID) {
+        graph graph = graphs.get(graphID);
+
+        //Determine span lengths of each node
+        int[] graphNodeSpanLengths = new int[graph.getNodes().size()];
+
+        for (int i = 0; i < graphNodeSpanLengths.length; i++) {
+            int end = graph.getNodes().get(i).getAnchors().get(0).getEnd();
+            int from = graph.getNodes().get(i).getAnchors().get(0).getFrom();
+            int span = end - from;
+            graphNodeSpanLengths[i] = span;
+        }
+
+
+        //Determine unique span lengths of all the node spans
+        ArrayList<Integer> uniqueSpanLengths = new ArrayList<>();
+
+        HashMap<Integer, Boolean> map = new HashMap<>();
+        for (Integer item : graphNodeSpanLengths) {
+            if (!map.containsKey(item)) {
+                map.put(item, true); // set any value to Map
+                uniqueSpanLengths.add(item);
+            }
+        }
+        Collections.sort(uniqueSpanLengths);
+
+
+        //Sort the nodes into each level based on their spans
+        ArrayList<ArrayList<node>> nodesInLevels = new ArrayList<>();
+        for (int level : uniqueSpanLengths) {
+            ArrayList<node> currentLevel = new ArrayList<>();
+
+            for (
+                    int spanIndex = 0;
+                    spanIndex < graphNodeSpanLengths.length;
+                    spanIndex++
+            ) {
+                if (graphNodeSpanLengths[spanIndex] == level) {
+                    currentLevel.add(graph.getNodes().get(spanIndex));
+                }
+            }
+
+            nodesInLevels.add(currentLevel);
+        }
+        //Find the nodes in each level with the same span and group them together
+        //Find the unique spans in each level
+        ArrayList<ArrayList<String>> uniqueSpansInLevels = new ArrayList<>();
+
+        for (ArrayList<node> level : nodesInLevels) {
+
+            ArrayList<String> uniqueSpans = new ArrayList<>(); //Stores the "stringified" objects
+
+            HashMap<String, Boolean> spanMap = new HashMap<>();
+            for (node node : level) {
+                String span = node.getAnchors().get(0).getFrom() + " " + node.getAnchors().get(0).getEnd();
+                if (!spanMap.containsKey(span)) {
+                    spanMap.put(span, true); // set any value to Map
+                    uniqueSpans.add(span);
+                }
+            }
+            uniqueSpansInLevels.add(uniqueSpans);
+
+        }
+
+        ArrayList<ArrayList<ArrayList<node>>> newNodeLevels = new ArrayList<>();
+        //Iterate through the unique spans in each level and group the same ones together
+        for (int level = 0; level < nodesInLevels.size(); level++) {
+            ArrayList<ArrayList<node>> newLevelOfGroups = new ArrayList<>();
+            for (String uniqueSpan : uniqueSpansInLevels.get(level)) {
+                //find the nodes in the level that have the same span and group them together
+                ArrayList<node> nodesWithCurrentSpan = new ArrayList<>();
+                for (node n : nodesInLevels.get(level)) {
+                    String span = n.getAnchors().get(0).getFrom() + " " + n.getAnchors().get(0).getEnd();
+                    if (span.equals(uniqueSpan)) {
+                        nodesWithCurrentSpan.add(n);
+                    }
+                }
+
+                newLevelOfGroups.add(nodesWithCurrentSpan);
+            }
+            newNodeLevels.add(newLevelOfGroups);
+        }
+
+        //Determine the actual number of levels needed
+        int height = 0;
+        ArrayList<Integer> previousLevelHeights = new ArrayList<>();
+        previousLevelHeights.add(0);
+        for (ArrayList<ArrayList<node>> level : newNodeLevels) {
+            int maxLevelHeight = 0;
+            for (ArrayList<node> item : level) {
+                maxLevelHeight = Math.max(maxLevelHeight, item.size());
+            }
+            previousLevelHeights.add(maxLevelHeight);
+            height += maxLevelHeight;
+        }
+        //console.log({height});
+        //console.log({nodesInLevels});
+        //console.log({previousLevelHeights});
+
+        //Sort the nodes into the final levels
+        ArrayList<ArrayList<node>> nodesInFinalLevels = new ArrayList<>();
+        for (int index = 0; index < height; index++) {
+            nodesInFinalLevels.add(new ArrayList<node>());
+        }
+        for (int level = 0; level < newNodeLevels.size(); level++) {
+            //console.log(nodesInLevels[level]);
+            for (ArrayList<node> group : newNodeLevels.get(level)) {
+                //console.log({group});
+                for (
+                        int nodeGroupIndex = 0;
+                        nodeGroupIndex < group.size();
+                        nodeGroupIndex++
+                ) {
+                    //console.log(group[nodeGroupIndex]);
+                    ArrayList<Integer> finalLevel = new ArrayList<>();
+
+                    finalLevel.addAll(previousLevelHeights.subList(0, level + 1));
+                    int finalIndex = 0;
+                    for (Integer i : finalLevel) {
+                        finalIndex += i;
+                    }
+                    finalIndex = finalIndex + nodeGroupIndex;
+
+
+                    nodesInFinalLevels.get(finalIndex).add(group.get(nodeGroupIndex));
+                }
+            }
+        }
+        //console.log({ nodesInFinalLevels });
+
+        //Map the nodes in each level to the correct format
+
+        int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
+
+        ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
+
+        for (int level = 0; level < nodesInFinalLevels.size(); level++) {
+
+            for (node n : nodesInFinalLevels.get(level)) {
+                HashMap<String, Object> singleNode = new HashMap<>();
+                singleNode.put("id", n.getId());
+                singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
+                singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
+                singleNode.put("label", n.getLabel());
+                singleNode.put("type", "node");
+                singleNode.put("nodeLevel", level);
+                singleNode.put("anchors", n.getAnchors().get(0));
+                singleNode.put("group", "node");
+                singleNode.put("fixed", true);
+                finalNodes.add(singleNode);
+            }
+
+
+        }
+        ArrayList<HashMap<String, Object>> finalTokens = new ArrayList<>();
+
+        for (token t : graph.getTokens()) {
+            HashMap<String, Object> singleToken = new HashMap<>();
+            singleToken.put("index", t.getIndex());
+            singleToken.put("x", t.getIndex() * 110);
+            singleToken.put("y", totalGraphHeight + 100);
+            singleToken.put("label", t.getForm());
+            singleToken.put("type", "token");
+            singleToken.put("group", "token");
+            singleToken.put("fixed", true);
+            finalTokens.add(singleToken);
+        }
+
+
+        ArrayList<HashMap<String, Object>> finalGraphNodes = new ArrayList<>();
+        finalGraphNodes.addAll(finalNodes);
+        finalGraphNodes.addAll(finalTokens);
+
+
+        ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
+        int fromID = 0, toID = 0, fromLevel = 0, toLevel = 0;
+
+        for (edge e : graph.getEdges()) {
+            HashMap<String, Object> singleEdge = new HashMap<>();
+            for (HashMap<String, Object> node : finalNodes) {
+
+                if ((Integer) node.get("id") == e.getSource()) {
+                    fromID = e.getSource();
+                    fromLevel = (Integer) node.get("nodeLevel");
+
+                }
+                if ((Integer) node.get("id") == e.getTarget()) {
+                    toID = e.getTarget();
+                    toLevel = (Integer) node.get("nodeLevel");
+                }
+            }
+            String edgeType = "";
+            if (fromLevel == toLevel && fromLevel == 0) {
+                edgeType = "curvedCW";
+            } else {
+                edgeType = "dynamic";
+            }
+            singleEdge.put("id", graph.getEdges().indexOf(e));
+            singleEdge.put("from", fromID);
+            singleEdge.put("to", toID);
+            singleEdge.put("label", e.getLabel());
+            singleEdge.put("group", "normal");
+            singleEdge.put("shadow", false);
+            HashMap<String, Object> back = new HashMap<>();
+            back.put("enabled", false);
+            singleEdge.put("background", back);
+
+            HashMap<String, Object> smooth = new HashMap<>();
+            smooth.put("type", edgeType);
+            smooth.put("roundness", 0.4);
+
+            HashMap<String, Object> end = new HashMap<>();
+            end.put("from", 20);
+            end.put("to", 0);
+            singleEdge.put("smooth", smooth);
+            singleEdge.put("endPointOffset", end);
+            finalGraphEdges.add(singleEdge);
+
+        }
+
+
+        HashMap<String, Object> Visualised = new HashMap<>();
+        Visualised.put("id", graphID);
+        Visualised.put("nodes", finalGraphNodes);
+        Visualised.put("edges", finalGraphEdges);
+
+
+        return Visualised;
+    }
 
 }
