@@ -489,7 +489,7 @@ public class RepGraphModel {
 
         graph graph = graphs.get(graphID);
 
-        int height = 100;
+        int height = 1;
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
@@ -522,7 +522,7 @@ public class RepGraphModel {
 
 
         ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
-        int fromID = 0, toID = 0, fromLevel = 0, toLevel = 0;
+        int fromID = 0, toID = 0;
 
         for (edge e : graph.getEdges()) {
             HashMap<String, Object> singleEdge = new HashMap<>();
@@ -530,12 +530,12 @@ public class RepGraphModel {
 
                 if ((Integer) node.get("id") == e.getSource()) {
                     fromID = e.getSource();
-                    fromLevel = (Integer) node.get("nodeLevel");
+
 
                 }
                 if ((Integer) node.get("id") == e.getTarget()) {
                     toID = e.getTarget();
-                    toLevel = (Integer) node.get("nodeLevel");
+
                 }
             }
             String edgeType = "curvedCW";
