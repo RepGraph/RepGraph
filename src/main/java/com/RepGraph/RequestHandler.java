@@ -145,8 +145,8 @@ public class RequestHandler {
 
     @GetMapping("/DisplayPlanarGraph")
     @ResponseBody
-    public graph DisplayPlanarGraph(@RequestParam String graphID) {
-        return RepModel.getGraph(graphID).PlanarVisualisation();
+    public HashMap<String, Object> DisplayPlanarGraph(@RequestParam String graphID) {
+        return RepModel.VisualisePlanar(graphID);
     }
 
     /**

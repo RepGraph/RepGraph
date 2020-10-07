@@ -485,6 +485,91 @@ public class RepGraphModel {
         return returnObj;
     }
 
+    public HashMap<String, Object> VisualisePlanar(String graphID) {
+
+        graph graph = graphs.get(graphID).PlanarGraph();
+
+        int height = 1;
+        int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
+
+        ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
+
+
+        for (node n : graph.getNodes()) {
+            HashMap<String, Object> singleNode = new HashMap<>();
+            singleNode.put("id", n.getId());
+            singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
+            singleNode.put("y", totalGraphHeight);
+            singleNode.put("label", n.getLabel());
+            singleNode.put("type", "node");
+            singleNode.put("anchors", n.getAnchors().get(0));
+            singleNode.put("group", "node");
+            singleNode.put("fixed", true);
+            finalNodes.add(singleNode);
+        }
+
+
+        ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
+        int fromID = 0, toID = 0;
+
+        for (int i = 0; i < graph.getEdges().size(); i++) {
+            HashMap<String, Object> singleEdge = new HashMap<>();
+            edge e = graph.getEdges().get(i);
+            for (HashMap<String, Object> node : finalNodes) {
+
+                if ((Integer) node.get("id") == e.getSource()) {
+                    fromID = e.getSource();
+
+
+                }
+                if ((Integer) node.get("id") == e.getTarget()) {
+                    toID = e.getTarget();
+
+                }
+            }
+            String edgeType = "";
+
+            if (fromID > toID) {
+                edgeType = "curvedCCW";
+            } else {
+                edgeType = "curvedCW";
+            }
+            if (fromID == toID) {
+                continue;
+            }
+            singleEdge.put("id", i);
+            singleEdge.put("from", fromID);
+            singleEdge.put("to", toID);
+            singleEdge.put("label", e.getLabel());
+            singleEdge.put("group", "normal");
+            singleEdge.put("shadow", false);
+            HashMap<String, Object> back = new HashMap<>();
+            back.put("enabled", false);
+            singleEdge.put("background", back);
+
+            HashMap<String, Object> smooth = new HashMap<>();
+            smooth.put("type", edgeType);
+            smooth.put("roundness", 0.6);
+
+            HashMap<String, Object> end = new HashMap<>();
+            end.put("from", 20);
+            end.put("to", 0);
+            singleEdge.put("smooth", smooth);
+            singleEdge.put("endPointOffset", end);
+            finalGraphEdges.add(singleEdge);
+
+        }
+
+        HashMap<String, Object> Visualised = new HashMap<>();
+        Visualised.put("id", graph.getId());
+        Visualised.put("nodes", finalNodes);
+        Visualised.put("edges", finalGraphEdges);
+
+        return Visualised;
+
+
+    }
+
     public HashMap<String, Object> VisualiseFlat(String graphID) {
 
         graph graph = graphs.get(graphID);

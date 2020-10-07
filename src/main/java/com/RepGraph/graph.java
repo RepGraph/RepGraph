@@ -616,8 +616,8 @@ public class graph {
         return true;
     }
 
-    //CHANGE MEMORY LEAK MAKE INDEPENDANT
-    public graph PlanarVisualisation() {
+
+    public graph PlanarGraph() {
 
         ArrayList<node> ordered = new ArrayList<>();
         for (node n : nodes) {
