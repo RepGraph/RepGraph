@@ -485,6 +485,94 @@ public class RepGraphModel {
         return returnObj;
     }
 
+    public HashMap<String, Object> VisualiseFlat(String graphID) {
+
+        graph graph = graphs.get(graphID);
+
+        int height = 100;
+        int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
+
+        ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
+
+
+        for (int i = 0; i < graph.getNodes().size(); i++) {
+            node n = graph.getNodes().get(i);
+            HashMap<String, Object> singleNode = new HashMap<>();
+            singleNode.put("id", n.getId());
+            singleNode.put("x", i * 130);
+            singleNode.put("y", totalGraphHeight);
+            singleNode.put("label", n.getLabel());
+            singleNode.put("type", "node");
+            singleNode.put("anchors", n.getAnchors().get(0));
+            singleNode.put("group", "node");
+            singleNode.put("fixed", true);
+            finalNodes.add(singleNode);
+        }
+
+        HashMap<String, Object> singleNode = new HashMap<>();
+        singleNode.put("id", graph.getNodes().size());
+        singleNode.put("x", graph.getTops().get(0) * 130);
+        singleNode.put("y", totalGraphHeight - 150);
+        singleNode.put("label", "TOP");
+        singleNode.put("type", "node");
+        singleNode.put("group", "token");
+        singleNode.put("fixed", true);
+
+        finalNodes.add(singleNode);
+
+
+        ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
+        int fromID = 0, toID = 0, fromLevel = 0, toLevel = 0;
+
+        for (edge e : graph.getEdges()) {
+            HashMap<String, Object> singleEdge = new HashMap<>();
+            for (HashMap<String, Object> node : finalNodes) {
+
+                if ((Integer) node.get("id") == e.getSource()) {
+                    fromID = e.getSource();
+                    fromLevel = (Integer) node.get("nodeLevel");
+
+                }
+                if ((Integer) node.get("id") == e.getTarget()) {
+                    toID = e.getTarget();
+                    toLevel = (Integer) node.get("nodeLevel");
+                }
+            }
+            String edgeType = "curvedCW";
+
+            singleEdge.put("id", graph.getEdges().indexOf(e));
+            singleEdge.put("from", fromID);
+            singleEdge.put("to", toID);
+            singleEdge.put("label", e.getLabel());
+            singleEdge.put("group", "normal");
+            singleEdge.put("shadow", false);
+            HashMap<String, Object> back = new HashMap<>();
+            back.put("enabled", false);
+            singleEdge.put("background", back);
+
+            HashMap<String, Object> smooth = new HashMap<>();
+            smooth.put("type", edgeType);
+            smooth.put("roundness", 0.4);
+
+            HashMap<String, Object> end = new HashMap<>();
+            end.put("from", 20);
+            end.put("to", 0);
+            singleEdge.put("smooth", smooth);
+            singleEdge.put("endPointOffset", end);
+            finalGraphEdges.add(singleEdge);
+
+        }
+
+        HashMap<String, Object> Visualised = new HashMap<>();
+        Visualised.put("id", graphID);
+        Visualised.put("nodes", finalNodes);
+        Visualised.put("edges", finalGraphEdges);
+
+        return Visualised;
+
+    }
+
+
     public HashMap<String, Object> VisualiseHierarchy(String graphID) {
         graph graph = graphs.get(graphID);
 
