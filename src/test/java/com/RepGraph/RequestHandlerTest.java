@@ -127,8 +127,8 @@ public class RequestHandlerTest {
     }
 
     @Test
-    public void test_Visualise_returnsGraph() throws Exception {
-        String URL = "/Visualise";
+    public void test_GetGraph_returnsGraph() throws Exception {
+        String URL = "/GetGraph";
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
