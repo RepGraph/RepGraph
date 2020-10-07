@@ -317,18 +317,13 @@ public class RepGraphModel {
                     if (n.getLabel().equals(sn.getLabel())) {
                         //Once it finds a node in the graph that is the same as the subgraph node label it has to iterate over the subgraph edges list
                         //to find the corresponding edge of the subgraph node that found a match.
-                        for (node subneigh : sn.getDirectedNeighbours()) {
-                            //For every edge it has to iterate over all the current graph edges to find the edge of the matched graph node as well
-                            for (node neigh : n.getDirectedNeighbours()) {
 
-                                //This statement checks if the target nodes of the subgraph node and graph node have the same label.
-                                //if this is true it creates a hashmap entry with the subgraph node id and the subgraph target node id and sets the value to true
-                                //this indicates that the unique edge in the subgraph pattern has been found.
+                        for (int i = 0; i < sn.getDirectedNeighbours().size(); i++) {
+                            for (int j = 0; j < n.getDirectedNeighbours().size(); j++) {
 
-                                if (neigh.getLabel().equals(subneigh.getLabel())) {
-                                    checks.put(sn.getId() + subneigh.getId() + "", true);
+                                if (sn.getDirectedNeighbours().get(i).getLabel().equals(n.getDirectedNeighbours().get(j).getLabel()) && sn.getDirectedEdgeNeighbours().get(i).getLabel().equals(n.getDirectedEdgeNeighbours().get(j).getLabel())) {
+                                    checks.put(sn.getId() + sn.getDirectedNeighbours().get(i).getId() + "", true);
                                 }
-
                             }
                         }
                     }
@@ -340,6 +335,7 @@ public class RepGraphModel {
             for (int i = 0; i < subgraph.getEdges().size(); i++) {
                 if (checks.containsKey(subgraph.getEdges().get(i).getSource() + subgraph.getEdges().get(i).getTarget() + "") && checks.get(subgraph.getEdges().get(i).getSource() + subgraph.getEdges().get(i).getTarget() + "") == true) {
                     checksarr[i] = true;
+
                 }
             }
             //This checks to see if all values in the boolean array are true and if so adds the current graph to the list of found graphs.

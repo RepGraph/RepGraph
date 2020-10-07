@@ -343,12 +343,14 @@ public class graph {
     public void setNodeNeighbours() {
         int source;
         int target;
-
+        try {
         if (edges.size() == 0) {
             //Graph has no edges
             return;
         } else {
+
             source = edges.get(0).getSource();
+
             if (nodes.get(source).getDirectedNeighbours().size() != 0) {
                 //Node neighbours have already been set
                 return;
@@ -369,7 +371,9 @@ public class graph {
             nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
 
         }
-
+        } catch (IndexOutOfBoundsException e) {
+            return;
+        }
     }
 
     /**
