@@ -465,9 +465,10 @@ public class RepGraphModelTest {
         ArrayList<node> subnodes = new ArrayList<>();
         ArrayList<edge> subedges = new ArrayList<>();
 
+        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+
         subnodes.add(new node(0, "node" + (2), new ArrayList<anchors>()));
         subnodes.add(new node(1, "node" + (4), new ArrayList<anchors>()));
-        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         graph subgraph1 = new graph("44444", "testsource", "node2 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         subnodes = new ArrayList<>();
@@ -499,6 +500,18 @@ public class RepGraphModelTest {
         subnodes.add(new node(2, "node" + (3), new ArrayList<anchors>()));
         subnodes.add(new node(3, "node" + (4), new ArrayList<anchors>()));
         graph subgraph5 = new graph("88888", "testsource", "node1 node2 node3 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+
+        subnodes = new ArrayList<>();
+        subnodes.add(new node(0, "node" + (1), new ArrayList<anchors>()));
+        subnodes.add(new node(1, "node" + (2), new ArrayList<anchors>()));
+        subnodes.add(new node(2, "node" + (3), new ArrayList<anchors>()));
+        subnodes.add(new node(3, "node" + (4), new ArrayList<anchors>()));
+
+        subedges = new ArrayList<>();
+        subedges.add(new edge(0, 1, "testlabelWillFail", "testpostlabel"));
+        subedges.add(new edge(1, 3, "testlabel", "testpostlabel"));
+        subedges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        graph subgraph6 = new graph("88888", "testsource", "node1 node2 node3 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
 
         ArrayList<String> correctResults = new ArrayList<>();
@@ -542,6 +555,14 @@ public class RepGraphModelTest {
         Collections.sort(results);
         Collections.sort(correctResults);
         assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
+
+        correctResults.clear();
+        results = model.searchSubgraphPattern(subgraph6);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
+
 
     }
 
