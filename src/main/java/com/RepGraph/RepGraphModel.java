@@ -6,7 +6,6 @@
 
 package com.RepGraph;
 
-
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -706,6 +705,329 @@ public class RepGraphModel {
 
         return Visualised;
 
+    }
+
+
+    public HashMap<String, Object> VisualiseTree(String graphID) {
+        graph graph = graphs.get(graphID);
+
+        ArrayList<ArrayList<Integer>> directedNeighbours = new ArrayList<>();
+
+
+        for (int i = 0; i < graph.getNodes().size(); i++) {
+            directedNeighbours.add(new ArrayList<>());
+        }
+
+
+        for (edge e : graph.getEdges()) {
+            directedNeighbours.get(e.getSource()).add(e.getTarget());
+        }
+
+
+        ArrayList<Stack<Integer>> topologicalStacks = new ArrayList<>();
+
+        for (int i = 0; i < graph.getNodes().size(); i++) {
+            Stack<Integer> stack = new Stack<>();
+            HashMap<Integer, Boolean> visited = new HashMap<>();
+            for (int j = 0; j < graph.getNodes().size(); j++) {
+                visited.put(j, false);
+            }
+
+            topologicalStacks.add(graph.topologicalSort(i, visited, stack));
+            //  console.log("Topological ordering " + i + ": " + topologicalStacks[i]);
+        }
+
+
+        int numLevels = 0;
+        for (int i = 0; i < topologicalStacks.size(); i++) {
+            numLevels = Math.max(numLevels, topologicalStacks.get(i).size());
+        }
+
+
+        ArrayList<ArrayList<node>> nodesInLevels = new ArrayList<>();
+
+        for (int level = 1; level < numLevels + 1; level++) {
+            ArrayList<node> currentLevel = new ArrayList<>();
+            for (int n : graph.getNodes().keySet()) {
+                // console.log("node: " + n + " Length: " + topologicalStacks[n].length);
+                if (topologicalStacks.get(n).size() == level) {
+                    currentLevel.add(graph.getNodes().get(n));
+                }
+            }
+            for (node n : currentLevel) {
+                System.out.println(n.getLabel());
+            }
+            System.out.println("**************************");
+            nodesInLevels.add(currentLevel);
+
+        }
+
+        HashMap<Integer, Integer> xPositions = new HashMap<>();
+        HashMap<Integer, node> lowestNode = new HashMap<>();
+
+        //console.log(lowestNode);
+        for (ArrayList<node> level : nodesInLevels) {
+            for (node n : level) {
+                int column = n.getAnchors().get(0).getFrom();
+                xPositions.put(n.getId(), column);
+                if (!lowestNode.containsKey(column)) {
+                    lowestNode.put(column, n);
+                }
+            }
+        }
+
+
+        for (ArrayList<node> level : nodesInLevels) {
+            for (node n : level) {
+                if (lowestNode.get(xPositions.get(n.getId())) != n) {
+                    if (directedNeighbours.get(n.getId()).size() == 1) {
+                        xPositions.put(n.getId(), xPositions.get(directedNeighbours.get(n.getId()).get(0)));
+                    } else {
+                        ArrayList<Integer> childrenInSpan = new ArrayList<>();
+                        // console.log(n.id);
+                        //  console.log(directedNeighbours[n.id]);
+                        for (Integer neighbour : directedNeighbours.get(n.getId())) {
+                            if (
+                                    xPositions.get(neighbour) >= n.getAnchors().get(0).getFrom() &&
+                                            xPositions.get(neighbour) <= n.getAnchors().get(0).getEnd()
+                            ) {
+                                childrenInSpan.add(neighbour);
+                            }
+                        }
+                        if (childrenInSpan.size() != 0) {
+                            int leftMostChildPos = xPositions.get(childrenInSpan.get(0));
+                            for (int child : childrenInSpan) {
+                                leftMostChildPos = Math.min(
+                                        leftMostChildPos,
+                                        xPositions.get(child)
+                                );
+                            }
+                            xPositions.put(n.getId(), leftMostChildPos);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        HashMap<Integer, HashMap<Integer, node>> nodesInFinalLevels = new HashMap<>();
+
+        nodesInFinalLevels.put(0, new HashMap<>());
+
+        //Resolve overlapping nodes.
+        int numNodesProcessed = 0;
+        int currentLevel = 0;
+        while (numNodesProcessed != graph.getNodes().size()) {
+            HashMap<Integer, Integer> nodeXPos = new HashMap<>();
+            nodesInFinalLevels.put(currentLevel + 1, new HashMap<>());
+            for (node n : nodesInLevels.get(currentLevel)) {
+                if (nodeXPos.containsKey(xPositions.get(n.getId()))) {
+                    if (
+                            topologicalStacks.get(n.getId()).size() <
+                                    topologicalStacks.get(nodeXPos.get(xPositions.get(n.getId()))).size()
+                    ) {
+                        int currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.getId()));
+                        nodeXPos.put(xPositions.get(n.getId()), n.getId());
+                        nodesInLevels.get(currentLevel + 1).add(
+                                graph.getNodes().get(currentOccupyingNodeID)
+                        );
+                        nodesInFinalLevels.get(currentLevel).remove(currentOccupyingNodeID);
+                        nodesInFinalLevels.get(currentLevel).put(n.getId(), n);
+                    } else {
+                        //nodesInLevels.add();
+                        nodesInLevels.get(currentLevel + 1).add(n);
+                    }
+                } else {
+                    nodeXPos.put(xPositions.get(n.getId()), n.getId());
+                    nodesInFinalLevels.get(currentLevel).put(n.getId(), n);
+                    numNodesProcessed++;
+                }
+            }
+            currentLevel++;
+        }
+
+        int height = numLevels;
+
+        //convert frmo array of maps to array of arrays
+        ArrayList<ArrayList<node>> nodesInFinalLevelsArray = new ArrayList<>();
+
+        for (int level = 0; level < nodesInFinalLevels.size(); level++) {
+            nodesInFinalLevelsArray.add(new ArrayList<>());
+            for (node n : nodesInFinalLevels.get(level).values()) {
+                nodesInFinalLevelsArray.get(level).add(n);
+            }
+        }
+
+        int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
+
+        ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
+
+        for (int level = 0; level < nodesInFinalLevelsArray.size(); level++) {
+            for (node node : nodesInFinalLevelsArray.get(level)) {
+                HashMap<String, Object> singleNode = new HashMap<>();
+                singleNode.put("id", node.getId());
+                singleNode.put("x", xPositions.get(node.getId()) * 130);
+                singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
+                singleNode.put("label", node.getLabel());
+                singleNode.put("type", "node");
+                singleNode.put("nodeLevel", level);
+                singleNode.put("anchors", node.getAnchors().get(0));
+                singleNode.put("group", "node");
+                singleNode.put("fixed", true);
+                finalNodes.add(singleNode);
+            }
+        }
+
+
+        ArrayList<HashMap<String, Object>> finalTokens = new ArrayList<>();
+
+        for (token t : graph.getTokens()) {
+            HashMap<String, Object> singleToken = new HashMap<>();
+            singleToken.put("index", t.getIndex());
+            singleToken.put("x", t.getIndex() * 130);
+            singleToken.put("y", totalGraphHeight + 200);
+            singleToken.put("label", t.getForm());
+            singleToken.put("type", "token");
+            singleToken.put("group", "token");
+            singleToken.put("fixed", true);
+            finalTokens.add(singleToken);
+        }
+
+
+        ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
+        int fromID = 0, toID = 0, fromLevel = 0, toLevel = 0, fromX = 0, toX = 0;
+
+        for (edge e : graph.getEdges()) {
+            HashMap<String, Object> singleEdge = new HashMap<>();
+            for (HashMap<String, Object> node : finalNodes) {
+
+                if ((Integer) node.get("id") == e.getSource()) {
+                    fromID = e.getSource();
+                    fromLevel = (Integer) node.get("nodeLevel");
+                    fromX = (Integer) node.get("x");
+                }
+                if ((Integer) node.get("id") == e.getTarget()) {
+                    toID = e.getTarget();
+                    toLevel = (Integer) node.get("nodeLevel");
+                    toX = (Integer) node.get("x");
+                }
+            }
+            String edgeType = "";
+
+            double round = 0.5;
+
+            if (fromX == toX) {
+                if (fromLevel - toLevel == 1) {
+                    edgeType = "continuous";
+                } else {
+                    boolean notFound = true;
+                    for (HashMap<String, Object> node : finalNodes) {
+                        if ((Integer) node.get("x") == fromX && (Integer) node.get("nodeLevel") > toLevel && (Integer) node.get("nodeLevel") < fromLevel) {
+                            notFound = false;
+                        }
+                    }
+                    if (
+                            notFound
+                    ) {
+                        edgeType = "continuous";
+                    } else {
+                        if (fromLevel - toLevel > 3) {
+                            round = 0.32;
+                        }
+                        edgeType = "curvedCCW";
+                        for (int i = 0; i < directedNeighbours.get(fromID).size(); i++) {
+                            if (
+                                    xPositions.get(fromID) -
+                                            xPositions.get(directedNeighbours.get(fromID).get(i)) == 1
+                            ) {
+                                edgeType = "curvedCW";
+                            }
+                        }
+                    }
+                }
+            } else {
+                edgeType = "dynamic";
+            }
+
+            singleEdge.put("id", graph.getEdges().indexOf(e));
+            singleEdge.put("from", fromID);
+            singleEdge.put("to", toID);
+            singleEdge.put("label", e.getLabel());
+            singleEdge.put("group", "normal");
+            singleEdge.put("shadow", false);
+            HashMap<String, Object> back = new HashMap<>();
+            back.put("enabled", false);
+            singleEdge.put("background", back);
+
+            HashMap<String, Object> smooth = new HashMap<>();
+            smooth.put("type", edgeType);
+            smooth.put("roundness", round);
+
+            HashMap<String, Object> end = new HashMap<>();
+            end.put("from", 20);
+            end.put("to", 0);
+            singleEdge.put("smooth", smooth);
+            singleEdge.put("endPointOffset", end);
+            finalGraphEdges.add(singleEdge);
+
+        }
+
+
+        ArrayList<HashMap<String, Object>> connectedTokens = new ArrayList<>();
+        int index = finalGraphEdges.size();
+
+        for (HashMap<String, Object> n : finalNodes) {
+            HashMap<String, Object> token = null;
+            String group = (String) n.get("group");
+            if (group.equals("node")) {
+                boolean Found = false;
+                for (HashMap<String, Object> node : finalNodes) {
+                    String tgroup = (String) node.get("group");
+
+                    int tx = (Integer) node.get("x");
+                    if (connectedTokens.indexOf(node) == -1 &&
+                            tgroup.equals("token") &&
+                            (Integer) node.get("x") == tx) {
+                        Found = true;
+                        token = node;
+                    }
+                }
+
+                if (Found) {
+                    HashMap<String, Object> singleEdge = new HashMap<>();
+                    singleEdge.put("id", graph.getEdges().size());
+                    singleEdge.put("from", (Integer) n.get("from"));
+                    singleEdge.put("to", (Integer) n.get("to"));
+                    singleEdge.put("label", "");
+                    singleEdge.put("group", "tokenEdge");
+                    singleEdge.put("shadow", false);
+                    HashMap<String, Object> back = new HashMap<>();
+                    back.put("enabled", false);
+                    singleEdge.put("background", back);
+
+                    HashMap<String, Object> smooth = new HashMap<>();
+                    smooth.put("type", "continuous");
+                    smooth.put("roundness", 0.5);
+
+                    HashMap<String, Object> end = new HashMap<>();
+                    end.put("from", 20);
+                    end.put("to", 0);
+                    singleEdge.put("smooth", smooth);
+                    singleEdge.put("endPointOffset", end);
+                    finalGraphEdges.add(singleEdge);
+
+                    index++;
+                    connectedTokens.add(token);
+                }
+            }
+        }
+
+        HashMap<String, Object> Visualised = new HashMap<>();
+        Visualised.put("id", graphID);
+        Visualised.put("nodes", finalNodes);
+        Visualised.put("edges", finalGraphEdges);
+
+        return Visualised;
     }
 
 
