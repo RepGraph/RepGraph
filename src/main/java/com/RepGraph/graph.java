@@ -398,7 +398,7 @@ public class graph {
         //boolean[] visited = new boolean[nodes.size()];
         HashMap<Integer, Boolean> visited = new HashMap<>();
         for (int i : nodes.keySet()) {
-            visited.put(i, true);
+            visited.put(i, false);
         }
 
         //Topologically sort every unvisited node.
@@ -550,7 +550,6 @@ public class graph {
         return paths;
     }
 
-
     /**
      * Method to check if a graph is planar
      *
@@ -620,7 +619,6 @@ public class graph {
     }
 
     // public ArrayList<edge> UpdateEdges()
-
 
     public graph PlanarGraph() {
 
