@@ -68,10 +68,10 @@ public class RequestHandlerTest {
         edges.add(new edge(1, 3, "testlabel", "testpostlabel"));
         edges.add(new edge(2, 3, "testlabel", "testpostlabel"));
 
-        tokens.add(new token(0, "node 1", "node1", "node1"));
-        tokens.add(new token(1, "node 2", "node2", "node2"));
-        tokens.add(new token(2, "node 3", "node3", "node3"));
-        tokens.add(new token(3, "node 4", "node4", "node4"));
+        tokens.add(new token(0, "node1", "node1", "node1"));
+        tokens.add(new token(1, "node2", "node2", "node2"));
+        tokens.add(new token(2, "node3", "node3", "node3"));
+        tokens.add(new token(3, "node4", "node4", "node4"));
 
         testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
@@ -123,7 +123,9 @@ public class RequestHandlerTest {
         String requestJSON = writer.writeValueAsString(testgraph);
 
         mockMvc.perform(post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json("{\"id\" : \"11111\",\"input\":\"node1 node2 node3 node4\"}"));
 
     }
 
@@ -140,11 +142,10 @@ public class RequestHandlerTest {
         mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
 
         String graphID = "11111";
-        String format = "1";
+
 
         mockMvc.perform(get(URL)
-                .param("graphID", graphID)
-                .param("format", format))
+                .param("graphID", graphID).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(requestJSON));

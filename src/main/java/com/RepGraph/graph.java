@@ -5,6 +5,7 @@
  */
 package com.RepGraph;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -68,7 +69,11 @@ public class graph {
      * Default constructor for the graph class.
      */
     public graph() {
-
+        this.nodelist = new ArrayList<>();
+        this.nodes = new HashMap<>();
+        this.tokens = new ArrayList<>();
+        this.edges = new ArrayList<>();
+        this.tops = new ArrayList<>();
     }
 
     /**
@@ -86,7 +91,26 @@ public class graph {
         this.id = id;
         this.source = source;
         this.input = input;
+        this.nodelist = new ArrayList<>();
         this.nodes = nodes;
+        for (node n : nodes.values()) {
+            this.nodelist.add(n);
+        }
+        this.tokens = tokens;
+        this.edges = edges;
+        this.tops = tops;
+
+    }
+
+    public graph(String id, String source, String input, ArrayList<node> nodelist, ArrayList<token> tokens, ArrayList<edge> edges, ArrayList<Integer> tops) {
+        this.id = id;
+        this.source = source;
+        this.input = input;
+        this.nodelist = nodelist;
+        this.nodes = new HashMap<Integer, node>();
+        for (node n : nodelist) {
+            this.nodes.put(n.getId(), n);
+        }
         this.tokens = tokens;
         this.edges = edges;
         this.tops = tops;
@@ -100,6 +124,11 @@ public class graph {
         for (node n : nodelist) {
             nodes.put(n.getId(), n);
         }
+    }
+
+    @JsonGetter("nodes")
+    public ArrayList<node> getNodelist() {
+        return this.nodelist;
     }
 
     /**
