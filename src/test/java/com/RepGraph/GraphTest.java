@@ -2755,7 +2755,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        assertTrue("connectedBFS method does not correctly identify a connected graph.", g.connectedBFS());
+        assertTrue("connectedBFS method does not correctly identify a connected graph.", g.connectedBFS(0));
 
     }
 
@@ -2789,7 +2789,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        assertFalse("connectedBFS method does not correctly identify a disconnected graph.", g.connectedBFS());
+        assertFalse("connectedBFS method does not correctly identify a disconnected graph.", g.connectedBFS(0));
 
     }
 
@@ -2811,7 +2811,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        assertFalse("connectedBFS method does not correctly identify a disconnected graph where node 0 is disconnected.", g.connectedBFS());
+        assertFalse("connectedBFS method does not correctly identify a disconnected graph where node 0 is disconnected.", g.connectedBFS(0));
 
     }
 
@@ -2826,7 +2826,7 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), new ArrayList<edge>(), new ArrayList<Integer>());
 
-        assertTrue("connectedBFS method does not correctly identify a connected graph with a single node.", g.connectedBFS());
+        assertTrue("connectedBFS method does not correctly identify a connected graph with a single node.", g.connectedBFS(0));
 
     }
 }
