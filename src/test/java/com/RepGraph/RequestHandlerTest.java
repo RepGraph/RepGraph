@@ -75,14 +75,14 @@ public class RequestHandlerTest {
 
         testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        HashMap<Integer, node> nodes2 = new ArrayList<>();
+        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
         ArrayList<edge> edges2 = new ArrayList<>();
         ArrayList<token> tokens2 = new ArrayList<>();
 
-        nodes2.add(new node(0, "node3", anch1));
-        nodes2.add(new node(1, "node4", anch2));
-        nodes2.add(new node(2, "node5", anch3));
-        nodes2.add(new node(3, "node6", anch4));
+        nodes2.put(0, new node(0, "node3", anch1));
+        nodes2.put(1, new node(1, "node4", anch2));
+        nodes2.put(2, new node(2, "node5", anch3));
+        nodes2.put(3, new node(3, "node6", anch4));
 
         edges2.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges2.add(new edge(1, 3, "testlabel", "testpostlabel"));
