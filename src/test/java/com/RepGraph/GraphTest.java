@@ -16,14 +16,14 @@ public class GraphTest {
     @Test
     public void test_Constructor_CreatesAndAssignsMemberVariables() throws NoSuchFieldException, IllegalAccessException {
 
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
 
-        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
-        nodes.add(new node(1, "node2", new ArrayList<anchors>()));
-        nodes.add(new node(2, "node3", new ArrayList<anchors>()));
-        nodes.add(new node(3, "node4", new ArrayList<anchors>()));
+        nodes.put(0, new node(0, "node1", new ArrayList<anchors>()));
+        nodes.put(1, new node(1, "node2", new ArrayList<anchors>()));
+        nodes.put(2, new node(2, "node3", new ArrayList<anchors>()));
+        nodes.put(3, new node(3, "node4", new ArrayList<anchors>()));
 
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
