@@ -646,6 +646,7 @@ public class graph {
             target = e.getTarget();
 
             edge newEdge = new edge();
+
             for (int i = 0; i < ordered.size(); i++) {
                 node n = ordered.get(i);
                 if (n.getId() == source) {
@@ -717,7 +718,8 @@ public class graph {
             target = e.getTarget();
 
             edge newEdge = new edge();
-
+            newEdge.setLabel("");
+            newEdge.setPostLabel("");
             for (int i = 0; i < ordered.size(); i++) {
 
                 node n = ordered.get(i);
@@ -725,18 +727,17 @@ public class graph {
                 if (n.getId() == source) {
 
                     newEdge.setSource(nodeToToken.get(i));
-                    System.out.println(n.getId() + " Source Becomes " + nodeToToken.get(n.getId()));
+
                 }
                 if (n.getId() == target) {
 
                     newEdge.setTarget(nodeToToken.get(i));
-                    System.out.println(n.getId() + " Target Becomes " + nodeToToken.get(n.getId()));
+
                 }
             }
             updated.add(newEdge);
 
         }
-
 
         HashMap<Integer, node> newNodes = new HashMap<>();
         for (node n : ordered) {

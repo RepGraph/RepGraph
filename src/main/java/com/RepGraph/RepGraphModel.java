@@ -92,28 +92,28 @@ public class RepGraphModel {
         node n = graphs.get(graphID).getNodes().get(headNodeID);
 
         adjacentNodes.put(n.getId(), n);
-                int minFrom = n.getAnchors().get(0).getFrom();
-                int maxEnd = n.getAnchors().get(0).getEnd();
-                ArrayList<node> nodeNeighbours = new ArrayList<>(n.getDirectedNeighbours());
-                ArrayList<edge> edgeNeighbours = new ArrayList<>(n.getDirectedEdgeNeighbours());
+        int minFrom = n.getAnchors().get(0).getFrom();
+        int maxEnd = n.getAnchors().get(0).getEnd();
+        ArrayList<node> nodeNeighbours = new ArrayList<>(n.getDirectedNeighbours());
+        ArrayList<edge> edgeNeighbours = new ArrayList<>(n.getDirectedEdgeNeighbours());
 
-                nodeNeighbours.addAll(n.getUndirectedNeighbours());
-                edgeNeighbours.addAll(n.getUndirectedEdgeNeighbours());
-                for (node nn : nodeNeighbours) {
-                    adjacentNodes.put(nn.getId(), nn);
-                    if (nn.getAnchors().get(0).getFrom() < minFrom) {
-                        minFrom = nn.getAnchors().get(0).getFrom();
-                    }
-                    if (nn.getAnchors().get(0).getEnd() > maxEnd) {
-                        maxEnd = nn.getAnchors().get(0).getEnd();
-                    }
+        nodeNeighbours.addAll(n.getUndirectedNeighbours());
+        edgeNeighbours.addAll(n.getUndirectedEdgeNeighbours());
+        for (node nn : nodeNeighbours) {
+            adjacentNodes.put(nn.getId(), nn);
+            if (nn.getAnchors().get(0).getFrom() < minFrom) {
+                minFrom = nn.getAnchors().get(0).getFrom();
+            }
+            if (nn.getAnchors().get(0).getEnd() > maxEnd) {
+                maxEnd = nn.getAnchors().get(0).getEnd();
+            }
 
 
-                }
-                for (edge ne : edgeNeighbours) {
-                    adjacentEdges.add(ne);
-                }
-                SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
+        }
+        for (edge ne : edgeNeighbours) {
+            adjacentEdges.add(ne);
+        }
+        SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
 
 
         subset.setId(parent.getId());
@@ -150,30 +150,30 @@ public class RepGraphModel {
         node n = parent.getNodes().get(headNodeID);
 
         DescendentNodes.put(n.getId(), n);
-                DescendentEdges.addAll(n.getDirectedEdgeNeighbours());
+        DescendentEdges.addAll(n.getDirectedEdgeNeighbours());
 
-                int minFrom = n.getAnchors().get(0).getFrom();
-                int maxEnd = n.getAnchors().get(0).getEnd();
+        int minFrom = n.getAnchors().get(0).getFrom();
+        int maxEnd = n.getAnchors().get(0).getEnd();
 
-                HashMap<Integer, node> descNode = new HashMap<>();
-                HashMap<String, edge> descEdge = new HashMap<>();
+        HashMap<Integer, node> descNode = new HashMap<>();
+        HashMap<String, edge> descEdge = new HashMap<>();
 
-                DiscoverNodesAndEdges(n, descNode, descEdge);
+        DiscoverNodesAndEdges(n, descNode, descEdge);
 
         DescendentNodes.putAll(descNode);
 
-                DescendentEdges.addAll(descEdge.values());
+        DescendentEdges.addAll(descEdge.values());
 
         for (node nn : DescendentNodes.values()) {
-                    if (nn.getAnchors().get(0).getFrom() < minFrom) {
-                        minFrom = nn.getAnchors().get(0).getFrom();
-                    }
-                    if (nn.getAnchors().get(0).getEnd() > maxEnd) {
-                        maxEnd = nn.getAnchors().get(0).getEnd();
-                    }
-                }
+            if (nn.getAnchors().get(0).getFrom() < minFrom) {
+                minFrom = nn.getAnchors().get(0).getFrom();
+            }
+            if (nn.getAnchors().get(0).getEnd() > maxEnd) {
+                maxEnd = nn.getAnchors().get(0).getEnd();
+            }
+        }
 
-                SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
+        SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
 
 
         subset.setId(parent.getId());
@@ -487,30 +487,39 @@ public class RepGraphModel {
 
         graph graph = graphs.get(graphID).PlanarGraph();
 
-        for (int i = 0; i < graph.getEdges().size(); i++) {
+        ArrayList<edge> crossingEdges = new ArrayList<>();
 
-            System.out.println("EDGE SOURCE TO TARGET : " + graph.getEdges().get(i).getSource() + " to " + graph.getEdges().get(i).getTarget());
-            System.out.println("NODE ID TO TARGET NODE ID : " + graph.getNodes().get(graph.getEdges().get(i).getSource()).getId() + " to " + graph.getNodes().get(graph.getEdges().get(i).getTarget()).getId());
+        for (edge e : graph.getEdges()) {
+
+            for (edge other : graph.getEdges()) {
+
+                if (Math.min(e.getSource(), e.getTarget()) < Math.min(other.getSource(), other.getTarget()) && Math.min(other.getSource(), other.getTarget()) < Math.max(e.getSource(), e.getTarget()) && Math.max(e.getSource(), e.getTarget()) < Math.max(other.getSource(), other.getTarget())) {
+
+                    crossingEdges.add(e);
+                    crossingEdges.add(other);
+                }
+
+            }
         }
-
 
         int height = 1;
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
 
-        int level = 0;
-        int prev = -1;
+
+        HashMap<Integer, Integer> currentLevels = new HashMap<>();
         for (node n : graph.getNodes().values()) {
-            if (prev == n.getAnchors().get(0).getFrom()) {
-                level++;
+            if (!currentLevels.containsKey(n.getAnchors().get(0).getFrom())) {
+                currentLevels.put(n.getAnchors().get(0).getFrom(), 0);
             } else {
-                level = 0;
+                currentLevels.put(n.getAnchors().get(0).getFrom(), currentLevels.get(n.getAnchors().get(0).getFrom()) + 1);
             }
+
             HashMap<String, Object> singleNode = new HashMap<>();
-            singleNode.put("id", n.getAnchors().get(0).getFrom() + level * graph.getNodes().size());
+            singleNode.put("id", n.getAnchors().get(0).getFrom() + currentLevels.get(n.getAnchors().get(0).getFrom()) * graph.getNodes().size());
             singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
-            singleNode.put("y", totalGraphHeight + level * 100);
+            singleNode.put("y", totalGraphHeight + currentLevels.get(n.getAnchors().get(0).getFrom()) * 100);
             singleNode.put("label", n.getLabel());
             singleNode.put("type", "node");
             singleNode.put("anchors", n.getAnchors().get(0));
@@ -518,7 +527,6 @@ public class RepGraphModel {
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
 
-            prev = n.getAnchors().get(0).getFrom();
 
         }
 
@@ -557,10 +565,15 @@ public class RepGraphModel {
             singleEdge.put("from", fromID);
             singleEdge.put("to", toID);
             singleEdge.put("label", e.getLabel());
+
+            singleEdge.put("color", "rgba(0,0,0,1)");
             singleEdge.put("group", "normal");
             singleEdge.put("shadow", false);
             HashMap<String, Object> back = new HashMap<>();
-            back.put("enabled", false);
+            back.put("enabled", true);
+            if (crossingEdges.contains(e)) {
+                back.put("color", "#ff0000");
+            }
             singleEdge.put("background", back);
 
             HashMap<String, Object> smooth = new HashMap<>();
