@@ -604,7 +604,6 @@ public class graph {
         return paths;
     }
 
-
     /**
      * Method to check if a graph is planar
      *
@@ -675,7 +674,6 @@ public class graph {
     }
 
     // public ArrayList<edge> UpdateEdges()
-
 
     public graph PlanarGraph() {
 
