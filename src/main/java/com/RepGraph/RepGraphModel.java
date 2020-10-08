@@ -8,10 +8,7 @@ package com.RepGraph;
 
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.*;
 
 public class RepGraphModel {
 
@@ -662,9 +659,9 @@ public class RepGraphModel {
 
         //Determine span lengths of each node
         int[] graphNodeSpanLengths = new int[graph.getNodes().size()];
-
+        Iterator<Integer> iter = graph.getNodes().keySet().iterator();
         for (int j = 0; j < graphNodeSpanLengths.length; j++) {
-            int i = graph.getNodes().keySet().iterator().next();
+            int i = iter.next();
             int end = graph.getNodes().get(i).getAnchors().get(0).getEnd();
             int from = graph.getNodes().get(i).getAnchors().get(0).getFrom();
             int span = end - from;
