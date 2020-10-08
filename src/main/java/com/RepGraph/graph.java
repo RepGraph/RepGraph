@@ -7,12 +7,21 @@ package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.node.IntNode;
 
+import java.io.IOException;
 import java.util.*;
 
 import static java.util.Collections.max;
 
 public class graph {
+
 
     /**
      * The graph's ID number.
@@ -29,9 +38,14 @@ public class graph {
      */
     private String input;
 
+
+    @JsonProperty("nodes")
+    private ArrayList<node> nodelist;
+
     /**
-     * An array list of the graph's nodes.
+     * A HashMap of the graph nodes
      */
+    @JsonIgnore
     private HashMap<Integer, node> nodes;
 
     /**
@@ -54,6 +68,7 @@ public class graph {
      * Default constructor for the graph class.
      */
     public graph() {
+
     }
 
     /**
@@ -75,6 +90,16 @@ public class graph {
         this.tokens = tokens;
         this.edges = edges;
         this.tops = tops;
+
+    }
+
+    @JsonSetter("nodes")
+    public void setNodelist(ArrayList<node> nodelist) {
+        this.nodelist = nodelist;
+        nodes = new HashMap<Integer, node>();
+        for (node n : nodelist) {
+            nodes.put(n.getId(), n);
+        }
     }
 
     /**
@@ -233,7 +258,7 @@ public class graph {
                     ArrayList<ArrayList<Integer>> endpoints = BFS(0);
                     ArrayList<ArrayList<Integer>> temp;
                     ArrayList<Integer> pathEnds = new ArrayList<>();
-                    for (ArrayList<Integer> end : endpoints){
+                    for (ArrayList<Integer> end : endpoints) {
                         if (!pathEnds.contains(end.get(0))) {
                             temp = BFS(end.get(0));
                             for (ArrayList<Integer> al : temp) {
@@ -273,10 +298,10 @@ public class graph {
                     }
 
                     ArrayList<ArrayList<Integer>> newPaths = new ArrayList<>();
-                    for (ArrayList<Integer> al : paths){
-                        if (!newPaths.contains(al)){
+                    for (ArrayList<Integer> al : paths) {
+                        if (!newPaths.contains(al)) {
                             Collections.reverse(al);
-                            if (!newPaths.contains(al)){
+                            if (!newPaths.contains(al)) {
                                 newPaths.add(al);
                             }
                         }
@@ -344,33 +369,33 @@ public class graph {
         int source;
         int target;
         try {
-        if (edges.size() == 0) {
-            //Graph has no edges
-            return;
-        } else {
-
-            source = edges.get(0).getSource();
-
-            if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
-                //Node neighbours have already been set
+            if (edges.size() == 0) {
+                //Graph has no edges
                 return;
+            } else {
+
+                source = edges.get(0).getSource();
+
+                if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
+                    //Node neighbours have already been set
+                    return;
+                }
             }
-        }
 
-        for (int i = 0; i < edges.size(); i++) {
-            edge currentEdge = edges.get(i);
+            for (int i = 0; i < edges.size(); i++) {
+                edge currentEdge = edges.get(i);
 
-            source = currentEdge.getSource();
-            target = currentEdge.getTarget();
+                source = currentEdge.getSource();
+                target = currentEdge.getTarget();
 
-            node sourceNode = nodes.get(source);
-            sourceNode.addDirectedNeighbour(nodes.get(target));
-            nodes.get(target).addUndirectedNeighbour(sourceNode);
+                node sourceNode = nodes.get(source);
+                sourceNode.addDirectedNeighbour(nodes.get(target));
+                nodes.get(target).addUndirectedNeighbour(sourceNode);
 
-            sourceNode.addDirectedEdgeNeighbour(currentEdge);
-            nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
+                sourceNode.addDirectedEdgeNeighbour(currentEdge);
+                nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
 
-        }
+            }
         } catch (IndexOutOfBoundsException e) {
             return;
         }
@@ -595,10 +620,10 @@ public class graph {
             for (int i = 0; i < ordered.size(); i++) {
                 node n = ordered.get(i);
                 if (n.getId() == source) {
-                    newEdge.setSource(nodeToToken.get(i));
+                    newEdge.setSource(nodeToToken.get(n.getId()));
                 }
                 if (n.getId() == target) {
-                    newEdge.setTarget(nodeToToken.get(i));
+                    newEdge.setTarget(nodeToToken.get(n.getId()));
                 }
             }
             updated.add(newEdge);
@@ -649,6 +674,7 @@ public class graph {
         HashMap<Integer, Integer> nodeToToken = new HashMap<>();
 
         for (int i = 0; i < ordered.size(); i++) {
+            System.out.println(ordered.get(i).getId() + " ANCHORS FROM:" + ordered.get(i).getAnchors().get(0).getFrom());
             nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom());
         }
 
@@ -662,24 +688,27 @@ public class graph {
             target = e.getTarget();
 
             edge newEdge = new edge();
+
             for (int i = 0; i < ordered.size(); i++) {
+
                 node n = ordered.get(i);
+
                 if (n.getId() == source) {
 
                     newEdge.setSource(nodeToToken.get(i));
+                    System.out.println(n.getId() + " Source Becomes " + nodeToToken.get(n.getId()));
                 }
                 if (n.getId() == target) {
 
                     newEdge.setTarget(nodeToToken.get(i));
+                    System.out.println(n.getId() + " Target Becomes " + nodeToToken.get(n.getId()));
                 }
             }
             updated.add(newEdge);
 
         }
 
-        for (int i = 0; i < ordered.size(); i++) {
-            ordered.get(i).setId(i);
-        }
+
         HashMap<Integer, node> newNodes = new HashMap<>();
         for (node n : ordered) {
             newNodes.put(n.getId(), n);

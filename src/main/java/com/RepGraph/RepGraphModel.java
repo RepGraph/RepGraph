@@ -484,25 +484,42 @@ public class RepGraphModel {
 
     public HashMap<String, Object> VisualisePlanar(String graphID) {
 
+
         graph graph = graphs.get(graphID).PlanarGraph();
+
+        for (int i = 0; i < graph.getEdges().size(); i++) {
+
+            System.out.println("EDGE SOURCE TO TARGET : " + graph.getEdges().get(i).getSource() + " to " + graph.getEdges().get(i).getTarget());
+            System.out.println("NODE ID TO TARGET NODE ID : " + graph.getNodes().get(graph.getEdges().get(i).getSource()).getId() + " to " + graph.getNodes().get(graph.getEdges().get(i).getTarget()).getId());
+        }
+
 
         int height = 1;
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
 
-
+        int level = 0;
+        int prev = -1;
         for (node n : graph.getNodes().values()) {
+            if (prev == n.getAnchors().get(0).getFrom()) {
+                level++;
+            } else {
+                level = 0;
+            }
             HashMap<String, Object> singleNode = new HashMap<>();
-            singleNode.put("id", n.getId());
+            singleNode.put("id", n.getAnchors().get(0).getFrom() + level * graph.getNodes().size());
             singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
-            singleNode.put("y", totalGraphHeight);
+            singleNode.put("y", totalGraphHeight + level * 100);
             singleNode.put("label", n.getLabel());
             singleNode.put("type", "node");
             singleNode.put("anchors", n.getAnchors().get(0));
             singleNode.put("group", "node");
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
+
+            prev = n.getAnchors().get(0).getFrom();
+
         }
 
 
@@ -512,16 +529,18 @@ public class RepGraphModel {
         for (int i = 0; i < graph.getEdges().size(); i++) {
             HashMap<String, Object> singleEdge = new HashMap<>();
             edge e = graph.getEdges().get(i);
+            anchors fromNode = null;
+            anchors toNode = null;
             for (HashMap<String, Object> node : finalNodes) {
 
                 if ((Integer) node.get("id") == e.getSource()) {
                     fromID = e.getSource();
-
+                    fromNode = (anchors) node.get("anchors");
 
                 }
                 if ((Integer) node.get("id") == e.getTarget()) {
                     toID = e.getTarget();
-
+                    toNode = (anchors) node.get("anchors");
                 }
             }
             String edgeType = "";
@@ -531,7 +550,7 @@ public class RepGraphModel {
             } else {
                 edgeType = "curvedCW";
             }
-            if (fromID == toID) {
+            if (fromID == toID || fromNode.getFrom() == toNode.getFrom()) {
                 continue;
             }
             singleEdge.put("id", i);
@@ -644,6 +663,28 @@ public class RepGraphModel {
             finalGraphEdges.add(singleEdge);
 
         }
+        HashMap<String, Object> singleEdge = new HashMap<>();
+        String edgeType = "dynamic";
+
+        singleEdge.put("id", graph.getEdges().size());
+        singleEdge.put("from", graph.getNodes().size());
+        singleEdge.put("to", graph.getTops().get(0));
+        singleEdge.put("group", "normal");
+        singleEdge.put("shadow", false);
+        HashMap<String, Object> back = new HashMap<>();
+        back.put("enabled", false);
+        singleEdge.put("background", back);
+
+        HashMap<String, Object> smooth = new HashMap<>();
+        smooth.put("type", edgeType);
+        smooth.put("roundness", 0.4);
+
+        HashMap<String, Object> end = new HashMap<>();
+        end.put("from", 20);
+        end.put("to", 0);
+        singleEdge.put("smooth", smooth);
+        singleEdge.put("endPointOffset", end);
+        finalGraphEdges.add(singleEdge);
 
         HashMap<String, Object> Visualised = new HashMap<>();
         Visualised.put("id", graphID);
