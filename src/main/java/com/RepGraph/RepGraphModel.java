@@ -231,6 +231,7 @@ public class RepGraphModel {
         graph parent = graphs.get(graphID);
         HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
         ArrayList<edge> subedges = new ArrayList<>();
+
         for (int n : NodeId) {
             subnodes.put(n, new node(parent.getNodes().get(n)));
         }
@@ -280,7 +281,7 @@ public class RepGraphModel {
         }
 
         //checks more advanced situations of graph not being connected
-        if (!subgraph.connectedBFS()) {
+        if (!subgraph.connectedBFS(subgraph.getNodes().values().iterator().next().getId())) {
             return FoundGraphs;
         }
 
@@ -448,7 +449,7 @@ public class RepGraphModel {
         }
 
         HashMap<String, Object> returnObj = new HashMap<>();
-        returnObj.put("Nodes", similarNodes.keySet());
+        returnObj.put("Nodes", new ArrayList<Integer>(similarNodes.keySet()));
         returnObj.put("Edges", similarEdges);
 
         return returnObj;
@@ -476,7 +477,7 @@ public class RepGraphModel {
             returnObj.put("LongestPathUndirected", graphs.get(graphID).findLongest(false));
         }
         if (connected) {
-            returnObj.put("Connected", graphs.get(graphID).connectedBFS());
+            returnObj.put("Connected", graphs.get(graphID).connectedBFS(graphs.get(graphID).getNodes().values().iterator().next().getId()));
         }
         return returnObj;
     }

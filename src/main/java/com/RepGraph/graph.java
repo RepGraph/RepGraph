@@ -229,7 +229,7 @@ public class graph {
 
             if (!directed) {
 
-                if (connectedBFS()) {
+                if (connectedBFS(nodes.values().iterator().next().getId())) {
                     ArrayList<ArrayList<Integer>> endpoints = BFS(0);
                     ArrayList<ArrayList<Integer>> temp;
                     ArrayList<Integer> pathEnds = new ArrayList<>();
@@ -351,7 +351,7 @@ public class graph {
 
             source = edges.get(0).getSource();
 
-            if (nodes.get(source).getDirectedNeighbours().size() != 0) {
+            if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
                 //Node neighbours have already been set
                 return;
             }
@@ -398,7 +398,7 @@ public class graph {
         //boolean[] visited = new boolean[nodes.size()];
         HashMap<Integer, Boolean> visited = new HashMap<>();
         for (int i : nodes.keySet()) {
-            visited.put(i, true);
+            visited.put(i, false);
         }
 
         //Topologically sort every unvisited node.
@@ -751,11 +751,10 @@ public class graph {
      *
      * @return boolean Whether the graph is connected or not.
      */
-    public boolean connectedBFS() {
+    public boolean connectedBFS(int startNodeID) {
 
         setNodeNeighbours();
 
-        int startNodeID = 0;
 
         if (nodes.size() <= 1) {
             return true;

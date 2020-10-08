@@ -766,8 +766,8 @@ public class RepGraphModelTest {
         model.addGraph(g2);
 
 
-        HashMap<Integer, node> similarNodes = new HashMap<Integer, node>();
-        ArrayList<edge> similarEdges = new ArrayList<>();
+        ArrayList<Integer> similarNodes = new ArrayList<>();
+        ArrayList<Integer> similarEdges = new ArrayList<>();
         HashMap<String,Object> expected = new HashMap<>();
         expected.put("Nodes", similarNodes);
         expected.put("Edges", similarEdges);
@@ -821,8 +821,8 @@ public class RepGraphModelTest {
         model.addGraph(g2);
 
 
-        HashMap<Integer, node> similarNodes = new HashMap<Integer, node>();
-        ArrayList<edge> similarEdges = new ArrayList<>();
+        ArrayList<Integer> similarNodes = new ArrayList<>();
+        ArrayList<Integer> similarEdges = new ArrayList<>();
 
         HashMap<String,Object> expected = new HashMap<>();
         expected.put("Nodes", similarNodes);
