@@ -278,6 +278,9 @@ public class RepGraphModel {
             return FoundGraphs;
         }
 
+        if (subgraph.hasDanglingEdge()) {
+            return FoundGraphs;
+        }
         //checks more advanced situations of graph not being connected
         if (!subgraph.connectedBFS(subgraph.getNodes().values().iterator().next().getId())) {
             return FoundGraphs;
@@ -303,6 +306,7 @@ public class RepGraphModel {
             } catch (IndexOutOfBoundsException f) {
                 continue;
             }
+
             //Iterate over each node in the subgraph patttern
             for (node sn : subgraph.getNodes().values()) {
                 //for each node in the subgraph pattern, it iterates over every node in the current graph that is being checked.
