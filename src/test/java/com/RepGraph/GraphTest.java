@@ -2829,4 +2829,21 @@ public class GraphTest {
         assertTrue("connectedBFS method does not correctly identify a connected graph with a single node.", g.connectedBFS(0));
 
     }
+
+    @Test
+    public void test_hasDanglingEdge_ReturnsTrueIfGraphHasDanglingEdge() {
+        //Creating the nodes and edges for the graph
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        nodes.put(0, node0);
+        edges.add(new edge(0, 1, "", ""));
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+        assertTrue("Has Dangling Edge Has Not Correctly Identified dangling edge", g.hasDanglingEdge());
+    }
+
+
 }

@@ -605,6 +605,42 @@ public class RepGraphModelTest {
     }
 
     @Test
+    public void test_SearchSubgraphPattern_HandlesDanglingEdgeInSubGraphPattern() throws NoSuchFieldException, IllegalAccessException {
+        RepGraphModel model = new RepGraphModel();
+
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put("11111", g1);
+        graphs.put("22222", g2);
+        graphs.put("33333", g3);
+
+        //Set field without using setter
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
+        subnodes.put(0, new node(0, "node" + (1), new ArrayList<anchors>()));
+        subnodes.put(1, new node(1, "node" + (2), new ArrayList<anchors>()));
+        subnodes.put(2, new node(2, "node" + (3), new ArrayList<anchors>()));
+
+        ArrayList<edge> subedges = new ArrayList<>();
+        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        subedges.add(new edge(1, 2, "testlabel", "testpostlabel"));
+        subedges.add(new edge(2, 3, "testlabel", "testpostlabel"));
+
+
+        graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+
+        ArrayList<String> correctResults = new ArrayList<>();
+        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+
+        Collections.sort(results);
+        Collections.sort(correctResults);
+        assertEquals("Graphs were searched using an empty subgraph pattern and the method did not handle it correctly.", correctResults, results);
+
+    }
+
+    @Test
     public void test_SearchSubgraphPattern_HandlesEmptySubgraph() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
 
