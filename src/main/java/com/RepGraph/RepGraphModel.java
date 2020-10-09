@@ -59,6 +59,14 @@ public class RepGraphModel {
         graphs.clear();
     }
 
+    /**
+     * Display Subset overloaded method to decide which type of subset to consctruct and return
+     *
+     * @param graphId    The ID of the graph where the subset is being constructed
+     * @param headNodeID The node ID of the starting node of subset creation
+     * @param SubsetType The type of subset to be created
+     * @return graph The graph object of the subset
+     */
     public graph DisplaySubset(String graphId, int headNodeID, String SubsetType) {
         if (SubsetType.equals("adjacent")) {
             return DisplaySubsetAdjacent(graphId, headNodeID);

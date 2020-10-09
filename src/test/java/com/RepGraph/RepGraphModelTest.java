@@ -737,34 +737,36 @@ public class RepGraphModelTest {
         //Creating the nodes and edges for the graph
         HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
-
-        node node0 = new node(0, "node0", new ArrayList<>());
-        node node1 = new node(1, "node1", new ArrayList<>());
-        node node2 = new node(2, "node2", new ArrayList<>());
+        anchors anch1 = new anchors(0, 0);
+        ArrayList<anchors> anch1arr = new ArrayList<>();
+        anch1arr.add(anch1);
+        node node0 = new node(0, "node0", anch1arr);
+        node node1 = new node(1, "node1", anch1arr);
+        node node2 = new node(2, "node2", anch1arr);
         nodes.put(0, node0);
         nodes.put(1, node1);
         nodes.put(2, node2);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
-        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge1 = new edge(0, 2, "testlabel", "testpostlabel");
+
         edges.add(edge0);
         edges.add(edge1);
-        edges.add(edge2);
+
 
         graph g1 = new graph("1", "testsource1", "testInput1", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
         HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
         ArrayList<edge> edges2 = new ArrayList<>();
 
-        node node3 = new node(0, "node0", new ArrayList<>());
-        node node4 = new node(1, "node3", new ArrayList<>());
-        node node5 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(0, "node0", anch1arr);
+        node node4 = new node(1, "node3", anch1arr);
+        node node5 = new node(2, "node2", anch1arr);
         nodes2.put(0, node3);
         nodes2.put(1, node4);
         nodes2.put(2, node5);
 
-        edge edge3 = new edge(2, 3, "testlabel3", "testpostlabel3");
+        edge edge3 = new edge(0, 2, "testlabel", "testpostlabel");
 
         edges2.add(edge3);
         edges2.add(edge1);
@@ -776,16 +778,26 @@ public class RepGraphModelTest {
         model.addGraph(g2);
 
 
-        HashMap<Integer, node> similarNodes = new HashMap<Integer, node>();
-        ArrayList<edge> similarEdges = new ArrayList<>();
-        similarNodes.put(node0.getId(), node0);
-        similarNodes.put(node2.getId(), node2);
-        similarEdges.add(edge0);
-        similarEdges.add(edge1);
+        ArrayList<Integer> similarNodes1 = new ArrayList<>();
+        ArrayList<Integer> similarNodes2 = new ArrayList<>();
+        ArrayList<Integer> similarEdges1 = new ArrayList<>();
+        ArrayList<Integer> similarEdges2 = new ArrayList<>();
+        similarNodes1.add(node0.getId());
+        similarNodes1.add(node2.getId());
+        similarNodes2.add(node5.getId());
+        similarNodes2.add(node3.getId());
+        similarEdges1.add(1);
+        similarEdges2.add(0);
 
+        Collections.sort(similarNodes1);
+        Collections.sort(similarNodes2);
+        Collections.sort(similarEdges1);
+        Collections.sort(similarEdges2);
         HashMap<String,Object> expected = new HashMap<>();
-        expected.put("Nodes", similarNodes);
-        expected.put("Edges", similarEdges);
+        expected.put("SimilarNodes1", similarNodes1);
+        expected.put("SimilarNodes2", similarNodes2);
+        expected.put("SimilarEdges1", similarEdges1);
+        expected.put("SimilarEdges2", similarEdges2);
 
         assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges.",expected,model.compareTwoGraphs("1","2"));
     }
@@ -794,62 +806,71 @@ public class RepGraphModelTest {
     public void test_compareTwoGraphs_EmptyGraphs(){
 
 
-        graph g1 = new graph("1", "testsource1", "testInput1", new HashMap<Integer, node>(), new ArrayList<token>(), new ArrayList<edge>(), new ArrayList<Integer>());
-
-        graph g2 = new graph("2", "testsource2", "testInput2", new HashMap<Integer, node>(), new ArrayList<token>(), new ArrayList<edge>(), new ArrayList<Integer>());
         RepGraphModel model = new RepGraphModel();
+        graph g1 = new graph("1", "", "", new ArrayList<node>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        graph g2 = new graph("2", "", "", new ArrayList<node>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+
         model.addGraph(g1);
         model.addGraph(g2);
 
 
-        ArrayList<Integer> similarNodes = new ArrayList<>();
-        ArrayList<Integer> similarEdges = new ArrayList<>();
-        HashMap<String,Object> expected = new HashMap<>();
-        expected.put("Nodes", similarNodes);
-        expected.put("Edges", similarEdges);
+        ArrayList<Integer> similarNodes1 = new ArrayList<>();
+        ArrayList<Integer> similarNodes2 = new ArrayList<>();
+        ArrayList<Integer> similarEdges1 = new ArrayList<>();
+        ArrayList<Integer> similarEdges2 = new ArrayList<>();
 
-        assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges in an empty graph.",expected,model.compareTwoGraphs("1","2"));
+
+        Collections.sort(similarNodes1);
+        Collections.sort(similarNodes2);
+        Collections.sort(similarEdges1);
+        Collections.sort(similarEdges2);
+        HashMap<String,Object> expected = new HashMap<>();
+        expected.put("SimilarNodes1", similarNodes1);
+        expected.put("SimilarNodes2", similarNodes2);
+        expected.put("SimilarEdges1", similarEdges1);
+        expected.put("SimilarEdges2", similarEdges2);
+
+        assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges.", expected, model.compareTwoGraphs("1", "2"));
     }
 
     @Test
-    public void test_compareTwoGraphs_NoSimilarEdgesOrNodes(){
+    public void test_compareTwoGraphs_NoSimilarEdgesOrNodes() {
         //Creating the nodes and edges for the graph
         HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
-
-        node node0 = new node(0, "node0", new ArrayList<>());
-        node node1 = new node(1, "node1", new ArrayList<>());
-        node node2 = new node(2, "node2", new ArrayList<>());
-        nodes.put(node0.getId(), node0);
-        nodes.put(node1.getId(), node1);
-        nodes.put(node2.getId(), node2);
+        anchors anch1 = new anchors(0, 0);
+        ArrayList<anchors> anch1arr = new ArrayList<>();
+        anch1arr.add(anch1);
+        node node0 = new node(0, "node9", anch1arr);
+        node node1 = new node(1, "node5", anch1arr);
+        node node2 = new node(2, "node4", anch1arr);
+        nodes.put(0, node0);
+        nodes.put(1, node1);
+        nodes.put(2, node2);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
-        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edge edge1 = new edge(0, 2, "testlabel", "testpostlabel");
+
         edges.add(edge0);
         edges.add(edge1);
-        edges.add(edge2);
+
 
         graph g1 = new graph("1", "testsource1", "testInput1", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
         HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
         ArrayList<edge> edges2 = new ArrayList<>();
 
-        node node3 = new node(0, "node3", new ArrayList<>());
-        node node4 = new node(1, "node4", new ArrayList<>());
-        node node5 = new node(2, "node5", new ArrayList<>());
+        node node3 = new node(0, "node0", anch1arr);
+        node node4 = new node(1, "node3", anch1arr);
+        node node5 = new node(2, "node2", anch1arr);
         nodes2.put(0, node3);
         nodes2.put(1, node4);
         nodes2.put(2, node5);
 
-        edge edge3 = new edge(2, 3, "testlabel3", "testpostlabel3");
-        edge edge4 = new edge(0, 2, "testlabel4", "testpostlabel4");
-        edge edge5 = new edge(2, 3, "testlabel5", "testpostlabel5");
+        edge edge3 = new edge(0, 2, "testlabel11", "testpostlabel22");
 
         edges2.add(edge3);
-        edges2.add(edge4);
-        edges2.add(edge5);
+
 
         graph g2 = new graph("2", "testsource2", "testInput2", nodes2, new ArrayList<token>(), edges2, new ArrayList<Integer>());
         RepGraphModel model = new RepGraphModel();
@@ -857,14 +878,23 @@ public class RepGraphModelTest {
         model.addGraph(g2);
 
 
-        ArrayList<Integer> similarNodes = new ArrayList<>();
-        ArrayList<Integer> similarEdges = new ArrayList<>();
+        ArrayList<Integer> similarNodes1 = new ArrayList<>();
+        ArrayList<Integer> similarNodes2 = new ArrayList<>();
+        ArrayList<Integer> similarEdges1 = new ArrayList<>();
+        ArrayList<Integer> similarEdges2 = new ArrayList<>();
 
+
+        Collections.sort(similarNodes1);
+        Collections.sort(similarNodes2);
+        Collections.sort(similarEdges1);
+        Collections.sort(similarEdges2);
         HashMap<String,Object> expected = new HashMap<>();
-        expected.put("Nodes", similarNodes);
-        expected.put("Edges", similarEdges);
+        expected.put("SimilarNodes1", similarNodes1);
+        expected.put("SimilarNodes2", similarNodes2);
+        expected.put("SimilarEdges1", similarEdges1);
+        expected.put("SimilarEdges2", similarEdges2);
 
-        assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges in two graphs that do not have any similarities.",expected,model.compareTwoGraphs("1","2"));
+        assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges.", expected, model.compareTwoGraphs("1", "2"));
+
     }
-
 }
