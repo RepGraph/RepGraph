@@ -130,6 +130,8 @@ public class RequestHandler {
     public HashMap<String, Object> Visualise(@RequestParam String graphID, @RequestParam int format) {
         if (format == 1) {
             return RepModel.VisualiseHierarchy(graphID);
+        } else if (format == 2) {
+            return RepModel.VisualiseTree(graphID);
         } else {
             return RepModel.VisualiseFlat(graphID);
         }
