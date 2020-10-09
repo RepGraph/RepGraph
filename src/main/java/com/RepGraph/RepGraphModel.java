@@ -505,10 +505,18 @@ public class RepGraphModel {
             returnObj.put("Planar", graphs.get(graphID).GraphIsPlanar());
         }
         if (longestPathDirected) {
-            returnObj.put("LongestPathDirected", graphs.get(graphID).findLongest(true));
+            if (graphs.get(graphID).isCyclic(true)) {
+                returnObj.put("LongestPathDirected", "Cycle Detected");
+            } else {
+                returnObj.put("LongestPathDirected", graphs.get(graphID).findLongest(true));
+            }
         }
         if (longestPathUndirected) {
-            returnObj.put("LongestPathUndirected", graphs.get(graphID).findLongest(false));
+            if (graphs.get(graphID).isCyclic(false)) {
+                returnObj.put("LongestPathUndirected", "Cycle Detected");
+            } else {
+                returnObj.put("LongestPathUndirected", graphs.get(graphID).findLongest(false));
+            }
         }
         if (connected) {
             returnObj.put("Connected", graphs.get(graphID).connectedBFS(graphs.get(graphID).getNodes().values().iterator().next().getId()));
