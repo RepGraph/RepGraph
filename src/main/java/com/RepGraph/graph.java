@@ -680,8 +680,6 @@ public class graph {
         return true;
     }
 
-    // public ArrayList<edge> UpdateEdges()
-
     public graph PlanarGraph() {
 
         ArrayList<node> ordered = new ArrayList<>();
@@ -869,4 +867,31 @@ public class graph {
         }
     }
 
+    public boolean isCyclicUndirected(){
+
+        //Mark nodes as unvisited.
+        HashMap<node,Boolean> visited = new HashMap<>();
+        for (node n : nodes.values()){
+            visited.put(n, false);
+        }
+
+        //Call recursive function to detect cycles in different DFS trees.
+        for (node n : nodes.values()){
+            if (!visited.get(n)){ //Check if the node hasn't already been visited
+                if (isCyclicCheckerUndirected(n,visited,-1)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isCyclicCheckerUndirected(node v, HashMap<node, Boolean> visited, int parent){
+
+        //Set the current node as visited.
+        visited.put(v,true);
+        Integer i;
+
+    }
 }
