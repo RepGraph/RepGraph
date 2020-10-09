@@ -398,33 +398,33 @@ public class graph {
         int source;
         int target;
 
-            if (edges.size() == 0) {
-                //Graph has no edges
+        if (edges.size() == 0) {
+            //Graph has no edges
+            return;
+        } else {
+
+            source = edges.get(0).getSource();
+
+            if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
+                //Node neighbours have already been set
                 return;
-            } else {
-
-                source = edges.get(0).getSource();
-
-                if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
-                    //Node neighbours have already been set
-                    return;
-                }
             }
+        }
 
-            for (int i = 0; i < edges.size(); i++) {
-                edge currentEdge = edges.get(i);
+        for (int i = 0; i < edges.size(); i++) {
+            edge currentEdge = edges.get(i);
 
-                source = currentEdge.getSource();
-                target = currentEdge.getTarget();
+            source = currentEdge.getSource();
+            target = currentEdge.getTarget();
 
-                node sourceNode = nodes.get(source);
-                sourceNode.addDirectedNeighbour(nodes.get(target));
-                nodes.get(target).addUndirectedNeighbour(sourceNode);
+            node sourceNode = nodes.get(source);
+            sourceNode.addDirectedNeighbour(nodes.get(target));
+            nodes.get(target).addUndirectedNeighbour(sourceNode);
 
-                sourceNode.addDirectedEdgeNeighbour(currentEdge);
-                nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
+            sourceNode.addDirectedEdgeNeighbour(currentEdge);
+            nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
 
-            }
+        }
 
     }
 
@@ -867,19 +867,30 @@ public class graph {
         }
     }
 
-    public boolean isCyclicUndirected(){
+    public boolean isCyclic(boolean directed) {
 
-        //Mark nodes as unvisited.
-        HashMap<node,Boolean> visited = new HashMap<>();
-        for (node n : nodes.values()){
+        //Mark nodes as unvisited and not in the stack (stack is for directed only)
+        HashMap<node, Boolean> visited = new HashMap<>();
+        HashMap<node, Boolean> stack = new HashMap<>();
+        for (node n : nodes.values()) {
             visited.put(n, false);
+            stack.put(n, false);
         }
 
-        //Call recursive function to detect cycles in different DFS trees.
-        for (node n : nodes.values()){
-            if (!visited.get(n)){ //Check if the node hasn't already been visited
-                if (isCyclicCheckerUndirected(n,visited,-1)){
+        if (directed) {
+            //Call recursive function to detect cycles in different DFS directed trees.
+            for (node n : nodes.values()) {
+                if (isCyclicCheckerDirected(n, visited, stack)) {
                     return true;
+                }
+            }
+        } else {
+            //Call recursive function to detect cycles in different DFS undirected trees.
+            for (node n : nodes.values()) {
+                if (!visited.get(n)) { //Check if the node hasn't already been visited
+                    if (isCyclicCheckerUndirected(n, visited, -1)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -887,17 +898,16 @@ public class graph {
         return false;
     }
 
-    public boolean isCyclicCheckerUndirected(node v, HashMap<node, Boolean> visited, int parent){
+    public boolean isCyclicCheckerUndirected(node v, HashMap<node, Boolean> visited, int parent) {
 
         //Set the current node as visited.
-        visited.put(v,true);
+        visited.put(v, true);
 
         //Iterate through all the current node's neighbouring nodes
-        for (node neighbour : combineNeighbours(v.getId())){
-            if (!visited.get(neighbour)){ //If the neighbour is unvisited
-                if (isCyclicCheckerUndirected(neighbour, visited, v.getId()));
-            }
-            else if (neighbour.getId() != parent){ //If the neighbouring is visited and not a parent of the current node, then there is a cycle.
+        for (node neighbour : combineNeighbours(v.getId())) {
+            if (!visited.get(neighbour)) { //If the neighbour is unvisited
+                if (isCyclicCheckerUndirected(neighbour, visited, v.getId())) ;
+            } else if (neighbour.getId() != parent) { //If the neighbouring is visited and not a parent of the current node, then there is a cycle.
                 return true;
             }
         }
@@ -905,15 +915,15 @@ public class graph {
         return false;
     }
 
-    public boolean isCycleCheckerDirected(node v, HashMap<node, Boolean> visited, HashMap<node,Boolean> stack){
+    public boolean isCyclicCheckerDirected(node v, HashMap<node, Boolean> visited, HashMap<node, Boolean> stack) {
 
         //Check if the node is in the stack already.
-        if (stack.get(v)){
+        if (stack.get(v)) {
             return true;
         }
 
         // Check if the node has already been visited.
-        if (visited.get(v)){
+        if (visited.get(v)) {
             return false;
         }
 
@@ -922,8 +932,8 @@ public class graph {
         visited.put(v, true);
 
         //Iterate through the node's directed neighbours and call recursive function.
-        for (node neighbour : v.getDirectedNeighbours()){
-            if (isCycleCheckerDirected(neighbour, visited, stack)){
+        for (node neighbour : v.getDirectedNeighbours()) {
+            if (isCyclicCheckerDirected(neighbour, visited, stack)) {
                 return true;
             }
         }
