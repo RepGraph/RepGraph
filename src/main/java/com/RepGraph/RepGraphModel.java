@@ -422,35 +422,78 @@ public class RepGraphModel {
 
         HashMap<Integer, node> nodes1 = graphs.get(graphID1).getNodes();
         HashMap<Integer, node> nodes2 = new HashMap<Integer, node>(graphs.get(graphID2).getNodes());
-        HashMap<Integer, node> similarNodes = new HashMap<Integer, node>();
 
-        for (node n1 : nodes1.values()) {
-            for (node n2 : nodes2.values()) {
-                if (n1.getLabel().equals(n2.getLabel())) {
-                    similarNodes.put(n1.getId(), n1);
-                    nodes2.remove(n2.getId());
-                    break;
-                }
-            }
-        }
+
+        ArrayList<Integer> similarNodes1 = new ArrayList<>();
+        ArrayList<Integer> similarNodes2 = new ArrayList<>();
+
 
         ArrayList<edge> edges1 = graphs.get(graphID1).getEdges();
         ArrayList<edge> edges2 = new ArrayList<>(graphs.get(graphID2).getEdges());
-        ArrayList<edge> similarEdges = new ArrayList<>();
+        ArrayList<Integer> similarEdges1 = new ArrayList<>();
+        ArrayList<Integer> similarEdges2 = new ArrayList<>();
 
-        for (edge e1 : edges1) {
-            for (edge e2 : edges2) {
-                if ((e1.getLabel().equals(e2.getLabel())) && (e1.getPostLabel().equals(e2.getPostLabel()))) {
-                    similarEdges.add(e1);
-                    edges2.remove(e2);
-                    break;
+        graphs.get(graphID1).setNodeNeighbours();
+        graphs.get(graphID2).setNodeNeighbours();
+
+
+        for (node n1 : nodes1.values()) {
+            for (node n2 : nodes2.values()) {
+                int span1 = n1.getAnchors().get(0).getEnd() - n1.getAnchors().get(0).getFrom();
+                int span2 = n2.getAnchors().get(0).getEnd() - n2.getAnchors().get(0).getFrom();
+
+                if (n1.getLabel().equals(n2.getLabel()) && span1 == span2) {
+
+                    for (edge e1 : n1.getDirectedEdgeNeighbours()) {
+                        for (edge e2 : n2.getDirectedEdgeNeighbours()) {
+
+                            node nn1 = nodes1.get(e1.getTarget());
+                            node nn2 = nodes2.get(e2.getTarget());
+                            span1 = nn1.getAnchors().get(0).getEnd() - nn1.getAnchors().get(0).getFrom();
+                            span2 = nn2.getAnchors().get(0).getEnd() - nn2.getAnchors().get(0).getFrom();
+
+                            if (nn1.getLabel().equals(nn2.getLabel()) && e1.getLabel().equals(e2.getLabel()) && span1 == span2) {
+
+                                if (!similarNodes1.contains(n1.getId())) {
+
+                                    similarNodes1.add(n1.getId());
+                                }
+                                if (!similarNodes1.contains(nn1.getId())) {
+
+                                    similarNodes1.add(nn1.getId());
+                                }
+                                if (!similarNodes2.contains(n2.getId())) {
+
+                                    similarNodes2.add(n2.getId());
+                                }
+                                if (!similarNodes2.contains(nn2.getId())) {
+
+                                    similarNodes2.add(nn2.getId());
+                                }
+                                if (!similarEdges1.contains(edges1.indexOf(e1))) {
+
+                                    similarEdges1.add(edges1.indexOf(e1));
+                                }
+                                if (!similarEdges2.contains(edges2.indexOf(e2))) {
+
+                                    similarEdges2.add(edges2.indexOf(e2));
+                                }
+
+                            }
+                        }
+
+                    }
                 }
+
             }
         }
 
+
         HashMap<String, Object> returnObj = new HashMap<>();
-        returnObj.put("Nodes", new ArrayList<Integer>(similarNodes.keySet()));
-        returnObj.put("Edges", similarEdges);
+        returnObj.put("SimilarNodes1", similarNodes1);
+        returnObj.put("SimilarNodes2", similarNodes2);
+        returnObj.put("SimilarEdges1", similarEdges1);
+        returnObj.put("SimilarEdges2", similarEdges2);
 
         return returnObj;
     }
