@@ -16,14 +16,14 @@ public class GraphTest {
     @Test
     public void test_Constructor_CreatesAndAssignsMemberVariables() throws NoSuchFieldException, IllegalAccessException {
 
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
 
-        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
-        nodes.add(new node(1, "node2", new ArrayList<anchors>()));
-        nodes.add(new node(2, "node3", new ArrayList<anchors>()));
-        nodes.add(new node(3, "node4", new ArrayList<anchors>()));
+        nodes.put(0, new node(0, "node1", new ArrayList<anchors>()));
+        nodes.put(1, new node(1, "node2", new ArrayList<anchors>()));
+        nodes.put(2, new node(2, "node3", new ArrayList<anchors>()));
+        nodes.put(3, new node(3, "node4", new ArrayList<anchors>()));
 
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
@@ -101,8 +101,8 @@ public class GraphTest {
     public void test_getNodes_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
         final graph g = new graph();
 
-        ArrayList<node> nodes = new ArrayList<>();
-        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
+        nodes.put(0,new node(0, "node1", new ArrayList<anchors>()));
 
         //Set field without using setter
         final Field field = g.getClass().getDeclaredField("nodes");
@@ -205,8 +205,8 @@ public class GraphTest {
 
         final graph g = new graph();
 
-        ArrayList<node> nodes = new ArrayList<>();
-        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
+        nodes.put(0,new node(0, "node1", new ArrayList<anchors>()));
 
         g.setNodes(nodes);
 
@@ -272,11 +272,11 @@ public class GraphTest {
     @Test
     public void test_equals_TwoGraphsWithDifferentValues() {
 
-        ArrayList<node> nodes1 = new ArrayList<>();
+        HashMap<Integer, node> nodes1 = new HashMap<Integer, node>();
         ArrayList<edge> edges1 = new ArrayList<>();
         ArrayList<token> tokens1 = new ArrayList<>();
 
-        ArrayList<node> nodes2 = new ArrayList<>();
+        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
         ArrayList<edge> edges2 = new ArrayList<>();
         ArrayList<token> tokens2 = new ArrayList<>();
 
@@ -284,10 +284,10 @@ public class GraphTest {
         ArrayList<anchors> anchs = new ArrayList<>();
         anchs.add(new anchors(1, 2));
 
-        nodes1.add(new node(0, "node1", anchs));
-        nodes1.add(new node(1, "node2", anchs));
-        nodes2.add(new node(2, "node3", anchs));
-        nodes2.add(new node(3, "node4", anchs));
+        nodes1.put(0,new node(0, "node1", anchs));
+        nodes1.put(1,new node(1, "node2", anchs));
+        nodes2.put(2,new node(2, "node3", anchs));
+        nodes2.put(3,new node(3, "node4", anchs));
 
         edges1.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges2.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
@@ -308,19 +308,19 @@ public class GraphTest {
     @Test
     public void test_equals_IdenticalGraphsWithSameValues() {
 
-        ArrayList<node> nodes1 = new ArrayList<>();
+        HashMap<Integer, node> nodes1 = new HashMap<Integer, node>();
         ArrayList<edge> edges1 = new ArrayList<>();
         ArrayList<token> tokens1 = new ArrayList<>();
 
-        ArrayList<node> nodes2 = new ArrayList<>();
+        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
         ArrayList<edge> edges2 = new ArrayList<>();
         ArrayList<token> tokens2 = new ArrayList<>();
 
         ArrayList<anchors> anchs = new ArrayList<>();
         anchs.add(new anchors(1, 2));
 
-        nodes1.add(new node(0, "node1", anchs));
-        nodes2.add(new node(0, "node1", anchs));
+        nodes1.put(0,new node(0, "node1", anchs));
+        nodes2.put(0,new node(0, "node1", anchs));
 
         edges1.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges2.add(new edge(0, 1, "testlabel", "testpostlabel"));
@@ -337,11 +337,11 @@ public class GraphTest {
     @Test
     public void test_equals_TwoObjectsOfDifferentClasses() {
 
-        ArrayList<node> nodes1 = new ArrayList<>();
+        HashMap<Integer, node> nodes1 = new HashMap<Integer, node>();
         ArrayList<edge> edges1 = new ArrayList<>();
         ArrayList<token> tokens1 = new ArrayList<>();
 
-        nodes1.add(new node(0, "node1", new ArrayList<anchors>()));
+        nodes1.put(0,new node(0, "node1", new ArrayList<anchors>()));
 
         edges1.add(new edge(0, 1, "testlabel", "testpostlabel"));
 
@@ -355,11 +355,11 @@ public class GraphTest {
     @Test
     public void test_equals_EqualToItself() {
 
-        ArrayList<node> nodes1 = new ArrayList<>();
+        HashMap<Integer, node> nodes1 = new HashMap<Integer, node>();
         ArrayList<edge> edges1 = new ArrayList<>();
         ArrayList<token> tokens1 = new ArrayList<>();
 
-        nodes1.add(new node(0, "node1", new ArrayList<anchors>()));
+        nodes1.put(0,new node(0, "node1", new ArrayList<anchors>()));
 
         edges1.add(new edge(0, 1, "testlabel", "testpostlabel"));
 
@@ -372,15 +372,15 @@ public class GraphTest {
 
     @Test
     public void test_setNodeNeighbours_setDirectedNeighbouringNodesCorrectly() throws NoSuchFieldException, IllegalAccessException {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node1", new ArrayList<>());
         node node1 = new node(1, "node2", new ArrayList<>());
         node node2 = new node(2, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
 
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 2, "testlabel1", "testpostlabel1"));
@@ -414,15 +414,15 @@ public class GraphTest {
 
     @Test
     public void test_setNodeNeighbours_setUndirectedNeighbouringNodesCorrectly() throws NoSuchFieldException, IllegalAccessException {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node1", new ArrayList<>());
         node node1 = new node(1, "node2", new ArrayList<>());
         node node2 = new node(2, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
 
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 2, "testlabel1", "testpostlabel1"));
@@ -456,15 +456,15 @@ public class GraphTest {
 
     @Test
     public void test_setNodeNeighbours_setDirectedEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node1", new ArrayList<>());
         node node1 = new node(1, "node2", new ArrayList<>());
         node node2 = new node(2, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
 
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
@@ -502,15 +502,15 @@ public class GraphTest {
 
     @Test
     public void test_setNodeNeighbours_setUndirectedEdgesCorrectly() throws NoSuchFieldException, IllegalAccessException {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node1", new ArrayList<>());
         node node1 = new node(1, "node2", new ArrayList<>());
         node node2 = new node(2, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
 
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
@@ -570,15 +570,15 @@ public class GraphTest {
 
     @Test
     public void test_setNodeNeighbours_NoEdgesInGraph() throws NoSuchFieldException, IllegalAccessException {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node1", new ArrayList<>());
         node node1 = new node(1, "node2", new ArrayList<>());
         node node2 = new node(2, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
@@ -623,15 +623,15 @@ public class GraphTest {
 
     @Test
     public void test_setNodeNeighbours_NodesAlreadyHaveNodeNeighbours() throws NoSuchFieldException, IllegalAccessException {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node1", new ArrayList<>());
         node node1 = new node(1, "node2", new ArrayList<>());
         node node2 = new node(2, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
 
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
@@ -673,17 +673,17 @@ public class GraphTest {
     public void test_directedLongestPaths_DirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
@@ -737,7 +737,7 @@ public class GraphTest {
     public void test_directedLongestPaths_DirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -746,12 +746,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
@@ -808,7 +808,7 @@ public class GraphTest {
     @Test
     public void test_topologicalSort_SortsCorrectly() throws NoSuchFieldException, IllegalAccessException{
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -819,14 +819,14 @@ public class GraphTest {
         node node5 = new node(5, "node5", new ArrayList<>());
         node node6 = new node(6, "node6", new ArrayList<>());
         node node7 = new node(7, "node7", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
-        nodes.add(node6);
-        nodes.add(node7);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
+        nodes.put(6,node6);
+        nodes.put(7,node7);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
@@ -859,8 +859,15 @@ public class GraphTest {
         nodeField4.set(node4, nodeNeighbours4);
 
         Stack<Integer> stack = new Stack<Integer>();
-        boolean [] visited = new boolean[8];
-        Arrays.fill(visited,false);
+        HashMap<Integer,Boolean> visited = new HashMap<Integer, Boolean>();
+        visited.put(0,false);
+        visited.put(1,false);
+        visited.put(2,false);
+        visited.put(3,false);
+        visited.put(4,false);
+        visited.put(5,false);
+        visited.put(6,false);
+        visited.put(7,false);
 
         //Expected results for longest path for each node as the start node.
         Stack<Integer> expectedResult = new Stack<Integer>();
@@ -875,7 +882,14 @@ public class GraphTest {
         assertTrue("topologicalSort does not sort a graph correctly for node 0.", g.topologicalSort(0,visited,stack).equals(expectedResult));
 
         stack.clear();
-        Arrays.fill(visited,false);
+        visited.put(0,false);
+        visited.put(1,false);
+        visited.put(2,false);
+        visited.put(3,false);
+        visited.put(4,false);
+        visited.put(5,false);
+        visited.put(6,false);
+        visited.put(7,false);
 
         //Expected results for longest path for each node as the start node.
         expectedResult.clear();
@@ -886,7 +900,14 @@ public class GraphTest {
         assertTrue("topologicalSort does not sort a graph correctly for node 1.", g.topologicalSort(1,visited,stack).equals(expectedResult));
 
         stack.clear();
-        Arrays.fill(visited,false);
+        visited.put(0,false);
+        visited.put(1,false);
+        visited.put(2,false);
+        visited.put(3,false);
+        visited.put(4,false);
+        visited.put(5,false);
+        visited.put(6,false);
+        visited.put(7,false);
 
         //Expected results for longest path for each node as the start node.
         expectedResult.clear();
@@ -895,7 +916,14 @@ public class GraphTest {
         assertTrue("topologicalSort does not sort a graph correctly for node 2.", g.topologicalSort(2,visited,stack).equals(expectedResult));
 
         stack.clear();
-        Arrays.fill(visited,false);
+        visited.put(0,false);
+        visited.put(1,false);
+        visited.put(2,false);
+        visited.put(3,false);
+        visited.put(4,false);
+        visited.put(5,false);
+        visited.put(6,false);
+        visited.put(7,false);
 
         //Expected results for longest path for each node as the start node.
         expectedResult.clear();
@@ -904,7 +932,14 @@ public class GraphTest {
         assertTrue("topologicalSort does not sort a graph correctly for node 6.", g.topologicalSort(6,visited,stack).equals(expectedResult));
 
         stack.clear();
-        Arrays.fill(visited,false);
+        visited.put(0,false);
+        visited.put(1,false);
+        visited.put(2,false);
+        visited.put(3,false);
+        visited.put(4,false);
+        visited.put(5,false);
+        visited.put(6,false);
+        visited.put(7,false);
 
         //Expected results for longest path for each node as the start node.
         expectedResult.clear();
@@ -919,17 +954,17 @@ public class GraphTest {
     public void test_directedLongestPaths_DirectedSingleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
+        nodes.put(,node0);
+        nodes.put(,node1);
+        nodes.put(,node2);
+        nodes.put(,node3);
 
         edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
@@ -987,17 +1022,17 @@ public class GraphTest {
     public void test_directedLongestPaths_DirectedMultipleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException{
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
+        nodes.put(,node0);
+        nodes.put(,node1);
+        nodes.put(,node2);
+        nodes.put(,node3);
 
         edge edge0 =new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 =new edge(0, 2, "testlabel1", "testpostlabel1");
@@ -1059,17 +1094,17 @@ public class GraphTest {
     public void test_BFS_UndirectedSingleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(2, 0, "testlabel1", "testpostlabel1");
@@ -1156,7 +1191,7 @@ public class GraphTest {
     public void test_BFS_UndirectedMultipleLongestPathFromStartNodeInAcyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1165,12 +1200,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
@@ -1255,15 +1290,15 @@ public class GraphTest {
     public void test_BFS_UndirectedMultipleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
+        nodes.put(,node0);
+        nodes.put(,node1);
+        nodes.put(,node2);
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
         edge edge2 = new edge(0, 2, "testlabel", "testpostlabel");
@@ -1318,7 +1353,7 @@ public class GraphTest {
     public void test_BFS_UndirectedMultipleLongestPathFromStartNodeInCyclicGraph() throws NoSuchFieldException, IllegalAccessException {
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1327,12 +1362,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(,node0);
+        nodes.put(,node1);
+        nodes.put(,node2);
+        nodes.put(,node3);
+        nodes.put(,node4);
+        nodes.put(,node5);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
@@ -1425,17 +1460,17 @@ public class GraphTest {
     public void test_findLongest_DirectedSingleLongestPath(){
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
 
         edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -1461,7 +1496,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_DirectedMultipleLongestPathsFromSingleStartNode()  {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1469,11 +1504,11 @@ public class GraphTest {
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
 
         edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -1504,17 +1539,17 @@ public class GraphTest {
     @Test
     public void test_findLongest_DirectedMultipleLongestPathsFromDifferentStartNodes() {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
 
         edge edge0 = new edge(0, 2, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -1543,7 +1578,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_DirectedMultipleLongestPathsFromSameAndDifferentStartNodes()  {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1552,12 +1587,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
@@ -1596,17 +1631,17 @@ public class GraphTest {
     public void test_findLongest_UndirectedSingleLongestPath()  {
 
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
         node node3 = new node(3, "node3", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
 
         edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -1634,7 +1669,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_UndirectedMultipleLongestPathsFromSingleStartNode()  {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1644,13 +1679,13 @@ public class GraphTest {
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
         node node6 = new node(6, "node6", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
-        nodes.add(node6);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
+        nodes.put(6,node6);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -1691,7 +1726,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_UndirectedMultipleLongestPathsFromDifferentStartNodes()  {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1699,11 +1734,11 @@ public class GraphTest {
         node node2 = new node(2, "node4", new ArrayList<>());
         node node3 = new node(3, "node5", new ArrayList<>());
         node node4 = new node(4, "node6", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge3 = new edge(0, 2, "testlabel3", "testpostlabel3");
@@ -1736,7 +1771,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_UndirectedMultipleLongestPathsFromSameAndDifferentStartNodes() {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1745,12 +1780,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         edge edge0 = new edge(0, 2, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -1794,7 +1829,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_UndirectedMultipleLongestPathsInSymmetricalGraphEdgeCase(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1804,13 +1839,13 @@ public class GraphTest {
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
         node node6 = new node(6, "node6", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
-        nodes.add(node6);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
+        nodes.put(6,node6);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(2, 0, "testlabel1", "testpostlabel1");
@@ -1861,7 +1896,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_UndirectedSingleLongestPathInDisconnectedGraphCase1(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1871,13 +1906,13 @@ public class GraphTest {
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
         node node6 = new node(6, "node6", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
-        nodes.add(node6);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
+        nodes.put(6,node6);
 
         edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -1905,7 +1940,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_UndirectedSingleLongestPathInDisconnectedGraphCase2(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1915,13 +1950,13 @@ public class GraphTest {
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
         node node6 = new node(6, "node6", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
-        nodes.add(node6);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
+        nodes.put(6,node6);
 
         edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -1934,7 +1969,7 @@ public class GraphTest {
         edges.add(edge3);
         edges.add(edge4);
 
-        graph g2 = new graph("11111", "testsource", "testInput", new ArrayList<>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+        graph g2 = new graph("11111", "testsource", "testInput", new HashMap<Integer,node>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
 
         ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
         correctResult.add(new ArrayList<>());
@@ -1949,7 +1984,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_UndirectedMultipleLongestPathInDisconnectedGraph(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -1958,12 +1993,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
@@ -1974,7 +2009,7 @@ public class GraphTest {
         edges.add(edge2);
         edges.add(edge4);
 
-        graph g2 = new graph("11111", "testsource", "testInput", new ArrayList<>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+        graph g2 = new graph("11111", "testsource", "testInput", new HashMap<Integer,node>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
 
         ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
         correctResult.add(new ArrayList<>());
@@ -1992,7 +2027,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_UndirectedMultipleLongestPathInComplexDisconnectedGraph(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -2008,19 +2043,19 @@ public class GraphTest {
         node node10 = new node(10, "node10", new ArrayList<>());
         node node11 = new node(11, "node11", new ArrayList<>());
         node node12 = new node(12, "node11", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
-        nodes.add(node6);
-        nodes.add(node7);
-        nodes.add(node8);
-        nodes.add(node9);
-        nodes.add(node10);
-        nodes.add(node11);
-        nodes.add(node12);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
+        nodes.put(6,node6);
+        nodes.put(7,node7);
+        nodes.put(8,node8);
+        nodes.put(9,node9);
+        nodes.put(10,node10);
+        nodes.put(11,node11);
+        nodes.put(12,node12);
 
         edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
@@ -2045,7 +2080,7 @@ public class GraphTest {
         edges.add(edge9);
         edges.add(edge10);
 
-        graph g2 = new graph("11111", "testsource", "testInput", new ArrayList<>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+        graph g2 = new graph("11111", "testsource", "testInput", new HashMap<Integer,node>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
 
         ArrayList<ArrayList<Integer>> correctResult = new ArrayList<>();
         correctResult.add(new ArrayList<>());
@@ -2086,13 +2121,13 @@ public class GraphTest {
     @Test
     public void test_findLongest_OneEdgeInGraph() {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edges.add(edge0);
@@ -2112,7 +2147,7 @@ public class GraphTest {
     @Test
     public void test_findLongest_NoNodes() {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), new ArrayList<>(), new ArrayList<Integer>());
 
@@ -2126,13 +2161,13 @@ public class GraphTest {
     @Test
     public void test_findLongest_NoEdges()  {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
 
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), new ArrayList<>(), new ArrayList<Integer>());
 
@@ -2146,7 +2181,7 @@ public class GraphTest {
     @Test
     public void test_combineNeighbours_CombinesNeighboursCorrectly()throws NoSuchFieldException, IllegalAccessException {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -2155,12 +2190,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
@@ -2198,7 +2233,7 @@ public class GraphTest {
     @Test
     public void test_combineNeighbours_NoUndirectedNeighbours()throws NoSuchFieldException, IllegalAccessException {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -2207,12 +2242,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
@@ -2246,7 +2281,7 @@ public class GraphTest {
     @Test
     public void test_combineNeighbours_NoDirectedNeighbours()throws NoSuchFieldException, IllegalAccessException {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -2255,12 +2290,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
@@ -2292,7 +2327,7 @@ public class GraphTest {
     @Test
     public void test_combineNeighbours_NoNeighbours()throws NoSuchFieldException, IllegalAccessException {
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -2301,12 +2336,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
@@ -2333,19 +2368,19 @@ public class GraphTest {
 
     @Test
     public void test_traverseLongestPath_FindsSingleLongestPathCorrectly(){
-        ArrayList<Integer> distances = new ArrayList<>();
-        int [] prevNode = new int[5];
+        HashMap<Integer, Integer> distances = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> prevNode = new HashMap<Integer, Integer>();
 
-        distances.add(0);
-        distances.add(1);
-        distances.add(1);
-        distances.add(2);
-        distances.add(Integer.MIN_VALUE);
+        distances.put(0,0);
+        distances.put(1,1);
+        distances.put(2,1);
+        distances.put(3,2);
+        distances.put(4,Integer.MIN_VALUE);
 
-        prevNode[0] = 0;
-        prevNode[1] = 0;
-        prevNode[2] = 0;
-        prevNode[3] = 2;
+        prevNode.put(0, 0);
+        prevNode.put(1, 0);
+        prevNode.put(2, 0);
+        prevNode.put(3, 2);
 
         graph g = new graph();
 
@@ -2362,21 +2397,21 @@ public class GraphTest {
 
     @Test
     public void test_traverseLongestPath_FindsMultipleLongestPathsCorrectly(){
-        ArrayList<Integer> distances = new ArrayList<>();
-        int [] prevNode = new int[6];
+        HashMap<Integer, Integer> distances = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> prevNode = new HashMap<Integer, Integer>();
 
-        distances.add(0);
-        distances.add(1);
-        distances.add(1);
-        distances.add(2);
-        distances.add(Integer.MIN_VALUE);
-        distances.add(2);
+        distances.put(0,0);
+        distances.put(1,1);
+        distances.put(2,1);
+        distances.put(3,2);
+        distances.put(4,Integer.MIN_VALUE);
+        distances.put(5,2);
 
-        prevNode[0] = 0;
-        prevNode[1] = 0;
-        prevNode[2] = 0;
-        prevNode[3] = 2;
-        prevNode[5] = 1;
+        prevNode.put(0, 0);
+        prevNode.put(1 ,0);
+        prevNode.put(2 ,0);
+        prevNode.put(3 ,2);
+        prevNode.put(5 ,1);
 
         graph g = new graph();
 
@@ -2397,30 +2432,30 @@ public class GraphTest {
 
     @Test
     public void test_isPlanar_IdentifiesPlanarGraph() {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
 
 
         ArrayList<anchors> anch1 = new ArrayList<anchors>();
         anch1.add(new anchors(0, 0));
-        nodes.add(new node(0, "node" + (0 + 1), anch1));
+        nodes.put(0,new node(0, "node" + (0 + 1), anch1));
 
         ArrayList<anchors> anch2 = new ArrayList<anchors>();
         anch2.add(new anchors(1, 1));
-        nodes.add(new node(1, "node" + (1 + 1), anch2));
+        nodes.put(1,new node(1, "node" + (1 + 1), anch2));
 
         ArrayList<anchors> anch3 = new ArrayList<anchors>();
         anch3.add(new anchors(2, 2));
-        nodes.add(new node(2, "node" + (2 + 1), anch3));
+        nodes.put(2,new node(2, "node" + (2 + 1), anch3));
 
         ArrayList<anchors> anch4 = new ArrayList<anchors>();
         anch4.add(new anchors(3, 3));
-        nodes.add(new node(3, "node" + (3 + 1), anch4));
+        nodes.put(3,new node(3, "node" + (3 + 1), anch4));
 
         ArrayList<anchors> anch5 = new ArrayList<anchors>();
         anch5.add(new anchors(4, 4));
-        nodes.add(new node(4, "node" + (4 + 1), anch5));
+        nodes.put(4,new node(4, "node" + (4 + 1), anch5));
 
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
@@ -2465,30 +2500,30 @@ public class GraphTest {
 
     @Test
     public void test_isPlanar_HandlesNodesWithSameToken() {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
 
 
         ArrayList<anchors> anch1 = new ArrayList<anchors>();
         anch1.add(new anchors(0, 0));
-        nodes.add(new node(0, "node" + (0 + 1), anch1));
+        nodes.put(0,new node(0, "node" + (0 + 1), anch1));
 
         ArrayList<anchors> anch2 = new ArrayList<anchors>();
         anch2.add(new anchors(0, 0));
-        nodes.add(new node(1, "node" + (1 + 1), anch2));
+        nodes.put(1,new node(1, "node" + (1 + 1), anch2));
 
         ArrayList<anchors> anch3 = new ArrayList<anchors>();
         anch3.add(new anchors(1, 1));
-        nodes.add(new node(2, "node" + (2 + 1), anch3));
+        nodes.put(2,new node(2, "node" + (2 + 1), anch3));
 
         ArrayList<anchors> anch4 = new ArrayList<anchors>();
         anch4.add(new anchors(2, 2));
-        nodes.add(new node(3, "node" + (3 + 1), anch4));
+        nodes.put(3,new node(3, "node" + (3 + 1), anch4));
 
         ArrayList<anchors> anch5 = new ArrayList<anchors>();
         anch5.add(new anchors(3, 3));
-        nodes.add(new node(4, "node" + (4 + 1), anch5));
+        nodes.put(4,new node(4, "node" + (4 + 1), anch5));
 
         edges.add(new edge(0, 2, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
@@ -2509,27 +2544,27 @@ public class GraphTest {
         anch1 = new ArrayList<anchors>();
         anch1.add(new anchors(0, 0));
         nodes.clear();
-        nodes.add(new node(0, "node" + (0 + 1), anch1));
+        nodes.put(0,new node(0, "node" + (0 + 1), anch1));
 
         anch2 = new ArrayList<anchors>();
         anch2.add(new anchors(0, 0));
-        nodes.add(new node(1, "node" + (1 + 1), anch2));
+        nodes.put(1,new node(1, "node" + (1 + 1), anch2));
 
         anch3 = new ArrayList<anchors>();
         anch3.add(new anchors(1, 1));
-        nodes.add(new node(2, "node" + (2 + 1), anch3));
+        nodes.put(2,new node(2, "node" + (2 + 1), anch3));
 
         anch4 = new ArrayList<anchors>();
         anch4.add(new anchors(1, 1));
-        nodes.add(new node(3, "node" + (3 + 1), anch4));
+        nodes.put(3,new node(3, "node" + (3 + 1), anch4));
 
         anch5 = new ArrayList<anchors>();
         anch5.add(new anchors(2, 2));
-        nodes.add(new node(4, "node" + (4 + 1), anch5));
+        nodes.put(4,new node(4, "node" + (4 + 1), anch5));
 
         ArrayList<anchors> anch6 = new ArrayList<anchors>();
         anch6.add(new anchors(3, 3));
-        nodes.add(new node(5, "node" + (5 + 1), anch6));
+        nodes.put(5,new node(5, "node" + (5 + 1), anch6));
 
         edges.clear();
         edges.add(new edge(0, 3, "testlabel", "testpostlabel"));
@@ -2551,30 +2586,30 @@ public class GraphTest {
 
     @Test
     public void test_isPlanar_HandlesNoEdgesInGraph() {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
 
 
         ArrayList<anchors> anch1 = new ArrayList<anchors>();
         anch1.add(new anchors(0, 0));
-        nodes.add(new node(0, "node" + (0 + 1), anch1));
+        nodes.put(0,new node(0, "node" + (0 + 1), anch1));
 
         ArrayList<anchors> anch2 = new ArrayList<anchors>();
         anch2.add(new anchors(1, 1));
-        nodes.add(new node(1, "node" + (1 + 1), anch2));
+        nodes.put(1,new node(1, "node" + (1 + 1), anch2));
 
         ArrayList<anchors> anch3 = new ArrayList<anchors>();
         anch3.add(new anchors(2, 2));
-        nodes.add(new node(2, "node" + (2 + 1), anch3));
+        nodes.put(2,new node(2, "node" + (2 + 1), anch3));
 
         ArrayList<anchors> anch4 = new ArrayList<anchors>();
         anch4.add(new anchors(3, 3));
-        nodes.add(new node(3, "node" + (3 + 1), anch4));
+        nodes.put(3,new node(3, "node" + (3 + 1), anch4));
 
         ArrayList<anchors> anch5 = new ArrayList<anchors>();
         anch5.add(new anchors(4, 4));
-        nodes.add(new node(4, "node" + (4 + 1), anch5));
+        nodes.put(4,new node(4, "node" + (4 + 1), anch5));
 
 
         graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
@@ -2585,7 +2620,7 @@ public class GraphTest {
 
     @Test
     public void test_isPlanar_HandlesNoNodesInGraph() {
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
 
@@ -2612,7 +2647,7 @@ public class GraphTest {
         tokens.add(token4);
         tokens.add(token5);
 
-        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+        graph g = new graph("1","source","input",new HashMap<Integer, node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
 
         ArrayList<token> expected = new ArrayList<>();
         expected.add(token1);
@@ -2626,7 +2661,7 @@ public class GraphTest {
     @Test
     public void test_getTokenSpan_noTokensInGraph(){
 
-        graph g = new graph("1","source","input",new ArrayList<node>(),new ArrayList<token>(),new ArrayList<edge>(),new ArrayList<Integer>());
+        graph g = new graph("1","source","input",new HashMap<Integer, node>(),new ArrayList<token>(),new ArrayList<edge>(),new ArrayList<Integer>());
 
         ArrayList<token> expected = new ArrayList<>();
 
@@ -2644,7 +2679,7 @@ public class GraphTest {
         tokens.add(token1);
         tokens.add(token2);
 
-        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+        graph g = new graph("1","source","input",new HashMap<Integer, node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
 
         ArrayList<token> expected = new ArrayList<>();
         expected.add(token1);
@@ -2669,7 +2704,7 @@ public class GraphTest {
         tokens.add(token4);
         tokens.add(token5);
 
-        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+        graph g = new graph("1","source","input",new HashMap<Integer, node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
 
         String expected = "form0 form1 form2 form3 form4 form5";
 
@@ -2681,7 +2716,7 @@ public class GraphTest {
         ArrayList<token> tokens = new ArrayList<>();
 
 
-        graph g = new graph("1","source","input",new ArrayList<node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
+        graph g = new graph("1","source","input",new HashMap<Integer, node>(),tokens,new ArrayList<edge>(),new ArrayList<Integer>());
 
         String expected = "" ;
 
@@ -2691,7 +2726,7 @@ public class GraphTest {
     @Test
     public void test_connectedBFS_IdentifiesConnectedGraph(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -2700,12 +2735,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
@@ -2720,14 +2755,14 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        assertTrue("connectedBFS method does not correctly identify a connected graph.", g.connectedBFS());
+        assertTrue("connectedBFS method does not correctly identify a connected graph.", g.connectedBFS(0));
 
     }
 
     @Test
     public void test_connectedBFS_IdentifiesDisconnectedGraph(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
@@ -2736,12 +2771,12 @@ public class GraphTest {
         node node3 = new node(3, "node3", new ArrayList<>());
         node node4 = new node(4, "node4", new ArrayList<>());
         node node5 = new node(5, "node5", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-        nodes.add(node4);
-        nodes.add(node5);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
 
         edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
         edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
@@ -2754,44 +2789,44 @@ public class GraphTest {
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        assertFalse("connectedBFS method does not correctly identify a disconnected graph.", g.connectedBFS());
+        assertFalse("connectedBFS method does not correctly identify a disconnected graph.", g.connectedBFS(0));
 
     }
 
     @Test
     public void test_connectedBFS_Node0IsDisconnected(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
         node node1 = new node(1, "node1", new ArrayList<>());
         node node2 = new node(2, "node2", new ArrayList<>());
-        nodes.add(node0);
-        nodes.add(node1);
-        nodes.add(node2);
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
 
         edge edge1 = new edge(1, 2, "testlabel", "testpostlabel");
         edges.add(edge1);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
-        assertFalse("connectedBFS method does not correctly identify a disconnected graph where node 0 is disconnected.", g.connectedBFS());
+        assertFalse("connectedBFS method does not correctly identify a disconnected graph where node 0 is disconnected.", g.connectedBFS(0));
 
     }
 
     @Test
     public void test_connectedBFS_SingleNodeGraph(){
         //Creating the nodes and edges for the graph
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
 
         node node0 = new node(0, "node0", new ArrayList<>());
-        nodes.add(node0);
+        nodes.put(0,node0);
 
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), new ArrayList<edge>(), new ArrayList<Integer>());
 
-        assertTrue("connectedBFS method does not correctly identify a connected graph with a single node.", g.connectedBFS());
+        assertTrue("connectedBFS method does not correctly identify a connected graph with a single node.", g.connectedBFS(0));
 
     }
 }

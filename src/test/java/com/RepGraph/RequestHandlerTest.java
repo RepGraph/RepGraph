@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -45,7 +46,7 @@ public class RequestHandlerTest {
     @Before
     public void construct_test_graph() {
 
-        ArrayList<node> nodes = new ArrayList<>();
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
         ArrayList<edge> edges = new ArrayList<>();
         ArrayList<token> tokens = new ArrayList<>();
 
@@ -58,30 +59,30 @@ public class RequestHandlerTest {
         anch3.add(new anchors(2, 2));
         anch4.add(new anchors(3, 3));
 
-        nodes.add(new node(0, "node1", anch1));
-        nodes.add(new node(1, "node2", anch2));
-        nodes.add(new node(2, "node3", anch3));
-        nodes.add(new node(3, "node4", anch4));
+        nodes.put(0, new node(0, "node1", anch1));
+        nodes.put(1, new node(1, "node2", anch2));
+        nodes.put(2, new node(2, "node3", anch3));
+        nodes.put(3, new node(3, "node4", anch4));
 
         edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges.add(new edge(1, 3, "testlabel", "testpostlabel"));
         edges.add(new edge(2, 3, "testlabel", "testpostlabel"));
 
-        tokens.add(new token(0, "node 1", "node1", "node1"));
-        tokens.add(new token(1, "node 2", "node2", "node2"));
-        tokens.add(new token(2, "node 3", "node3", "node3"));
-        tokens.add(new token(3, "node 4", "node4", "node4"));
+        tokens.add(new token(0, "node1", "node1", "node1"));
+        tokens.add(new token(1, "node2", "node2", "node2"));
+        tokens.add(new token(2, "node3", "node3", "node3"));
+        tokens.add(new token(3, "node4", "node4", "node4"));
 
         testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
 
-        ArrayList<node> nodes2 = new ArrayList<>();
+        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
         ArrayList<edge> edges2 = new ArrayList<>();
         ArrayList<token> tokens2 = new ArrayList<>();
 
-        nodes2.add(new node(0, "node3", anch1));
-        nodes2.add(new node(1, "node4", anch2));
-        nodes2.add(new node(2, "node5", anch3));
-        nodes2.add(new node(3, "node6", anch4));
+        nodes2.put(0, new node(0, "node3", anch1));
+        nodes2.put(1, new node(1, "node4", anch2));
+        nodes2.put(2, new node(2, "node5", anch3));
+        nodes2.put(3, new node(3, "node6", anch4));
 
         edges2.add(new edge(0, 1, "testlabel", "testpostlabel"));
         edges2.add(new edge(1, 3, "testlabel", "testpostlabel"));
@@ -122,7 +123,9 @@ public class RequestHandlerTest {
         String requestJSON = writer.writeValueAsString(testgraph);
 
         mockMvc.perform(post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json("{\"id\" : \"11111\",\"input\":\"node1 node2 node3 node4\"}"));
 
     }
 
@@ -139,11 +142,10 @@ public class RequestHandlerTest {
         mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
 
         String graphID = "11111";
-        String format = "1";
+
 
         mockMvc.perform(get(URL)
-                .param("graphID", graphID)
-                .param("format", format))
+                .param("graphID", graphID).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(requestJSON));
