@@ -2,6 +2,7 @@ package com.RepGraph;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.context.TestExecutionListeners;
 
 import javax.validation.constraints.AssertTrue;
 import java.lang.reflect.Array;
@@ -566,7 +567,6 @@ public class GraphTest {
         assertTrue("setNodeNeighbours does not set edges correctly #2", edgeField1.get(node1).equals(correctResult1));
         assertTrue("setNodeNeighbours does not set edges correctly #3", edgeField2.get(node2).equals(correctResult2));
     }
-
 
     @Test
     public void test_setNodeNeighbours_NoEdgesInGraph() throws NoSuchFieldException, IllegalAccessException {
@@ -2843,5 +2843,48 @@ public class GraphTest {
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
         assertTrue("Has Dangling Edge Has Not Correctly Identified dangling edge", g.hasDanglingEdge());
+    }
+
+    @Test
+    public void test_isCyclic_CorrectlyIdentifiesCycleInDirectedGraph(){
+        //Creating the nodes and edges for the graph
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
+        ArrayList<edge> edges = new ArrayList<>();
+
+        node node0 = new node(0, "node0", new ArrayList<>());
+        node node1 = new node(1, "node1", new ArrayList<>());
+        node node2 = new node(2, "node2", new ArrayList<>());
+        node node3 = new node(3, "node3", new ArrayList<>());
+        node node4 = new node(4, "node4", new ArrayList<>());
+        node node5 = new node(5, "node5", new ArrayList<>());
+        node node6 = new node(6, "node6", new ArrayList<>());
+        nodes.put(0,node0);
+        nodes.put(1,node1);
+        nodes.put(2,node2);
+        nodes.put(3,node3);
+        nodes.put(4,node4);
+        nodes.put(5,node5);
+        nodes.put(6,node6);
+
+        edge edge0 = new edge(1, 0, "testlabel", "testpostlabel");
+        edge edge1 = new edge(0, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(0, 3, "testlabel2", "testpostlabel2");
+        edge edge3 = new edge(2, 1, "testlabel2", "testpostlabel2");
+        edge edge4 = new edge(1, 6, "testlabel2", "testpostlabel2");
+        edge edge5 = new edge(2, 5, "testlabel2", "testpostlabel2");
+        edge edge6 = new edge(2, 4, "testlabel2", "testpostlabel2");
+        edge edge7 = new edge(4, 5, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+        edges.add(edge5);
+        edges.add(edge6);
+        edges.add(edge7);
+
+        graph g2 = new graph("11111", "testsource", "testInput", new HashMap<Integer,node>(nodes), new ArrayList<token>(),  new ArrayList<>(edges), new ArrayList<Integer>());
+
+        assertTrue("isCylic failed to find a cycle in a directed graph.", g2.isCyclic(true));
     }
 }
