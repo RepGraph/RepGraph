@@ -891,7 +891,17 @@ public class graph {
 
         //Set the current node as visited.
         visited.put(v,true);
-        Integer i;
 
+        //Iterate through all the current node's neighbouring nodes
+        for (node neighbour : combineNeighbours(v.getId())){
+            if (!visited.get(neighbour)){ //If the neighbour is unvisited
+                if (isCyclicCheckerUndirected(neighbour, visited, v.getId()));
+            }
+            else if (neighbour.getId() != parent){ //If the neighbouring is visited and not a parent of the current node, then there is a cycle.
+                return true;
+            }
+        }
+
+        return false;
     }
 }
