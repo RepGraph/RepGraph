@@ -427,6 +427,18 @@ public class RepGraphModel {
         ArrayList<Integer> similarNodes1 = new ArrayList<>();
         ArrayList<Integer> similarNodes2 = new ArrayList<>();
 
+        for (node n1 : nodes1.values()) {
+            for (node n2 : nodes2.values()) {
+                int span1 = n1.getAnchors().get(0).getEnd() - n1.getAnchors().get(0).getFrom();
+                int span2 = n2.getAnchors().get(0).getEnd() - n2.getAnchors().get(0).getFrom();
+                if (n1.getLabel().equals(n2.getLabel()) && span1 == span2) {
+                    similarNodes1.add(n1.getId());
+                    similarNodes2.add(n2.getId());
+                    nodes2.remove(n2);
+                    break;
+                }
+            }
+        }
 
         ArrayList<edge> edges1 = graphs.get(graphID1).getEdges();
         ArrayList<edge> edges2 = new ArrayList<>(graphs.get(graphID2).getEdges());
@@ -454,22 +466,7 @@ public class RepGraphModel {
 
                             if (nn1.getLabel().equals(nn2.getLabel()) && e1.getLabel().equals(e2.getLabel()) && span1 == span2) {
 
-                                if (!similarNodes1.contains(n1.getId())) {
 
-                                    similarNodes1.add(n1.getId());
-                                }
-                                if (!similarNodes1.contains(nn1.getId())) {
-
-                                    similarNodes1.add(nn1.getId());
-                                }
-                                if (!similarNodes2.contains(n2.getId())) {
-
-                                    similarNodes2.add(n2.getId());
-                                }
-                                if (!similarNodes2.contains(nn2.getId())) {
-
-                                    similarNodes2.add(nn2.getId());
-                                }
                                 if (!similarEdges1.contains(edges1.indexOf(e1))) {
 
                                     similarEdges1.add(edges1.indexOf(e1));
