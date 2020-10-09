@@ -867,6 +867,11 @@ public class graph {
         }
     }
 
+    /**
+     * Checks if a directed or an undirected graph is cyclic or not by calling on the appropriate recursive function required.
+     * @param directed Boolean to see if the graph is directed or not.
+     * @return Boolean If the graph is cyclic or not.
+     */
     public boolean isCyclic(boolean directed) {
 
         //Mark nodes as unvisited and not in the stack (stack is for directed only)
@@ -898,6 +903,13 @@ public class graph {
         return false;
     }
 
+    /**
+     * Recursive function that checks for cycles in an undirected graph.
+     * @param v The current node.
+     * @param visited A HashMap of node to boolean to keep track of which nodes have been visited already.
+     * @param parent The ID of the parent node of the current node.
+     * @return Boolean If the graph is cyclic or not.
+     */
     public boolean isCyclicCheckerUndirected(node v, HashMap<node, Boolean> visited, int parent) {
 
         //Set the current node as visited.
@@ -915,6 +927,13 @@ public class graph {
         return false;
     }
 
+    /**
+     * Recursive function that checks for cycles in an directed graph.
+     * @param v The current node.
+     * @param visited A HashMap of node to boolean to keep track of which nodes have been visited already.
+     * @param stack A HashMap of node to boolean to keep track of which nodes have been added to the stack.
+     * @return Boolean If the graph is cyclic or not.
+     */
     public boolean isCyclicCheckerDirected(node v, HashMap<node, Boolean> visited, HashMap<node, Boolean> stack) {
 
         //Check if the node is in the stack already.
