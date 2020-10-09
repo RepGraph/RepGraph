@@ -423,29 +423,16 @@ public class RepGraphModel {
     public HashMap<String, Object> compareTwoGraphs(String graphID1, String graphID2) {
 
         HashMap<Integer, node> nodes1 = graphs.get(graphID1).getNodes();
-        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>(graphs.get(graphID2).getNodes());
+        HashMap<Integer, node> nodes2 = (graphs.get(graphID2).getNodes());
+        ArrayList<edge> edges1 = graphs.get(graphID1).getEdges();
+        ArrayList<edge> edges2 = (graphs.get(graphID2).getEdges());
 
 
         ArrayList<Integer> similarNodes1 = new ArrayList<>();
         ArrayList<Integer> similarNodes2 = new ArrayList<>();
-
-        for (node n1 : nodes1.values()) {
-            for (node n2 : nodes2.values()) {
-                int span1 = n1.getAnchors().get(0).getEnd() - n1.getAnchors().get(0).getFrom();
-                int span2 = n2.getAnchors().get(0).getEnd() - n2.getAnchors().get(0).getFrom();
-                if (n1.getLabel().equals(n2.getLabel()) && span1 == span2) {
-                    similarNodes1.add(n1.getId());
-                    similarNodes2.add(n2.getId());
-                    nodes2.remove(n2);
-                    break;
-                }
-            }
-        }
-
-        ArrayList<edge> edges1 = graphs.get(graphID1).getEdges();
-        ArrayList<edge> edges2 = new ArrayList<>(graphs.get(graphID2).getEdges());
         ArrayList<Integer> similarEdges1 = new ArrayList<>();
         ArrayList<Integer> similarEdges2 = new ArrayList<>();
+
 
         graphs.get(graphID1).setNodeNeighbours();
         graphs.get(graphID2).setNodeNeighbours();
@@ -457,6 +444,12 @@ public class RepGraphModel {
                 int span2 = n2.getAnchors().get(0).getEnd() - n2.getAnchors().get(0).getFrom();
 
                 if (n1.getLabel().equals(n2.getLabel()) && span1 == span2) {
+                    if (!similarNodes1.contains(n1.getId())) {
+                        similarNodes1.add(n1.getId());
+                    }
+                    if (!similarNodes2.contains(n2.getId())) {
+                        similarNodes2.add(n2.getId());
+                    }
 
                     for (edge e1 : n1.getDirectedEdgeNeighbours()) {
                         for (edge e2 : n2.getDirectedEdgeNeighbours()) {
@@ -467,7 +460,6 @@ public class RepGraphModel {
                             span2 = nn2.getAnchors().get(0).getEnd() - nn2.getAnchors().get(0).getFrom();
 
                             if (nn1.getLabel().equals(nn2.getLabel()) && e1.getLabel().equals(e2.getLabel()) && span1 == span2) {
-
 
                                 if (!similarEdges1.contains(edges1.indexOf(e1))) {
 
@@ -1037,7 +1029,7 @@ public class RepGraphModel {
         }
 
         //Combine nodes and tokens
-        for (HashMap<String, Object> token : finalTokens){
+        for (HashMap<String, Object> token : finalTokens) {
             finalNodes.add(token);
         }
         HashMap<String, Object> Visualised = new HashMap<>();
