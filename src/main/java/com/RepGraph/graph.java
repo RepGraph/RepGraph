@@ -874,6 +874,8 @@ public class graph {
      */
     public boolean isCyclic(boolean directed) {
 
+        setNodeNeighbours();
+
         //Mark nodes as unvisited and not in the stack (stack is for directed only)
         HashMap<node, Boolean> visited = new HashMap<>();
         HashMap<node, Boolean> stack = new HashMap<>();
@@ -918,7 +920,9 @@ public class graph {
         //Iterate through all the current node's neighbouring nodes
         for (node neighbour : combineNeighbours(v.getId())) {
             if (!visited.get(neighbour)) { //If the neighbour is unvisited
-                if (isCyclicCheckerUndirected(neighbour, visited, v.getId())) ;
+                if (isCyclicCheckerUndirected(neighbour, visited, v.getId())){
+                    return true;
+                };
             } else if (neighbour.getId() != parent) { //If the neighbouring is visited and not a parent of the current node, then there is a cycle.
                 return true;
             }
