@@ -2844,6 +2844,4 @@ public class GraphTest {
 
         assertTrue("Has Dangling Edge Has Not Correctly Identified dangling edge", g.hasDanglingEdge());
     }
-
-
 }

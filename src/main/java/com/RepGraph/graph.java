@@ -904,4 +904,32 @@ public class graph {
 
         return false;
     }
+
+    public boolean isCycleCheckerDirected(node v, HashMap<node, Boolean> visited, HashMap<node,Boolean> stack){
+
+        //Check if the node is in the stack already.
+        if (stack.get(v)){
+            return true;
+        }
+
+        // Check if the node has already been visited.
+        if (visited.get(v)){
+            return false;
+        }
+
+        //Set stack and visited to true.
+        stack.put(v, true);
+        visited.put(v, true);
+
+        //Iterate through the node's directed neighbours and call recursive function.
+        for (node neighbour : v.getDirectedNeighbours()){
+            if (isCycleCheckerDirected(neighbour, visited, stack)){
+                return true;
+            }
+        }
+
+        stack.put(v, false);
+
+        return false;
+    }
 }
