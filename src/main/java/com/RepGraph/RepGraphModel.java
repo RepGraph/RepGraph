@@ -6,7 +6,6 @@
 
 package com.RepGraph;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class RepGraphModel {
@@ -709,9 +708,10 @@ public class RepGraphModel {
 
 
     public HashMap<String, Object> VisualiseTree(String graphID) {
+
         graph graph = graphs.get(graphID);
 
-        ArrayList<ArrayList<Integer>> directedNeighbours = new ArrayList<>();
+       /* ArrayList<ArrayList<Integer>> directedNeighbours = new ArrayList<>();
 
 
         for (int i = 0; i < graph.getNodes().size(); i++) {
@@ -722,9 +722,9 @@ public class RepGraphModel {
         for (edge e : graph.getEdges()) {
             directedNeighbours.get(e.getSource()).add(e.getTarget());
         }
-
-
-        ArrayList<Stack<Integer>> topologicalStacks = new ArrayList<>();
+*/
+        graph.setNodeNeighbours();
+        HashMap<Integer, Stack<Integer>> topologicalStacks = new HashMap<>();
 
         for (int i = 0; i < graph.getNodes().size(); i++) {
             Stack<Integer> stack = new Stack<>();
@@ -733,8 +733,7 @@ public class RepGraphModel {
                 visited.put(j, false);
             }
 
-            topologicalStacks.add(graph.topologicalSort(i, visited, stack));
-            //  console.log("Topological ordering " + i + ": " + topologicalStacks[i]);
+            topologicalStacks.put(graph.getNodes().get(i).getId(), graph.topologicalSort(i, visited, stack));
         }
 
 
@@ -754,10 +753,10 @@ public class RepGraphModel {
                     currentLevel.add(graph.getNodes().get(n));
                 }
             }
-            for (node n : currentLevel) {
+          /*  for (node n : currentLevel) {
                 System.out.println(n.getLabel());
             }
-            System.out.println("**************************");
+            System.out.println("**************************");*/
             nodesInLevels.add(currentLevel);
 
         }
@@ -780,18 +779,18 @@ public class RepGraphModel {
         for (ArrayList<node> level : nodesInLevels) {
             for (node n : level) {
                 if (lowestNode.get(xPositions.get(n.getId())) != n) {
-                    if (directedNeighbours.get(n.getId()).size() == 1) {
-                        xPositions.put(n.getId(), xPositions.get(directedNeighbours.get(n.getId()).get(0)));
+                    if (n.getDirectedNeighbours().size() == 1) {
+                        xPositions.put(n.getId(), xPositions.get(n.getDirectedNeighbours().get(0)));
                     } else {
                         ArrayList<Integer> childrenInSpan = new ArrayList<>();
                         // console.log(n.id);
                         //  console.log(directedNeighbours[n.id]);
-                        for (Integer neighbour : directedNeighbours.get(n.getId())) {
+                        for (node neighbour : n.getDirectedNeighbours()) {
                             if (
                                     xPositions.get(neighbour) >= n.getAnchors().get(0).getFrom() &&
                                             xPositions.get(neighbour) <= n.getAnchors().get(0).getEnd()
                             ) {
-                                childrenInSpan.add(neighbour);
+                                childrenInSpan.add(neighbour.getId());
                             }
                         }
                         if (childrenInSpan.size() != 0) {
@@ -848,20 +847,38 @@ public class RepGraphModel {
 
         int height = numLevels;
 
-        //convert frmo array of maps to array of arrays
-        ArrayList<ArrayList<node>> nodesInFinalLevelsArray = new ArrayList<>();
+        //convert from maps of maps to array of arrays
+       /* ArrayList<ArrayList<node>> nodesInFinalLevelsArray = new ArrayList<>();
 
         for (int level = 0; level < nodesInFinalLevels.size(); level++) {
             nodesInFinalLevelsArray.add(new ArrayList<>());
             for (node n : nodesInFinalLevels.get(level).values()) {
                 nodesInFinalLevelsArray.get(level).add(n);
             }
-        }
+        }*/
 
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
 
+        int levelNum = -1;
+        for (HashMap<Integer, node> level : nodesInFinalLevels.values()) {
+            levelNum++;
+            for (node node : nodesInFinalLevels.get(level).values()) {
+                HashMap<String, Object> singleNode = new HashMap<>();
+                singleNode.put("id", node.getId());
+                singleNode.put("x", xPositions.get(node.getId()) * 130);
+                singleNode.put("y", totalGraphHeight - levelNum * (totalGraphHeight / height));
+                singleNode.put("label", node.getLabel());
+                singleNode.put("type", "node");
+                singleNode.put("nodeLevel", level);
+                singleNode.put("anchors", node.getAnchors().get(0));
+                singleNode.put("group", "node");
+                singleNode.put("fixed", true);
+                finalNodes.add(singleNode);
+            }
+        }
+        /*
         for (int level = 0; level < nodesInFinalLevelsArray.size(); level++) {
             for (node node : nodesInFinalLevelsArray.get(level)) {
                 HashMap<String, Object> singleNode = new HashMap<>();
@@ -876,14 +893,14 @@ public class RepGraphModel {
                 singleNode.put("fixed", true);
                 finalNodes.add(singleNode);
             }
-        }
+        }*/
 
 
         ArrayList<HashMap<String, Object>> finalTokens = new ArrayList<>();
 
         for (token t : graph.getTokens()) {
             HashMap<String, Object> singleToken = new HashMap<>();
-            singleToken.put("index", t.getIndex());
+            singleToken.put("id", t.getIndex() + finalNodes.size());
             singleToken.put("x", t.getIndex() * 130);
             singleToken.put("y", totalGraphHeight + 200);
             singleToken.put("label", t.getForm());
@@ -891,6 +908,7 @@ public class RepGraphModel {
             singleToken.put("group", "token");
             singleToken.put("fixed", true);
             finalTokens.add(singleToken);
+            finalNodes.add(singleToken);
         }
 
 
@@ -935,10 +953,10 @@ public class RepGraphModel {
                             round = 0.32;
                         }
                         edgeType = "curvedCCW";
-                        for (int i = 0; i < directedNeighbours.get(fromID).size(); i++) {
+                        for (int i = 0; i < graph.getNodes().get(fromID).getDirectedNeighbours().size(); i++) {
                             if (
                                     xPositions.get(fromID) -
-                                            xPositions.get(directedNeighbours.get(fromID).get(i)) == 1
+                                            xPositions.get(graph.getNodes().get(fromID).getDirectedNeighbours().get(i)) == 1
                             ) {
                                 edgeType = "curvedCW";
                             }
@@ -976,6 +994,51 @@ public class RepGraphModel {
         ArrayList<HashMap<String, Object>> connectedTokens = new ArrayList<>();
         int index = finalGraphEdges.size();
 
+        for (HashMap<String, Object> n : finalNodes) {
+            String group = (String) n.get("group");
+            if (group.equals("node")) {
+
+                HashMap<String, Object> token = null;
+                boolean Found = false;
+                for (HashMap<String, Object> t : finalTokens) {
+
+                    if (!connectedTokens.contains(t) && t.get("x").equals(n.get("x"))) {
+                        Found = true;
+                        token = t;
+                    }
+                }
+
+                if (Found) {
+                    HashMap<String, Object> singleEdge = new HashMap<>();
+                    singleEdge.put("id", index);
+                    singleEdge.put("from", n.get("id"));
+                    singleEdge.put("to", token.get("id"));
+                    singleEdge.put("label", "");
+                    singleEdge.put("group", "tokenEdge");
+                    singleEdge.put("shadow", false);
+                    HashMap<String, Object> back = new HashMap<>();
+                    back.put("enabled", false);
+                    singleEdge.put("background", back);
+
+                    HashMap<String, Object> smooth = new HashMap<>();
+                    smooth.put("type", "continuous");
+                    smooth.put("roundness", 0.5);
+
+                    HashMap<String, Object> end = new HashMap<>();
+                    end.put("from", 20);
+                    end.put("to", 0);
+                    singleEdge.put("smooth", smooth);
+                    singleEdge.put("endPointOffset", end);
+                    finalGraphEdges.add(singleEdge);
+
+                    index++;
+                    connectedTokens.add(token);
+                }
+
+            }
+        }
+
+        /*
         for (HashMap<String, Object> n : finalNodes) {
             HashMap<String, Object> token = null;
             String group = (String) n.get("group");
@@ -1020,7 +1083,7 @@ public class RepGraphModel {
                     connectedTokens.add(token);
                 }
             }
-        }
+        }*/
 
         HashMap<String, Object> Visualised = new HashMap<>();
         Visualised.put("id", graphID);
