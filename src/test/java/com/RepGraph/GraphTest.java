@@ -2583,4 +2583,19 @@ public class GraphTest {
         assertEquals("tokens value was not constructed properly.", fieldTokens.get(g), tokens);
         assertEquals("edges value was not constructed properly.", fieldEdges.get(g), edges);
     }
+
+    @Test
+    public void test_getNodelist_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+        final graph g = new graph();
+
+        ArrayList<node> nodes = new ArrayList<>();
+        nodes.add(new node(0, "node1", new ArrayList<>()));
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("nodelist");
+        field.setAccessible(true);
+        field.set(g, nodes);
+
+        assertEquals("nodelist value was not retrieved properly.", g.getNodelist(), nodes);
+    }
 }

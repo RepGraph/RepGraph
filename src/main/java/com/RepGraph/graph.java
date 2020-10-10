@@ -679,8 +679,6 @@ public class graph {
         return true;
     }
 
-    // public ArrayList<edge> UpdateEdges()
-
     public graph PlanarGraph() {
 
         ArrayList<node> ordered = new ArrayList<>();
