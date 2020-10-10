@@ -1183,7 +1183,7 @@ public class RepGraphModel {
         //Map the nodes in each level to the correct format
 
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
-        int space =130;
+        int space = 130;
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
 
@@ -1245,113 +1245,85 @@ public class RepGraphModel {
                     toX = (Integer) node.get("x");
                 }
             }
-            /*
-                    let edgeType = "";
-        let round = 0.45;
-        if (fromNode.x === toNode.x) {
-            if (Math.abs(fromNode.nodeLevel - toNode.nodeLevel) === 1) {
-                edgeType = "continuous";
-            } else {
-                edgeType = "curvedCCW";
-                for (let i = 0; i < directedNeighbours[fromID].length; i++) {
-                    if (
-                        fromNode.x / space -
-                        graph.nodes[directedNeighbours[fromID][i]].anchors[0].from ===
-                        1
-                    ) {
-                        edgeType = "curvedCW";
-                    }
-                }
-            }
-        } else {
-            if (fromNode.nodeLevel === toNode.nodeLevel) {
-                edgeType = "curvedCCW";
-                if (Math.abs(fromNode.x / space - toNode.x / space) > 4) {
-                    round = 0.2;
-                }
-                if (Math.abs(fromNode.x / space - toNode.x / space) > 10) {
-                    round = 0.1;
-                }
-                if (
-                    fromNode.x / space - toNode.x / space > 0 &&
-                    fromNode.nodeLevel === 0
-                ) {
-                    edgeType = "curvedCW";
-                }
-            } else {
-                edgeType = "dynamic";
-            }
-        }
-             */
+
             String edgeType = "";
             double round = 0.45;
-            System.out.println("fromID: " + fromID + " toID: " + toID);
-            System.out.println("fromX: " + fromX + " toX: " + toX);
-            System.out.println("fromLevel: " + fromLevel + " toLevel: " + toLevel);
+
             if (fromX == toX) {
-                if (Math.abs(fromLevel - toLevel) == 1){
+                if (Math.abs(fromLevel - toLevel) == 1) {
                     edgeType = "continuous";
-                }
-                else{
-                    edgeType = "curvedCCW";
-                    for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()){
-                        if (fromX/space - neighbour.getAnchors().get(0).getFrom() == 1 ){
-                            edgeType = "curvedCW";
+                } else {
+                    boolean notFound = true;
+                    for (HashMap<String, Object> node : finalNodes) {
+                        if ((Integer) node.get("x") == fromX && (Integer) node.get("nodeLevel") > toLevel && (Integer) node.get("nodeLevel") < fromLevel) {
+                            notFound = false;
+                        }
+                    }
+                    if (notFound) {
+                        edgeType = "continuous";
+                    } else {
+                        if (fromLevel - toLevel > 3) {
+                            round = 0.32;
+                        }
+                        edgeType = "curvedCCW";
+                        for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()) {
+                            if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
+                                edgeType = "curvedCW";
+                            }
                         }
                     }
                 }
             }
             else{
-                if (fromLevel == toLevel){
-                    edgeType = "curvedCCW";
-                    int difference = fromX / space - toX / space;
-                    if (Math.abs(difference) > 4){
-                        round = 0.2;
-                    }
-                    if (Math.abs(difference) > 10){
-                        round = 0.1;
-                    }
-                    if (difference > 0 && fromLevel == 0){
-                        edgeType = "curvedCW";
+                    if (fromLevel == toLevel) {
+                        edgeType = "curvedCCW";
+                        int difference = fromX / space - toX / space;
+                        if (Math.abs(difference) > 4) {
+                            round = 0.2;
+                        }
+                        if (Math.abs(difference) > 10) {
+                            round = 0.1;
+                        }
+                        if (difference > 0 && fromLevel == 0) {
+                            edgeType = "curvedCW";
+                        }
+                    } else {
+                        edgeType = "dynamic";
                     }
                 }
-                else {
-                    edgeType = "dynamic";
-                }
+
+
+                singleEdge.put("id", graph.getEdges().indexOf(e));
+                singleEdge.put("from", fromID);
+                singleEdge.put("to", toID);
+                singleEdge.put("label", e.getLabel());
+                singleEdge.put("group", "normal");
+                singleEdge.put("shadow", false);
+                HashMap<String, Object> back = new HashMap<>();
+                back.put("enabled", false);
+                singleEdge.put("background", back);
+
+                HashMap<String, Object> smooth = new HashMap<>();
+                smooth.put("type", edgeType);
+                smooth.put("roundness", round);
+
+                HashMap<String, Object> end = new HashMap<>();
+                end.put("from", 20);
+                end.put("to", 0);
+                singleEdge.put("smooth", smooth);
+                singleEdge.put("endPointOffset", end);
+                finalGraphEdges.add(singleEdge);
+
             }
 
 
-            singleEdge.put("id", graph.getEdges().indexOf(e));
-            singleEdge.put("from", fromID);
-            singleEdge.put("to", toID);
-            singleEdge.put("label", e.getLabel());
-            singleEdge.put("group", "normal");
-            singleEdge.put("shadow", false);
-            HashMap<String, Object> back = new HashMap<>();
-            back.put("enabled", false);
-            singleEdge.put("background", back);
+            HashMap<String, Object> Visualised = new HashMap<>();
+            Visualised.put("id", graphID);
+            Visualised.put("nodes", finalGraphNodes);
+            Visualised.put("edges", finalGraphEdges);
 
-            HashMap<String, Object> smooth = new HashMap<>();
-            smooth.put("type", edgeType);
-            smooth.put("roundness", round);
 
-            HashMap<String, Object> end = new HashMap<>();
-            end.put("from", 20);
-            end.put("to", 0);
-            singleEdge.put("smooth", smooth);
-            singleEdge.put("endPointOffset", end);
-            finalGraphEdges.add(singleEdge);
-
+            return Visualised;
         }
 
-
-        HashMap<String, Object> Visualised = new HashMap<>();
-        Visualised.put("id", graphID);
-        Visualised.put("nodes", finalGraphNodes);
-        Visualised.put("edges", finalGraphEdges);
-
-
-        return Visualised;
     }
-
-}
