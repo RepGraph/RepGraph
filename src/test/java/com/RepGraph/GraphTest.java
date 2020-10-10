@@ -169,7 +169,7 @@ public class GraphTest {
         final Field field = g.getClass().getDeclaredField("id");
         field.setAccessible(true);
 
-        assertEquals("id value was not retrieved properly.", field.get(g), "11111");
+        assertEquals("id value was not set properly.", field.get(g), "11111");
     }
 
     @Test
@@ -183,7 +183,7 @@ public class GraphTest {
         final Field field = g.getClass().getDeclaredField("source");
         field.setAccessible(true);
 
-        assertEquals("source value was not retrieved properly.", field.get(g), "testSource");
+        assertEquals("source value was not set properly.", field.get(g), "testSource");
     }
 
     @Test
@@ -197,7 +197,7 @@ public class GraphTest {
         final Field field = g.getClass().getDeclaredField("input");
         field.setAccessible(true);
 
-        assertEquals("input value was not retrieved properly.", field.get(g), "node1 node2 node3 node4");
+        assertEquals("input value was not set properly.", field.get(g), "node1 node2 node3 node4");
     }
 
     @Test
@@ -214,7 +214,7 @@ public class GraphTest {
         final Field field = g.getClass().getDeclaredField("nodes");
         field.setAccessible(true);
 
-        assertEquals("nodes value was not retrieved properly.", field.get(g), nodes);
+        assertEquals("nodes value was not set properly.", field.get(g), nodes);
     }
 
     @Test
@@ -231,7 +231,7 @@ public class GraphTest {
         final Field field = g.getClass().getDeclaredField("tokens");
         field.setAccessible(true);
 
-        assertEquals("tokens value was not retrieved properly.", field.get(g), tokens);
+        assertEquals("tokens value was not set properly.", field.get(g), tokens);
     }
 
     @Test
@@ -248,7 +248,7 @@ public class GraphTest {
         final Field field = g.getClass().getDeclaredField("edges");
         field.setAccessible(true);
 
-        assertEquals("edges value was not retrieved properly.", field.get(g), edges);
+        assertEquals("edges value was not set properly.", field.get(g), edges);
     }
 
     @Test
@@ -266,7 +266,7 @@ public class GraphTest {
         final Field field = g.getClass().getDeclaredField("tops");
         field.setAccessible(true);
 
-        assertEquals("tops value was not retrieved properly.", field.get(g), tops);
+        assertEquals("tops value was not set properly.", field.get(g), tops);
     }
 
     @Test
@@ -2597,5 +2597,22 @@ public class GraphTest {
         field.set(g, nodes);
 
         assertEquals("nodelist value was not retrieved properly.", g.getNodelist(), nodes);
+    }
+
+    @Test
+    public void test_setNodelist_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final graph g = new graph();
+
+        ArrayList<node> nodes = new ArrayList<>();
+        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
+
+        g.setNodelist(nodes);
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("nodelist");
+        field.setAccessible(true);
+
+        assertEquals("nodelist value was not set properly.", field.get(g), nodes);
     }
 }
