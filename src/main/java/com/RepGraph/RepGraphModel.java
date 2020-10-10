@@ -1302,7 +1302,22 @@ public class RepGraphModel {
                 }
             }
             else{
-                edgeType = "dynamic";
+                if (fromLevel == toLevel){
+                    edgeType = "curvedCCW";
+                    int difference = fromX / space - toX / space;
+                    if (Math.abs(difference) > 4){
+                        round = 0.2;
+                    }
+                    if (Math.abs(difference) > 10){
+                        round = 0.1;
+                    }
+                    if (difference > 0 && fromLevel == 0){
+                        edgeType = "curvedCW";
+                    }
+                }
+                else {
+                    edgeType = "dynamic";
+                }
             }
 
 
