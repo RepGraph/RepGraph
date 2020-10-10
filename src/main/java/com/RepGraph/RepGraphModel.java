@@ -1183,6 +1183,7 @@ public class RepGraphModel {
         //Map the nodes in each level to the correct format
 
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
+        int space =130;
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
 
@@ -1191,7 +1192,7 @@ public class RepGraphModel {
             for (node n : nodesInFinalLevels.get(level)) {
                 HashMap<String, Object> singleNode = new HashMap<>();
                 singleNode.put("id", n.getId());
-                singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
+                singleNode.put("x", n.getAnchors().get(0).getFrom() * space);
                 singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
                 singleNode.put("label", n.getLabel());
                 singleNode.put("type", "node");
@@ -1209,8 +1210,8 @@ public class RepGraphModel {
         for (token t : graph.getTokens()) {
             HashMap<String, Object> singleToken = new HashMap<>();
             singleToken.put("index", t.getIndex());
-            singleToken.put("x", t.getIndex() * 110);
-            singleToken.put("y", totalGraphHeight + 100);
+            singleToken.put("x", t.getIndex() * space);
+            singleToken.put("y", totalGraphHeight + 200);
             singleToken.put("label", t.getForm());
             singleToken.put("type", "token");
             singleToken.put("group", "token");
@@ -1226,6 +1227,8 @@ public class RepGraphModel {
 
         ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
         int fromID = 0, toID = 0, fromLevel = 0, toLevel = 0, fromX = 0, toX = 0;
+
+        graph.setNodeNeighbours();
 
         for (edge e : graph.getEdges()) {
             HashMap<String, Object> singleEdge = new HashMap<>();
@@ -1291,6 +1294,11 @@ public class RepGraphModel {
                 }
                 else{
                     edgeType = "curvedCCW";
+                    for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()){
+                        if (fromX/space - neighbour.getAnchors().get(0).getFrom() == 1 ){
+                            edgeType = "curvedCW";
+                        }
+                    }
                 }
             }
             else{
