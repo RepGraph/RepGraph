@@ -1192,7 +1192,7 @@ public class RepGraphModel {
                 singleNode.put("id", n.getId());
                 singleNode.put("x", n.getAnchors().get(0).getFrom() * space);
                 singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
-                singleNode.put("label", n.getId() + n.getLabel());
+                singleNode.put("label", n.getLabel());
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", level);
                 singleNode.put("anchors", n.getAnchors().get(0));
