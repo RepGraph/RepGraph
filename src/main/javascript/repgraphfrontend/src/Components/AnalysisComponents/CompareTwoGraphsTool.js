@@ -1,35 +1,38 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Grid from "@material-ui/core/Grid";
 import {makeStyles} from "@material-ui/core/styles";
-import Tooltip from "@material-ui/core/Tooltip";
-import Zoom from "@material-ui/core/Zoom";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Button from "@material-ui/core/Button";
+import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
+import { AppContext } from "../../Store/AppContextProvider.js";
+import {useHistory} from "react-router-dom";
+import CompareTwoGraphsVisualisation from "../Main/CompareTwoGraphsVisualisation";
+import SubsetVisualisation from "../Main/SubsetVisualisation";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        width: "80%",
-        '& > * + *': {
-            marginTop: theme.spacing(3),
-        },
-    },
-    autoComplete :{
-        marginBottom: 10
+        height: "100%"
     }
-
 }));
 
 function CompareTwoGraphsTool(props){
+    const { state, dispatch } = useContext(AppContext);
+    const history = useHistory();
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const classes = useStyles();
-
-    const parsedSentences = props.sentences;
-    const parsedSentencesInputs = parsedSentences.map(sentenceObj => sentenceObj.input);
 
     return(
         <Grid
@@ -39,24 +42,31 @@ function CompareTwoGraphsTool(props){
             alignItems="center"
             className={classes.root}
         >
-            <div className={classes.root}>
-            <Autocomplete className={classes.autoComplete}
-                          multiple
-                          id="tags-outlined"
-                          options={parsedSentencesInputs}
-                          getOptionLabel={(option) => option}
-                          defaultValue={[parsedSentencesInputs[0]]}
-                          filterSelectedOptions
-                          renderInput={(params) => (
-                              <TextField
-                                  {...params}
-                                  variant="outlined"
-                                  label="Select two sentences for comparison:"
-                                  placeholder="Selected Sentences"
-                              />
-                          )}
-            />
-            </div>
+                <Button
+                    variant="contained" color="primary" onClick={handleClickOpen}
+                    endIcon={<LocationSearchingIcon/>}
+                    disabled={state.dataSet === null}
+                >
+                    Compare Two Graphs
+                </Button>
+                <Dialog
+                    open={open}
+                    fullWidth={true}
+                    maxWidth="xl"
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Compare two graphs:"}</DialogTitle>
+                    <DialogContent>
+                            <CompareTwoGraphsVisualisation />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary" autoFocus >
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
         </Grid>
     );
 
