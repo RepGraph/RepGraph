@@ -36,6 +36,13 @@ public class edge {
      */
     public edge(){}
 
+    public edge(edge e) {
+        this.target = e.target;
+        this.source = e.source;
+        this.label = e.label;
+        this.postLabel = e.postLabel;
+    }
+
     /**
      * Fully parameterised constructor of the edge class.
      * @param source Number of the node that is the source of the edge.

@@ -5,14 +5,24 @@
  */
 package com.RepGraph;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.node.IntNode;
 
+import java.io.IOException;
 import java.util.*;
 
 import static java.util.Collections.max;
 
 public class graph {
+
 
     /**
      * The graph's ID number.
@@ -29,10 +39,15 @@ public class graph {
      */
     private String input;
 
+
+    @JsonProperty("nodes")
+    private ArrayList<node> nodelist;
+
     /**
-     * An array list of the graph's nodes.
+     * A HashMap of the graph nodes
      */
-    private ArrayList<node> nodes;
+    @JsonIgnore
+    private HashMap<Integer, node> nodes;
 
     /**
      * An array list of the graph's tokens.
@@ -54,6 +69,11 @@ public class graph {
      * Default constructor for the graph class.
      */
     public graph() {
+        this.nodelist = new ArrayList<>();
+        this.nodes = new HashMap<>();
+        this.tokens = new ArrayList<>();
+        this.edges = new ArrayList<>();
+        this.tops = new ArrayList<>();
     }
 
     /**
@@ -67,14 +87,48 @@ public class graph {
      * @param edges  An array list of the graph's edges.
      * @param tops   An array list of the graph's top node ids.
      */
-    public graph(String id, String source, String input, ArrayList<node> nodes, ArrayList<token> tokens, ArrayList<edge> edges, ArrayList<Integer> tops) {
+    public graph(String id, String source, String input, HashMap<Integer, node> nodes, ArrayList<token> tokens, ArrayList<edge> edges, ArrayList<Integer> tops) {
         this.id = id;
         this.source = source;
         this.input = input;
+        this.nodelist = new ArrayList<>();
         this.nodes = nodes;
+        for (node n : nodes.values()) {
+            this.nodelist.add(n);
+        }
         this.tokens = tokens;
         this.edges = edges;
         this.tops = tops;
+
+    }
+
+    public graph(String id, String source, String input, ArrayList<node> nodelist, ArrayList<token> tokens, ArrayList<edge> edges, ArrayList<Integer> tops) {
+        this.id = id;
+        this.source = source;
+        this.input = input;
+        this.nodelist = nodelist;
+        this.nodes = new HashMap<Integer, node>();
+        for (node n : nodelist) {
+            this.nodes.put(n.getId(), n);
+        }
+        this.tokens = tokens;
+        this.edges = edges;
+        this.tops = tops;
+
+    }
+
+    @JsonSetter("nodes")
+    public void setNodelist(ArrayList<node> nodelist) {
+        this.nodelist = nodelist;
+        nodes = new HashMap<Integer, node>();
+        for (node n : nodelist) {
+            nodes.put(n.getId(), n);
+        }
+    }
+
+    @JsonGetter("nodes")
+    public ArrayList<node> getNodelist() {
+        return this.nodelist;
     }
 
     /**
@@ -136,7 +190,7 @@ public class graph {
      *
      * @return ArrayList The graph's nodes.
      */
-    public ArrayList<node> getNodes() {
+    public HashMap<Integer, node> getNodes() {
         return nodes;
     }
 
@@ -145,7 +199,7 @@ public class graph {
      *
      * @param nodes The graph's nodes.
      */
-    public void setNodes(ArrayList<node> nodes) {
+    public void setNodes(HashMap<Integer, node> nodes) {
         this.nodes = nodes;
     }
 
@@ -229,11 +283,11 @@ public class graph {
 
             if (!directed) {
 
-                if (connectedBFS()) {
+                if (connectedBFS(nodes.values().iterator().next().getId())) {
                     ArrayList<ArrayList<Integer>> endpoints = BFS(0);
                     ArrayList<ArrayList<Integer>> temp;
                     ArrayList<Integer> pathEnds = new ArrayList<>();
-                    for (ArrayList<Integer> end : endpoints){
+                    for (ArrayList<Integer> end : endpoints) {
                         if (!pathEnds.contains(end.get(0))) {
                             temp = BFS(end.get(0));
                             for (ArrayList<Integer> al : temp) {
@@ -254,7 +308,7 @@ public class graph {
                     ArrayList<ArrayList<Integer>> temp;
 
                     //Makes each node the start node and finds the longest overall path/s.
-                    for (int i = 1; i < nodes.size(); i++) {
+                    for (int i : nodes.keySet()) {
                         temp = BFS(i);
 
                         if (temp.size() != 0) {
@@ -273,10 +327,10 @@ public class graph {
                     }
 
                     ArrayList<ArrayList<Integer>> newPaths = new ArrayList<>();
-                    for (ArrayList<Integer> al : paths){
-                        if (!newPaths.contains(al)){
+                    for (ArrayList<Integer> al : paths) {
+                        if (!newPaths.contains(al)) {
                             Collections.reverse(al);
-                            if (!newPaths.contains(al)){
+                            if (!newPaths.contains(al)) {
                                 newPaths.add(al);
                             }
                         }
@@ -300,7 +354,7 @@ public class graph {
                 ArrayList<ArrayList<Integer>> temp;
 
                 //Makes each node the start node and finds the longest overall path/s.
-                for (int i = 1; i < nodes.size(); i++) {
+                for (int i : nodes.keySet()) {
                     if (!nodesInPath.contains(i)) {
                         temp = directedLongestPaths(i);
 
@@ -344,32 +398,43 @@ public class graph {
         int source;
         int target;
 
-        if (edges.size() == 0) {
-            //Graph has no edges
-            return;
-        } else {
-            source = edges.get(0).getSource();
-            if (nodes.get(source).getDirectedNeighbours().size() != 0) {
-                //Node neighbours have already been set
+            if (edges.size() == 0) {
+                //Graph has no edges
                 return;
+            } else {
+
+                source = edges.get(0).getSource();
+
+                if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
+                    //Node neighbours have already been set
+                    return;
+                }
+            }
+
+            for (int i = 0; i < edges.size(); i++) {
+                edge currentEdge = edges.get(i);
+
+                source = currentEdge.getSource();
+                target = currentEdge.getTarget();
+
+                node sourceNode = nodes.get(source);
+                sourceNode.addDirectedNeighbour(nodes.get(target));
+                nodes.get(target).addUndirectedNeighbour(sourceNode);
+
+                sourceNode.addDirectedEdgeNeighbour(currentEdge);
+                nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
+
+            }
+
+    }
+
+    public boolean hasDanglingEdge() {
+        for (edge e : edges) {
+            if (!nodes.containsKey(e.getTarget()) || !nodes.containsKey(e.getSource())) {
+                return true;
             }
         }
-
-        for (int i = 0; i < edges.size(); i++) {
-            edge currentEdge = edges.get(i);
-
-            source = currentEdge.getSource();
-            target = currentEdge.getTarget();
-
-            node sourceNode = nodes.get(source);
-            sourceNode.addDirectedNeighbour(nodes.get(target));
-            nodes.get(target).addUndirectedNeighbour(sourceNode);
-
-            sourceNode.addDirectedEdgeNeighbour(currentEdge);
-            nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
-
-        }
-
+        return false;
     }
 
     /**
@@ -387,28 +452,29 @@ public class graph {
             return paths;
         }
 
-        ArrayList<Integer> dist = new ArrayList<>();
-        int[] prevNode = new int[nodes.size()];
+        HashMap<Integer, Integer> dist = new HashMap<>();
+        HashMap<Integer, Integer> prevNode = new HashMap<>();
 
         //Set all nodes in the graph to unvisited (i.e. visited[nodeID] = false)
-        boolean[] visited = new boolean[nodes.size()];
-        for (int i = 0; i < nodes.size(); i++) {
-            visited[i] = false;
+        //boolean[] visited = new boolean[nodes.size()];
+        HashMap<Integer, Boolean> visited = new HashMap<>();
+        for (int i : nodes.keySet()) {
+            visited.put(i, false);
         }
 
         //Topologically sort every unvisited node.
         Stack<Integer> stack = new Stack<Integer>();
-        for (int i = 0; i < nodes.size(); i++) {
-            if (!visited[i]) {
+        for (int i : nodes.keySet()) {
+            if (!visited.get(i)) {
                 topologicalSort(i, visited, stack);
             }
         }
 
         //Set all distances to NINF except the start node.
-        for (int i = 0; i < nodes.size(); i++) {
-            dist.add(Integer.MIN_VALUE);
+        for (int i : nodes.keySet()) {
+            dist.put(i, Integer.MIN_VALUE);
         }
-        dist.set(startNodeID, 0);
+        dist.put(startNodeID, 0);
 
         //Iterate through the stack to find longest path.
         while (!stack.empty()) {
@@ -417,8 +483,8 @@ public class graph {
             if (dist.get(u) != Integer.MIN_VALUE) {
                 for (node n : nodes.get(u).getDirectedNeighbours()) {
                     if (dist.get(n.getId()) < dist.get(u) + 1) {
-                        dist.set(n.getId(), dist.get(u) + 1);
-                        prevNode[n.getId()] = u;
+                        dist.put(n.getId(), dist.get(u) + 1);
+                        prevNode.put(n.getId(), u);
                     }
                 }
             }
@@ -433,12 +499,12 @@ public class graph {
      * @param nodeID  The current node.
      * @param visited A list of booleans, representing whether a node has already been visited or not.
      */
-    public Stack<Integer> topologicalSort(int nodeID, boolean visited[], Stack<Integer> stack) {
-        visited[nodeID] = true;
+    public Stack<Integer> topologicalSort(int nodeID, HashMap<Integer, Boolean> visited, Stack<Integer> stack) {
+        visited.put(nodeID, true);
 
         //Iterate through every neighbouring node of the given node.
         for (node neighbourNode : nodes.get(nodeID).getDirectedNeighbours()) {
-            if (!visited[neighbourNode.getId()]) {
+            if (!visited.get(neighbourNode.getId())) {
                 topologicalSort(neighbourNode.getId(), visited, stack);
             }
         }
@@ -466,13 +532,13 @@ public class graph {
         }
 
         //All distances from start node start at -1, except the start node.
-        ArrayList<Integer> dist = new ArrayList<>();
-        for (int i = 0; i < nodes.size(); i++) {
-            dist.add(-1);
+        HashMap<Integer, Integer> dist = new HashMap<>();
+        for (int i : nodes.keySet()) {
+            dist.put(i, -1);
         }
-        dist.set(startNodeID, 0);
+        dist.put(startNodeID, 0);
 
-        int[] prevNode = new int[nodes.size()];
+        HashMap<Integer, Integer> prevNode = new HashMap<>();
 
         Queue<Integer> q = new LinkedList<>();
 
@@ -490,8 +556,8 @@ public class graph {
 
                 if (dist.get(neighbourNodeID) == -1) {
                     q.add(neighbourNodeID);
-                    dist.set(neighbourNodeID, dist.get(currentNodeID) + 1);
-                    prevNode[neighbourNodeID] = currentNodeID;
+                    dist.put(neighbourNodeID, dist.get(currentNodeID) + 1);
+                    prevNode.put(neighbourNodeID, currentNodeID);
                 }
             }
         }
@@ -508,9 +574,7 @@ public class graph {
     public ArrayList<node> combineNeighbours(int nodeID) {
         ArrayList<node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
         ArrayList<node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
-        for (int i = 0; i < undirectedNeighbours.size(); i++) {
-            allNeighbours.add(undirectedNeighbours.get(i));
-        }
+        allNeighbours.addAll(undirectedNeighbours);
         return allNeighbours;
     }
 
@@ -522,22 +586,22 @@ public class graph {
      * @param startNodeID The node ID of the start node.
      * @return ArrayList<ArrayList < Integer>> The longest paths.
      */
-    public ArrayList<ArrayList<Integer>> traverseLongestPath(ArrayList<Integer> dist, int[] prevNode,
+    public ArrayList<ArrayList<Integer>> traverseLongestPath(HashMap<Integer, Integer> dist, HashMap<Integer, Integer> prevNode,
                                                              int startNodeID) {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
-        int max = Collections.max(dist);
+        int max = Collections.max(dist.values());
 
         //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
         ArrayList<Integer> path = new ArrayList<>();
-        for (int i = 0; i < dist.size(); i++) {
+        for (int i : dist.keySet()) {
             if (dist.get(i) == max) {
                 path.clear();
                 path.add(i);
-                int prev = prevNode[i];
+                int prev = prevNode.get(i);
                 while (prev != startNodeID) {
                     path.add(prev);
-                    prev = prevNode[prev];
+                    prev = prevNode.get(prev);
                 }
                 path.add(startNodeID);
                 paths.add(new ArrayList<>(path));
@@ -553,7 +617,12 @@ public class graph {
      * @return boolean returns true if the graph is planar
      */
     public boolean GraphIsPlanar() {
-        ArrayList<node> ordered = new ArrayList<>(nodes);
+
+        ArrayList<node> ordered = new ArrayList<>();
+
+        for (node n : nodes.values()) {
+            ordered.add(new node(n));
+        }
 
         Collections.sort(ordered, new Comparator<node>() {
             @Override
@@ -583,13 +652,14 @@ public class graph {
             target = e.getTarget();
 
             edge newEdge = new edge();
+
             for (int i = 0; i < ordered.size(); i++) {
                 node n = ordered.get(i);
                 if (n.getId() == source) {
-                    newEdge.setSource(nodeToToken.get(i));
+                    newEdge.setSource(nodeToToken.get(n.getId()));
                 }
                 if (n.getId() == target) {
-                    newEdge.setTarget(nodeToToken.get(i));
+                    newEdge.setTarget(nodeToToken.get(n.getId()));
                 }
             }
             updated.add(newEdge);
@@ -610,9 +680,14 @@ public class graph {
         return true;
     }
 
-    public graph PlanarVisualisation() {
+    // public ArrayList<edge> UpdateEdges()
 
-        ArrayList<node> ordered = new ArrayList<>(nodes);
+    public graph PlanarGraph() {
+
+        ArrayList<node> ordered = new ArrayList<>();
+        for (node n : nodes.values()) {
+            ordered.add(new node(n));
+        }
 
         Collections.sort(ordered, new Comparator<node>() {
             @Override
@@ -634,6 +709,7 @@ public class graph {
         HashMap<Integer, Integer> nodeToToken = new HashMap<>();
 
         for (int i = 0; i < ordered.size(); i++) {
+            System.out.println(ordered.get(i).getId() + " ANCHORS FROM:" + ordered.get(i).getAnchors().get(0).getFrom());
             nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom());
         }
 
@@ -647,26 +723,33 @@ public class graph {
             target = e.getTarget();
 
             edge newEdge = new edge();
+            newEdge.setLabel("");
+            newEdge.setPostLabel("");
             for (int i = 0; i < ordered.size(); i++) {
+
                 node n = ordered.get(i);
+
                 if (n.getId() == source) {
 
                     newEdge.setSource(nodeToToken.get(i));
+
                 }
                 if (n.getId() == target) {
 
                     newEdge.setTarget(nodeToToken.get(i));
+
                 }
             }
             updated.add(newEdge);
 
         }
 
-        for (int i = 0; i < ordered.size(); i++) {
-            ordered.get(i).setId(i);
+        HashMap<Integer, node> newNodes = new HashMap<>();
+        for (node n : ordered) {
+            newNodes.put(n.getId(), n);
         }
 
-        graph planarVisualisation = new graph(this.getId(), this.getSource(), this.input, ordered, this.tokens, updated, this.tops);
+        graph planarVisualisation = new graph(this.getId(), this.getSource(), this.input, newNodes, this.tokens, updated, this.tops);
 
         return planarVisualisation;
 
@@ -732,11 +815,10 @@ public class graph {
      *
      * @return boolean Whether the graph is connected or not.
      */
-    public boolean connectedBFS() {
+    public boolean connectedBFS(int startNodeID) {
 
         setNodeNeighbours();
 
-        int startNodeID = 0;
 
         if (nodes.size() <= 1) {
             return true;
@@ -750,11 +832,11 @@ public class graph {
         }
 
         //All distances from start node start at -1, except the start node.
-        ArrayList<Integer> dist = new ArrayList<>();
-        for (int i = 0; i < nodes.size(); i++) {
-            dist.add(-1);
+        HashMap<Integer, Integer> dist = new HashMap<>();
+        for (int i : nodes.keySet()) {
+            dist.put(i, -1);
         }
-        dist.set(startNodeID, 0);
+        dist.put(startNodeID, 0);
 
         int nodesVisited = 0;
 
@@ -775,7 +857,7 @@ public class graph {
 
                 if (dist.get(neighbourNodeID) == -1) {
                     q.add(neighbourNodeID);
-                    dist.set(neighbourNodeID, dist.get(currentNodeID) + 1);
+                    dist.put(neighbourNodeID, dist.get(currentNodeID) + 1);
                 }
             }
         }

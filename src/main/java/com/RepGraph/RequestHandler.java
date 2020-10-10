@@ -127,21 +127,40 @@ public class RequestHandler {
      */
     @GetMapping("/Visualise")
     @ResponseBody
-    public graph Visualise(@RequestParam String graphID, @RequestParam int format) {
-        return RepModel.getGraph(graphID);
+    public HashMap<String, Object> Visualise(@RequestParam String graphID, @RequestParam int format) {
+        if (format == 1) {
+            return RepModel.VisualiseHierarchy(graphID);
+        } else if (format == 2) {
+            return RepModel.VisualiseTree(graphID);
+        } else {
+            return RepModel.VisualiseFlat(graphID);
+        }
+
     }
 
+    /**
+     * This method retrieves subset data of a graph
+     *
+     * @param graphID    This is the graph ID of the graph where the subset is constructed from
+     * @param NodeID     This is the ID of the node which the subset is constructed from
+     * @param SubsetType This is the type of subset i.e descendent or adjacent
+     * @return
+     */
     @GetMapping("/DisplaySubset")
     @ResponseBody
     public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType) {
         return RepModel.DisplaySubset(graphID, NodeID, SubsetType);
     }
 
-
+    /**
+     * This method Displays a visualisation of a graph in its potentially planar form.
+     * @param graphID This is the graph ID of the graph requested
+     * @return HashMap<String, Object> This is a hashmap with nodes and edges in a format readable by graphing libraries
+     */
     @GetMapping("/DisplayPlanarGraph")
     @ResponseBody
-    public graph DisplayPlanarGraph(@RequestParam String graphID) {
-        return RepModel.getGraph(graphID).PlanarVisualisation();
+    public HashMap<String, Object> DisplayPlanarGraph(@RequestParam String graphID) {
+        return RepModel.VisualisePlanar(graphID);
     }
 
     /**
@@ -208,6 +227,22 @@ public class RequestHandler {
 
     }
 
+    /**
+     * This method gets only the graph data of a specific graph ID in the model
+     *
+     * @param graphID This is the ID of the graph that is requested.
+     * @return graph Returns the graph data
+     */
+    @GetMapping("/GetGraph")
+    @ResponseBody
+    public graph GetGraph(@RequestParam String graphID) {
+        return RepModel.getGraph(graphID);
+    }
+
+    /**
+     * Main Method to run the spring boot application and host the API.
+     * @param args
+     */
     public static void main(String[] args) {
         SpringApplication.run(RequestHandler.class, args);
     }
