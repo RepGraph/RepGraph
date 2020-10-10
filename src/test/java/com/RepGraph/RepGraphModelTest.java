@@ -898,12 +898,41 @@ public class RepGraphModelTest {
     }
 
     @Test
-    public void test_containsKey(){
+    public void test_containsKey_CorrectlyChecksForKey()throws NoSuchFieldException, IllegalAccessException{
         RepGraphModel model = new RepGraphModel();
-        model.addGraph(g2);
-        model.addGraph(g1);
-        model.addGraph(g3);
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put(g1.getId(),g1);
+        graphs.put(g2.getId(),g2);
+        graphs.put(g3.getId(),g3);
+
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
 
         assertTrue("containsKey does not correctly check for a key in the model.", model.containsKey("22222"));
+    }
+
+    @Test
+    public void test_clearGraph_CorrectlyClearsGraph()throws NoSuchFieldException, IllegalAccessException{
+        RepGraphModel model = new RepGraphModel();
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put(g1.getId(),g1);
+        graphs.put(g2.getId(),g2);
+        graphs.put(g3.getId(),g3);
+
+        final Field fieldSet = model.getClass().getDeclaredField("graphs");
+        fieldSet.setAccessible(true);
+        fieldSet.set(model, graphs);
+
+        HashMap<String, graph> expected = new HashMap<>();
+        model.clearGraphs();
+
+        final Field fieldGet = model.getClass().getDeclaredField("graphs");
+        fieldGet.setAccessible(true);
+
+
+        assertEquals("clearGraphs does not clear graphs correctly.", fieldGet.get(model), expected );
+
+
     }
 }
