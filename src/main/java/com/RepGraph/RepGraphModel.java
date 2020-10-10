@@ -1225,7 +1225,7 @@ public class RepGraphModel {
 
 
         ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
-        int fromID = 0, toID = 0, fromLevel = 0, toLevel = 0;
+        int fromID = 0, toID = 0, fromLevel = 0, toLevel = 0, fromX = 0, toX = 0;
 
         for (edge e : graph.getEdges()) {
             HashMap<String, Object> singleEdge = new HashMap<>();
@@ -1234,19 +1234,70 @@ public class RepGraphModel {
                 if ((Integer) node.get("id") == e.getSource()) {
                     fromID = e.getSource();
                     fromLevel = (Integer) node.get("nodeLevel");
-
+                    fromX = (Integer) node.get("x");
                 }
                 if ((Integer) node.get("id") == e.getTarget()) {
                     toID = e.getTarget();
                     toLevel = (Integer) node.get("nodeLevel");
+                    toX = (Integer) node.get("x");
                 }
             }
-            String edgeType = "";
-            if (fromLevel == toLevel && fromLevel == 0) {
-                edgeType = "curvedCW";
+            /*
+                    let edgeType = "";
+        let round = 0.45;
+        if (fromNode.x === toNode.x) {
+            if (Math.abs(fromNode.nodeLevel - toNode.nodeLevel) === 1) {
+                edgeType = "continuous";
+            } else {
+                edgeType = "curvedCCW";
+                for (let i = 0; i < directedNeighbours[fromID].length; i++) {
+                    if (
+                        fromNode.x / space -
+                        graph.nodes[directedNeighbours[fromID][i]].anchors[0].from ===
+                        1
+                    ) {
+                        edgeType = "curvedCW";
+                    }
+                }
+            }
+        } else {
+            if (fromNode.nodeLevel === toNode.nodeLevel) {
+                edgeType = "curvedCCW";
+                if (Math.abs(fromNode.x / space - toNode.x / space) > 4) {
+                    round = 0.2;
+                }
+                if (Math.abs(fromNode.x / space - toNode.x / space) > 10) {
+                    round = 0.1;
+                }
+                if (
+                    fromNode.x / space - toNode.x / space > 0 &&
+                    fromNode.nodeLevel === 0
+                ) {
+                    edgeType = "curvedCW";
+                }
             } else {
                 edgeType = "dynamic";
             }
+        }
+             */
+            String edgeType = "";
+            double round = 0.45;
+            System.out.println("fromID: " + fromID + " toID: " + toID);
+            System.out.println("fromX: " + fromX + " toX: " + toX);
+            System.out.println("fromLevel: " + fromLevel + " toLevel: " + toLevel);
+            if (fromX == toX) {
+                if (Math.abs(fromLevel - toLevel) == 1){
+                    edgeType = "continuous";
+                }
+                else{
+                    edgeType = "curvedCCW";
+                }
+            }
+            else{
+                edgeType = "dynamic";
+            }
+
+
             singleEdge.put("id", graph.getEdges().indexOf(e));
             singleEdge.put("from", fromID);
             singleEdge.put("to", toID);
@@ -1259,7 +1310,7 @@ public class RepGraphModel {
 
             HashMap<String, Object> smooth = new HashMap<>();
             smooth.put("type", edgeType);
-            smooth.put("roundness", 0.4);
+            smooth.put("roundness", round);
 
             HashMap<String, Object> end = new HashMap<>();
             end.put("from", 20);
