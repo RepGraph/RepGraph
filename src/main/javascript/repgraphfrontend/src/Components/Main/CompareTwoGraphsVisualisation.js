@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: "100%",
         height: "100%",
-        border: "1px solid red"
     },
     header: {
         display: "flex",
@@ -184,14 +183,6 @@ function highlightCompare(standardVisualisation, similarNodes, similarEdges) {
 
     return {...currentStandardVisualisation, nodes: newNodes, edges: newEdges};
 }
-
-//This response is for debugging
-const response = {
-    SimilarNodes1: [0, 1, 3, 9, 2],
-    SimilarEdges1: [3, 2, 0],
-    SimilarEdges2: [3, 2],
-    SimilarNodes2: [1, 2, 4]
-};
 
 function CompareTwoGraphsVisualisation(props) {
     const classes = useStyles();
@@ -387,7 +378,7 @@ function CompareTwoGraphsVisualisation(props) {
                         />
                     </Tooltip>
                 </Grid>
-                <Grid item style={{width: "100%", height: "70vh"}}>
+                <Grid item style={{width: "100%", height: "50vh"}}>
                     {
                         compareVis1 === null ? <div>Please select a sentence</div> :
 
@@ -428,7 +419,7 @@ function CompareTwoGraphsVisualisation(props) {
                         />
                     </Tooltip>
                 </Grid>
-                <Grid item style={{width: "100%", height: "70vh"}}>
+                <Grid item style={{width: "100%", height: "50vh"}}>
                     {
                         compareVis2 === null ? <div>Please select a sentence</div> :
 
