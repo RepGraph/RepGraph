@@ -17,11 +17,12 @@ import GraphVisualisation from "../Main/GraphVisualisation";
 import DialogActions from "@material-ui/core/DialogActions";
 import Chip from "@material-ui/core/Chip";
 import Dialog from "@material-ui/core/Dialog";
+import FormalTestResultsDisplay from "./FormalTestResultsDisplay";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        width: "100%",
-        marginBottom: 10
+        height: "100%",
+        width: "100%"
     }
 
 }));
@@ -63,15 +64,14 @@ function FormalTestsTool(props){
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult);
                 dispatch({ type: "SET_LOADING", payload: { isLoading: false } });
-                setTestResults(JSON.stringify(jsonResult));
-
+                dispatch({ type: "SET_TEST_RESULTS", payload: { testResults: jsonResult } });
+                setTestResults(jsonResult);
             })
             .catch((error) => {
                 dispatch({ type: "SET_LOADING", payload: { isLoading: false } });
                 console.log("error", error);
                 history.push("/404"); //for debugging
             });
-
     }
 
     const { planar, longestPathDirected, longestPathUndirected, connected } = state;
@@ -85,25 +85,26 @@ function FormalTestsTool(props){
             className={classes.root}
         >
             <FormControl component="fieldset">
-                <FormLabel component="legend">Graph Property Tests</FormLabel>
+                <FormLabel color="primary" component="legend">Graph Property Tests</FormLabel>
                 <FormGroup>
                     <FormControlLabel
-                        control={<Checkbox checked={planar} onChange={handleChange} color="primary"  name="planar" />}
+                        control={<Checkbox checked={planar} onChange={handleChange} color="secondary"  name="planar" />}
                         label="Graph Planar?"
                     />
                     <FormControlLabel
-                        control={<Checkbox  checked={longestPathDirected} onChange={handleChange} color="primary" name="longestPathDirected" />}
+                        control={<Checkbox  checked={longestPathDirected} onChange={handleChange} color="secondary" name="longestPathDirected" />}
                         label="Find Longest Directed Path"
                     />
                     <FormControlLabel
-                        control={<Checkbox  checked={longestPathUndirected} onChange={handleChange} color="primary" name="longestPathUndirected" />}
+                        control={<Checkbox  checked={longestPathUndirected} onChange={handleChange} color="secondary" name="longestPathUndirected" />}
                         label="Find Longest Undirected Path"
                     />
                     <FormControlLabel
-                        control={<Checkbox  checked={connected} onChange={handleChange} color="primary" name="connected" />}
+                        control={<Checkbox  checked={connected} onChange={handleChange} color="secondary" name="connected" />}
                         label="Graph Connected?"
                     />
                     <Button
+                        disabled={state.selectedSentenceID === null}
                         variant="contained"
                         color="primary"
                         endIcon={<ArrowForwardIcon/>}
@@ -115,7 +116,6 @@ function FormalTestsTool(props){
                 </FormGroup>
                 <FormHelperText/>
             </FormControl>
-            <Chip label= {`Test Results: ${JSON.stringify(testResults)}`} />
         </Grid>
     );
 
