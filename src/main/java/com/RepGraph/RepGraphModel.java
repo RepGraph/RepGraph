@@ -130,6 +130,7 @@ public class RepGraphModel {
         subset.setInput(parent.getTokenInput(SubsetTokens));
         subset.setTops(parent.getTops());
 
+
         return subset;
     }
 

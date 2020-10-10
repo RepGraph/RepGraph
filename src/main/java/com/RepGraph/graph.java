@@ -200,7 +200,11 @@ public class graph {
      * @param nodes The graph's nodes.
      */
     public void setNodes(HashMap<Integer, node> nodes) {
+        this.nodelist.clear();
         this.nodes = nodes;
+        for (node n : nodes.values()) {
+            this.nodelist.add(n);
+        }
     }
 
     /**
