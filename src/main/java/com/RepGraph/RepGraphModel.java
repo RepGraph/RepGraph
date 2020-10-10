@@ -750,7 +750,6 @@ public class RepGraphModel {
 
     }
 
-
     public HashMap<String, Object> VisualiseTree(String graphID) {
 
         graph graph = graphs.get(graphID);
@@ -1048,7 +1047,6 @@ public class RepGraphModel {
         return Visualised;
     }
 
-
     public HashMap<String, Object> VisualiseHierarchy(String graphID) {
         graph graph = graphs.get(graphID);
 
@@ -1194,7 +1192,7 @@ public class RepGraphModel {
                 singleNode.put("id", n.getId());
                 singleNode.put("x", n.getAnchors().get(0).getFrom() * space);
                 singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
-                singleNode.put("label", n.getLabel());
+                singleNode.put("label", n.getId() + n.getLabel());
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", level);
                 singleNode.put("anchors", n.getAnchors().get(0));
@@ -1255,20 +1253,38 @@ public class RepGraphModel {
                 } else {
                     boolean notFound = true;
                     for (HashMap<String, Object> node : finalNodes) {
-                        if ((Integer) node.get("x") == fromX && (Integer) node.get("nodeLevel") > toLevel && (Integer) node.get("nodeLevel") < fromLevel) {
+                        if ((Integer) node.get("x") == fromX && ((Integer) node.get("nodeLevel") > toLevel && (Integer) node.get("nodeLevel") < fromLevel) || ((Integer) node.get("nodeLevel") < toLevel && (Integer) node.get("nodeLevel") > fromLevel)) {
                             notFound = false;
                         }
                     }
                     if (notFound) {
                         edgeType = "continuous";
                     } else {
-                        if (fromLevel - toLevel > 3) {
+                        if (Math.abs(fromLevel - toLevel) > 3) {
                             round = 0.32;
                         }
                         edgeType = "curvedCCW";
+                        if (fromLevel < toLevel){
+                            edgeType = "curvedCW";
+                        }
                         for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()) {
                             if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
-                                edgeType = "curvedCW";
+                                if (fromLevel < toLevel){
+                                    edgeType = "curvedCCW";
+                                }
+                                else{
+                                    edgeType = "curvedCW";
+                                }
+                            }
+                        }
+                        for (node neighbour : graph.getNodes().get(toID).getDirectedNeighbours()) {
+                            if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
+                                if (fromLevel < toLevel){
+                                    edgeType = "curvedCCW";
+                                }
+                                else{
+                                    edgeType = "curvedCW";
+                                }
                             }
                         }
                     }
