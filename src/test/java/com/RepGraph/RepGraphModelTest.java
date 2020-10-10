@@ -11,8 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 
 public class RepGraphModelTest {
@@ -934,5 +933,23 @@ public class RepGraphModelTest {
         assertEquals("clearGraphs does not clear graphs correctly.", fieldGet.get(model), expected );
 
 
+    }
+
+    @Test
+    public void test_areAllTrue_CorrectlyChecksBooleanArray(){
+        boolean [] array = new boolean[5];
+        array[0] = true;
+        array[1] = true;
+        array[2] = true;
+        array[3] = true;
+        array[4] = true;
+
+        RepGraphModel model = new RepGraphModel();
+
+        assertTrue("areAllTrue does not correctly identify an array of all trues", model.areAllTrue(array));
+
+        array[3] = false;
+
+        assertFalse("areAllTrue does not correctly identify an array with one false", model.areAllTrue(array));
     }
 }

@@ -359,7 +359,6 @@ public class RepGraphModel {
         return FoundGraphs;
     }
 
-
     /**
      * Uses a graph ID and a set of Node IDS which will be used to search for which graphs have the requested node labels present .
      *
