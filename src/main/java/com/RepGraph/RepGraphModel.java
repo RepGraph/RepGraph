@@ -750,7 +750,6 @@ public class RepGraphModel {
 
     }
 
-
     public HashMap<String, Object> VisualiseTree(String graphID) {
 
         graph graph = graphs.get(graphID);
@@ -1047,7 +1046,6 @@ public class RepGraphModel {
 
         return Visualised;
     }
-
 
     public HashMap<String, Object> VisualiseHierarchy(String graphID) {
         graph graph = graphs.get(graphID);

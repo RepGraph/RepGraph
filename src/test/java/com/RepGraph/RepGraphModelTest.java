@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 
 public class RepGraphModelTest {
@@ -98,7 +99,6 @@ public class RepGraphModelTest {
 
         assertEquals("graph value was not added correctly.", field.get(r) , graphs);
     }
-
 
     @Test
     public void test_DisplaySubsetAdjacent_CorrectlyConstructsSubsetGraph() throws NoSuchFieldException, IllegalAccessException {
@@ -449,7 +449,6 @@ public class RepGraphModelTest {
 
 
     }
-
 
     @Test
     public void test_SearchSubgraphPattern_FindsGraphsCorrectly() throws NoSuchFieldException, IllegalAccessException {
@@ -896,5 +895,15 @@ public class RepGraphModelTest {
 
         assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges.", expected, model.compareTwoGraphs("1", "2"));
 
+    }
+
+    @Test
+    public void test_containsKey(){
+        RepGraphModel model = new RepGraphModel();
+        model.addGraph(g2);
+        model.addGraph(g1);
+        model.addGraph(g3);
+
+        assertTrue("containsKey does not correctly check for a key in the model.", model.containsKey("22222"));
     }
 }

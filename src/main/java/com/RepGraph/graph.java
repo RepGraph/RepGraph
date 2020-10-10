@@ -39,7 +39,6 @@ public class graph {
      */
     private String input;
 
-
     @JsonProperty("nodes")
     private ArrayList<node> nodelist;
 
