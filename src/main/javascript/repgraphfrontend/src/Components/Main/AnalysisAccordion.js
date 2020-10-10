@@ -25,6 +25,7 @@ import SubsetVisualisation from "./SubsetVisualisation";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
+import CompareTwoGraphsTool from "../AnalysisComponents/CompareTwoGraphsTool";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -148,11 +149,25 @@ export default function AnalysisAccordion() {
                         </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography>Select a two graphs below:
-                            <IconButton aria-label="Compare two graphs information button" onClick={() => handleInfoClick("compare two graphs tool")}>
-                            <InfoIcon />
-                            </IconButton>
-                        </Typography>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="space-between"
+                            alignItems="flex-start"
+                            spacing={4}
+                        >
+                            <Grid item>
+                                <Typography>Select a two graphs below:
+                                    <IconButton aria-label="Compare two graphs information button" onClick={() => handleInfoClick("compare two graphs tool")}>
+                                        <InfoIcon />
+                                    </IconButton>
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <CompareTwoGraphsTool/>
+                            </Grid>
+                        </Grid>
+
                     </AccordionDetails>
                 </Accordion>
                 <Accordion>
