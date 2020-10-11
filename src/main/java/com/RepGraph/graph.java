@@ -913,4 +913,102 @@ public class graph {
         }
     }
 
+    /**
+     * Checks if a directed or an undirected graph is cyclic or not by calling on the appropriate recursive function required.
+     * @param directed Boolean to see if the graph is directed or not.
+     * @return Boolean If the graph is cyclic or not.
+     */
+    public boolean isCyclic(boolean directed) {
+
+        setNodeNeighbours();
+
+        //Mark nodes as unvisited and not in the stack (stack is for directed only)
+        HashMap<node, Boolean> visited = new HashMap<>();
+        HashMap<node, Boolean> stack = new HashMap<>();
+        for (node n : nodes.values()) {
+            visited.put(n, false);
+            stack.put(n, false);
+        }
+
+        if (directed) {
+            //Call recursive function to detect cycles in different DFS directed trees.
+            for (node n : nodes.values()) {
+                if (isCyclicCheckerDirected(n, visited, stack)) {
+                    return true;
+                }
+            }
+        } else {
+            //Call recursive function to detect cycles in different DFS undirected trees.
+            for (node n : nodes.values()) {
+                if (!visited.get(n)) { //Check if the node hasn't already been visited
+                    if (isCyclicCheckerUndirected(n, visited, -1)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Recursive function that checks for cycles in an undirected graph.
+     * @param v The current node.
+     * @param visited A HashMap of node to boolean to keep track of which nodes have been visited already.
+     * @param parent The ID of the parent node of the current node.
+     * @return Boolean If the graph is cyclic or not.
+     */
+    public boolean isCyclicCheckerUndirected(node v, HashMap<node, Boolean> visited, int parent) {
+
+        //Set the current node as visited.
+        visited.put(v, true);
+
+        //Iterate through all the current node's neighbouring nodes
+        for (node neighbour : combineNeighbours(v.getId())) {
+            if (!visited.get(neighbour)) { //If the neighbour is unvisited
+                if (isCyclicCheckerUndirected(neighbour, visited, v.getId())){
+                    return true;
+                };
+            } else if (neighbour.getId() != parent) { //If the neighbouring is visited and not a parent of the current node, then there is a cycle.
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Recursive function that checks for cycles in an directed graph.
+     * @param v The current node.
+     * @param visited A HashMap of node to boolean to keep track of which nodes have been visited already.
+     * @param stack A HashMap of node to boolean to keep track of which nodes have been added to the stack.
+     * @return Boolean If the graph is cyclic or not.
+     */
+    public boolean isCyclicCheckerDirected(node v, HashMap<node, Boolean> visited, HashMap<node, Boolean> stack) {
+
+        //Check if the node is in the stack already.
+        if (stack.get(v)) {
+            return true;
+        }
+
+        // Check if the node has already been visited.
+        if (visited.get(v)) {
+            return false;
+        }
+
+        //Set stack and visited to true.
+        stack.put(v, true);
+        visited.put(v, true);
+
+        //Iterate through the node's directed neighbours and call recursive function.
+        for (node neighbour : v.getDirectedNeighbours()) {
+            if (isCyclicCheckerDirected(neighbour, visited, stack)) {
+                return true;
+            }
+        }
+
+        stack.put(v, false);
+
+        return false;
+    }
 }
