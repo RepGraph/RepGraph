@@ -34,7 +34,7 @@ const styles = {
     }
 };
 
-export default function SentenceList() {
+export default function SentenceList(props) {
     const {state, dispatch} = useContext(AppContext);
     const history = useHistory();
 
@@ -47,7 +47,7 @@ export default function SentenceList() {
             method: 'GET',
             redirect: 'follow'
         };
-
+        props.closeSelectSentence();
         dispatch({type: "SET_LOADING", payload: {isLoading: true}});
 
         //state.APIendpoint+"/DisplayPlanarGraph?graphID=20001001
@@ -60,10 +60,10 @@ export default function SentenceList() {
                 console.log(jsonResult);
                 //console.log(jsonResult);
                 //console.log(jsonResult.response);
-                const formattedGraph = layoutGraph(jsonResult);
-                dispatch({type: "SET_SENTENCE", payload: {selectedSentence: formattedGraph}});
+                //const formattedGraph = layoutGraph(jsonResult);
+                dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: jsonResult}});
                 dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: jsonResult.id}});
-
+                dispatch({ type: "SET_TEST_RESULTS", payload: { testResults: null } });
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
             })
             .catch((error) => {
