@@ -59,6 +59,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
+import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 const drawerWidth = 240;
 
@@ -134,6 +136,15 @@ export default function Main() {
     const [open, setOpen] = React.useState(false);
     const [sentenceOpen, setSentenceOpen] = React.useState(false);
     const [visFormat, setVisFormat] = React.useState("1");
+    const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true);
+
+    const handleDataSetResponseClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setDataSetResponseOpen(false);
+    };
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -147,36 +158,43 @@ export default function Main() {
         setSentenceOpen(false);
     };
 
-    const handleChangeVisualisationFormat = (format) => {
-        setVisFormat(format);
-        dispatch({type: "SET_VISUALISATION_FORMAT", payload: {visualisationFormat: format}});
-        console.log(format);
-        //Update the currently displayed graph as well!
+    const handleChangeVisualisationFormat = (event, newFormat) => {
+        if (newFormat !== null) {
+            setVisFormat(newFormat);
+            dispatch({type: "SET_VISUALISATION_FORMAT", payload: {visualisationFormat: newFormat}});
+            console.log(newFormat);
+            //Update the currently displayed graph as well!
+            if (state.selectedSentenceID !== null) {
+                let requestOptions = {
+                    method: 'GET',
+                    redirect: 'follow'
+                };
 
-        let requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-        };
+                dispatch({type: "SET_LOADING", payload: {isLoading: true}});
 
-        dispatch({type: "SET_VISUALISATION_FORMAT", payload: {isLoading: true}});
+                fetch(state.APIendpoint + "/Visualise?graphID=" + state.selectedSentenceID + "&format=" + newFormat, requestOptions)
+                    .then((response) => response.text())
+                    .then((result) => {
 
-        fetch(state.APIendpoint + "/Visualise?graphID=" + state.selectedSentenceID + "&format="+format, requestOptions)
-            .then((response) => response.text())
-            .then((result) => {
+                        const jsonResult = JSON.parse(result);
+                        console.log(jsonResult);
+                        //console.log(jsonResult);
+                        //console.log(jsonResult.response);
+                        //const formattedGraph = layoutGraph(jsonResult);
+                        dispatch({
+                            type: "SET_SENTENCE_VISUALISATION",
+                            payload: {selectedSentenceVisualisation: jsonResult}
+                        });
+                        dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                    })
+                    .catch((error) => {
+                        dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                        console.log("error", error);
+                        history.push("/404"); //for debugging
+                    });
+            }
 
-                const jsonResult = JSON.parse(result);
-                console.log(jsonResult);
-                //console.log(jsonResult);
-                //console.log(jsonResult.response);
-                //const formattedGraph = layoutGraph(jsonResult);
-                dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: jsonResult}});
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
-            })
-            .catch((error) => {
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
-                console.log("error", error);
-                history.push("/404"); //for debugging
-            });
+        }
     }
 
 
@@ -209,25 +227,25 @@ export default function Main() {
                         <Grid item color="inherit">
                             <Tooltip arrow
                                      title={"Select visualisation format"}>
-                            <Paper>
-                                <ToggleButtonGroup
-                                    value={visFormat}
-                                    exclusive
-                                    onChange={(event, value)=>{handleChangeVisualisationFormat(value)}}
-                                    aria-label="Visualisation formats"
-                                    color="inherit"
-                                >
-                                    <ToggleButton color="primary" value="1" aria-label="Hierarchical">
-                                        <Typography color="primary">Hierarchical</Typography>
-                                    </ToggleButton>
-                                    <ToggleButton color="primary" value="2" aria-label="Tree-like">
-                                        <Typography color="primary">Tree-like</Typography>
-                                    </ToggleButton>
-                                    <ToggleButton color="primary" value="3" aria-label="Flat">
-                                        <Typography color="primary">Flat</Typography>
-                                    </ToggleButton>
-                                </ToggleButtonGroup>
-                            </Paper>
+                                <Paper>
+                                    <ToggleButtonGroup
+                                        value={visFormat}
+                                        exclusive
+                                        onChange={handleChangeVisualisationFormat}
+                                        aria-label="Visualisation formats"
+                                        color="inherit"
+                                    >
+                                        <ToggleButton color="primary" value="1" aria-label="Hierarchical">
+                                            <Typography color="primary">Hierarchical</Typography>
+                                        </ToggleButton>
+                                        <ToggleButton color="primary" value="2" aria-label="Tree-like">
+                                            <Typography color="primary">Tree-like</Typography>
+                                        </ToggleButton>
+                                        <ToggleButton color="primary" value="3" aria-label="Flat">
+                                            <Typography color="primary">Flat</Typography>
+                                        </ToggleButton>
+                                    </ToggleButtonGroup>
+                                </Paper>
                             </Tooltip>
                         </Grid>
                         <Grid item>
@@ -321,7 +339,7 @@ export default function Main() {
                                     {state.selectedSentenceID === null ? (
                                         <Typography variant="subtitle1">Please select a sentence</Typography>
                                     ) : (
-                                               <GraphVisualisation/>
+                                        <GraphVisualisation/>
                                     )}
                                 </CardContent>
                             </Card>
@@ -338,6 +356,13 @@ export default function Main() {
                         </Grid>
                     </Grid>
                 </React.Fragment>
+                <Snackbar open={dataSetResponseOpen && state.dataSet !== null} autoHideDuration={6000}
+                          onClose={handleDataSetResponseClose}>
+                    <MuiAlert elevation={6} variant="filled" onClose={handleDataSetResponseClose}
+                              severity={state.dataSetResponse === "Duplicates Found" ? "warning" : "success"}>
+                        {state.dataSetResponse === "Duplicates Found" ? "Data-set contained duplicate IDs, which were removed." : state.dataSetResponse}
+                    </MuiAlert>
+                </Snackbar>
             </main>
         </div>
     );
