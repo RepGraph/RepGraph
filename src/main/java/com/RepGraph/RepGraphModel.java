@@ -781,7 +781,7 @@ public class RepGraphModel {
         for (edge e : graph.getEdges()) {
             HashMap<String, Object> singleEdge = new HashMap<>();
             for (HashMap<String, Object> node : finalNodes) {
-
+                if (!node.get("id").equals((String) "TOP")) {
                 if ((Integer) node.get("id") == e.getSource()) {
                     fromID = e.getSource();
 
@@ -790,6 +790,7 @@ public class RepGraphModel {
                 if ((Integer) node.get("id") == e.getTarget()) {
                     toID = e.getTarget();
 
+                }
                 }
             }
             String edgeType = "curvedCW";
