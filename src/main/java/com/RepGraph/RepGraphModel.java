@@ -975,15 +975,17 @@ public class RepGraphModel {
 
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
 
+
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
 
-
         int levelNum = -1;
+        int maxID = graph.getNodes().keySet().iterator().next();
         for (HashMap<Integer, node> level : nodesInFinalLevels.values()) {
             levelNum++;
             for (node n : level.values()) {
                 HashMap<String, Object> singleNode = new HashMap<>();
                 singleNode.put("id", n.getId());
+                maxID = Math.max(n.getId(), maxID);
                 singleNode.put("x", xPositions.get(n.getId()) * 130);
                 singleNode.put("y", totalGraphHeight - levelNum * (totalGraphHeight / height));
                 singleNode.put("label", n.getLabel());
@@ -1001,7 +1003,7 @@ public class RepGraphModel {
 
         for (token t : graph.getTokens()) {
             HashMap<String, Object> singleToken = new HashMap<>();
-            singleToken.put("id", t.getIndex() + finalNodes.size());
+            singleToken.put("id", t.getIndex() + maxID);
             singleToken.put("x", t.getIndex() * 130);
             singleToken.put("y", totalGraphHeight + 200);
             singleToken.put("label", t.getForm());
