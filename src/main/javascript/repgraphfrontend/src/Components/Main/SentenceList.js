@@ -52,7 +52,7 @@ export default function SentenceList(props) {
 
         //state.APIendpoint+"/DisplayPlanarGraph?graphID=20001001
 
-        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=1", requestOptions)
+        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format="+state.visualisationFormat, requestOptions)
             .then((response) => response.text())
             .then((result) => {
 
