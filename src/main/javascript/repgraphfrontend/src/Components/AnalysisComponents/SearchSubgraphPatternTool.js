@@ -21,6 +21,8 @@ import Card from "@material-ui/core/Card";
 import {node} from "prop-types";
 import ListItem from "@material-ui/core/ListItem";
 import {Virtuoso} from "react-virtuoso";
+import SelectSubgraphVisualisation from "../Main/SelectSubgraphVisualisation";
+import SubgraphVisualisation from "../Main/SubgraphVisualisation";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,6 +45,7 @@ function SearchSubgraphPatternTool(props) {
     const [open, setOpen] = React.useState(false);
     const [openNodeSet, setOpenNodeSet] = React.useState(false);
     const [nodeSetResult, setNodeSetResult] = React.useState(null);
+    const [subgraphResponse, setSubgraphResponse] = React.useState(null);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -69,7 +72,7 @@ function SearchSubgraphPatternTool(props) {
             .then((result) => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult);
-                setNodeSetResult(jsonResult); //Store the results
+                setNodeSetResult(jsonResult.data); //Store the results
                 setOpenNodeSet(true); //Display the results
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
             })
@@ -97,6 +100,36 @@ function SearchSubgraphPatternTool(props) {
         } else {
             return [];
         }
+    }
+
+    function handleClickSentenceResult(sentenceId) {
+        console.log(sentenceId);
+
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}});
+
+        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=" + state.visualisationFormat, requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+
+                const jsonResult = JSON.parse(result);
+                console.log(jsonResult);
+                //console.log(jsonResult);
+                //console.log(jsonResult.response);
+                //const formattedGraph = layoutGraph(jsonResult);
+                setSubgraphResponse(jsonResult);
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+            })
+            .catch((error) => {
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                console.log("error", error);
+                history.push("/404"); //for debugging
+
+            });
     }
 
     return (
@@ -157,18 +190,18 @@ function SearchSubgraphPatternTool(props) {
                     </DialogTitle>
                     <DialogContent style={{height: "80vh"}}>
                         {nodeSetResult && <Virtuoso
-                            style={{width: "100%", height: "100%"}}
+                            style={{width: "100%", height: "30%"}}
                             totalCount={nodeSetResult.length}
                             item={(index) => {
                                 return (
                                     <ListItem
                                         button
-                                        key={state.dataSet[index].id}
+                                        key={index}
                                         onClick={() => {
-
+                                            handleClickSentenceResult(nodeSetResult[index].id);
                                         }}
                                     >
-                                        <Typography>{nodeSetResult[index]}</Typography>
+                                        <Typography>{nodeSetResult[index].input}</Typography>
                                     </ListItem>
                                 );
                             }}
@@ -178,6 +211,20 @@ function SearchSubgraphPatternTool(props) {
                                 </div>
                             )}
                         />}
+                        {subgraphResponse === null ?
+                            <Grid
+                                container
+                                direction="column"
+                                justify="center"
+                                alignItems="center">
+                                <Grid item>
+                                    <Card style={{height: "100%", width: "100%"}} variant="outlined"><CardContent><Typography>Select
+                                        a sentence from the results above.</Typography></CardContent></Card>
+                                </Grid>
+                            </Grid>
+                             :
+                            <SubgraphVisualisation subgraphGraphData={subgraphResponse}/>
+                        }
 
                     </DialogContent>
                     <DialogActions>
@@ -215,16 +262,15 @@ function SearchSubgraphPatternTool(props) {
                         <DialogTitle id="alert-dialog-title">
                             {"Select a node on the graph:"}
                         </DialogTitle>
-                        <DialogContent style={{height: "80vh"}}>
-                            <div>select subgraph vis to go here</div>
+                        <DialogContent>
+                            <SelectSubgraphVisualisation/>
                         </DialogContent>
                         <DialogActions>
                             <Chip
                                 label={`Selected Nodes and Edges: still need to get this working`}
                             />
-                            <Button onClick={() => {
-                            }} color="primary" autoFocus>
-                                Search
+                            <Button onClick={handleClose} color="primary" autoFocus>
+                                Close
                             </Button>
                         </DialogActions>
                     </Dialog>

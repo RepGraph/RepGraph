@@ -193,16 +193,20 @@ const SelectSubgraphVisualisation = () => {
             if (nodes.length === 0) {
                 for (const [i, x] of currentStandardVisualisation.edges.entries()) {
                     if (x.id === edges[0] && x.group !== "Selected") {
-                        currentStandardVisualisation.edges[i] = {
-                            ...x,
-                            color: "rgba(0, 0, 0, 1)",
-                            shadow: true,
-                            group: "Selected",
-                            background: {
-                                enabled: true,
-                                color: "#ff0000"
-                            }
-                        };
+
+                        if(x.group !== "tokenEdge"){
+                            currentStandardVisualisation.edges[i] = {
+                                ...x,
+                                color: "rgba(0, 0, 0, 1)",
+                                shadow: true,
+                                group: "Selected",
+                                background: {
+                                    enabled: true,
+                                    color: "#ff0000"
+                                }
+                            };
+                        }
+
                     } else if (x.id === edges[0] && x.group === "Selected") {
                         currentStandardVisualisation.edges[i] = {
                             ...x,

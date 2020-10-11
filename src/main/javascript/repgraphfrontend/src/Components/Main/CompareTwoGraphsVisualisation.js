@@ -142,6 +142,22 @@ const options = {
             heightConstraint: {
                 minimum: 30
             }
+        },
+        tokenEdge:{
+            color: "rgba(156, 154, 154, 1)",
+            smooth: true,
+            physics: true,
+            dashed: true,
+            arrows: {
+                to: {
+                    enabled: false
+                }
+            },
+            arrowStrikethrough: false,
+            endPointOffset: {
+                from: 20,
+                to: 0
+            }
         }
     }
 };
@@ -171,17 +187,12 @@ function highlightCompare(standardVisualisation, similarNodes, similarEdges) {
     }));
     let newEdges = currentStandardVisualisation.edges.map((edge, index) => ({
         ...edge,
-        /*group: similarEdges.includes(edge.id)
-          ? "similarEdge"
-          : edge.group,*/
-        //background: similarEdges.includes(edge.id) ? true : true,
-        color: similarEdges.includes(edge.id)
+        color: edge.group === "tokenEdge" ? "rgba(156, 154, 154, 1)" : similarEdges.includes(edge.id)
             ? "rgba(0,153,0,0.7)"
             : "rgba(245, 0, 87, 0.7)"
-        //  width: similarEdges.includes(edge.id) ? "4" : "4"
     }));
 
-    return {...currentStandardVisualisation, nodes: newNodes, edges: newEdges};
+    return { ...currentStandardVisualisation, nodes: newNodes, edges: newEdges };
 }
 
 function CompareTwoGraphsVisualisation(props) {
@@ -253,7 +264,7 @@ function CompareTwoGraphsVisualisation(props) {
             //dispatch({type: "SET_LOADING", payload: {isLoading: true}});
             //state.APIendpoint+"/DisplayPlanarGraph?graphID=20001001
 
-            fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=1", requestOptions)
+            fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format="+state.visualisationFormat, requestOptions)
                 .then((response) => response.text())
                 .then((result) => {
                     const jsonResult = JSON.parse(result);
