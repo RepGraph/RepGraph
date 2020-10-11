@@ -859,11 +859,10 @@ public class RepGraphModel {
         for (int i : graph.getNodes().keySet()) {
             Stack<Integer> stack = new Stack<>();
             HashMap<Integer, Boolean> visited = new HashMap<>();
-            for (int j = 0; j < graph.getNodes().size(); j++) {
+            for (int j : graph.getNodes().keySet()){
                 visited.put(j, false);
             }
-
-            topologicalStacks.put(graph.getNodes().get(i).getId(), graph.topologicalSort(i, visited, stack));
+            topologicalStacks.put(i, graph.topologicalSort(i, visited, stack));
         }
 
 
