@@ -67,11 +67,27 @@ public class RepGraphModel {
      * @param SubsetType The type of subset to be created
      * @return graph The graph object of the subset
      */
-    public graph DisplaySubset(String graphId, int headNodeID, String SubsetType) {
+    public HashMap<String, Object> DisplaySubset(String graphId, int headNodeID, String SubsetType, int format) {
         if (SubsetType.equals("adjacent")) {
-            return DisplaySubsetAdjacent(graphId, headNodeID);
+            if (format == 1) {
+                return VisualiseHierarchy(CreateSubsetAdjacent(graphId, headNodeID));
+            } else if (format == 2) {
+                return VisualiseTree(CreateSubsetAdjacent(graphId, headNodeID));
+            } else if (format == 3) {
+                return VisualiseFlat(CreateSubsetAdjacent(graphId, headNodeID));
+            } else {
+                return VisualisePlanar(CreateSubsetAdjacent(graphId, headNodeID));
+            }
         } else if (SubsetType.equals("descendent")) {
-            return DisplaySubsetDescendent(graphId, headNodeID);
+            if (format == 1) {
+                return VisualiseHierarchy(CreateSubsetDescendent(graphId, headNodeID));
+            } else if (format == 2) {
+                return VisualiseTree(CreateSubsetDescendent(graphId, headNodeID));
+            } else if (format == 3) {
+                return VisualiseFlat(CreateSubsetDescendent(graphId, headNodeID));
+            } else {
+                return VisualisePlanar(CreateSubsetDescendent(graphId, headNodeID));
+            }
         }
         return null;
     }
@@ -83,7 +99,7 @@ public class RepGraphModel {
      * @param headNodeID The graph's node which will be the head node of the subset.
      * @return graph The subset of the graph.
      */
-    public graph DisplaySubsetAdjacent(String graphID, int headNodeID) {
+    public graph CreateSubsetAdjacent(String graphID, int headNodeID) {
 
         graph subset = new graph();
         HashMap<Integer, node> adjacentNodes = new HashMap<Integer, node>();
@@ -130,6 +146,7 @@ public class RepGraphModel {
         subset.setInput(parent.getTokenInput(SubsetTokens));
         subset.setTops(parent.getTops());
 
+
         return subset;
     }
 
@@ -140,7 +157,7 @@ public class RepGraphModel {
      * @param headNodeID The graph's node which will be the head node of the subset.
      * @return graph The subset of the graph.
      */
-    public graph DisplaySubsetDescendent(String graphID, int headNodeID) {
+    public graph CreateSubsetDescendent(String graphID, int headNodeID) {
 
         graph subset = new graph();
 
@@ -233,7 +250,7 @@ public class RepGraphModel {
      * @param EdgeIndices int array of the edge indices of the pattern selected
      * @return ArrayList Returns an arraylist of strings containing the graph IDs where the pattern was found
      */
-    public ArrayList<String> searchSubgraphPattern(String graphID, int[] NodeId, int[] EdgeIndices) {
+    public HashMap<String, Object> searchSubgraphPattern(String graphID, int[] NodeId, int[] EdgeIndices) {
         graph parent = graphs.get(graphID);
         HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
         ArrayList<edge> subedges = new ArrayList<>();
@@ -275,24 +292,21 @@ public class RepGraphModel {
      *
      * @return String A string of graph IDs who have matching subgraphs.
      */
-    public ArrayList<String> searchSubgraphPattern(graph subgraph) {
+    public HashMap<String, Object> searchSubgraphPattern(graph subgraph) {
+        HashMap<String, Object> returninfo = new HashMap<>();
 
         //subgraph pattern must be connected
 
         //Empty Arraylist for the graph ids that have the subgraph pattern specified.
-        ArrayList<String> FoundGraphs = new ArrayList<String>();
-        //If no nodes there is no pattern, if there are no edges it is not connected, and if there are less edges than number of nodes -1 then it is not connected
-        if (subgraph.getNodes().size() == 0 || subgraph.getEdges().size() == 0 || subgraph.getEdges().size() < subgraph.getNodes().size() - 1) {
-            return FoundGraphs;
+        ArrayList<HashMap<String, String>> FoundGraphs = new ArrayList<>();
+        //If no nodes there is no pattern, if there are no edges it is not connected,
+        // and if there are less edges than number of nodes -1 then it is not connected,
+        // if it has a dangling edge it isnt connected
+        if (subgraph.getNodes().size() == 0 || subgraph.getEdges().size() == 0 || subgraph.getEdges().size() < subgraph.getNodes().size() - 1 || subgraph.hasDanglingEdge() || !subgraph.connectedBFS(subgraph.getNodes().values().iterator().next().getId())) {
+            returninfo.put("Response", "Subgraph Pattern was not entered correctly");
+            return returninfo;
         }
 
-        if (subgraph.hasDanglingEdge()) {
-            return FoundGraphs;
-        }
-        //checks more advanced situations of graph not being connected
-        if (!subgraph.connectedBFS(subgraph.getNodes().values().iterator().next().getId())) {
-            return FoundGraphs;
-        }
 
         // Hashmap with a string key and boolean value - this is used to confirm that each unique edge in the subgraph has been found in the graph being checked.
         //This is necessary because there can be multiple of the same two node links so a counter or an array cant be used.
@@ -303,7 +317,9 @@ public class RepGraphModel {
         try {
             subgraph.setNodeNeighbours();
         } catch (IndexOutOfBoundsException e) {
-            return FoundGraphs;
+            returninfo.put("Response", "An Error has occurred");
+            return returninfo;
+
         }
 
 
@@ -347,7 +363,10 @@ public class RepGraphModel {
             }
             //This checks to see if all values in the boolean array are true and if so adds the current graph to the list of found graphs.
             if (areAllTrue(checksarr)) {
-                FoundGraphs.add(g.getId());
+                HashMap<String, String> found = new HashMap<String, String>();
+                found.put("id", g.getId());
+                found.put("input", g.getInput());
+                FoundGraphs.add(found);
             }
             checks.clear();
             for (int i = 0; i < checksarr.length; i++) {
@@ -355,8 +374,8 @@ public class RepGraphModel {
             }
         }
 
-
-        return FoundGraphs;
+        returninfo.put("data", FoundGraphs);
+        return returninfo;
     }
 
 
@@ -365,12 +384,14 @@ public class RepGraphModel {
      *
      * @return ArrayList<String> An arraylist of strings that contain the graph IDs who have matching node labels.
      */
-    public ArrayList<String> searchSubgraphNodeSet(ArrayList<String> labels) {
+    public HashMap<String, Object> searchSubgraphNodeSet(ArrayList<String> labels) {
+        HashMap<String, Object> returninfo = new HashMap<>();
 
 
-        ArrayList<String> FoundGraphs = new ArrayList<String>();
+        ArrayList<HashMap<String, String>> FoundGraphs = new ArrayList<>();
         if (labels.size() == 0) {
-            return FoundGraphs;
+            returninfo.put("Response", "Subgraph Pattern was not entered correctly");
+            return returninfo;
         }
 
 
@@ -395,8 +416,10 @@ public class RepGraphModel {
 
             //checks if all node labels have been found
             if (areAllTrue(checks)) {
-
-                FoundGraphs.add(g.getId());
+                HashMap<String, String> found = new HashMap<String, String>();
+                found.put("id", g.getId());
+                found.put("input", g.getInput());
+                FoundGraphs.add(found);
 
             }
             for (int i = 0; i < checks.length; i++) {
@@ -404,7 +427,8 @@ public class RepGraphModel {
             }
         }
 
-        return FoundGraphs;
+        returninfo.put("data", FoundGraphs);
+        return returninfo;
     }
 
     /**
@@ -513,10 +537,18 @@ public class RepGraphModel {
             returnObj.put("Planar", graphs.get(graphID).GraphIsPlanar());
         }
         if (longestPathDirected) {
-            returnObj.put("LongestPathDirected", graphs.get(graphID).findLongest(true));
+            if (graphs.get(graphID).isCyclic(true)) {
+                returnObj.put("LongestPathDirected", "Cycle Detected");
+            } else {
+                returnObj.put("LongestPathDirected", graphs.get(graphID).findLongest(true));
+            }
         }
         if (longestPathUndirected) {
-            returnObj.put("LongestPathUndirected", graphs.get(graphID).findLongest(false));
+            if (graphs.get(graphID).isCyclic(false)) {
+                returnObj.put("LongestPathUndirected", "Cycle Detected");
+            } else {
+                returnObj.put("LongestPathUndirected", graphs.get(graphID).findLongest(false));
+            }
         }
         if (connected) {
             returnObj.put("Connected", graphs.get(graphID).connectedBFS(graphs.get(graphID).getNodes().values().iterator().next().getId()));
@@ -524,10 +556,24 @@ public class RepGraphModel {
         return returnObj;
     }
 
-    public HashMap<String, Object> VisualisePlanar(String graphID) {
+    public HashMap<String, Object> Visualise(String graphID, int format) {
+        graph graph = graphs.get(graphID);
+        if (format == 1) {
+            return VisualiseHierarchy(graph);
+        } else if (format == 2) {
+            return VisualiseTree(graph);
+        } else if (format == 3) {
+            return VisualiseFlat(graph);
+        } else if (format == 4) {
+            return VisualisePlanar(graph);
+        }
+        return null;
+    }
+
+    public HashMap<String, Object> VisualisePlanar(graph graph) {
 
 
-        graph graph = graphs.get(graphID).PlanarGraph();
+        graph = graph.PlanarGraph();
 
         ArrayList<edge> crossingEdges = new ArrayList<>();
 
@@ -641,9 +687,9 @@ public class RepGraphModel {
 
     }
 
-    public HashMap<String, Object> VisualiseFlat(String graphID) {
+    public HashMap<String, Object> VisualiseFlat(graph graph) {
 
-        graph graph = graphs.get(graphID);
+
 
         int height = 1;
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
@@ -742,7 +788,7 @@ public class RepGraphModel {
         finalGraphEdges.add(singleEdge);
 
         HashMap<String, Object> Visualised = new HashMap<>();
-        Visualised.put("id", graphID);
+        Visualised.put("id", graph.getId());
         Visualised.put("nodes", finalNodes);
         Visualised.put("edges", finalGraphEdges);
 
@@ -750,9 +796,10 @@ public class RepGraphModel {
 
     }
 
-    public HashMap<String, Object> VisualiseTree(String graphID) {
 
-        graph graph = graphs.get(graphID);
+    public HashMap<String, Object> VisualiseTree(graph graph) {
+
+
 
         graph.setNodeNeighbours();
         HashMap<Integer, Stack<Integer>> topologicalStacks = new HashMap<>();
@@ -1040,15 +1087,16 @@ public class RepGraphModel {
             finalNodes.add(token);
         }
         HashMap<String, Object> Visualised = new HashMap<>();
-        Visualised.put("id", graphID);
+        Visualised.put("id", graph.getId());
         Visualised.put("nodes", finalNodes);
         Visualised.put("edges", finalGraphEdges);
 
         return Visualised;
     }
 
-    public HashMap<String, Object> VisualiseHierarchy(String graphID) {
-        graph graph = graphs.get(graphID);
+
+    public HashMap<String, Object> VisualiseHierarchy(graph graph) {
+
 
         //Determine span lengths of each node
         int[] graphNodeSpanLengths = new int[graph.getNodes().size()];
