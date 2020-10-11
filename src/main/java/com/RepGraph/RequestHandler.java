@@ -129,7 +129,6 @@ public class RequestHandler {
     @ResponseBody
     public HashMap<String, Object> Visualise(@RequestParam String graphID, @RequestParam int format) {
         return RepModel.Visualise(graphID, format);
-
     }
 
     /**
@@ -142,7 +141,7 @@ public class RequestHandler {
      */
     @GetMapping("/DisplaySubset")
     @ResponseBody
-    public HashMap<String, Object> DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType, int format) {
+    public HashMap<String, Object> DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType, @RequestParam int format) {
         return RepModel.DisplaySubset(graphID, NodeID, SubsetType, format);
     }
 
@@ -158,7 +157,7 @@ public class RequestHandler {
      */
     @GetMapping("/SearchSubgraphNodeSet")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
+    public HashMap<String, Object> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
 
         return RepModel.searchSubgraphNodeSet(labels);
 
@@ -174,7 +173,7 @@ public class RequestHandler {
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam int[] NodeId, @RequestParam int[] EdgeIndices) {
+    public HashMap<String, Object> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam int[] NodeId, @RequestParam int[] EdgeIndices) {
         return RepModel.searchSubgraphPattern(graphID, NodeId, EdgeIndices);
     }
 
