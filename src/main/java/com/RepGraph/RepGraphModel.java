@@ -323,7 +323,7 @@ public class RepGraphModel {
         // and if there are less edges than number of nodes -1 then it is not connected,
         // if it has a dangling edge it isnt connected
         if (subgraph.getNodes().size() == 0 || subgraph.getEdges().size() == 0 || subgraph.getEdges().size() < subgraph.getNodes().size() - 1 || subgraph.hasDanglingEdge() || !subgraph.connectedBFS(subgraph.getNodes().values().iterator().next().getId())) {
-            returninfo.put("Response", "Subgraph Pattern was not entered correctly");
+            returninfo.put("response", "Subgraph Pattern was not entered correctly");
             return returninfo;
         }
 
@@ -337,7 +337,7 @@ public class RepGraphModel {
         try {
             subgraph.setNodeNeighbours();
         } catch (IndexOutOfBoundsException e) {
-            returninfo.put("Response", "An Error has occurred");
+            returninfo.put("response", "An Error has occurred");
             return returninfo;
 
         }
@@ -411,7 +411,7 @@ public class RepGraphModel {
 
         ArrayList<HashMap<String, String>> FoundGraphs = new ArrayList<>();
         if (labels.size() == 0) {
-            returninfo.put("Response", "Subgraph Pattern was not entered correctly");
+            returninfo.put("response", "Subgraph Pattern was not entered correctly");
             return returninfo;
         }
 
