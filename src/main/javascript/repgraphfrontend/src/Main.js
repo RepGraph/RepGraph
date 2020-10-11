@@ -42,6 +42,23 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import BuildIcon from '@material-ui/icons/Build';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+
+import {Chip} from "@material-ui/core";
+import Tooltip from "@material-ui/core/Tooltip";
+import {Link, useHistory} from "react-router-dom";
+import Box from "@material-ui/core/Box";
+import CardHeader from "@material-ui/core/CardHeader";
+import VisualizerArea from "./Components/Main/VisualizerArea";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+import ToggleButton from "@material-ui/lab/ToggleButton";
 
 const drawerWidth = 240;
 
@@ -113,8 +130,10 @@ export default function Main() {
     const {state, dispatch} = useContext(AppContext);
     const classes = useStyles();
     const theme = useTheme();
+    const history = useHistory();
     const [open, setOpen] = React.useState(false);
     const [sentenceOpen, setSentenceOpen] = React.useState(false);
+    const [visFormat, setVisFormat] = React.useState("1");
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -127,6 +146,38 @@ export default function Main() {
     const handleSentenceClose = () => {
         setSentenceOpen(false);
     };
+
+    const handleChangeVisualisationFormat = (format) => {
+        setVisFormat(format);
+        dispatch({type: "SET_VISUALISATION_FORMAT", payload: {visualisationFormat: format}});
+        console.log(format);
+        //Update the currently displayed graph as well!
+
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        dispatch({type: "SET_VISUALISATION_FORMAT", payload: {isLoading: true}});
+
+        fetch(state.APIendpoint + "/Visualise?graphID=" + state.selectedSentenceID + "&format="+format, requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+
+                const jsonResult = JSON.parse(result);
+                console.log(jsonResult);
+                //console.log(jsonResult);
+                //console.log(jsonResult.response);
+                //const formattedGraph = layoutGraph(jsonResult);
+                dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: jsonResult}});
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+            })
+            .catch((error) => {
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                console.log("error", error);
+                history.push("/404"); //for debugging
+            });
+    }
 
 
     return (
@@ -151,10 +202,58 @@ export default function Main() {
                     >
                         <MenuIcon/>
                     </IconButton>
-                    <Typography variant="h6" noWrap>
+                    <Typography variant="h6">
                         RepGraph
                     </Typography>
+                    <Grid container justify="flex-end" spacing={2}>
+                        <Grid item color="inherit">
+                            <Tooltip arrow
+                                     title={"Select visualisation format"}>
+                            <Paper>
+                                <ToggleButtonGroup
+                                    value={visFormat}
+                                    exclusive
+                                    onChange={(event, value)=>{handleChangeVisualisationFormat(value)}}
+                                    aria-label="Visualisation formats"
+                                    color="inherit"
+                                >
+                                    <ToggleButton color="primary" value="1" aria-label="Hierarchical">
+                                        <Typography color="primary">Hierarchical</Typography>
+                                    </ToggleButton>
+                                    <ToggleButton color="primary" value="2" aria-label="Tree-like">
+                                        <Typography color="primary">Tree-like</Typography>
+                                    </ToggleButton>
+                                    <ToggleButton color="primary" value="3" aria-label="Flat">
+                                        <Typography color="primary">Flat</Typography>
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </Paper>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item>
+                            <Tooltip arrow
+                                     title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
+                                <Chip onClick={() => {
+                                    handleDrawerOpen();
+                                }} color="inherit"
+                                      label={state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID}
+                                      icon={state.selectedSentenceID === null ? <AddCircleOutlineIcon/> :
+                                          <BuildIcon/>}/>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item>
+                            <Tooltip arrow title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
+                                <Chip onClick={() => {
+                                    history.push("/");
+                                }} color="inherit"
+                                      label={state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName}
+                                      icon={state.dataSet === null ? <CloudUploadIcon/> : <BuildIcon/>}/>
+                            </Tooltip>
+                        </Grid>
+                    </Grid>
+
                 </Toolbar>
+
             </AppBar>
             <Drawer
                 variant="permanent"
@@ -182,7 +281,7 @@ export default function Main() {
                 <List>
                     <ListItem button onClick={() => setSentenceOpen(true)}>
                         <ListItemIcon>
-                            <MenuOpenIcon/>
+                            {state.selectedSentenceID === null ? <AddCircleOutlineIcon/> : <BuildIcon/>}
                         </ListItemIcon>
                         <ListItemText primary="Select Sentence"/>
                     </ListItem>
@@ -192,7 +291,6 @@ export default function Main() {
             <main className={classes.content}>
                 <div className={classes.toolbar}/>
                 <React.Fragment>
-
                     <Dialog
                         fullWidth
                         maxWidth="md"
@@ -204,7 +302,7 @@ export default function Main() {
                             Select a sentence
                         </DialogTitle>
                         <DialogContent>
-                            <SentenceList/>
+                            <SentenceList closeSelectSentence={handleSentenceClose}/>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleSentenceClose}>
@@ -213,24 +311,22 @@ export default function Main() {
                         </DialogActions>
                     </Dialog>
                     <Grid container spacing={2} direction="column">
-                        <Grid item xs={12}>
+                        <Grid item>
                             <Card>
                                 <CardContent>
-                                    <Typography variant="h6">Visualisation Area</Typography>
-                                </CardContent>
-                                <CardActions>
+                                    <Typography variant="h5">Visualisation Area</Typography>
                                     <VisualisationControls/>
-                                </CardActions>
-                                <CardContent>
-                                    {state.selectedSentence === null ? (
-                                        <div>Select a sentence</div>
+                                </CardContent>
+                                <CardContent style={{height: "80vh", width: "100%"}}>
+                                    {state.selectedSentenceID === null ? (
+                                        <Typography variant="subtitle1">Please select a sentence</Typography>
                                     ) : (
-                                        <GraphVisualisation/>
+                                               <GraphVisualisation/>
                                     )}
                                 </CardContent>
                             </Card>
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item>
                             <Card>
                                 <CardContent>
                                     <Typography variant="h6">Analysis Features</Typography>
