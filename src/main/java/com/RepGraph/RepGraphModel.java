@@ -1438,7 +1438,7 @@ public class RepGraphModel {
 
 
             HashMap<String, Object> Visualised = new HashMap<>();
-            Visualised.put("id", graphID);
+        Visualised.put("id", graph.getId());
             Visualised.put("nodes", finalGraphNodes);
             Visualised.put("edges", finalGraphEdges);
 
