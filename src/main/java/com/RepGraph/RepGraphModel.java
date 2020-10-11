@@ -1003,7 +1003,7 @@ public class RepGraphModel {
 
         for (token t : graph.getTokens()) {
             HashMap<String, Object> singleToken = new HashMap<>();
-            singleToken.put("id", t.getIndex() + maxID);
+            singleToken.put("id", t.getIndex() + maxID+1);
             singleToken.put("x", t.getIndex() * 130);
             singleToken.put("y", totalGraphHeight + 200);
             singleToken.put("label", t.getForm());
