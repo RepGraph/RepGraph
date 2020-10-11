@@ -1178,12 +1178,7 @@ public class RepGraphModel {
         ArrayList<ArrayList<node>> nodesInLevels = new ArrayList<>();
         for (int level : uniqueSpanLengths) {
             ArrayList<node> currentLevel = new ArrayList<>();
-
-            for (
-                    int spanIndex = 0;
-                    spanIndex < graphNodeSpanLengths.size();
-                    spanIndex++
-            ) {
+            for (int spanIndex :graphNodeSpanLengths.keySet()) {
                 if (graphNodeSpanLengths.get(spanIndex) == level) {
                     currentLevel.add(graph.getNodes().get(spanIndex));
                 }
