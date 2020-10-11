@@ -67,11 +67,27 @@ public class RepGraphModel {
      * @param SubsetType The type of subset to be created
      * @return graph The graph object of the subset
      */
-    public graph DisplaySubset(String graphId, int headNodeID, String SubsetType) {
+    public HashMap<String, Object> DisplaySubset(String graphId, int headNodeID, String SubsetType, int format) {
         if (SubsetType.equals("adjacent")) {
-            return DisplaySubsetAdjacent(graphId, headNodeID);
+            if (format == 1) {
+                return VisualiseHierarchy(CreateSubsetAdjacent(graphId, headNodeID));
+            } else if (format == 2) {
+                return VisualiseTree(CreateSubsetAdjacent(graphId, headNodeID));
+            } else if (format == 3) {
+                return VisualiseFlat(CreateSubsetAdjacent(graphId, headNodeID));
+            } else {
+                return VisualisePlanar(CreateSubsetAdjacent(graphId, headNodeID));
+            }
         } else if (SubsetType.equals("descendent")) {
-            return DisplaySubsetDescendent(graphId, headNodeID);
+            if (format == 1) {
+                return VisualiseHierarchy(CreateSubsetDescendent(graphId, headNodeID));
+            } else if (format == 2) {
+                return VisualiseTree(CreateSubsetDescendent(graphId, headNodeID));
+            } else if (format == 3) {
+                return VisualiseFlat(CreateSubsetDescendent(graphId, headNodeID));
+            } else {
+                return VisualisePlanar(CreateSubsetDescendent(graphId, headNodeID));
+            }
         }
         return null;
     }
@@ -83,7 +99,7 @@ public class RepGraphModel {
      * @param headNodeID The graph's node which will be the head node of the subset.
      * @return graph The subset of the graph.
      */
-    public graph DisplaySubsetAdjacent(String graphID, int headNodeID) {
+    public graph CreateSubsetAdjacent(String graphID, int headNodeID) {
 
         graph subset = new graph();
         HashMap<Integer, node> adjacentNodes = new HashMap<Integer, node>();
@@ -141,7 +157,7 @@ public class RepGraphModel {
      * @param headNodeID The graph's node which will be the head node of the subset.
      * @return graph The subset of the graph.
      */
-    public graph DisplaySubsetDescendent(String graphID, int headNodeID) {
+    public graph CreateSubsetDescendent(String graphID, int headNodeID) {
 
         graph subset = new graph();
 
@@ -525,10 +541,24 @@ public class RepGraphModel {
         return returnObj;
     }
 
-    public HashMap<String, Object> VisualisePlanar(String graphID) {
+    public HashMap<String, Object> Visualise(String graphID, int format) {
+        graph graph = graphs.get(graphID);
+        if (format == 1) {
+            return VisualiseHierarchy(graph);
+        } else if (format == 2) {
+            return VisualiseTree(graph);
+        } else if (format == 3) {
+            return VisualiseFlat(graph);
+        } else if (format == 4) {
+            return VisualisePlanar(graph);
+        }
+        return null;
+    }
+
+    public HashMap<String, Object> VisualisePlanar(graph graph) {
 
 
-        graph graph = graphs.get(graphID).PlanarGraph();
+        graph = graph.PlanarGraph();
 
         ArrayList<edge> crossingEdges = new ArrayList<>();
 
@@ -642,9 +672,9 @@ public class RepGraphModel {
 
     }
 
-    public HashMap<String, Object> VisualiseFlat(String graphID) {
+    public HashMap<String, Object> VisualiseFlat(graph graph) {
 
-        graph graph = graphs.get(graphID);
+
 
         int height = 1;
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
@@ -743,7 +773,7 @@ public class RepGraphModel {
         finalGraphEdges.add(singleEdge);
 
         HashMap<String, Object> Visualised = new HashMap<>();
-        Visualised.put("id", graphID);
+        Visualised.put("id", graph.getId());
         Visualised.put("nodes", finalNodes);
         Visualised.put("edges", finalGraphEdges);
 
@@ -752,9 +782,9 @@ public class RepGraphModel {
     }
 
 
-    public HashMap<String, Object> VisualiseTree(String graphID) {
+    public HashMap<String, Object> VisualiseTree(graph graph) {
 
-        graph graph = graphs.get(graphID);
+
 
         graph.setNodeNeighbours();
         HashMap<Integer, Stack<Integer>> topologicalStacks = new HashMap<>();
@@ -1042,7 +1072,7 @@ public class RepGraphModel {
             finalNodes.add(token);
         }
         HashMap<String, Object> Visualised = new HashMap<>();
-        Visualised.put("id", graphID);
+        Visualised.put("id", graph.getId());
         Visualised.put("nodes", finalNodes);
         Visualised.put("edges", finalGraphEdges);
 
@@ -1050,8 +1080,8 @@ public class RepGraphModel {
     }
 
 
-    public HashMap<String, Object> VisualiseHierarchy(String graphID) {
-        graph graph = graphs.get(graphID);
+    public HashMap<String, Object> VisualiseHierarchy(graph graph) {
+
 
         //Determine span lengths of each node
         int[] graphNodeSpanLengths = new int[graph.getNodes().size()];
@@ -1273,7 +1303,7 @@ public class RepGraphModel {
 
 
         HashMap<String, Object> Visualised = new HashMap<>();
-        Visualised.put("id", graphID);
+        Visualised.put("id", graph.getId());
         Visualised.put("nodes", finalGraphNodes);
         Visualised.put("edges", finalGraphEdges);
 

@@ -128,13 +128,7 @@ public class RequestHandler {
     @GetMapping("/Visualise")
     @ResponseBody
     public HashMap<String, Object> Visualise(@RequestParam String graphID, @RequestParam int format) {
-        if (format == 1) {
-            return RepModel.VisualiseHierarchy(graphID);
-        } else if (format == 2) {
-            return RepModel.VisualiseTree(graphID);
-        } else {
-            return RepModel.VisualiseFlat(graphID);
-        }
+        return RepModel.Visualise(graphID, format);
 
     }
 
@@ -148,20 +142,10 @@ public class RequestHandler {
      */
     @GetMapping("/DisplaySubset")
     @ResponseBody
-    public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType) {
-        return RepModel.DisplaySubset(graphID, NodeID, SubsetType);
+    public HashMap<String, Object> DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType, int format) {
+        return RepModel.DisplaySubset(graphID, NodeID, SubsetType, format);
     }
 
-    /**
-     * This method Displays a visualisation of a graph in its potentially planar form.
-     * @param graphID This is the graph ID of the graph requested
-     * @return HashMap<String, Object> This is a hashmap with nodes and edges in a format readable by graphing libraries
-     */
-    @GetMapping("/DisplayPlanarGraph")
-    @ResponseBody
-    public HashMap<String, Object> DisplayPlanarGraph(@RequestParam String graphID) {
-        return RepModel.VisualisePlanar(graphID);
-    }
 
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
@@ -237,6 +221,25 @@ public class RequestHandler {
     @ResponseBody
     public graph GetGraph(@RequestParam String graphID) {
         return RepModel.getGraph(graphID);
+    }
+
+    /**
+     * This method gets only the graph data of a subset.
+     *
+     * @param graphID    This is the graph ID of the graph where the subset is created from
+     * @param headNodeID This is the node ID of the starting point of subset creation.
+     * @param SubsetType This is the type of subset being created. "adjacent" or "descendent"
+     * @return graph Returns a graph object of the subset
+     */
+    @GetMapping("/GetSubset")
+    @ResponseBody
+    public graph GetSubset(@RequestParam String graphID, @RequestParam int headNodeID, @RequestParam String SubsetType) {
+        if (SubsetType.equals("adjacent")) {
+            return RepModel.CreateSubsetAdjacent(graphID, headNodeID);
+        } else if (SubsetType.equals("descendent")) {
+            return RepModel.CreateSubsetDescendent(graphID, headNodeID);
+        }
+        return null;
     }
 
     /**
