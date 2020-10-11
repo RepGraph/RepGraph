@@ -11,12 +11,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class edge {
 
     /**
-     * Number of the node that is the source of the edge.
+     * ID of the node that is the source of the edge.
      */
     private int source;
 
     /**
-     * Number of the node that is the target of the edge.
+     * ID of the node that is the target of the edge.
      */
     private int target;
 
@@ -36,6 +36,11 @@ public class edge {
      */
     public edge(){}
 
+    /**
+     * The Parameterised copy constructor of the edge class
+     *
+     * @param e This is the edge object that is copied.
+     */
     public edge(edge e) {
         this.target = e.target;
         this.source = e.source;
