@@ -394,6 +394,7 @@ public class RepGraphModel {
             }
         }
 
+        returninfo.put("response", "Success");
         returninfo.put("data", FoundGraphs);
         return returninfo;
     }
@@ -448,6 +449,7 @@ public class RepGraphModel {
             }
         }
 
+        returninfo.put("response", "Success");
         returninfo.put("data", FoundGraphs);
         return returninfo;
     }
@@ -816,25 +818,27 @@ public class RepGraphModel {
         HashMap<String, Object> singleEdge = new HashMap<>();
         String edgeType = "dynamic";
 
-        singleEdge.put("id", graph.getEdges().size());
-        singleEdge.put("from", graph.getNodes().size());
-        singleEdge.put("to", graph.getTops().get(0));
-        singleEdge.put("group", "normal");
-        singleEdge.put("shadow", false);
-        HashMap<String, Object> back = new HashMap<>();
-        back.put("enabled", false);
-        singleEdge.put("background", back);
+        if (graph.getNodes().containsKey(graph.getTops().get(0))) {
+            singleEdge.put("id", graph.getEdges().size());
+            singleEdge.put("from", graph.getNodes().size());
+            singleEdge.put("to", graph.getTops().get(0));
+            singleEdge.put("group", "tokenEdge");
+            singleEdge.put("shadow", false);
+            HashMap<String, Object> back = new HashMap<>();
+            back.put("enabled", false);
+            singleEdge.put("background", back);
 
-        HashMap<String, Object> smooth = new HashMap<>();
-        smooth.put("type", edgeType);
-        smooth.put("roundness", 0.4);
+            HashMap<String, Object> smooth = new HashMap<>();
+            smooth.put("type", edgeType);
+            smooth.put("roundness", 0.4);
 
-        HashMap<String, Object> end = new HashMap<>();
-        end.put("from", 20);
-        end.put("to", 0);
-        singleEdge.put("smooth", smooth);
-        singleEdge.put("endPointOffset", end);
-        finalGraphEdges.add(singleEdge);
+            HashMap<String, Object> end = new HashMap<>();
+            end.put("from", 20);
+            end.put("to", 0);
+            singleEdge.put("smooth", smooth);
+            singleEdge.put("endPointOffset", end);
+            finalGraphEdges.add(singleEdge);
+        }
 
         HashMap<String, Object> Visualised = new HashMap<>();
         Visualised.put("id", graph.getId());
@@ -859,11 +863,10 @@ public class RepGraphModel {
         for (int i : graph.getNodes().keySet()) {
             Stack<Integer> stack = new Stack<>();
             HashMap<Integer, Boolean> visited = new HashMap<>();
-            for (int j = 0; j < graph.getNodes().size(); j++) {
+            for (int j : graph.getNodes().keySet()){
                 visited.put(j, false);
             }
-
-            topologicalStacks.put(graph.getNodes().get(i).getId(), graph.topologicalSort(i, visited, stack));
+            topologicalStacks.put(i, graph.topologicalSort(i, visited, stack));
         }
 
 
