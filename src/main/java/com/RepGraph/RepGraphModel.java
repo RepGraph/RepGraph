@@ -11,7 +11,7 @@ import java.util.*;
 public class RepGraphModel {
 
     /**
-     * A hashmap of the model's graphs that maps graph IDs to their graph class.
+     * A hashmap of the model's graphs that maps graph IDs to their graph objects.
      */
     private HashMap<String, graph> graphs;
 
@@ -35,7 +35,7 @@ public class RepGraphModel {
     /**
      * Adds graph to hashmap.
      *
-     * @param value Graph object
+     * @param value This is the graph object that is added to the graphs hashmap
      */
     public void addGraph(graph value) {
         graphs.put(value.getId(), value);
@@ -60,12 +60,14 @@ public class RepGraphModel {
     }
 
     /**
-     * Display Subset overloaded method to decide which type of subset to consctruct and return
+     * Display Subset overloaded method to decide which type of subset to construct
+     * and what type of visualisation the subset should be displayed in
      *
      * @param graphId    The ID of the graph where the subset is being constructed
      * @param headNodeID The node ID of the starting node of subset creation
      * @param SubsetType The type of subset to be created
-     * @return graph The graph object of the subset
+     * @param format The format of the visualisation i.e 1 - hierarchical format, 2- tree like format, 3 - flat visualisation, 4 - planar visualisation
+     * @return HashMap<String, Object> The Visualisation Data of the subset
      */
     public HashMap<String, Object> DisplaySubset(String graphId, int headNodeID, String SubsetType, int format) {
         if (SubsetType.equals("adjacent")) {
@@ -210,6 +212,15 @@ public class RepGraphModel {
         return subset;
     }
 
+    /**
+     * Iteratively goes down from a root node and finds all descendents and edges from that nodes and puts them in a hashmap
+     *
+     * @param root             This is the root node where the algorithm starts looking for all descendants from.
+     * @param descendants      This is the HashMap input that is populated with descendant nodes
+     *                         i.e the data is returned in the object inputted as the parameter
+     * @param descendantsEdges This is the HashMap input that is populated with descendant edges
+     *                         i.e the data is returned in the object inputted as the parameter
+     */
     public void DiscoverNodesAndEdges(node root, HashMap<Integer, node> descendants, HashMap<String, edge> descendantsEdges) {
 
         if (root == null)
@@ -248,7 +259,9 @@ public class RepGraphModel {
      * @param graphID     ID of graph that contains the selected pattern
      * @param NodeId      Int array of node IDs of the pattern selected
      * @param EdgeIndices int array of the edge indices of the pattern selected
-     * @return ArrayList Returns an arraylist of strings containing the graph IDs where the pattern was found
+     * @return HashMap<String, Object> Returns a hashmap of information
+     * i.e the "data" key contains a list of hashmaps that contain the graph ID's and Inputs of graphs that contain the subgraph pattern.
+     * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphPattern(String graphID, int[] NodeId, int[] EdgeIndices) {
         graph parent = graphs.get(graphID);
@@ -290,7 +303,11 @@ public class RepGraphModel {
      * This method searches through the graph objects in the hashmap to find graphs that contain a
      * subgraph pattern.
      *
-     * @return String A string of graph IDs who have matching subgraphs.
+     * @param subgraph This is the subgraph pattern graph object that is searched for. It needs to be a connected graph.
+     *
+     * @return HashMap<String, Object> Returns a hashmap of information
+     *      * i.e the "data" key contains a list of hashmaps that contain the graph ID's and Inputs of graphs that contain the subgraph pattern.
+     *      * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphPattern(graph subgraph) {
         HashMap<String, Object> returninfo = new HashMap<>();
@@ -380,9 +397,11 @@ public class RepGraphModel {
 
 
     /**
-     * Uses a graph ID and a set of Node IDS which will be used to search for which graphs have the requested node labels present .
-     *
-     * @return ArrayList<String> An arraylist of strings that contain the graph IDs who have matching node labels.
+     * Searches through all the graphs to find graphs that contain all the node labels provided.
+     * @param labels This is the list of node labels to search for.
+     * @return HashMap<String, Object> Returns a hashmap of information
+     *      * i.e the "data" key contains a list of hashmaps that contain the graph ID's and Inputs of graphs that have the set of node labels.
+     *      * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphNodeSet(ArrayList<String> labels) {
         HashMap<String, Object> returninfo = new HashMap<>();
@@ -450,7 +469,11 @@ public class RepGraphModel {
      *
      * @param graphID1 Graph ID of the first graph.
      * @param graphID2 Graph ID of the second graph.
-     * @return String The differences and similarities of the two graphs.
+     * @return HashMap<String, Object> The differences and similarities of the two graphs i.e
+     * the "SimilarNodes1" key gives the node ids of the similar nodes in graph1.
+     * the "SimilarNodes2" key gives the node ids of the similar nodes in graph2.
+     * the "SimilarEdges1" key gives the node ids of the similar edges in graph1.
+     * the "SimilarEdge2" key gives the node ids of the similar edges in graph2.
      */
     public HashMap<String, Object> compareTwoGraphs(String graphID1, String graphID2) {
 
@@ -529,7 +552,11 @@ public class RepGraphModel {
      * @param longestPathDirected   Boolean to decide if to find the longest directed path.
      * @param longestPathUndirected Boolean to decide if to find the longest undirected path.
      * @param connected             Boolean to decide if to test for if the graph is connected.
-     * @return String Results of the tests.
+     * @return HashMap<String, Object> Results of the tests i.e
+     * the "Planar" key returns a boolean of whether or not the graph is planar
+     * the "LongestPathDirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest directed paths in the graphs
+     * the "LongestPathUndirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest undirected paths in the graphs
+     * the "Connected" returns a boolean of whether or not the graph is connected.
      */
     public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestPathDirected, boolean longestPathUndirected, boolean connected) {
         HashMap<String, Object> returnObj = new HashMap<>();
@@ -556,6 +583,17 @@ public class RepGraphModel {
         return returnObj;
     }
 
+    /**
+     * This method returns visualisation information so that it can be visualised on the front-end
+     * @param graphID This is the graphID of the graph to be visualised
+     * @param format this is the format of the visualisation i.e
+     *               format 1 - hierarchical,
+     *               format 2 - tree like,
+     *               format 3 - flat,
+     *               format 4 - planar.
+     * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
+     *
+     */
     public HashMap<String, Object> Visualise(String graphID, int format) {
         graph graph = graphs.get(graphID);
         if (format == 1) {
@@ -570,6 +608,11 @@ public class RepGraphModel {
         return null;
     }
 
+    /**
+     * The visualisation method for visualising a planar graph.
+     * @param graph the graph object to be visualised in a planar format
+     * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
+     */
     public HashMap<String, Object> VisualisePlanar(graph graph) {
 
 
@@ -687,8 +730,12 @@ public class RepGraphModel {
 
     }
 
+    /**
+     * The visualisation method for visualising a Flat graph.
+     * @param graph the graph object to be visualised in a Flat format
+     * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
+     */
     public HashMap<String, Object> VisualiseFlat(graph graph) {
-
 
 
         int height = 1;
@@ -797,8 +844,12 @@ public class RepGraphModel {
     }
 
 
+    /**
+     * The visualisation method for visualising a Tree like graph.
+     * @param graph the graph object to be visualised in a Tree like format
+     * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
+     */
     public HashMap<String, Object> VisualiseTree(graph graph) {
-
 
 
         graph.setNodeNeighbours();
@@ -1095,6 +1146,11 @@ public class RepGraphModel {
     }
 
 
+    /**
+     * The visualisation method for visualising a Hierarchical graph.
+     * @param graph the graph object to be visualised in a Hierarchical format
+     * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
+     */
     public HashMap<String, Object> VisualiseHierarchy(graph graph) {
 
 
