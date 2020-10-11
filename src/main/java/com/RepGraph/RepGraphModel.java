@@ -115,7 +115,7 @@ public class RepGraphModel {
 
         node n = graphs.get(graphID).getNodes().get(headNodeID);
 
-        adjacentNodes.put(n.getId(), n);
+        adjacentNodes.put(n.getId(), new node(n));
         int minFrom = n.getAnchors().get(0).getFrom();
         int maxEnd = n.getAnchors().get(0).getEnd();
         ArrayList<node> nodeNeighbours = new ArrayList<>(n.getDirectedNeighbours());
@@ -124,7 +124,7 @@ public class RepGraphModel {
         nodeNeighbours.addAll(n.getUndirectedNeighbours());
         edgeNeighbours.addAll(n.getUndirectedEdgeNeighbours());
         for (node nn : nodeNeighbours) {
-            adjacentNodes.put(nn.getId(), nn);
+            adjacentNodes.put(nn.getId(), new node(nn));
             if (nn.getAnchors().get(0).getFrom() < minFrom) {
                 minFrom = nn.getAnchors().get(0).getFrom();
             }
@@ -135,7 +135,7 @@ public class RepGraphModel {
 
         }
         for (edge ne : edgeNeighbours) {
-            adjacentEdges.add(ne);
+            adjacentEdges.add(new edge(ne));
         }
         SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
 
@@ -174,8 +174,11 @@ public class RepGraphModel {
 // THE WHOLE DISCOVER NODES METHOD MIGHT BE REDUNDANT.
         node n = parent.getNodes().get(headNodeID);
 
-        DescendentNodes.put(n.getId(), n);
-        DescendentEdges.addAll(n.getDirectedEdgeNeighbours());
+        DescendentNodes.put(n.getId(), new node(n));
+        for (edge e : n.getDirectedEdgeNeighbours()) {
+            DescendentEdges.add(new edge(e));
+        }
+
 
         int minFrom = n.getAnchors().get(0).getFrom();
         int maxEnd = n.getAnchors().get(0).getEnd();
@@ -234,11 +237,11 @@ public class RepGraphModel {
 
             for (node n : curr.getDirectedNeighbours()) {
                 s.push(n);
-                descendants.put(n.getId(), n);
+                descendants.put(n.getId(), new node(n));
 
                 for (edge e : n.getDirectedEdgeNeighbours()) {
 
-                    descendantsEdges.put(e.getSource() + " " + e.getTarget(), e);
+                    descendantsEdges.put(e.getSource() + " " + e.getTarget(), new edge(e));
                 }
             }
 
@@ -855,7 +858,7 @@ public class RepGraphModel {
         graph.setNodeNeighbours();
         HashMap<Integer, Stack<Integer>> topologicalStacks = new HashMap<>();
 
-        for (int i = 0; i < graph.getNodes().size(); i++) {
+        for (int i : graph.getNodes().keySet()) {
             Stack<Integer> stack = new Stack<>();
             HashMap<Integer, Boolean> visited = new HashMap<>();
             for (int j = 0; j < graph.getNodes().size(); j++) {
