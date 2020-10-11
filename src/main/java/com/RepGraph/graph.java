@@ -40,11 +40,14 @@ public class graph {
     private String input;
 
 
+    /**
+     * The graphs linear list of nodes - used for returning graph data correctly
+     */
     @JsonProperty("nodes")
     private ArrayList<node> nodelist;
 
     /**
-     * A HashMap of the graph nodes
+     * A HashMap of the graph nodes with the node's ID as the key - used for quicker,easier and safer algorithmic use of node data
      */
     @JsonIgnore
     private HashMap<Integer, node> nodes;
@@ -77,12 +80,13 @@ public class graph {
     }
 
     /**
-     * Fully parameterised constructor for the graph class.
+     * parameterised constructor for the graph class that takes in the node's Hashmap instead of the linear nodeslist
+     * and populates the nodeslist from the hashmap information.
      *
      * @param id     The graph's ID number.
      * @param source The graph's source.
      * @param input  The graph's input/sentence.
-     * @param nodes  An array list of the graph's nodes.
+     * @param nodes  An HashMap of the graph's nodes with the node's ID as the key
      * @param tokens An array list of the graph's tokens.
      * @param edges  An array list of the graph's edges.
      * @param tops   An array list of the graph's top node ids.
@@ -102,6 +106,18 @@ public class graph {
 
     }
 
+    /**
+     * parameterised constructor for the graph class that takes in the linear nodeslist instead of the hashmap nodes
+     * and populates the nodes hashmap from the list information.
+     *
+     * @param id       The graph's ID number.
+     * @param source   The graph's source.
+     * @param input    The graph's input/sentence.
+     * @param nodelist An ArrayList of the graphs linear list of nodes
+     * @param tokens   An array list of the graph's tokens.
+     * @param edges    An array list of the graph's edges.
+     * @param tops     An array list of the graph's top node ids.
+     */
     public graph(String id, String source, String input, ArrayList<node> nodelist, ArrayList<token> tokens, ArrayList<edge> edges, ArrayList<Integer> tops) {
         this.id = id;
         this.source = source;
@@ -117,6 +133,10 @@ public class graph {
 
     }
 
+    /**
+     * The Setter method for the linear nodeslist attribute. The setter of the linear list of nodes also resets and populates the hashmap nodes.
+     * @param nodelist This is the linear list of nodes is used to set the objects list of nodes.
+     */
     @JsonSetter("nodes")
     public void setNodelist(ArrayList<node> nodelist) {
         this.nodelist = nodelist;
@@ -126,6 +146,10 @@ public class graph {
         }
     }
 
+    /**
+     * This is the getter for the linear list of nodes "nodeslist"
+     * @return ArrayList<node> This is the linear list of nodes of the graph object
+     */
     @JsonGetter("nodes")
     public ArrayList<node> getNodelist() {
         return this.nodelist;
@@ -186,18 +210,18 @@ public class graph {
     }
 
     /**
-     * Getter method for the graph's nodes.
+     * Getter method for the graph's nodes HashMap.
      *
-     * @return ArrayList The graph's nodes.
+     * @return HashMap<Integer, node> The graph's nodes HashMap.
      */
     public HashMap<Integer, node> getNodes() {
         return nodes;
     }
 
     /**
-     * Setter method for the graph's nodes.
+     * Setter method for the graph's nodes HashMap. This setter also resets and populates the linear list of nodes "nodeslist"
      *
-     * @param nodes The graph's nodes.
+     * @param nodes The graph's nodes HashMap.
      */
     public void setNodes(HashMap<Integer, node> nodes) {
         this.nodelist.clear();
@@ -264,6 +288,7 @@ public class graph {
     /**
      * Analysis Tool for finding the longest path in the graph.
      *
+     * @param directed This is the boolean to decide if the longest path found is directed or undirected.
      * @return ArrayList<ArrayList < Integer>> The a list of longest paths in the graph.
      */
     public ArrayList<ArrayList<Integer>> findLongest(boolean directed) {
@@ -402,36 +427,40 @@ public class graph {
         int source;
         int target;
 
-            if (edges.size() == 0) {
-                //Graph has no edges
+        if (edges.size() == 0) {
+            //Graph has no edges
+            return;
+        } else {
+
+            source = edges.get(0).getSource();
+
+            if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
+                //Node neighbours have already been set
                 return;
-            } else {
-
-                source = edges.get(0).getSource();
-
-                if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
-                    //Node neighbours have already been set
-                    return;
-                }
             }
+        }
 
-            for (int i = 0; i < edges.size(); i++) {
-                edge currentEdge = edges.get(i);
+        for (int i = 0; i < edges.size(); i++) {
+            edge currentEdge = edges.get(i);
 
-                source = currentEdge.getSource();
-                target = currentEdge.getTarget();
+            source = currentEdge.getSource();
+            target = currentEdge.getTarget();
 
-                node sourceNode = nodes.get(source);
-                sourceNode.addDirectedNeighbour(nodes.get(target));
-                nodes.get(target).addUndirectedNeighbour(sourceNode);
+            node sourceNode = nodes.get(source);
+            sourceNode.addDirectedNeighbour(nodes.get(target));
+            nodes.get(target).addUndirectedNeighbour(sourceNode);
 
-                sourceNode.addDirectedEdgeNeighbour(currentEdge);
-                nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
+            sourceNode.addDirectedEdgeNeighbour(currentEdge);
+            nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
 
-            }
+        }
 
     }
 
+    /**
+     * This method checks to see if a graph has a dangling edge i.e an edge that doesnt connect to any node
+     * @return boolean returns true if the graph has a dangling edge otherwise returns false.
+     */
     public boolean hasDanglingEdge() {
         for (edge e : edges) {
             if (!nodes.containsKey(e.getTarget()) || !nodes.containsKey(e.getSource())) {
@@ -501,7 +530,12 @@ public class graph {
      * Recursive function that Topologically Sorts a graph.
      *
      * @param nodeID  The current node.
-     * @param visited A list of booleans, representing whether a node has already been visited or not.
+     * @param visited A Hashmap of integer keys and boolean values,
+     *                representing whether a node (represented by its ID in the key of the hashmap)
+     *                has already been visited or not
+     *                i.e if it has been visited the boolean value of the hashmap will be true.
+     * @param stack ?
+     * @return Stack<Integer>
      */
     public Stack<Integer> topologicalSort(int nodeID, HashMap<Integer, Boolean> visited, Stack<Integer> stack) {
         visited.put(nodeID, true);
@@ -521,7 +555,7 @@ public class graph {
      * Breadth First Search algorithm for finding the longest path from a given start node in a graph.
      *
      * @param startNodeID The starting node ID.
-     * @return ArrayList<Integer> The path of the longest route from the given start node.
+     * @return ArrayList<ArrayList<Integer>>
      */
     public ArrayList<ArrayList<Integer>> BFS(int startNodeID) {
 
@@ -585,8 +619,10 @@ public class graph {
     /**
      * Returns the longest paths given a list of distances and an array of each node's previous node in the path.
      *
-     * @param dist        ArrayList of each nodes maximum distance.
-     * @param prevNode    Array of each node's previous node in a path.
+     * @param dist        A HashMap<Integer, Integer> of each nodes maximum distance
+     *                    with the node's ID being the key and the maximum distance being the value.
+     * @param prevNode    HashMap<Integer, Integer> of each node's previous node in a path
+     *                    with the Node's ID being the key and the previous node's ID being te value..
      * @param startNodeID The node ID of the start node.
      * @return ArrayList<ArrayList < Integer>> The longest paths.
      */
@@ -684,8 +720,13 @@ public class graph {
         return true;
     }
 
-    // public ArrayList<edge> UpdateEdges()
 
+    /**
+     * Returns a graph object in it's Planar format i.e
+     * Orders the nodes linearly based on their anchor's "from" positions
+     * and updates all edges to point to their corresponding new "IDs" which are represented by their token index
+     * @return graph This is the graph in a format to indicate its planarity.
+     */
     public graph PlanarGraph() {
 
         ArrayList<node> ordered = new ArrayList<>();
@@ -713,7 +754,6 @@ public class graph {
         HashMap<Integer, Integer> nodeToToken = new HashMap<>();
 
         for (int i = 0; i < ordered.size(); i++) {
-            System.out.println(ordered.get(i).getId() + " ANCHORS FROM:" + ordered.get(i).getAnchors().get(0).getFrom());
             nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom());
         }
 
@@ -775,7 +815,7 @@ public class graph {
     }
 
     /**
-     * gets the form of tokens and turns them into a string
+     * gets the "form" of tokens and turns them into a string
      *
      * @param tokenIn List of tokens to become a string
      * @return String This is the string of all token's form.
