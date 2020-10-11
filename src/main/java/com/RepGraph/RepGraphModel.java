@@ -394,6 +394,7 @@ public class RepGraphModel {
             }
         }
 
+        returninfo.put("response", "Success");
         returninfo.put("data", FoundGraphs);
         return returninfo;
     }
@@ -448,6 +449,7 @@ public class RepGraphModel {
             }
         }
 
+        returninfo.put("response", "Success");
         returninfo.put("data", FoundGraphs);
         return returninfo;
     }
