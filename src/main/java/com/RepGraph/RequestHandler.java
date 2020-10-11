@@ -84,7 +84,7 @@ public class RequestHandler {
                 returnobj.put("response", "Duplicates Found");
 
             } else {
-                returnobj.put("response", "No Duplicates Found");
+                returnobj.put("response", "Data-set Uploaded Successfully");
 
             }
 
