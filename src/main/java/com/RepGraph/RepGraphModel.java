@@ -398,7 +398,6 @@ public class RepGraphModel {
         return returninfo;
     }
 
-
     /**
      * Searches through all the graphs to find graphs that contain all the node labels provided.
      * @param labels This is the list of node labels to search for.
@@ -846,7 +845,6 @@ public class RepGraphModel {
 
     }
 
-
     /**
      * The visualisation method for visualising a Tree like graph.
      * @param graph the graph object to be visualised in a Tree like format
@@ -1148,7 +1146,6 @@ public class RepGraphModel {
         return Visualised;
     }
 
-
     /**
      * The visualisation method for visualising a Hierarchical graph.
      * @param graph the graph object to be visualised in a Hierarchical format
@@ -1158,22 +1155,17 @@ public class RepGraphModel {
 
 
         //Determine span lengths of each node
-        int[] graphNodeSpanLengths = new int[graph.getNodes().size()];
-        Iterator<Integer> iter = graph.getNodes().keySet().iterator();
-        for (int j = 0; j < graphNodeSpanLengths.length; j++) {
-            int i = iter.next();
-            int end = graph.getNodes().get(i).getAnchors().get(0).getEnd();
-            int from = graph.getNodes().get(i).getAnchors().get(0).getFrom();
-            int span = end - from;
-            graphNodeSpanLengths[i] = span;
+        HashMap<Integer, Integer> graphNodeSpanLengths = new HashMap<>();
+        for (node n : graph.getNodes().values()){
+            int span = n.getAnchors().get(0).getEnd() - n.getAnchors().get(0).getFrom();
+            graphNodeSpanLengths.put(n.getId(), span);
         }
-
 
         //Determine unique span lengths of all the node spans
         ArrayList<Integer> uniqueSpanLengths = new ArrayList<>();
 
         HashMap<Integer, Boolean> map = new HashMap<>();
-        for (Integer item : graphNodeSpanLengths) {
+        for (Integer item : graphNodeSpanLengths.values()) {
             if (!map.containsKey(item)) {
                 map.put(item, true); // set any value to Map
                 uniqueSpanLengths.add(item);
@@ -1189,10 +1181,10 @@ public class RepGraphModel {
 
             for (
                     int spanIndex = 0;
-                    spanIndex < graphNodeSpanLengths.length;
+                    spanIndex < graphNodeSpanLengths.size();
                     spanIndex++
             ) {
-                if (graphNodeSpanLengths[spanIndex] == level) {
+                if (graphNodeSpanLengths.get(spanIndex) == level) {
                     currentLevel.add(graph.getNodes().get(spanIndex));
                 }
             }
