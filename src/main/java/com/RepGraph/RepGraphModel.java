@@ -868,7 +868,7 @@ public class RepGraphModel {
 
 
         int numLevels = 0;
-        for (int i = 0; i < topologicalStacks.size(); i++) {
+        for (int i : topologicalStacks.keySet()){
             numLevels = Math.max(numLevels, topologicalStacks.get(i).size());
         }
 
