@@ -402,33 +402,33 @@ public class graph {
         int source;
         int target;
 
-            if (edges.size() == 0) {
-                //Graph has no edges
+        if (edges.size() == 0) {
+            //Graph has no edges
+            return;
+        } else {
+
+            source = edges.get(0).getSource();
+
+            if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
+                //Node neighbours have already been set
                 return;
-            } else {
-
-                source = edges.get(0).getSource();
-
-                if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
-                    //Node neighbours have already been set
-                    return;
-                }
             }
+        }
 
-            for (int i = 0; i < edges.size(); i++) {
-                edge currentEdge = edges.get(i);
+        for (int i = 0; i < edges.size(); i++) {
+            edge currentEdge = edges.get(i);
 
-                source = currentEdge.getSource();
-                target = currentEdge.getTarget();
+            source = currentEdge.getSource();
+            target = currentEdge.getTarget();
 
-                node sourceNode = nodes.get(source);
-                sourceNode.addDirectedNeighbour(nodes.get(target));
-                nodes.get(target).addUndirectedNeighbour(sourceNode);
+            node sourceNode = nodes.get(source);
+            sourceNode.addDirectedNeighbour(nodes.get(target));
+            nodes.get(target).addUndirectedNeighbour(sourceNode);
 
-                sourceNode.addDirectedEdgeNeighbour(currentEdge);
-                nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
+            sourceNode.addDirectedEdgeNeighbour(currentEdge);
+            nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
 
-            }
+        }
 
     }
 
@@ -684,8 +684,6 @@ public class graph {
         return true;
     }
 
-    // public ArrayList<edge> UpdateEdges()
-
     public graph PlanarGraph() {
 
         ArrayList<node> ordered = new ArrayList<>();
@@ -873,4 +871,102 @@ public class graph {
         }
     }
 
+    /**
+     * Checks if a directed or an undirected graph is cyclic or not by calling on the appropriate recursive function required.
+     * @param directed Boolean to see if the graph is directed or not.
+     * @return Boolean If the graph is cyclic or not.
+     */
+    public boolean isCyclic(boolean directed) {
+
+        setNodeNeighbours();
+
+        //Mark nodes as unvisited and not in the stack (stack is for directed only)
+        HashMap<node, Boolean> visited = new HashMap<>();
+        HashMap<node, Boolean> stack = new HashMap<>();
+        for (node n : nodes.values()) {
+            visited.put(n, false);
+            stack.put(n, false);
+        }
+
+        if (directed) {
+            //Call recursive function to detect cycles in different DFS directed trees.
+            for (node n : nodes.values()) {
+                if (isCyclicCheckerDirected(n, visited, stack)) {
+                    return true;
+                }
+            }
+        } else {
+            //Call recursive function to detect cycles in different DFS undirected trees.
+            for (node n : nodes.values()) {
+                if (!visited.get(n)) { //Check if the node hasn't already been visited
+                    if (isCyclicCheckerUndirected(n, visited, -1)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Recursive function that checks for cycles in an undirected graph.
+     * @param v The current node.
+     * @param visited A HashMap of node to boolean to keep track of which nodes have been visited already.
+     * @param parent The ID of the parent node of the current node.
+     * @return Boolean If the graph is cyclic or not.
+     */
+    public boolean isCyclicCheckerUndirected(node v, HashMap<node, Boolean> visited, int parent) {
+
+        //Set the current node as visited.
+        visited.put(v, true);
+
+        //Iterate through all the current node's neighbouring nodes
+        for (node neighbour : combineNeighbours(v.getId())) {
+            if (!visited.get(neighbour)) { //If the neighbour is unvisited
+                if (isCyclicCheckerUndirected(neighbour, visited, v.getId())){
+                    return true;
+                };
+            } else if (neighbour.getId() != parent) { //If the neighbouring is visited and not a parent of the current node, then there is a cycle.
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Recursive function that checks for cycles in an directed graph.
+     * @param v The current node.
+     * @param visited A HashMap of node to boolean to keep track of which nodes have been visited already.
+     * @param stack A HashMap of node to boolean to keep track of which nodes have been added to the stack.
+     * @return Boolean If the graph is cyclic or not.
+     */
+    public boolean isCyclicCheckerDirected(node v, HashMap<node, Boolean> visited, HashMap<node, Boolean> stack) {
+
+        //Check if the node is in the stack already.
+        if (stack.get(v)) {
+            return true;
+        }
+
+        // Check if the node has already been visited.
+        if (visited.get(v)) {
+            return false;
+        }
+
+        //Set stack and visited to true.
+        stack.put(v, true);
+        visited.put(v, true);
+
+        //Iterate through the node's directed neighbours and call recursive function.
+        for (node neighbour : v.getDirectedNeighbours()) {
+            if (isCyclicCheckerDirected(neighbour, visited, stack)) {
+                return true;
+            }
+        }
+
+        stack.put(v, false);
+
+        return false;
+    }
 }
