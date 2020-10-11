@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.RepGraph</groupId>
-	<artifactId>RepGraph</artifactId>
+	<artifactId>repgraph</artifactId>
     <version>1</version>
 	<packaging>jar</packaging>
 
-	<name>RepGraph</name>
+	<name>repgraph</name>
 	<description>CSC3003S Capstone Project - RepGraph - TLDEDA001 CHNROY002 CHNJAR003</description>
 
 	<parent>
