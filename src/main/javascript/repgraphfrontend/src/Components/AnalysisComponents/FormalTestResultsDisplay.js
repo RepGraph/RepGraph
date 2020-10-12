@@ -49,7 +49,7 @@ export default function FormalTestsResultsDisplay(props) {
         newRows.push(createData(test, result));
     }
 
-    //
+    //Handle click on table row
     const handleClickOpen = (event, test) => {
         console.log(test);
         if (test !== "Connected") {
@@ -58,11 +58,12 @@ export default function FormalTestsResultsDisplay(props) {
         }
     };
 
+    //Handle close of dialog
     const handleClose = () => {
         setOpen(false);
     };
 
-    let dialogElement;
+    let dialogElement; //variable to store the element to be displayed in the dialog to the user
 
     if (rowClicked === "Planar") {
         dialogElement = <Paper> planar vis </Paper>;
@@ -80,12 +81,14 @@ export default function FormalTestsResultsDisplay(props) {
         );
     }
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = React.useState(null); //Anchor for information popper component
 
+    //Handle information button click
     const handleInfoClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
+    //Handle information popper close
     const handlePopperClose = () => {
         setAnchorEl(null);
     };
