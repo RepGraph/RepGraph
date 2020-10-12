@@ -31,11 +31,9 @@ import ShortTextIcon from "@material-ui/icons/ShortText";
 
 import {AppContext} from "./Store/AppContextProvider.js";
 import SentenceList from "./Components/Main/SentenceList.js";
-import Header from "./Components/Layouts/Header.js";
 import AnalysisAccordion from "./Components/Main/AnalysisAccordion";
 import VisualisationControls from "./Components/Main/VisualisationControls";
 import GraphVisualisation from "./Components/Main/GraphVisualisation";
-
 import "./Components/Main/network.css";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -49,14 +47,6 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import {Chip} from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
 import {Link, useHistory} from "react-router-dom";
-import Box from "@material-ui/core/Box";
-import CardHeader from "@material-ui/core/CardHeader";
-import VisualizerArea from "./Components/Main/VisualizerArea";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -64,6 +54,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 
 const drawerWidth = 240;
 
+//Styles for the app bar and menu drawer of the application
 const useStyles = makeStyles((theme) => ({
     root: {
         display: "flex"
@@ -126,8 +117,6 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const testingEndpoint = "http://192.168.0.135:8080";
-
 export default function Main() {
     const {state, dispatch} = useContext(AppContext);
     const classes = useStyles();
@@ -135,9 +124,9 @@ export default function Main() {
     const history = useHistory();
     const [open, setOpen] = React.useState(false);
     const [sentenceOpen, setSentenceOpen] = React.useState(false);
-    const [visFormat, setVisFormat] = React.useState("1");
     const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true);
 
+    //Handle close of the alert shown after data-set upload
     const handleDataSetResponseClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -146,51 +135,54 @@ export default function Main() {
         setDataSetResponseOpen(false);
     };
 
+    //Handle click open menu drawer
     const handleDrawerOpen = () => {
         setOpen(true);
     };
 
+    //Handle click close menu drawer
     const handleDrawerClose = () => {
         setOpen(false);
     };
 
+    //Handle click close select sentence dialog
     const handleSentenceClose = () => {
         setSentenceOpen(false);
     };
 
+    //Handle change visualisation format setting in application app bar
     const handleChangeVisualisationFormat = (event, newFormat) => {
+        //Enforce one format being selected at all times
         if (newFormat !== null) {
-            setVisFormat(newFormat);
-            dispatch({type: "SET_VISUALISATION_FORMAT", payload: {visualisationFormat: newFormat}});
+            dispatch({type: "SET_VISUALISATION_FORMAT", payload: {visualisationFormat: newFormat}}); //Set global state for visualisation format
             console.log(newFormat);
-            //Update the currently displayed graph as well!
+            //Update the currently displayed graph as well
             if (state.selectedSentenceID !== null) {
                 let requestOptions = {
                     method: 'GET',
                     redirect: 'follow'
                 };
 
-                dispatch({type: "SET_LOADING", payload: {isLoading: true}});
+                dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation
 
+                //Request new visualisation from backend
                 fetch(state.APIendpoint + "/Visualise?graphID=" + state.selectedSentenceID + "&format=" + newFormat, requestOptions)
                     .then((response) => response.text())
                     .then((result) => {
 
                         const jsonResult = JSON.parse(result);
-                        console.log(jsonResult);
-                        //console.log(jsonResult);
-                        //console.log(jsonResult.response);
-                        //const formattedGraph = layoutGraph(jsonResult);
+                        console.log(jsonResult); //Debugging
+
                         dispatch({
                             type: "SET_SENTENCE_VISUALISATION",
                             payload: {selectedSentenceVisualisation: jsonResult}
-                        });
-                        dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                        }); //Set global state for visualisation
+                        dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
                     })
                     .catch((error) => {
-                        dispatch({type: "SET_LOADING", payload: {isLoading: false}});
-                        console.log("error", error);
-                        history.push("/404"); //for debugging
+                        dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
+                        console.log("error", error); //Debugging
+                        history.push("/404"); //Send user to error page
                     });
             }
 
@@ -229,7 +221,7 @@ export default function Main() {
                                      title={"Select visualisation format"}>
                                 <Paper>
                                     <ToggleButtonGroup
-                                        value={visFormat}
+                                        value={state.visualisationFormat}
                                         exclusive
                                         onChange={handleChangeVisualisationFormat}
                                         aria-label="Visualisation formats"
