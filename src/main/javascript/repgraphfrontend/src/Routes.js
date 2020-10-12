@@ -5,8 +5,6 @@ import HomePage from "./HomePage.js";
 import Main from "./Main.js";
 import ErrorPage from "./ErrorPage.js";
 
-import { AppContext } from "./Store/AppContextProvider.js";
-
 export default function Routes() {
   return (
     <Switch>
