@@ -25,6 +25,12 @@ public class RequestHandler {
 
     RepGraphModel RepModel = new RepGraphModel();
 
+    @GetMapping("/")
+    @ResponseBody
+    public String Home() {
+        return "Welcome";
+    }
+
     /**
      * This method is the post request to upload data to the model
      *
