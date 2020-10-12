@@ -11,14 +11,11 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 
 import {useHistory} from "react-router-dom";
 import {AppContext} from "../../Store/AppContextProvider";
-import Divider from "@material-ui/core/Divider";
 import Card from "@material-ui/core/Card";
-import {node} from "prop-types";
 import ListItem from "@material-ui/core/ListItem";
 import {Virtuoso} from "react-virtuoso";
 import SelectSubgraphVisualisation from "../Main/SelectSubgraphVisualisation";
@@ -39,25 +36,32 @@ const useStyles = makeStyles((theme) => ({
 function SearchSubgraphPatternTool(props) {
     const classes = useStyles();
 
-    const [nodeSet, setNodeSet] = React.useState(null);
-    const {state, dispatch} = useContext(AppContext);
-    const history = useHistory();
-    const [open, setOpen] = React.useState(false);
-    const [openNodeSet, setOpenNodeSet] = React.useState(false);
-    const [nodeSetResult, setNodeSetResult] = React.useState(null);
-    const [subgraphResponse, setSubgraphResponse] = React.useState(null);
+    const [nodeSet, setNodeSet] = React.useState(null); //Local state of entered node labels
+    const {state, dispatch} = useContext(AppContext); //Provide access to global state
+    const history = useHistory(); //Use routing history
+    const [open, setOpen] = React.useState(false); //Local state for search sub-graph pattern dialog
+    const [openNodeSet, setOpenNodeSet] = React.useState(false); //Local state for search node set dialog
+    const [nodeSetResult, setNodeSetResult] = React.useState(null); //Local state for node set search result
+    const [subgraphResponse, setSubgraphResponse] = React.useState(null); //Local state for subgraph pattern search results
 
+    //Handle click open for search sub-graph pattern dialog
     const handleClickOpen = () => {
         setOpen(true);
     };
 
+    //Handle close for search sub-graph pattern dialog
     const handleClose = () => {
         setOpen(false);
     };
+
+    //Handle close for node set dialog
     const handleCloseNodeSet = () => {
         setOpenNodeSet(false);
+        setNodeSetResult(null);
+        setSubgraphResponse(null);
     };
 
+    //Handle search for node set from backend
     function handleSearchForNodeSet() {
         console.log(nodeSet.join(","));
         let requestOptions = {
@@ -65,25 +69,26 @@ function SearchSubgraphPatternTool(props) {
             redirect: 'follow'
         };
 
-        dispatch({type: "SET_LOADING", payload: {isLoading: true}});
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation
 
         fetch(state.APIendpoint + "/SearchSubgraphNodeSet?labels=" + nodeSet.join(","), requestOptions)
             .then((response) => response.text())
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult);
-                setNodeSetResult(jsonResult.data); //Store the results
-                setOpenNodeSet(true); //Display the results
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                console.log(jsonResult); //Debugging
+                setNodeSetResult(jsonResult.data); //Store the node set results
+                setOpenNodeSet(true); //Display the node set results
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
             })
             .catch((error) => {
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
-                console.log("error", error);
-                history.push("/404");
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+                console.log("error", error); //Log the error
+                history.push("/404"); //Take the user to the error page
             });
 
     }
 
+    //Get just the labels from all the nodes of the currently displayed graph
     function getLabels(sentence) {
         if (state.selectedSentenceID !== null) {
             let graph = sentence;
@@ -95,40 +100,36 @@ function SearchSubgraphPatternTool(props) {
                     labelOptions.push(node.label);
                 }
             });
-            //console.log(labelOptions); //debugging
+
             return labelOptions;
         } else {
             return [];
         }
     }
 
+    //Handle when user selects one of the sentences returned in the results from the backend
     function handleClickSentenceResult(sentenceId) {
-        console.log(sentenceId);
+        console.log(sentenceId); //Debugging
 
         let requestOptions = {
             method: 'GET',
             redirect: 'follow'
         };
 
-        dispatch({type: "SET_LOADING", payload: {isLoading: true}});
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
 
         fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=" + state.visualisationFormat, requestOptions)
             .then((response) => response.text())
             .then((result) => {
-
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult);
-                //console.log(jsonResult);
-                //console.log(jsonResult.response);
-                //const formattedGraph = layoutGraph(jsonResult);
-                setSubgraphResponse(jsonResult);
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                console.log(jsonResult); //Debugging
+                setSubgraphResponse(jsonResult); //Store graph visualisation result
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
             })
             .catch((error) => {
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
-                console.log("error", error);
-                history.push("/404"); //for debugging
-
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+                console.log("error", error); //Log the error to console
+                history.push("/404"); //Take the user to the error page
             });
     }
 
@@ -188,44 +189,62 @@ function SearchSubgraphPatternTool(props) {
                     <DialogTitle id="alert-dialog-title">
                         {"Search Results:"}
                     </DialogTitle>
-                    <DialogContent style={{height: "80vh"}}>
-                        {nodeSetResult && <Virtuoso
-                            style={{width: "100%", height: "30%"}}
-                            totalCount={nodeSetResult.length}
-                            item={(index) => {
-                                return (
-                                    <ListItem
-                                        button
-                                        key={index}
-                                        onClick={() => {
-                                            handleClickSentenceResult(nodeSetResult[index].id);
-                                        }}
-                                    >
-                                        <Typography>{nodeSetResult[index].input}</Typography>
-                                    </ListItem>
-                                );
-                            }}
-                            footer={() => (
-                                <div style={{padding: "1rem", textAlign: "center"}}>
-                                    -- end of dataset --
-                                </div>
-                            )}
-                        />}
-                        {subgraphResponse === null ?
-                            <Grid
-                                container
-                                direction="column"
-                                justify="center"
-                                alignItems="center">
-                                <Grid item>
-                                    <Card style={{height: "100%", width: "100%"}} variant="outlined"><CardContent><Typography>Select
-                                        a sentence from the results above.</Typography></CardContent></Card>
-                                </Grid>
+                    <DialogContent>
+                        <Grid
+                            style={{width:"100%", height:"100%"}}
+                            container
+                            direction="column"
+                            justify="center"
+                            alignItems="center"
+                            spacing={2}
+                        >
+                            <Grid container item xs={12}>
+                                <Card variant="outlined" style={{width:"100%", height: "15vh"}}>
+                                    <CardContent style={{width:"100%", height: "100%"}}>
+                                        {nodeSetResult &&
+                                        <Virtuoso
+                                            style={{width: "100%", height: "100%"}}
+                                            totalCount={nodeSetResult.length}
+                                            item={(index) => {
+                                                return (
+                                                    <ListItem
+                                                        button
+                                                        key={index}
+                                                        onClick={() => {
+                                                            handleClickSentenceResult(nodeSetResult[index].id);
+                                                        }}
+                                                    >
+                                                        <Typography>{nodeSetResult[index].input}</Typography>
+                                                    </ListItem>
+                                                );
+                                            }}
+                                            footer={() => (
+                                                <div style={{padding: "1rem", textAlign: "center"}}>
+                                                    -- end of dataset --
+                                                </div>
+                                            )}
+                                        />}
+                                    </CardContent>
+                                </Card>
                             </Grid>
-                             :
-                            <SubgraphVisualisation subgraphGraphData={subgraphResponse}/>
-                        }
+                            <Grid container item xs={12}>
+                                <Card variant="outlined" style={{width:"100%", height: "40vh"}}>
+                                    <CardContent style={{width:"100%", height: "100%"}}>
+                                        {subgraphResponse === null ?
 
+                                                        <Typography>Select
+                                                            a sentence from the results above.</Typography>
+
+                                            :
+
+                                                        <SubgraphVisualisation
+                                                            subgraphGraphData={subgraphResponse}/>
+
+                                        }
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </Grid>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleCloseNodeSet} color="primary" autoFocus>
@@ -244,7 +263,7 @@ function SearchSubgraphPatternTool(props) {
                         variant="contained"
                         color="primary"
                         endIcon={<LocationSearchingIcon/>}
-                        onClick={() => setOpen(true)}
+                        onClick={handleClickOpen}
                         style={{marginBottom: 10, marginTop: 10}}
                         disabled={state.selectedSentenceID === null}
                     >
