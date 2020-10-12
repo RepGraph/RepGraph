@@ -267,7 +267,7 @@ public class RepGraphModelTest {
 
     }
 
-    @Test(timeout = 10)
+    @Test
     public void test_SearchSubgraphNodeSet_FindsGraphsCorrectly() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
 

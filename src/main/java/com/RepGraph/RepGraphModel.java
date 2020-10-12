@@ -246,21 +246,6 @@ public class RepGraphModel {
         }
         graph subgraph = new graph();
 
-/*
-        for (int i: subnodes.keySet()) {
-            for (edge e : subedges) {
-                if (e.getSource() == subnodes.get(i).getId()) {
-                    e.setSource(i);
-
-                }
-                if (e.getTarget() == subnodes.get(i).getId()) {
-                    e.setTarget(i);
-
-                }
-            }
-            subnodes.get(i).setId(i);
-        }
-*/
 
         subgraph.setNodes(subnodes);
         subgraph.setEdges(subedges);

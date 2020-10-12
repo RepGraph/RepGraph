@@ -251,17 +251,17 @@ public class RequestHandler {
      * This method gets only the graph data of a created subset. This method is mapped to "/GetSubset"
      * This method requires the "graphID","headNodeID", and "SubsetType" request parameters.
      * @param graphID    This is the graph ID of the graph where the subset is created from
-     * @param headNodeID This is the node ID of the starting point of subset creation.
+     * @param NodeID This is the node ID of the starting point of subset creation.
      * @param SubsetType This is the type of subset being created. "adjacent" or "descendent"
      * @return graph Returns a graph object of the subset
      */
     @GetMapping("/GetSubset")
     @ResponseBody
-    public graph GetSubset(@RequestParam String graphID, @RequestParam int headNodeID, @RequestParam String SubsetType) {
+    public graph GetSubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType) {
         if (SubsetType.equals("adjacent")) {
-            return RepModel.CreateSubsetAdjacent(graphID, headNodeID);
+            return RepModel.CreateSubsetAdjacent(graphID, NodeID);
         } else if (SubsetType.equals("descendent")) {
-            return RepModel.CreateSubsetDescendent(graphID, headNodeID);
+            return RepModel.CreateSubsetDescendent(graphID, NodeID);
         }
         return null;
     }
