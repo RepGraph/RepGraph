@@ -26,11 +26,12 @@ public class RequestHandler {
     RepGraphModel RepModel = new RepGraphModel();
 
     /**
-     * This method is the post request to upload data and create the model.
+     * This method is the post request to upload data to the model
      *
      * @param name This is the name that the file will be saved under
      * @param file This is the file data.
-     * @return HashMap<String, Object> This is a hashmap to return the necessary uploaded file information and a response.
+     * @return HashMap<String, Object> This is a hashmap to return the necessary uploaded file information
+     * and a response about whether or not there are duplicate graphs
      */
     @PostMapping("/UploadData")
     @ResponseBody
@@ -83,7 +84,7 @@ public class RequestHandler {
                 returnobj.put("response", "Duplicates Found");
 
             } else {
-                returnobj.put("response", "No Duplicates Found");
+                returnobj.put("response", "Data-set Uploaded Successfully");
 
             }
 
@@ -117,64 +118,58 @@ public class RequestHandler {
 
     /**
      * This method will be called when the class receives a GET HTTP request with "/Visualise".
-     * The Request URL also requires the "index" and "format" Request Params to be present.
+     * The Request URL also requires the "graphID" and "format" Request Params to be present.
      * This method finds the graph in the model dataset and constructs it into the required
      * format according to the format type specified.
      *
      * @param graphID  This refers to which graph the user wants to be visualised on the front end.
      * @param format This refers to which format the user wants the graph to be visualised in.
-     * @return graph This method returns a graph object of the requested graph.
+     *               format = 1 - hierarchical
+     *               format = 2 - tree-like
+     *               format = 3 - flat
+     *               format = 4 - planar
+     * @return HashMap<String, Object> This is the graph visualisation information.
      */
     @GetMapping("/Visualise")
     @ResponseBody
     public HashMap<String, Object> Visualise(@RequestParam String graphID, @RequestParam int format) {
-        if (format == 1) {
-            return RepModel.VisualiseHierarchy(graphID);
-        } else if (format == 2) {
-            return RepModel.VisualiseTree(graphID);
-        } else {
-            return RepModel.VisualiseFlat(graphID);
-        }
-
+        return RepModel.Visualise(graphID, format);
     }
 
     /**
-     * This method retrieves subset data of a graph
-     *
+     * This method creates and visualises a subset of a graph in a desired format. This method is mapped to "/DisplaySubset" URL
+     * and requires the Request Parameters as follows:
      * @param graphID    This is the graph ID of the graph where the subset is constructed from
      * @param NodeID     This is the ID of the node which the subset is constructed from
      * @param SubsetType This is the type of subset i.e descendent or adjacent
-     * @return
+     * @param format this is the format of the visualisation
+     *               format = 1 - hierarchical
+     *               format = 2 - tree-like
+     *               format = 3 - flat
+     *               format = 4 - planar
+     * @return HashMap<String, Object> This is the graph visualisation information.
      */
     @GetMapping("/DisplaySubset")
     @ResponseBody
-    public graph DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType) {
-        return RepModel.DisplaySubset(graphID, NodeID, SubsetType);
+    public HashMap<String, Object> DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType, @RequestParam int format) {
+        return RepModel.DisplaySubset(graphID, NodeID, SubsetType, format);
     }
 
-    /**
-     * This method Displays a visualisation of a graph in its potentially planar form.
-     * @param graphID This is the graph ID of the graph requested
-     * @return HashMap<String, Object> This is a hashmap with nodes and edges in a format readable by graphing libraries
-     */
-    @GetMapping("/DisplayPlanarGraph")
-    @ResponseBody
-    public HashMap<String, Object> DisplayPlanarGraph(@RequestParam String graphID) {
-        return RepModel.VisualisePlanar(graphID);
-    }
 
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
-     * The Request URL also requires the "graphID" and "NodeID" list Request Params to be present.
+     * The Request URL also requires the Request Parameter "labels" - List of node labels to be present.
      * This method searches the model's dataset for graphs containing the specified list of node labels and
-     * returns a list of graph IDs where the set of node labels have been found.
+     * returns information on graphs where the set of node labels have been found.
      *
      * @param labels list of labels to be searched for.
-     * @return ArrayList<String> This is the list of graph ids of graphs that have matching node labels
+     * @return HashMap<String, Object> This is the list of graph ids and graph inputs under the "data" key of the returned hashmap.
+     *                                 The "data" key returns a list of hashmaps that have "id" and "input" keys.
+     *                                 The "Response" key returns an error message if an error has taken place.
      */
     @GetMapping("/SearchSubgraphNodeSet")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
+    public HashMap<String, Object> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
 
         return RepModel.searchSubgraphNodeSet(labels);
 
@@ -182,15 +177,17 @@ public class RequestHandler {
 
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphPattern".
-     * The Request URL also requires the "graphID" Request Param and "subgraph" graph object requestbody to be present.
+     * The Request URL also requires the "graphID", "NodeId" - list of node ids, "EdgeIndices" list of edge indices Request Params to be present.
      * This method searches the model's dataset for graphs containing the specified subgraph pattern and
-     * returns a list of graph IDs where the subgraph pattern has been found.
+     * returns information on graphs where the subgraph pattern has been found.
      *
-     * @return ArrayList<String> This is a list a graph IDs with matching subgraph patterns
+     * @return HashMap<String, Object> This is the list of graph ids and graph inputs under the "data" key of the returned hashmap.
+     *                                        The "data" key returns a list of hashmaps that have "id" and "input" keys.
+     *                                        The "Response" key returns an error message if an error has taken place.
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public ArrayList<String> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam int[] NodeId, @RequestParam int[] EdgeIndices) {
+    public HashMap<String, Object> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam int[] NodeId, @RequestParam int[] EdgeIndices) {
         return RepModel.searchSubgraphPattern(graphID, NodeId, EdgeIndices);
     }
 
@@ -202,6 +199,11 @@ public class RequestHandler {
      *
      * @param graphID1 This refers to one of the indexes of the graphs to be compared.
      * @param graphID2 This refers to the other index of the graph to be compared.
+     * @return HashMap<String, Object> The differences and similarities of the two graphs i.e
+     *         the "SimilarNodes1" key gives the node ids of the similar nodes in graph1.
+     *         the "SimilarNodes2" key gives the node ids of the similar nodes in graph2.
+     *         the "SimilarEdges1" key gives the node ids of the similar edges in graph1.
+     *         the "SimilarEdge2" key gives the node ids of the similar edges in graph2.
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
@@ -211,14 +213,19 @@ public class RequestHandler {
 
     /**
      * This method will be called when the class receives a GET HTTP request with "/TestGraph".
-     * The Request URL also requires the "index" and "test" Request Params to be present.
+     * The Request URL also requires the "graphID", "planar","longestPathDirected","longestPathUndirected", and "connected" Request Params to be present.
      * This method runs the formal tests requested on the model specified and returns the results.
      *
-     * @param graphID          This refers to the id of the graph that will be tested.
-     * @param planar      This refers to whether its getting tested for the graph being planar
-     * @param connected   This refers to whether its getting tested for being connected
+     * @param graphID This refers to the id of the graph that will be tested.
+     * @param planar This refers to whether its getting tested for the graph being planar
+     * @param connected This refers to whether its getting tested for being connected
      * @param longestPathDirected This refers to finding the longest directed path
      * @param longestPathUndirected This refers to finding the longest undirected path
+     * @return HashMap<String, Object> Results of the tests i.e
+     *         the "Planar" key returns a boolean of whether or not the graph is planar
+     *         the "LongestPathDirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest directed paths in the graphs
+     *         the "LongestPathUndirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest undirected paths in the graphs
+     *         the "Connected" returns a boolean of whether or not the graph is connected.
      */
     @GetMapping("/TestGraph")
     @ResponseBody
@@ -228,7 +235,8 @@ public class RequestHandler {
     }
 
     /**
-     * This method gets only the graph data of a specific graph ID in the model
+     * This method gets only the graph data of a specific graph ID in the model and it is mapped to "/GetGraph"
+     * The Request URL also requires the "graphID" request param.
      *
      * @param graphID This is the ID of the graph that is requested.
      * @return graph Returns the graph data
@@ -237,6 +245,25 @@ public class RequestHandler {
     @ResponseBody
     public graph GetGraph(@RequestParam String graphID) {
         return RepModel.getGraph(graphID);
+    }
+
+    /**
+     * This method gets only the graph data of a created subset. This method is mapped to "/GetSubset"
+     * This method requires the "graphID","headNodeID", and "SubsetType" request parameters.
+     * @param graphID    This is the graph ID of the graph where the subset is created from
+     * @param headNodeID This is the node ID of the starting point of subset creation.
+     * @param SubsetType This is the type of subset being created. "adjacent" or "descendent"
+     * @return graph Returns a graph object of the subset
+     */
+    @GetMapping("/GetSubset")
+    @ResponseBody
+    public graph GetSubset(@RequestParam String graphID, @RequestParam int headNodeID, @RequestParam String SubsetType) {
+        if (SubsetType.equals("adjacent")) {
+            return RepModel.CreateSubsetAdjacent(graphID, headNodeID);
+        } else if (SubsetType.equals("descendent")) {
+            return RepModel.CreateSubsetDescendent(graphID, headNodeID);
+        }
+        return null;
     }
 
     /**

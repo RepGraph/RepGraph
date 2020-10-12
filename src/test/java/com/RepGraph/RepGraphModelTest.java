@@ -3,15 +3,14 @@ package com.RepGraph;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import static junit.framework.TestCase.*;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 
 public class RepGraphModelTest {
@@ -99,8 +98,9 @@ public class RepGraphModelTest {
         assertEquals("graph value was not added correctly.", field.get(r) , graphs);
     }
 
+
     @Test
-    public void test_DisplaySubsetAdjacent_CorrectlyConstructsSubsetGraph() throws NoSuchFieldException, IllegalAccessException {
+    public void test_CreateSubsetAdjacent_CorrectlyConstructsSubsetGraph() throws NoSuchFieldException, IllegalAccessException {
 
         RepGraphModel model = new RepGraphModel();
 
@@ -144,14 +144,14 @@ public class RepGraphModelTest {
 
         graph expected = new graph("11111", g1.getSource(), "node1 form node2 form node3 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
 
-        graph subset = model.DisplaySubsetAdjacent("11111", 0);
+        graph subset = model.CreateSubsetAdjacent("11111", 0);
 
         assertEquals("Subset Not Constructed Properly", subset, expected);
 
     }
 
     @Test
-    public void test_DisplaySubsetDescendent_CorrectlyConstructsSubsetGraph() throws NoSuchFieldException, IllegalAccessException {
+    public void test_CreateSubsetDescendent_CorrectlyConstructsSubsetGraph() throws NoSuchFieldException, IllegalAccessException {
 
         RepGraphModel model = new RepGraphModel();
 
@@ -202,7 +202,7 @@ public class RepGraphModelTest {
 
         graph expected = new graph("11111", g1.getSource(), "node1 form node2 form node3 form node4 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
 
-        graph subset = model.DisplaySubsetDescendent("11111", 0);
+        graph subset = model.CreateSubsetDescendent("11111", 0);
 
         Comparator<edge> comp = new Comparator<edge>() {
             @Override
@@ -238,7 +238,7 @@ public class RepGraphModelTest {
 
         assertEquals("Subset Not Constructed Properly", subset, expected);
 
-        subset = model.DisplaySubsetDescendent("11111", 1);
+        subset = model.CreateSubsetDescendent("11111", 1);
 
         correctNodes.clear();
         correctNodes.put(1, new node(1, "node" + (1 + 1), anch2));
@@ -284,28 +284,48 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        correctResults.add("11111");
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
+        ArrayList<HashMap<String, String>> found = new ArrayList<>();
+        HashMap<String, String> graph1 = new HashMap<String, String>();
+        graph1.put("id", "11111");
+        graph1.put("input", "node1 node2 node3 node4");
+        found.add(graph1);
+        correctResults.put("data", found);
         labels.add("node1");
-        ArrayList<String> results = model.searchSubgraphNodeSet(labels);
+        HashMap<String, Object> results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        //Collections.sort(results);
+        //Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
 
-        correctResults.clear();
-        correctResults.add("11111");
-        correctResults.add("22222");
+
+        correctResults = new HashMap<String, Object>();
+        found = new ArrayList<>();
+        HashMap<String, String> graph2 = new HashMap<String, String>();
+        graph2.put("id", "22222");
+        graph2.put("input", "node2 node3 node4 node5");
+        found.add(graph1);
+        found.add(graph2);
+        correctResults.put("data", found);
         labels.clear();
         labels.add("node2");
         results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
 
-        correctResults.clear();
-        correctResults.add("22222");
+
+        correctResults = new HashMap<String, Object>();
+        found = new ArrayList<>();
+
+
+        graph2 = new HashMap<String, String>();
+        graph2.put("id", "22222");
+        graph2.put("input", "node2 node3 node4 node5");
+        found.add(graph2);
+        correctResults.put("data", found);
         labels.clear();
         labels.add("node2");
         labels.add("node3");
@@ -313,32 +333,47 @@ public class RepGraphModelTest {
         labels.add("node5");
         results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
 
-        correctResults.clear();
-        correctResults.add("11111");
-        correctResults.add("22222");
-        correctResults.add("33333");
+        correctResults = new HashMap<String, Object>();
+        found = new ArrayList<>();
+        graph2 = new HashMap<String, String>();
+        graph2.put("id", "22222");
+        graph2.put("input", "node2 node3 node4 node5");
+        HashMap<String, String> graph3 = new HashMap<String, String>();
+        graph3.put("id", "33333");
+        graph3.put("input", "node3 node4 node5 node6");
+        found.add(graph1);
+        found.add(graph2);
+        found.add(graph3);
+        correctResults.put("data", found);
+
         labels.clear();
         labels.add("node3");
         labels.add("node4");
         results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        correctResults.put("response", "Success");
+        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults.size(), results.size());
 
-        correctResults.clear();
+        ArrayList<HashMap<String, String>> obj = (ArrayList<HashMap<String, String>>) correctResults.get("data");
+        ArrayList<HashMap<String, String>> Resultobj = (ArrayList<HashMap<String, String>>) results.get("data");
+        for (int i = 0; i < obj.size(); i++) {
+            HashMap<String, String> obj1 = obj.get(i);
+            assertTrue("Graphs were searched for a subgraph pattern and were not found correctly.", Resultobj.contains(obj1));
 
-        correctResults.add("33333");
+        }
+        correctResults = new HashMap<String, Object>();
+        found = new ArrayList<>();
+
+        found.add(graph3);
+        correctResults.put("data", found);
         labels.clear();
         labels.add("node6");
         results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
 
 
@@ -359,11 +394,12 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphNodeSet(labels);
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        HashMap<String, Object> results = model.searchSubgraphNodeSet(labels);
+
+
         assertEquals("Graphs were searched for an empty set of labels and the method did not function correctly.", correctResults, results);
 
     }
@@ -384,11 +420,12 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphNodeSet(labels);
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
+        ArrayList<HashMap<String, String>> found = new ArrayList<>();
+        correctResults.put("data", found);
+        HashMap<String, Object> results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for an empty set of labels and the method did not function correctly.", correctResults, results);
 
     }
@@ -410,18 +447,26 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        ArrayList<String> correctResults = new ArrayList<>();
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
+        ArrayList<HashMap<String, String>> found = new ArrayList<>();
+        correctResults.put("data", found);
         labels.add("node1");
         labels.add("node1");
-        ArrayList<String> results = model.searchSubgraphNodeSet(labels);
+        HashMap<String, Object> results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for an empty set of labels and the method did not function correctly.", correctResults, results);
 
-        correctResults.clear();
+        correctResults = new HashMap<String, Object>();
+        found = new ArrayList<>();
+        HashMap<String, String> graph4 = new HashMap<String, String>();
+        graph4.put("id", "44444");
+        graph4.put("input", "node7 node7 node7 node7");
 
-        correctResults.add("44444");
+        found.add(graph4);
+        correctResults.put("data", found);
+
+
         labels.clear();
         labels.add("node7");
         labels.add("node7");
@@ -429,11 +474,13 @@ public class RepGraphModelTest {
         labels.add("node7");
         results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
 
-        correctResults.clear();
+
+        correctResults = new HashMap<String, Object>();
+        found.clear();
+        correctResults.put("data", found);
         labels.clear();
         labels.add("node7");
         labels.add("node7");
@@ -442,12 +489,12 @@ public class RepGraphModelTest {
         labels.add("node7");
         results = model.searchSubgraphNodeSet(labels);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
 
 
     }
+
 
     @Test
     public void test_SearchSubgraphPattern_FindsGraphsCorrectly() throws NoSuchFieldException, IllegalAccessException {
@@ -516,53 +563,79 @@ public class RepGraphModelTest {
         graph subgraph6 = new graph("88888", "testsource", "node1 node2 node3 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        correctResults.add("11111");
-        correctResults.add("22222");
-        ArrayList<String> results = model.searchSubgraphPattern(subgraph1);
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
+        ArrayList<HashMap<String, String>> found = new ArrayList<>();
+        HashMap<String, String> graph1 = new HashMap<String, String>();
+        HashMap<String, String> graph2 = new HashMap<String, String>();
+        HashMap<String, String> graph3 = new HashMap<String, String>();
+        graph1.put("id", "11111");
+        graph1.put("input", "node1 node2 node3 node4");
+        found.add(graph1);
+        graph2.put("id", "22222");
+        graph2.put("input", "node2 node3 node4 node5");
+        found.add(graph2);
+        graph3.put("id", "33333");
+        graph3.put("input", "node3 node4 node5 node6");
+        correctResults.put("data", found);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+
+        HashMap<String, Object> results = model.searchSubgraphPattern(subgraph1);
+
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
         correctResults.clear();
-        correctResults.add("11111");
+        found.clear();
+        found.add(graph1);
+        correctResults.put("data", found);
         results = model.searchSubgraphPattern(subgraph2);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
         correctResults.clear();
-        correctResults.add("33333");
+        found.clear();
+        found.add(graph3);
+        correctResults.put("data", found);
         results = model.searchSubgraphPattern(subgraph3);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
         correctResults.clear();
-        correctResults.add("22222");
-        correctResults.add("33333");
+        found.clear();
+        found.add(graph2);
+        found.add(graph3);
+        correctResults.put("data", found);
         results = model.searchSubgraphPattern(subgraph4);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
-        assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
+        correctResults.put("response", "Success");
+        assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults.size(), results.size());
+
+        ArrayList<HashMap<String, String>> obj = (ArrayList<HashMap<String, String>>) correctResults.get("data");
+        ArrayList<HashMap<String, String>> Resultobj = (ArrayList<HashMap<String, String>>) results.get("data");
+        for (int i = 0; i < obj.size(); i++) {
+            HashMap<String, String> obj1 = obj.get(i);
+            assertTrue("Graphs were searched for a subgraph pattern and were not found correctly.", Resultobj.contains(obj1));
+
+        }
+
 
         correctResults.clear();
-        correctResults.add("11111");
+        found.clear();
+        found.add(graph1);
+        correctResults.put("data", found);
         results = model.searchSubgraphPattern(subgraph5);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
         correctResults.clear();
+        found.clear();
+        correctResults.put("data", found);
         results = model.searchSubgraphPattern(subgraph6);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Success");
         assertEquals("Graphs were searched for a subgraph pattern and were not found correctly.", correctResults, results);
 
 
@@ -593,11 +666,12 @@ public class RepGraphModelTest {
 
         graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
+
+
         assertEquals("Graphs were searched using an empty subgraph pattern and the method did not handle it correctly.", correctResults, results);
 
     }
@@ -629,11 +703,12 @@ public class RepGraphModelTest {
 
         graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
+
+
         assertEquals("Graphs were searched using an empty subgraph pattern and the method did not handle it correctly.", correctResults, results);
 
     }
@@ -657,11 +732,11 @@ public class RepGraphModelTest {
 
         graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
+        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+
         assertEquals("Graphs were searched using an empty subgraph pattern and the method did not handle it correctly.", correctResults, results);
 
     }
@@ -688,11 +763,11 @@ public class RepGraphModelTest {
 
         graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
+        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+
         assertEquals("Graphs were searched for a non connected subgraph and it was not handled correctly.", correctResults, results);
 
 
@@ -721,11 +796,11 @@ public class RepGraphModelTest {
 
         graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
-        ArrayList<String> correctResults = new ArrayList<>();
-        ArrayList<String> results = model.searchSubgraphPattern(subgraph);
+        HashMap<String, Object> correctResults = new HashMap<String, Object>();
+        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
 
-        Collections.sort(results);
-        Collections.sort(correctResults);
+
         assertEquals("Graphs were searched for a non connected subgraph and it was not handled correctly.", correctResults, results);
 
     }
@@ -894,62 +969,5 @@ public class RepGraphModelTest {
 
         assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges.", expected, model.compareTwoGraphs("1", "2"));
 
-    }
-
-    @Test
-    public void test_containsKey_CorrectlyChecksForKey()throws NoSuchFieldException, IllegalAccessException{
-        RepGraphModel model = new RepGraphModel();
-        HashMap<String, graph> graphs = new HashMap<>();
-        graphs.put(g1.getId(),g1);
-        graphs.put(g2.getId(),g2);
-        graphs.put(g3.getId(),g3);
-
-        final Field field = model.getClass().getDeclaredField("graphs");
-        field.setAccessible(true);
-        field.set(model, graphs);
-
-        assertTrue("containsKey does not correctly check for a key in the model.", model.containsKey("22222"));
-    }
-
-    @Test
-    public void test_clearGraph_CorrectlyClearsGraph()throws NoSuchFieldException, IllegalAccessException{
-        RepGraphModel model = new RepGraphModel();
-        HashMap<String, graph> graphs = new HashMap<>();
-        graphs.put(g1.getId(),g1);
-        graphs.put(g2.getId(),g2);
-        graphs.put(g3.getId(),g3);
-
-        final Field fieldSet = model.getClass().getDeclaredField("graphs");
-        fieldSet.setAccessible(true);
-        fieldSet.set(model, graphs);
-
-        HashMap<String, graph> expected = new HashMap<>();
-        model.clearGraphs();
-
-        final Field fieldGet = model.getClass().getDeclaredField("graphs");
-        fieldGet.setAccessible(true);
-
-
-        assertEquals("clearGraphs does not clear graphs correctly.", fieldGet.get(model), expected );
-
-
-    }
-
-    @Test
-    public void test_areAllTrue_CorrectlyChecksBooleanArray(){
-        boolean [] array = new boolean[5];
-        array[0] = true;
-        array[1] = true;
-        array[2] = true;
-        array[3] = true;
-        array[4] = true;
-
-        RepGraphModel model = new RepGraphModel();
-
-        assertTrue("areAllTrue does not correctly identify an array of all trues", model.areAllTrue(array));
-
-        array[3] = false;
-
-        assertFalse("areAllTrue does not correctly identify an array with one false", model.areAllTrue(array));
     }
 }
