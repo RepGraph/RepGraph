@@ -566,6 +566,7 @@ public class RepGraphModel {
         HashMap<String, Object> returnObj = new HashMap<>();
         if (planar) {
             returnObj.put("Planar", graphs.get(graphID).GraphIsPlanar());
+            returnObj.put("PlanarVis", VisualisePlanar(graphs.get(graphID)));
         }
         if (longestPathDirected) {
             if (graphs.get(graphID).isCyclic(true)) {
