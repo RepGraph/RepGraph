@@ -1360,7 +1360,8 @@ public class RepGraphModel {
             }
 
             String edgeType = "";
-            double round = 0.45;
+            double round = 0.4;
+
 
             int spanLower = graph.getNodes().get(fromID).getAnchors().get(0).getFrom() * space;
             int spanUpper = graph.getNodes().get(fromID).getAnchors().get(0).getEnd() * space;
@@ -1370,7 +1371,8 @@ public class RepGraphModel {
                     edgeType = "continuous";
                 } else {
                     boolean notFound = true;
-
+                    double protrusionHeight = 0.0;
+                    double protrusionWidth = 0.0;
                     if (fromX == toX) {
                         for (HashMap<String, Object> node : finalNodes) {
                             if ((Integer) node.get("x") == fromX) {
@@ -1383,8 +1385,14 @@ public class RepGraphModel {
                         for (HashMap<String, Object> node : finalNodes) {
                             if ((Integer) node.get("x") <= spanUpper && (Integer) node.get("x") >= spanLower) {
                                 if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
-                                    if ((((Integer) node.get("x") >= toX) && ((Integer) node.get("x") <= fromX)) || (((Integer) node.get("x") <= toX) && ((Integer) node.get("x") >= fromX))) {
+                                    if ((((Integer) node.get("x") >= toX) && ((Integer) node.get("x") <= fromX))) {
                                         notFound = false;
+                                        protrusionHeight = Math.max(protrusionHeight, ((Integer) node.get("nodeLevel")) / (double) fromLevel);
+                                        protrusionWidth = Math.max(protrusionWidth, Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanLower));
+                                    } else if (((Integer) node.get("x") <= toX) && ((Integer) node.get("x") >= fromX)) {
+                                        notFound = false;
+                                        protrusionHeight = Math.max(protrusionHeight, ((Integer) node.get("nodeLevel")) / (double) fromLevel);
+                                        protrusionWidth = Math.max(protrusionWidth, Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanUpper));
                                     }
                                 }
                             }
@@ -1395,28 +1403,51 @@ public class RepGraphModel {
 
                     } else {
                         if (Math.abs(fromLevel - toLevel) > 3) {
+                            round = 0.36;
+                        }
+                        if (Math.abs(fromLevel - toLevel) > 4) {
                             round = 0.32;
+                        }
+                        if ((protrusionHeight > 0.55) && (protrusionWidth > 0.55)) {
+                            round = 0.45;
+                        }
+                        if (protrusionWidth > 0.8) {
+                            round = 0.4;
                         }
                         edgeType = "curvedCCW";
                         if (fromLevel < toLevel) {
                             edgeType = "curvedCW";
                         }
-                        for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()) {
-                            if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
-                                if (fromLevel < toLevel) {
-                                    edgeType = "curvedCCW";
-                                } else {
-                                    edgeType = "curvedCW";
+                        if (fromX == toX) {
+                            for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()) {
+                                if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
+                                    if (fromLevel < toLevel) {
+                                        edgeType = "curvedCCW";
+                                    } else {
+                                        edgeType = "curvedCW";
+                                    }
                                 }
                             }
-                        }
-                        for (node neighbour : graph.getNodes().get(toID).getDirectedNeighbours()) {
-                            if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
-                                if (fromLevel < toLevel) {
-                                    edgeType = "curvedCCW";
-                                } else {
-                                    edgeType = "curvedCW";
+                            for (node neighbour : graph.getNodes().get(toID).getDirectedNeighbours()) {
+                                if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
+                                    if (fromLevel < toLevel) {
+                                        edgeType = "curvedCCW";
+                                    } else {
+                                        edgeType = "curvedCW";
+                                    }
                                 }
+                            }
+                        } else if (fromX < toX) {
+                            if (fromLevel < toLevel) {
+                                edgeType = "curvedCCW";
+                            } else {
+                                edgeType = "curvedCW";
+                            }
+                        } else {
+                            if (fromLevel < toLevel) {
+                                edgeType = "curvedCW";
+                            } else {
+                                edgeType = "curvedCCW";
                             }
                         }
                     }
@@ -1424,12 +1455,13 @@ public class RepGraphModel {
             } else {
                 if (fromLevel == toLevel) {
                     edgeType = "curvedCCW";
+                    round = 0.5;
                     int difference = fromX / space - toX / space;
                     if (Math.abs(difference) > 4) {
-                        round = 0.2;
+                        round = 0.3;
                     }
                     if (Math.abs(difference) > 10) {
-                        round = 0.1;
+                        round = 0.2;
                     }
                     if (difference > 0 && fromLevel == 0) {
                         edgeType = "curvedCW";
@@ -1453,6 +1485,13 @@ public class RepGraphModel {
             HashMap<String, Object> smooth = new HashMap<>();
             smooth.put("type", edgeType);
             smooth.put("roundness", round);
+
+            HashMap<String, Object> scaling = new HashMap<>();
+            scaling.put("min", 1);
+            scaling.put("max", 6);
+
+            singleEdge.put("scaling",scaling);
+            singleEdge.put("value", 1);
 
             HashMap<String, Object> end = new HashMap<>();
             end.put("from", 20);
