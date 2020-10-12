@@ -663,7 +663,6 @@ public class RepGraphModel {
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
 
-
         }
 
 
@@ -1285,23 +1284,29 @@ public class RepGraphModel {
         int space = 130;
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
+        int maxID = graph.getNodes().keySet().iterator().next();
 
         for (int level = 0; level < nodesInFinalLevels.size(); level++) {
-
             for (node n : nodesInFinalLevels.get(level)) {
                 HashMap<String, Object> singleNode = new HashMap<>();
                 singleNode.put("id", n.getId());
-                singleNode.put("x", n.getAnchors().get(0).getFrom() * space + (n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom() * space) / 2);
+                maxID = Math.max(n.getId(), maxID);
+                singleNode.put("x", (n.getAnchors().get(0).getEnd() * space + n.getAnchors().get(0).getFrom() * space) / 2);
                 singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
-                singleNode.put("label", n.getId() + n.getLabel());
+                singleNode.put("label", n.getLabel());
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", level);
                 singleNode.put("anchors", n.getAnchors().get(0));
                 singleNode.put("group", "node");
                 singleNode.put("fixed", true);
+                HashMap<String,Object> widthCon = new HashMap<>();
+                widthCon.put("minimum", n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom() * space + 70);
+                widthCon.put("maximum", n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom() * space + 70);
+                singleNode.put("widthConstraint", widthCon);
                 finalNodes.add(singleNode);
             }
         }
+
 
         if (graph.getNodes().containsKey(graph.getTops().get(0))) {
             HashMap<String, Object> singleNode = new HashMap<>();
@@ -1360,7 +1365,7 @@ public class RepGraphModel {
             }
 
             String edgeType = "";
-            double round = 0.4;
+            double round = 0.5;
 
 
             int spanLower = graph.getNodes().get(fromID).getAnchors().get(0).getFrom() * space;
@@ -1409,7 +1414,7 @@ public class RepGraphModel {
                             round = 0.32;
                         }
                         if ((protrusionHeight > 0.55) && (protrusionWidth > 0.55)) {
-                            round = 0.45;
+                            round = 0.47;
                         }
                         if (protrusionWidth > 0.8) {
                             round = 0.4;
@@ -1478,6 +1483,7 @@ public class RepGraphModel {
             singleEdge.put("label", e.getLabel());
             singleEdge.put("group", "normal");
             singleEdge.put("shadow", false);
+            singleEdge.put("color", "rgba(118, 118, 118, 1)");
             HashMap<String, Object> back = new HashMap<>();
             back.put("enabled", false);
             singleEdge.put("background", back);
@@ -1485,13 +1491,6 @@ public class RepGraphModel {
             HashMap<String, Object> smooth = new HashMap<>();
             smooth.put("type", edgeType);
             smooth.put("roundness", round);
-
-            HashMap<String, Object> scaling = new HashMap<>();
-            scaling.put("min", 1);
-            scaling.put("max", 6);
-
-            singleEdge.put("scaling",scaling);
-            singleEdge.put("value", 1);
 
             HashMap<String, Object> end = new HashMap<>();
             end.put("from", 20);
@@ -1502,11 +1501,7 @@ public class RepGraphModel {
 
         }
 
-        if (graph.getNodes().
-
-                containsKey(graph.getTops().
-
-                        get(0))) {
+        if (graph.getNodes().containsKey(graph.getTops().get(0))) {
             HashMap<String, Object> singleEdge = new HashMap<>();
             singleEdge.put("id", graph.getEdges().size());
             singleEdge.put("from", "TOP");
