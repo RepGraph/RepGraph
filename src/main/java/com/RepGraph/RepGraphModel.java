@@ -171,7 +171,7 @@ public class RepGraphModel {
         parent.setNodeNeighbours();
 
 
-// THE WHOLE DISCOVER NODES METHOD MIGHT BE REDUNDANT.
+
         node n = parent.getNodes().get(headNodeID);
 
         DescendentNodes.put(n.getId(), new node(n));
@@ -179,30 +179,37 @@ public class RepGraphModel {
             DescendentEdges.add(new edge(e));
         }
 
-
         int minFrom = n.getAnchors().get(0).getFrom();
         int maxEnd = n.getAnchors().get(0).getEnd();
 
-        HashMap<Integer, node> descNode = new HashMap<>();
+        // HashMap<Integer, node> descNode = new HashMap<>();
         HashMap<String, edge> descEdge = new HashMap<>();
-
-        DiscoverNodesAndEdges(n, descNode, descEdge);
-
-        DescendentNodes.putAll(descNode);
-
-        DescendentEdges.addAll(descEdge.values());
-
-        for (node nn : DescendentNodes.values()) {
-            if (nn.getAnchors().get(0).getFrom() < minFrom) {
-                minFrom = nn.getAnchors().get(0).getFrom();
+        Stack<node> stack = new Stack<>();
+        while (n != null) {
+            for (node nn : n.getDirectedNeighbours()) {
+                DescendentNodes.put(nn.getId(), nn);
+                stack.push(nn);
+                if (nn.getAnchors().get(0).getFrom() < minFrom) {
+                    minFrom = nn.getAnchors().get(0).getFrom();
+                }
+                if (nn.getAnchors().get(0).getEnd() > maxEnd) {
+                    maxEnd = nn.getAnchors().get(0).getEnd();
+                }
+                for (edge ne : nn.getDirectedEdgeNeighbours()) {
+                    descEdge.put(ne.getSource() + " " + ne.getTarget(), ne);
+                }
             }
-            if (nn.getAnchors().get(0).getEnd() > maxEnd) {
-                maxEnd = nn.getAnchors().get(0).getEnd();
+            if (!stack.empty()) {
+                n = stack.pop();
+            } else {
+                n = null;
             }
         }
 
-        SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
+        DescendentEdges.addAll(descEdge.values());
 
+
+        SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
 
         subset.setId(parent.getId());
         subset.setSource(parent.getSource());
@@ -215,46 +222,6 @@ public class RepGraphModel {
         return subset;
     }
 
-    /**
-     * Iteratively goes down from a root node and finds all descendents and edges from that nodes and puts them in a hashmap
-     *
-     * @param root             This is the root node where the algorithm starts looking for all descendants from.
-     * @param descendants      This is the HashMap input that is populated with descendant nodes
-     *                         i.e the data is returned in the object inputted as the parameter
-     * @param descendantsEdges This is the HashMap input that is populated with descendant edges
-     *                         i.e the data is returned in the object inputted as the parameter
-     */
-    public void DiscoverNodesAndEdges(node root, HashMap<Integer, node> descendants, HashMap<String, edge> descendantsEdges) {
-
-        if (root == null)
-            return;
-
-        Stack<node> s = new Stack<>();
-        node curr = root;
-
-        // traverse the tree
-        while (curr != null || s.size() > 0) {
-
-            for (node n : curr.getDirectedNeighbours()) {
-                s.push(n);
-                descendants.put(n.getId(), new node(n));
-
-                for (edge e : n.getDirectedEdgeNeighbours()) {
-
-                    descendantsEdges.put(e.getSource() + " " + e.getTarget(), new edge(e));
-                }
-            }
-
-            try {
-                curr = s.pop();
-            } catch (Exception e) {
-                curr = null;
-            }
-
-        }
-
-
-    }
 
     /**
      * Overloaded method to search for subgraph pattern using different parameters
