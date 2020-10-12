@@ -325,7 +325,6 @@ export default function Main() {
                             <Card>
                                 <CardContent>
                                     <Typography variant="h5">Visualisation Area</Typography>
-                                    <VisualisationControls/>
                                 </CardContent>
                                 <CardContent style={{height: "80vh", width: "100%"}}>
                                     {state.selectedSentenceID === null ? (
