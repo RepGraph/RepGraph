@@ -1,18 +1,14 @@
 import React, {useContext} from 'react';
-import Grid from "@material-ui/core/Grid";
 import {makeStyles} from "@material-ui/core/styles";
 import FormLabel from "@material-ui/core/FormLabel";
-import FormControl from "@material-ui/core/FormControl";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import Button from "@material-ui/core/Button";
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 
 import {AppContext} from "../../Store/AppContextProvider.js";
@@ -20,13 +16,8 @@ import {useHistory} from "react-router-dom";
 import GraphVisualisation from "../Main/GraphVisualisation";
 import Chip from "@material-ui/core/Chip";
 
-import {layoutGraph} from "../App";
 import SubsetVisualisation from "../Main/SubsetVisualisation";
 import CardContent from "@material-ui/core/CardContent";
-import {Typography} from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import InfoIcon from "@material-ui/icons/Info";
-import Card from "@material-ui/core/Card";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,27 +27,31 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function DisplaySubsetTool(props) {
-    const {state, dispatch} = useContext(AppContext);
-    const [subsetResponse, setSubsetResponse] = React.useState(null);
+    const {state, dispatch} = useContext(AppContext); //Provide access to global state
+    const [subsetResponse, setSubsetResponse] = React.useState(null); //Store selected subset response in local state
 
-    const history = useHistory();
+    const history = useHistory(); //Use history for page routing
 
-    const [open, setOpen] = React.useState(false);
-    const [resultOpen, setResultOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(false); //Store local state for whether dialog is open or not
+    const [resultOpen, setResultOpen] = React.useState(false); //Store local state for whether result dialog is open or not
 
+    //Handle click open for first dialog to select subset
     const handleClickOpen = () => {
         setOpen(true);
     };
-
+    //Handle close for first dialog to select subset
     const handleClose = () => {
         setOpen(false);
     };
+
+    //handle close for second dialog to display subset result
     const handleResultClose = () => {
         setResultOpen(false);
     };
 
-    const [value, setValue] = React.useState('adjacent');
+    const [value, setValue] = React.useState('adjacent'); //Store subset type in local state
 
+    //Handle change of selected subset type
     const handleChange = (event) => {
         setValue(event.target.value);
     };
@@ -71,33 +66,29 @@ function DisplaySubsetTool(props) {
             redirect: 'follow'
         };
 
-        console.log(state.selectedSentenceID, state.selectedNodeAndEdges.nodes[0], value);
-        dispatch({type: "SET_LOADING", payload: {isLoading: true}});
+        console.log(state.selectedSentenceID, state.selectedNodeAndEdges.nodes[0], value); //Debugging
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation
 
-        console.log(state.visualisationFormat);
+        console.log(state.visualisationFormat); //Debugging
 
-        console.log(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + state.selectedNodeAndEdges.nodes[0] + "&SubsetType=" + value +"&format="+state.visualisationFormat);
+        console.log(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + state.selectedNodeAndEdges.nodes[0] + "&SubsetType=" + value +"&format="+state.visualisationFormat); //Debugging
 
+        //Request subset from backend
         fetch(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + state.selectedNodeAndEdges.nodes[0] + "&SubsetType=" + value +"&format="+state.visualisationFormat, requestOptions)
             .then((response) => response.text())
             .then((result) => {
                 console.log(result);//debugging
                 console.log(JSON.parse(result));//debugging
-                const jsonResult = JSON.parse(result);
-
-                //const formattedGraph = layoutGraph(jsonResult); //will remove this step before final
-
-                //dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: formattedGraph}});
-                //dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: jsonResult.id}});
-                setSubsetResponse(jsonResult);
-                setResultOpen(true);
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                const jsonResult = JSON.parse(result); //Parse response into JSON
+                setSubsetResponse(jsonResult); //Store the response in local state
+                setResultOpen(true); //Show the result in dialog
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
 
             })
             .catch((error) => {
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
-                console.log("error", error);
-                history.push("/404"); //for debugging
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+                console.log("error", error); //Log the error
+                history.push("/404"); //Take user to error page
             });
     }
 
@@ -164,8 +155,6 @@ function DisplaySubsetTool(props) {
                 </DialogActions>
             </Dialog>
         </CardContent>
-
-
     );
 
 }
