@@ -293,9 +293,7 @@ function SearchSubgraphPatternTool(props) {
                             </Button>
                         </DialogActions>
                     </Dialog>
-
                 </CardContent>
-
             </Card>
         </React.Fragment>
 
