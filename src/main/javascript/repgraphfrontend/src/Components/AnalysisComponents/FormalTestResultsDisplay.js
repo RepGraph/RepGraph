@@ -11,7 +11,6 @@ import { Button } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Tooltip, Typography } from "@material-ui/core";
 
@@ -29,6 +28,7 @@ const useStyles = makeStyles({
     }
 });
 
+//Function to create row data for the formal tests results table
 function createData(test, result) {
     return { test, result };
 }
@@ -36,19 +36,20 @@ function createData(test, result) {
 export default function FormalTestsResultsDisplay(props) {
     const theme = useTheme();
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false); //State of dialog
-    const [rowClicked, setRowClicked] = React.useState(null);
-    const { state, dispatch } = React.useContext(AppContext);
+    const [open, setOpen] = React.useState(false); //Local state of the results dialog
+    const [rowClicked, setRowClicked] = React.useState(null); //Local state to store which table row was clicked
+    const { state, dispatch } = React.useContext(AppContext); //Provide access to global state
 
-    const response = state.testResults;
+    const response = state.testResults; //Get the test results from the global state
 
     let newRows = [];
 
+    //Add the rows to the table of results
     for (const [test, result] of Object.entries(response)) {
-        //console.log(`${test}: ${result}`);
         newRows.push(createData(test, result));
     }
 
+    //
     const handleClickOpen = (event, test) => {
         console.log(test);
         if (test !== "Connected") {
