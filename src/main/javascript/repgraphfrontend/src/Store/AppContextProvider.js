@@ -11,7 +11,7 @@ const initialState = {
   selectedSentenceID: null,
   selectedNodeAndEdges: null,
   isLoading: false,
-  APIendpoint: "http://localhost:8080",
+  APIendpoint: "http://repgraph-api.herokuapp.com",
   testResults: null,
   longestPathVisualisation: null,
   visualisationFormat: "1",
@@ -53,27 +53,3 @@ export default function AppContextProvider({ children }) {
     </AppContext.Provider>
   );
 }
-/*
-export class AppProvider extends Component {
-  componentDidMount = () => {
-    const initState = {
-      dataSet: {},
-      selectedSentence: {},
-      isLoading: false,
-      dispatch: (action) => {
-        this.setState((state) => reducer(state, action));
-      }
-    };
-    this.setState(initState);
-  };
-
-  state = {};
-
-  render() {
-    return (
-      <AppContext.Provider value={this.state}>
-        {this.props.children}
-      </AppContext.Provider>
-    );
-  }
-}*/
