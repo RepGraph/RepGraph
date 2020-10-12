@@ -25,6 +25,11 @@ public class RequestHandler {
 
     RepGraphModel RepModel = new RepGraphModel();
 
+    /**
+     * Simple Home Mapping that returns "Welcome"
+     *
+     * @return String This is the welcome message
+     */
     @GetMapping("/")
     @ResponseBody
     public String Home() {
