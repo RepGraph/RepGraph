@@ -1,8 +1,6 @@
 import {Button, Grid, Typography} from "@material-ui/core";
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
-import {DropzoneArea} from "material-ui-dropzone";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
 export default function ErrorPage() {
   const history = useHistory();
@@ -19,7 +17,7 @@ export default function ErrorPage() {
           <Typography variant="h2">Error 404</Typography>
         </Grid>
         <Grid item>
-          <Button onClick={() => {history.push("/")}}>Take Me Home</Button>
+          <Button variant="outlined" onClick={() => {history.push("/")}}>Take Me Home</Button>
         </Grid>
       </Grid>
       );
