@@ -383,6 +383,7 @@ function LongestPathVisualisation({ type }) {
                 index={activeStep}
                 onChangeIndex={handleStepChange}
                 enableMouseEvents
+                autoplay={false}
             >
                 {state.testResults[type].map((path, index) => (
                     <div className={classes.body} key={index}>
