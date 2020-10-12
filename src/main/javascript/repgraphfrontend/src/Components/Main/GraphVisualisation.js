@@ -36,6 +36,10 @@ const options = {
             }
         },
         arrowStrikethrough: false,
+        endPointOffset: {
+            from: 20,
+            to: 0
+        },
     },
     nodes: {
         shape: "box",
@@ -49,7 +53,8 @@ const options = {
             minimum: 30
         }
     },
-    height: "500px",
+    height: "100%",
+    width: "100%",
     interaction: {hover: true},
     groups: {
         'node': {
@@ -75,12 +80,40 @@ const options = {
             heightConstraint: {
                 minimum: 30
             }
+        },
+        'longestPath': {
+            shape: "box",
+            color: "rgba(245, 0, 87, 0.7)",
+            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+            widthConstraint: {
+                minimum: 60,
+                maximum: 60
+            },
+            heightConstraint: {
+                minimum: 30
+            }
+        },
+        'tokenEdge' :{
+            color: "rgba(156, 154, 154, 1)",
+            smooth: true,
+            physics: true,
+            dashed: true,
+            arrows: {
+                to: {
+                    enabled: false
+                }
+            },
+            arrowStrikethrough: false,
+            endPointOffset: {
+                from: 20,
+                to: 0
+            }
         }
     }
 };
 
 
-const GraphVisualisation = (props) => {
+const GraphVisualisation = () => {
     const {state, dispatch} = useContext(AppContext);
 
     const events = {
@@ -91,56 +124,60 @@ const GraphVisualisation = (props) => {
         }
     };
 
-    return (
-        <Graph
-            graph={state.selectedSentence}
-            options={options}
-            events={events}
-            style={{width: "100%", height: "100%"}}
-            getNetwork={(network) => {
-                //  if you want access to vis.js network api you can set the state in a parent component using this property
-                network.on("beforeDrawing", function (ctx) {
-                    //console.log(state.selectedSentence.nodes);
-                    /*
-                    for (let node of state.selectedSentence.nodes) {
-                      if (node.type === "node") {
-                        let nodeId = node.id;
-                        let nodePosition = network.getPositions([nodeId]);
-                        ctx.strokeStyle = "#A6D5F7";
-                        ctx.fillStyle = "#294475";
-                        ctx.lineWidth = 3;
+return (
+    <Graph
+        graph={state.selectedSentenceVisualisation}
+        options={options}
+        events={events}
+        style={{width: "100%", height: "100%"}}
+        getNetwork={(network) => {
+            //  if you want access to vis.js network api you can set the state in a parent component using this property
+            network.on("hoverNode", function (params) {
+                network.canvas.body.container.style.cursor = 'pointer'
+            });
+            network.on("beforeDrawing", function (ctx) {
+                //console.log(state.selectedSentence.nodes);
+                /*
+                for (let node of state.selectedSentence.nodes) {
+                  if (node.type === "node") {
+                    let nodeId = node.id;
+                    let nodePosition = network.getPositions([nodeId]);
+                    ctx.strokeStyle = "#A6D5F7";
+                    ctx.fillStyle = "#294475";
+                    ctx.lineWidth = 3;
 
-                        let nodeBoundingBox = network.getBoundingBox(nodeId);
-                        console.log(nodePosition[nodeId]);
+                    let nodeBoundingBox = network.getBoundingBox(nodeId);
+                    console.log(nodePosition[nodeId]);
 
-                        ctx.beginPath();
-                        ctx.moveTo(
-                          nodePosition[nodeId].x - 40,
-                          nodeBoundingBox.bottom + 5
-                        );
-                        ctx.lineTo(nodePosition[nodeId].x - 40, nodeBoundingBox.bottom);
-                        ctx.lineTo(
-                          nodePosition[nodeId].x +
-                            40 +
-                            60 * (node.anchors.end - node.anchors.from),
-                          nodeBoundingBox.bottom
-                        );
-                        ctx.lineTo(
-                          nodePosition[nodeId].x +
-                            40 +
-                            60 * (node.anchors.end - node.anchors.from),
-                          nodeBoundingBox.bottom + 5
-                        );
+                    ctx.beginPath();
+                    ctx.moveTo(
+                      nodePosition[nodeId].x - 40,
+                      nodeBoundingBox.bottom + 5
+                    );
+                    ctx.lineTo(nodePosition[nodeId].x - 40, nodeBoundingBox.bottom);
+                    ctx.lineTo(
+                      nodePosition[nodeId].x +
+                        40 +
+                        60 * (node.anchors.end - node.anchors.from),
+                      nodeBoundingBox.bottom
+                    );
+                    ctx.lineTo(
+                      nodePosition[nodeId].x +
+                        40 +
+                        60 * (node.anchors.end - node.anchors.from),
+                      nodeBoundingBox.bottom + 5
+                    );
 
-                        ctx.stroke();
-                        //ctx.fill();
-                        //ctx.stroke();
-                      }
-                    }*/
-                });
-            }}
-        />
-    );
-};
+                    ctx.stroke();
+                    //ctx.fill();
+                    //ctx.stroke();
+                  }
+                }*/
+            });
+        }}
+    />
+);
+}
+;
 
 export default GraphVisualisation;

@@ -1,14 +1,35 @@
-import React, { useContext } from "react";
+import React, {useContext} from "react";
 import {
-  Card,
-  Grid,
-  Paper,
-  Typography,
-  CardContent,
-  CardActions
+    Card,
+    Grid,
+    Paper,
+    Typography,
+    CardContent,
+    CardActions
 } from "@material-ui/core";
 
-import { AppContext } from "./Store/AppContextProvider.js";
+import clsx from "clsx";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import List from "@material-ui/core/List";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import {Button} from "@material-ui/core";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import MenuOpenIcon from "@material-ui/icons/MenuOpen";
+import ReorderIcon from "@material-ui/icons/Reorder";
+import ShortTextIcon from "@material-ui/icons/ShortText";
+
+import {AppContext} from "./Store/AppContextProvider.js";
 import SentenceList from "./Components/Main/SentenceList.js";
 import Header from "./Components/Layouts/Header.js";
 import AnalysisAccordion from "./Components/Main/AnalysisAccordion";
@@ -16,238 +37,333 @@ import VisualisationControls from "./Components/Main/VisualisationControls";
 import GraphVisualisation from "./Components/Main/GraphVisualisation";
 
 import "./Components/Main/network.css";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import BuildIcon from '@material-ui/icons/Build';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+
+import {Chip} from "@material-ui/core";
+import Tooltip from "@material-ui/core/Tooltip";
+import {Link, useHistory} from "react-router-dom";
+import Box from "@material-ui/core/Box";
+import CardHeader from "@material-ui/core/CardHeader";
+import VisualizerArea from "./Components/Main/VisualizerArea";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+import ToggleButton from "@material-ui/lab/ToggleButton";
+import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
+
+const drawerWidth = 240;
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        display: "flex"
+    },
+    appBar: {
+        zIndex: theme.zIndex.drawer + 1,
+        transition: theme.transitions.create(["width", "margin"], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen
+        })
+    },
+    appBarShift: {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(["width", "margin"], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen
+        })
+    },
+    menuButton: {
+        marginRight: 36
+    },
+    hide: {
+        display: "none"
+    },
+    drawer: {
+        width: drawerWidth,
+        flexShrink: 0,
+        whiteSpace: "nowrap"
+    },
+    drawerOpen: {
+        width: drawerWidth,
+        transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen
+        })
+    },
+    drawerClose: {
+        transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen
+        }),
+        overflowX: "hidden",
+        width: theme.spacing(7) + 1,
+        [theme.breakpoints.up("sm")]: {
+            width: theme.spacing(9) + 1
+        }
+    },
+    toolbar: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        padding: theme.spacing(0, 1),
+        // necessary for content to be below app bar
+        ...theme.mixins.toolbar
+    },
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing(3)
+    }
+}));
 
 const testingEndpoint = "http://192.168.0.135:8080";
 
 export default function Main() {
-  const { state, dispatch } = useContext(AppContext);
+    const {state, dispatch} = useContext(AppContext);
+    const classes = useStyles();
+    const theme = useTheme();
+    const history = useHistory();
+    const [open, setOpen] = React.useState(false);
+    const [sentenceOpen, setSentenceOpen] = React.useState(false);
+    const [visFormat, setVisFormat] = React.useState("1");
+    const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true);
 
-  const layoutGraph = (sentence) => {
-    let graph = sentence;
-
-    //Determine span lengths of each node
-    const graphNodeSpanLengths = graph.nodes
-      .map((node) => node.anchors[0])
-      .map((span) => span.end - span.from);
-    //Determine unique span lengths of all the node spans
-    let uniqueSpanLengths = [];
-    const map = new Map();
-    for (const item of graphNodeSpanLengths) {
-      if (!map.has(item)) {
-        map.set(item, true); // set any value to Map
-        uniqueSpanLengths.push(item);
-      }
-    }
-    uniqueSpanLengths.sort((a, b) => a - b); //sort unique spans ascending
-
-    //Sort the nodes into each level based on their spans
-    let nodesInLevels = [];
-    for (const level of uniqueSpanLengths) {
-      let currentLevel = [];
-
-      for (
-        let spanIndex = 0;
-        spanIndex < graphNodeSpanLengths.length;
-        spanIndex++
-      ) {
-        if (graphNodeSpanLengths[spanIndex] === level) {
-          currentLevel.push(graph.nodes[spanIndex]);
+    const handleDataSetResponseClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
         }
-      }
 
-      nodesInLevels.push(currentLevel);
-    }
-    //Find the nodes in each level with the same span and group them together
-    //Find the unique spans in each level
-    let uniqueSpansInLevels = [];
-    for (let level of nodesInLevels) {
-      let uniqueSpans = []; //Stores the "stringified" objects
-      const spanMap = new Map();
-      for (const node of level) {
-        if (!spanMap.has(JSON.stringify(node.anchors))) {
-          spanMap.set(JSON.stringify(node.anchors), true); // set any value to Map
-          uniqueSpans.push(JSON.stringify(node.anchors));
-        }
-      }
-      uniqueSpansInLevels.push(uniqueSpans);
-      //console.log(uniqueSpans);
-    }
-
-    //Iterate through the unique spans in each level and group the same ones together
-    for (let level = 0; level < nodesInLevels.length; level++) {
-      let newLevelOfGroups = [];
-      for (let uniqueSpan of uniqueSpansInLevels[level]) {
-        //find the nodes in the level that have the same span and group them together
-        let nodesWithCurrentSpan = nodesInLevels[level].filter(
-          (node) => JSON.stringify(node.anchors) === uniqueSpan
-        );
-        newLevelOfGroups.push(nodesWithCurrentSpan);
-      }
-      nodesInLevels[level] = newLevelOfGroups;
-    }
-
-    //Determine the actual number of levels needed
-    let height = 0;
-    let previousLevelHeights = [0];
-    for (let level of nodesInLevels) {
-      let maxLevelHeight = 0;
-      for (let item of level) {
-        maxLevelHeight = Math.max(maxLevelHeight, item.length);
-      }
-      previousLevelHeights.push(maxLevelHeight);
-      height += maxLevelHeight;
-    }
-    //console.log({height});
-    //console.log({nodesInLevels});
-    //console.log({previousLevelHeights});
-
-    //Sort the nodes into the final levels
-    let nodesInFinalLevels = [];
-    for (let index = 0; index < height; index++) {
-      nodesInFinalLevels.push([]);
-    }
-    for (let level = 0; level < nodesInLevels.length; level++) {
-      //console.log(nodesInLevels[level]);
-      for (let group of nodesInLevels[level]) {
-        //console.log({group});
-        for (
-          let nodeGroupIndex = 0;
-          nodeGroupIndex < group.length;
-          nodeGroupIndex++
-        ) {
-          //console.log(group[nodeGroupIndex]);
-          let finalLevel =
-            previousLevelHeights
-              .slice(0, level + 1)
-              .reduce(
-                (accumulator, currentValue) => accumulator + currentValue
-              ) + nodeGroupIndex;
-          nodesInFinalLevels[finalLevel].push(group[nodeGroupIndex]);
-        }
-      }
-    }
-    //console.log({ nodesInFinalLevels });
-
-    //Map the nodes in each level to the correct format
-
-    const totalGraphHeight = height * 50 + (height - 1) * 30; //number of levels times the height of each node and the spaces between them
-
-    for (let level = 0; level < nodesInFinalLevels.length; level++) {
-      nodesInFinalLevels[level] = nodesInFinalLevels[level].map((node) => ({
-        id: node.id,
-        x: node.anchors[0].from * 90,
-        y: totalGraphHeight - level * (totalGraphHeight / height),
-        label: node.label,
-        type: "node",
-        nodeLevel: level,
-        anchors: node.anchors[0]
-      }));
-    }
-
-    const tokens = graph.tokens.map((token) => ({
-      index: token.index,
-      x: token.index * 90,
-      y: totalGraphHeight + 100,
-      label: token.form,
-      type: "token"
-    }));
-
-    //this.setState({graphData: nodesInFinalLevels.flat().concat(tokens)});
-
-    const finalGraphNodes = nodesInFinalLevels
-      .flat()
-      .concat(tokens)
-      .map((node) => ({
-        id: node.id,
-        x: node.x,
-        y: node.y,
-        label: node.label,
-        title: node.label + " tootip text",
-        type: node.type,
-        anchors: node.anchors,
-        fixed: true,
-        nodeLevel: node.nodeLevel
-      }));
-
-    const finalGraphEdges = graph.edges.map((edge, index) => {
-      const fromID =
-        finalGraphNodes[
-          finalGraphNodes.findIndex((node) => node.id === edge.source)
-        ].id;
-      const toID =
-        finalGraphNodes[
-          finalGraphNodes.findIndex((node) => node.id === edge.target)
-        ].id;
-
-      let edgeType = "";
-
-      if (fromID === toID) {
-        edgeType = "curvedCW";
-      } else {
-        edgeType = "dynamic";
-      }
-
-      return {
-        id: index,
-        from: fromID,
-        to: toID,
-        label: edge.label,
-        smooth: { type: edgeType, roundness: 1 }
-      };
-      /*source: testGraphNodes[edge.source],
-                target: testGraphNodes[edge.target],*/
-    });
-
-    const finalGraph = {
-      nodes: finalGraphNodes,
-      edges: finalGraphEdges
+        setDataSetResponseOpen(false);
     };
 
-    return finalGraph;
-  };
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
 
-  return (
-    <React.Fragment>
-      <Header />
-      <Grid container spacing={2} direction="column">
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Data-set Sentences</Typography>
-            </CardContent>
-            <CardActions>
-              <SentenceList />
-            </CardActions>
-          </Card>
-        </Grid>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Visualisation Area</Typography>
-            </CardContent>
-            <CardActions>
-              <VisualisationControls />
-            </CardActions>
-            <CardContent>
-              {state.selectedSentence === null ? (
-                <div>Select a sentence</div>
-              ) : (
-                <GraphVisualisation />
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Analysis Features</Typography>
-            </CardContent>
-            <CardActions>
-              <AnalysisAccordion />
-            </CardActions>
-          </Card>
-        </Grid>
-      </Grid>
-    </React.Fragment>
-  );
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
+
+    const handleSentenceClose = () => {
+        setSentenceOpen(false);
+    };
+
+    const handleChangeVisualisationFormat = (event, newFormat) => {
+        if (newFormat !== null) {
+            setVisFormat(newFormat);
+            dispatch({type: "SET_VISUALISATION_FORMAT", payload: {visualisationFormat: newFormat}});
+            console.log(newFormat);
+            //Update the currently displayed graph as well!
+            if (state.selectedSentenceID !== null) {
+                let requestOptions = {
+                    method: 'GET',
+                    redirect: 'follow'
+                };
+
+                dispatch({type: "SET_LOADING", payload: {isLoading: true}});
+
+                fetch(state.APIendpoint + "/Visualise?graphID=" + state.selectedSentenceID + "&format=" + newFormat, requestOptions)
+                    .then((response) => response.text())
+                    .then((result) => {
+
+                        const jsonResult = JSON.parse(result);
+                        console.log(jsonResult);
+                        //console.log(jsonResult);
+                        //console.log(jsonResult.response);
+                        //const formattedGraph = layoutGraph(jsonResult);
+                        dispatch({
+                            type: "SET_SENTENCE_VISUALISATION",
+                            payload: {selectedSentenceVisualisation: jsonResult}
+                        });
+                        dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                    })
+                    .catch((error) => {
+                        dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                        console.log("error", error);
+                        history.push("/404"); //for debugging
+                    });
+            }
+
+        }
+    }
+
+
+    return (
+        <div className={classes.root}>
+            <CssBaseline/>
+            <AppBar
+                color="primary"
+                position="fixed"
+                className={clsx(classes.appBar, {
+                    [classes.appBarShift]: open
+                })}
+            >
+                <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
+                        edge="start"
+                        className={clsx(classes.menuButton, {
+                            [classes.hide]: open
+                        })}
+                    >
+                        <MenuIcon/>
+                    </IconButton>
+                    <Typography variant="h6">
+                        RepGraph
+                    </Typography>
+                    <Grid container justify="flex-end" spacing={2}>
+                        <Grid item color="inherit">
+                            <Tooltip arrow
+                                     title={"Select visualisation format"}>
+                                <Paper>
+                                    <ToggleButtonGroup
+                                        value={visFormat}
+                                        exclusive
+                                        onChange={handleChangeVisualisationFormat}
+                                        aria-label="Visualisation formats"
+                                        color="inherit"
+                                    >
+                                        <ToggleButton color="primary" value="1" aria-label="Hierarchical">
+                                            <Typography color="primary">Hierarchical</Typography>
+                                        </ToggleButton>
+                                        <ToggleButton color="primary" value="2" aria-label="Tree-like">
+                                            <Typography color="primary">Tree-like</Typography>
+                                        </ToggleButton>
+                                        <ToggleButton color="primary" value="3" aria-label="Flat">
+                                            <Typography color="primary">Flat</Typography>
+                                        </ToggleButton>
+                                    </ToggleButtonGroup>
+                                </Paper>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item>
+                            <Tooltip arrow
+                                     title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
+                                <Chip onClick={() => {
+                                    handleDrawerOpen();
+                                }} color="inherit"
+                                      label={state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID}
+                                      icon={state.selectedSentenceID === null ? <AddCircleOutlineIcon/> :
+                                          <BuildIcon/>}/>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item>
+                            <Tooltip arrow title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
+                                <Chip onClick={() => {
+                                    history.push("/");
+                                }} color="inherit"
+                                      label={state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName}
+                                      icon={state.dataSet === null ? <CloudUploadIcon/> : <BuildIcon/>}/>
+                            </Tooltip>
+                        </Grid>
+                    </Grid>
+
+                </Toolbar>
+
+            </AppBar>
+            <Drawer
+                variant="permanent"
+                className={clsx(classes.drawer, {
+                    [classes.drawerOpen]: open,
+                    [classes.drawerClose]: !open
+                })}
+                classes={{
+                    paper: clsx({
+                        [classes.drawerOpen]: open,
+                        [classes.drawerClose]: !open
+                    })
+                }}
+            >
+                <div className={classes.toolbar}>
+                    <IconButton onClick={handleDrawerClose}>
+                        {theme.direction === "rtl" ? (
+                            <ChevronRightIcon/>
+                        ) : (
+                            <ChevronLeftIcon/>
+                        )}
+                    </IconButton>
+                </div>
+                <Divider/>
+                <List>
+                    <ListItem button onClick={() => setSentenceOpen(true)}>
+                        <ListItemIcon>
+                            {state.selectedSentenceID === null ? <AddCircleOutlineIcon/> : <BuildIcon/>}
+                        </ListItemIcon>
+                        <ListItemText primary="Select Sentence"/>
+                    </ListItem>
+                </List>
+                <Divider/>
+            </Drawer>
+            <main className={classes.content}>
+                <div className={classes.toolbar}/>
+                <React.Fragment>
+                    <Dialog
+                        fullWidth
+                        maxWidth="md"
+                        open={sentenceOpen}
+                        onClose={handleSentenceClose}
+                        aria-labelledby="longest-path-visualisation-title"
+                    >
+                        <DialogTitle id="longest-path-visualisation-title">
+                            Select a sentence
+                        </DialogTitle>
+                        <DialogContent>
+                            <SentenceList closeSelectSentence={handleSentenceClose}/>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleSentenceClose}>
+                                Close
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Grid container spacing={2} direction="column">
+                        <Grid item>
+                            <Card>
+                                <CardContent>
+                                    <Typography variant="h5">Visualisation Area</Typography>
+                                    <VisualisationControls/>
+                                </CardContent>
+                                <CardContent style={{height: "80vh", width: "100%"}}>
+                                    {state.selectedSentenceID === null ? (
+                                        <Typography variant="subtitle1">Please select a sentence</Typography>
+                                    ) : (
+                                        <GraphVisualisation/>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item>
+                            <Card>
+                                <CardContent>
+                                    <Typography variant="h6">Analysis Features</Typography>
+                                </CardContent>
+                                <CardActions>
+                                    <AnalysisAccordion/>
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                </React.Fragment>
+                <Snackbar open={dataSetResponseOpen && state.dataSet !== null} autoHideDuration={6000}
+                          onClose={handleDataSetResponseClose}>
+                    <MuiAlert elevation={6} variant="filled" onClose={handleDataSetResponseClose}
+                              severity={state.dataSetResponse === "Duplicates Found" ? "warning" : "success"}>
+                        {state.dataSetResponse === "Duplicates Found" ? "Data-set contained duplicate IDs, which were removed." : state.dataSetResponse}
+                    </MuiAlert>
+                </Snackbar>
+            </main>
+        </div>
+    );
 }
