@@ -4,6 +4,7 @@ import { AppContext } from "../../Store/AppContextProvider.js";
 import { cloneDeep } from "lodash";
 import Button from "@material-ui/core/Button";
 import {
+    CardContent,
     Grid, Typography,
 } from "@material-ui/core";
 import {useHistory} from "react-router-dom";
@@ -13,6 +14,8 @@ import {Virtuoso} from "react-virtuoso";
 import ListItem from "@material-ui/core/ListItem";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
+import Card from "@material-ui/core/Card";
+import SubgraphVisualisation from "./SubgraphVisualisation";
 
 const options = {
     physics: {
@@ -115,52 +118,58 @@ const options = {
 };
 
 const SelectSubgraphVisualisation = () => {
-    const { state, dispatch } = useContext(AppContext);
+    const { state, dispatch } = useContext(AppContext); //Provide access to global state
     const [currentVis, setCurrentVis] = React.useState(
         state.selectedSentenceVisualisation
-    );
-    const history = useHistory();
+    ); //Store the current visualisation data locally
+    const history = useHistory(); //Access routing history
     const [searchResult, setSearchResult] = React.useState(null);
     const [open, setOpen] = React.useState(false);
+    const [selectedSentenceVisualisation, setSelectedSentenceVisualisation] = React.useState(null);
 
     function searchForSelectedSubgraph(){
-        const currentSelection = getSelected();
+
+        const currentSelection = getSelected(); //Get the currently selected nodes and edges
         let requestOptions = {
             method: 'GET',
             redirect: 'follow'
         };
 
-        dispatch({type: "SET_LOADING", payload: {isLoading: true}});
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
 
+        //Search the backend for matches
         fetch(state.APIendpoint + "/SearchSubgraphPattern?graphID="+currentSelection.id+"&NodeId="+currentSelection.nodes.join(",")+"&EdgeIndices="+currentSelection.edges.join(","), requestOptions)
             .then((response) => response.text())
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult);
-                setSearchResult(jsonResult);
-                setOpen(true);
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                console.log(jsonResult); //Debugging
+                setSearchResult(jsonResult.data); //Store the search results in local state
+                setOpen(true); //Show the results to the user
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
             })
             .catch((error) => {
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
-                console.log("error", error);
-                history.push("/404");
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+                console.log("error", error); //Log the error to console
+                history.push("/404"); //Take the user to the error page
             });
 
     }
 
+    //Function to get all the currently selected nodes and edges from the graph
     function getSelected() {
         //console.log(currentVis);
         let nodeID = [];
         let edgeID = [];
         let graphID = currentVis.id;
 
+        //Find the selected nodes
         for (let x of currentVis.nodes) {
             if (x.group === "Selected") {
                 nodeID.push(x.id);
             }
         }
 
+        //Find the selected edges
         for (let x of currentVis.edges) {
             if (x.group === "Selected") {
                 edgeID.push(x.id);
@@ -168,18 +177,20 @@ const SelectSubgraphVisualisation = () => {
         }
 
         const returnValue = { id: graphID, nodes: nodeID, edges: edgeID };
-        console.log(returnValue);
+        console.log(returnValue); //Debugging
 
         return returnValue;
     }
 
+    //Events that are enabled on the graph visualisation
     const events = {
+        //Select event for when user selects a node or edge on the graph
         select: function (event) {
             let { nodes, edges } = event;
-            //console.log(nodes, edges);
 
-            let currentStandardVisualisation = cloneDeep(currentVis);
+            let currentStandardVisualisation = cloneDeep(currentVis); //Deep clone the current visualisation
 
+            //User selected or deselected a node -> update the graph visually
             for (const [i, x] of currentStandardVisualisation.nodes.entries()) {
                 if (x.id === nodes[0] && x.group === "node") {
                     //If not selected - mark as selected
@@ -190,6 +201,7 @@ const SelectSubgraphVisualisation = () => {
                 }
             }
 
+            //If user selected an edge -> update the graph visually
             if (nodes.length === 0) {
                 for (const [i, x] of currentStandardVisualisation.edges.entries()) {
                     if (x.id === edges[0] && x.group !== "Selected") {
@@ -221,9 +233,35 @@ const SelectSubgraphVisualisation = () => {
                 }
             }
 
-            setCurrentVis(currentStandardVisualisation);
+            setCurrentVis(currentStandardVisualisation); //Update the current visualisation to reflect the selections made by the user
         }
     };
+
+    //Handle when user selects one of the sentences returned in the results from the backend
+    function handleClickSentenceResult(sentenceId) {
+        console.log(sentenceId); //Debugging
+
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
+
+        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=" + state.visualisationFormat, requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+                const jsonResult = JSON.parse(result);
+                console.log(jsonResult); //Debugging
+                setSelectedSentenceVisualisation(jsonResult); //Store graph visualisation result
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+            })
+            .catch((error) => {
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+                console.log("error", error); //Log the error to console
+                history.push("/404"); //Take the user to the error page
+            });
+    }
 
     return (
         <Grid
@@ -262,30 +300,62 @@ const SelectSubgraphVisualisation = () => {
                 <DialogTitle id="alert-dialog-title">
                     {"Search Results:"}
                 </DialogTitle>
-                <DialogContent style={{height: "80vh"}}>
-                    {searchResult && <Virtuoso
-                        style={{width: "100%", height: "100%"}}
-                        totalCount={searchResult.length}
-                        item={(index) => {
-                            return (
-                                <ListItem
-                                    button
-                                    key={index}
-                                    onClick={() => {
+                <DialogContent>
+                    <Grid
+                        style={{width:"100%", height:"100%"}}
+                        container
+                        direction="column"
+                        justify="center"
+                        alignItems="center"
+                        spacing={2}
+                    >
+                        <Grid container item xs={12}>
+                            <Card variant="outlined" style={{width:"100%", height: "15vh"}}>
+                                <CardContent style={{width:"100%", height: "100%"}}>
+                                    {searchResult &&
+                                    <Virtuoso
+                                        style={{width: "100%", height: "100%"}}
+                                        totalCount={searchResult.length}
+                                        item={(index) => {
+                                            return (
+                                                <ListItem
+                                                    button
+                                                    key={index}
+                                                    onClick={() => {
+                                                        handleClickSentenceResult(searchResult[index].id);
+                                                    }}
+                                                >
+                                                    <Typography>{searchResult[index].input}</Typography>
+                                                </ListItem>
+                                            );
+                                        }}
+                                        footer={() => (
+                                            <div style={{padding: "1rem", textAlign: "center"}}>
+                                                -- end of dataset --
+                                            </div>
+                                        )}
+                                    />}
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid container item xs={12}>
+                            <Card variant="outlined" style={{width:"100%", height: "45vh"}}>
+                                <CardContent style={{width:"100%", height: "100%"}}>
+                                    {selectedSentenceVisualisation === null ?
 
-                                    }}
-                                >
-                                    <Typography>{searchResult[index]}</Typography>
-                                </ListItem>
-                            );
-                        }}
-                        footer={() => (
-                            <div style={{padding: "1rem", textAlign: "center"}}>
-                                -- end of dataset --
-                            </div>
-                        )}
-                    />}
+                                        <Typography>Select
+                                            a sentence from the results above.</Typography>
 
+                                        :
+
+                                        <SubgraphVisualisation
+                                            subgraphGraphData={selectedSentenceVisualisation}/>
+
+                                    }
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpen(false)} color="primary" autoFocus>
