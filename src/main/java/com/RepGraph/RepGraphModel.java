@@ -1287,7 +1287,7 @@ public class RepGraphModel {
             for (node n : nodesInFinalLevels.get(level)) {
                 HashMap<String, Object> singleNode = new HashMap<>();
                 singleNode.put("id", n.getId());
-                singleNode.put("x", n.getAnchors().get(0).getFrom() * space);
+                singleNode.put("x", n.getAnchors().get(0).getFrom() * space + (n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom()*space)/2);
                 singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
                 singleNode.put("label", n.getLabel());
                 singleNode.put("type", "node");
