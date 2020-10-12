@@ -11,7 +11,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import { AppContext } from "../../Store/AppContextProvider.js";
 import {useHistory} from "react-router-dom";
 import CompareTwoGraphsVisualisation from "../Main/CompareTwoGraphsVisualisation";
-import SubsetVisualisation from "../Main/SubsetVisualisation";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,19 +19,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function CompareTwoGraphsTool(props){
-    const { state, dispatch } = useContext(AppContext);
+    const { state, dispatch } = useContext(AppContext); //Provide access to global state
     const history = useHistory();
     const [open, setOpen] = React.useState(false);
 
+    //Handle click open for dialog
     const handleClickOpen = () => {
         setOpen(true);
     };
 
+    //Handle close for dialog
     const handleClose = () => {
         setOpen(false);
     };
 
-    const classes = useStyles();
+    const classes = useStyles(); //Use styles created above
 
     return(
         <Grid
