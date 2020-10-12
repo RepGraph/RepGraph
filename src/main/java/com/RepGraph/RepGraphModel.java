@@ -558,6 +558,7 @@ public class RepGraphModel {
      * @param connected             Boolean to decide if to test for if the graph is connected.
      * @return HashMap<String, Object> Results of the tests i.e
      * the "Planar" key returns a boolean of whether or not the graph is planar
+     * the "PlanarVis" key returns the visualisation data
      * the "LongestPathDirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest directed paths in the graphs
      * the "LongestPathUndirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest undirected paths in the graphs
      * the "Connected" returns a boolean of whether or not the graph is connected.
