@@ -1364,33 +1364,34 @@ public class RepGraphModel {
 
             int spanLower = graph.getNodes().get(fromID).getAnchors().get(0).getFrom() * space;
             int spanUpper = graph.getNodes().get(fromID).getAnchors().get(0).getEnd() * space;
-            if (fromX == toX) {
 
-
-            }
-            else if (toX <= spanUpper && toX >= spanLower) {
+            if (toX <= spanUpper && toX >= spanLower) {
                 if (Math.abs(fromLevel - toLevel) == 1) {
                     edgeType = "continuous";
                 } else {
                     boolean notFound = true;
-                    if (fromID == 9 && toID == 2) {
-                        System.out.println("FROM: LowerSpan: " + spanLower + ". UpperSpan: " + spanUpper + ". x: " + fromX + " . level: " + fromLevel);
-                        System.out.println("TO: x: " + toX + " . level: " + toLevel);
-                    }
-                    for (HashMap<String, Object> node : finalNodes) {
-                        if ((Integer) node.get("x") <= spanUpper && (Integer) node.get("x") >= spanLower) {
-                            if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
-                                if (fromID == 9 && toID == 2) {
-                                    System.out.println("node: x: " + node.get("x") + ". Level: " + node.get("nodeLevel"));
-                                }
-                                if ((((Integer) node.get("x") > toX) && ((Integer) node.get("x") < fromX)) || (((Integer) node.get("x") < toX) && ((Integer) node.get("x") > fromX))) {
+
+                    if (fromX == toX) {
+                        for (HashMap<String, Object> node : finalNodes) {
+                            if ((Integer) node.get("x") == fromX) {
+                                if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
                                     notFound = false;
+                                }
+                            }
+                        }
+                    } else {
+                        for (HashMap<String, Object> node : finalNodes) {
+                            if ((Integer) node.get("x") <= spanUpper && (Integer) node.get("x") >= spanLower) {
+                                if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
+                                    if ((((Integer) node.get("x") >= toX) && ((Integer) node.get("x") <= fromX)) || (((Integer) node.get("x") <= toX) && ((Integer) node.get("x") >= fromX))) {
+                                        notFound = false;
+                                    }
                                 }
                             }
                         }
                     }
                     if (notFound) {
-                        edgeType = "continuous";
+                        edgeType = "dynamic";
 
                     } else {
                         if (Math.abs(fromLevel - toLevel) > 3) {
@@ -1418,7 +1419,6 @@ public class RepGraphModel {
                                 }
                             }
                         }
-
                     }
                 }
             } else {
@@ -1440,9 +1440,7 @@ public class RepGraphModel {
             }
 
 
-            singleEdge.put("id", graph.getEdges().
-
-                    indexOf(e));
+            singleEdge.put("id", graph.getEdges().indexOf(e));
             singleEdge.put("from", fromID);
             singleEdge.put("to", toID);
             singleEdge.put("label", e.getLabel());
