@@ -335,7 +335,26 @@ function showLongestPath(standardVisualisation, path) {
             : node.label,
         group: path.includes(node.id) ? "longestPath" : node.group
     }));
-    //console.log(newNodes);
+
+    for (let index = 0; index < path.length - 1; index++) {
+        for (const [i, e] of currentStandardVisualisation.edges.entries()) {
+            if (
+                (path[index] === e.from && path[index + 1] === e.to) ||
+                (path[index] === e.to && path[index + 1] === e.from)
+            ) {
+                currentStandardVisualisation.edges[i] = {
+                    ...e,
+                    color: "rgba(0, 0, 0, 1)",
+                    shadow: true,
+                    background: {
+                        enabled: true,
+                        color: "rgba(245, 0, 87, 0.7)"
+                    }
+                };
+            }
+        }
+    }
+
     return { ...currentStandardVisualisation, nodes: newNodes };
 }
 
