@@ -624,6 +624,7 @@ public class graph {
     public ArrayList<node> combineNeighbours(int nodeID) {
         ArrayList<node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
         ArrayList<node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
+        //Adds all a node's undirected neighbours and its directed neighbours together.
         allNeighbours.addAll(undirectedNeighbours);
         return allNeighbours;
     }
@@ -642,21 +643,21 @@ public class graph {
                                                              int startNodeID) {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
-        int max = Collections.max(dist.values());
+        int max = Collections.max(dist.values()); //Find the longest distance in the distance array
 
         //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
         ArrayList<Integer> path = new ArrayList<>();
         for (int i : dist.keySet()) {
-            if (dist.get(i) == max) {
+            if (dist.get(i) == max) { //i.e. a longest path
                 path.clear();
                 path.add(i);
                 int prev = prevNode.get(i);
-                while (prev != startNodeID) {
+                while (prev != startNodeID) {//Iterate through the previous node array until you reach the start node.
                     path.add(prev);
                     prev = prevNode.get(prev);
                 }
                 path.add(startNodeID);
-                paths.add(new ArrayList<>(path));
+                paths.add(new ArrayList<>(path)); //Add the path to the list of overall longest paths
             }
         }
 
