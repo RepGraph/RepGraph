@@ -721,15 +721,37 @@ public class RepGraphModel {
      */
     public HashMap<String, Object> VisualiseFlat(graph graph) {
 
+        ArrayList<node> ordered = new ArrayList<>();
+
+        for (node n : graph.getNodes().values()) {
+            ordered.add(new node(n));
+        }
+
+        Collections.sort(ordered, new Comparator<node>() {
+            @Override
+            public int compare(node o1, node o2) {
+                o1.getAnchors().get(0).setEnd(o1.getAnchors().get(0).getFrom());
+                o2.getAnchors().get(0).setEnd(o2.getAnchors().get(0).getFrom());
+                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+                    return -1;
+                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+                    return 0;
+                }
+                return 1;
+            }
+        });
 
         int height = 1;
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
-
+        int tops = 0;
         //simply iterate over the nodes and add their data to the visualisation object
-        for (int i : graph.getNodes().keySet()) {
-            node n = graph.getNodes().get(i);
+        for (int i = 0; i < ordered.size(); i++) {
+            node n = ordered.get(i);
+            if (n.getId() == graph.getTops().get(0)) {
+                tops = i;
+            }
             HashMap<String, Object> singleNode = new HashMap<>();
             singleNode.put("id", n.getId());
             singleNode.put("x", i * 130);
@@ -745,7 +767,7 @@ public class RepGraphModel {
         if (graph.getNodes().containsKey(graph.getTops().get(0))) {
             HashMap<String, Object> singleNode = new HashMap<>();
             singleNode.put("id", "TOP");
-            singleNode.put("x", graph.getTops().get(0) * 130);
+            singleNode.put("x", tops * 130);
             singleNode.put("y", totalGraphHeight - 150);
             singleNode.put("label", "TOP");
             singleNode.put("type", "node");
