@@ -40,7 +40,8 @@ export default function FormalTestsResultsDisplay(props) {
     const [open, setOpen] = React.useState(false); //Local state of the results dialog
     const [rowClicked, setRowClicked] = React.useState(null); //Local state to store which table row was clicked
     const { state, dispatch } = React.useContext(AppContext); //Provide access to global state
-
+    const [cyclesDetectedUndirected, setCyclesDetectedUndirected] = React.useState(false); //Local state for undirected cycles
+    const [cyclesDetectedDirected, setCyclesDetectedDirected] = React.useState(false); //Local state for directed cycles
     const response = state.testResults; //Get the test results from the global state
 
     let newRows = [];
@@ -129,15 +130,15 @@ export default function FormalTestsResultsDisplay(props) {
                         <TableRow
                             hover
                             key={row.test}
-                            onClick={(event) => handleClickOpen(event, row.test)}
                         >
                             <TableCell component="th" scope="row">
                                 {row.test}
                             </TableCell>
                             <TableCell align="right">{JSON.stringify(row.result)}</TableCell>
                             <TableCell>
-                                {row.test !== "Connected" && (
-                                    <Button variant="outlined" color="primary">
+                                {
+                                    row.test !== "Connected" && (
+                                    <Button variant="contained" color="primary" onClick={(event) => handleClickOpen(event, row.test)} disabled={row.result === "Cycle Detected" ? true : false}>
                                         Visualise
                                     </Button>
                                 )}
