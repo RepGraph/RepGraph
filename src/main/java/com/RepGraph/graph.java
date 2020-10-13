@@ -659,11 +659,12 @@ public class graph {
     public boolean GraphIsPlanar() {
 
         ArrayList<node> ordered = new ArrayList<>();
-
+        //add the node objects to a list
         for (node n : nodes.values()) {
             ordered.add(new node(n));
         }
 
+        //order the nodes according to the beginning of their span
         Collections.sort(ordered, new Comparator<node>() {
             @Override
             public int compare(node o1, node o2) {
@@ -678,6 +679,7 @@ public class graph {
 
         HashMap<Integer, Integer> nodeToToken = new HashMap<>();
 
+        //Map node ids to their token span beginning
         for (int i = 0; i < ordered.size(); i++) {
             nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom());
         }
@@ -686,6 +688,7 @@ public class graph {
 
         int source, target;
 
+        //for all edges change the source and target to refer to their span beginning of the respective nodes
         for (edge e : edges) {
 
             source = e.getSource();
@@ -706,7 +709,7 @@ public class graph {
 
         }
 
-
+        //check every edge with every other edge to see if any are crossing
         for (edge e : updated) {
 
             for (edge other : updated) {
