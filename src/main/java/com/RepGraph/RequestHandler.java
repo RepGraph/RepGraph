@@ -37,16 +37,20 @@ public class RequestHandler {
     }
 
     /**
-     * This method is the post request to upload data to the model
+     * This method is the post request to upload data to the model. It is mapped to "/UploadData"
      *
-     * @param name This is the name that the file will be saved under
-     * @param file This is the file data.
+     * @param name This is the name that the file will be saved under. The RequestParam is "FileName"
+     * @param file This is the file data. The RequestParam is "data"
      * @return HashMap<String, Object> This is a hashmap to return the necessary uploaded file information
-     * and a response about whether or not there are duplicate graphs
+     * and a response about whether or not there are duplicate graphs.
+     * Keys for the return object:
+     * - Response : a response message
+     * - data : list of graph IDs (key - id) and graph inputs (key - input)
      */
     @PostMapping("/UploadData")
     @ResponseBody
     public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+
         RepModel.clearGraphs();
         HashMap<String, Object> returnobj = new HashMap<>();
 
@@ -75,8 +79,9 @@ public class RequestHandler {
             ObjectMapper objectMapper = new ObjectMapper();
             boolean duplicates = false;
             while ((currentLine = reader.readLine()) != null) {
+                //Creates graph object from JSON string
                 graph currgraph = objectMapper.readValue(currentLine, graph.class);
-
+                //checks if model doesnt contain the ID already and if it does dont add it and tell the user duplicates were found
                 if (!RepModel.containsKey(currgraph.getId())) {
 
                     RepModel.addGraph(currgraph);
@@ -90,7 +95,7 @@ public class RequestHandler {
                 }
             }
             reader.close();
-            HashMap<String, String> response = new HashMap<>();
+
             if (duplicates) {
                 returnobj.put("response", "Duplicates Found");
 
@@ -113,6 +118,9 @@ public class RequestHandler {
      *
      * @param data This is the graph object to be uploaded
      * @return HashMap<String, String> This is a hashmap object with the graph id and graph input.
+     * Key:
+     * - id : graph ID
+     * - input : graph input
      */
     @PostMapping("/UploadSingle")
     @ResponseBody
@@ -121,7 +129,7 @@ public class RequestHandler {
 
         returninfo.put("input", data.getInput());
         returninfo.put("id", data.getId());
-
+        //add graph to model
         RepModel.addGraph(data);
 
         return returninfo;
@@ -234,6 +242,7 @@ public class RequestHandler {
      * @param longestPathUndirected This refers to finding the longest undirected path
      * @return HashMap<String, Object> Results of the tests i.e
      *         the "Planar" key returns a boolean of whether or not the graph is planar
+     *         the "PlanarVis" returns the planar visualisation data.
      *         the "LongestPathDirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest directed paths in the graphs
      *         the "LongestPathUndirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest undirected paths in the graphs
      *         the "Connected" returns a boolean of whether or not the graph is connected.
