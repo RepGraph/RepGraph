@@ -286,22 +286,23 @@ public class graph {
     }
 
     /**
-     * Analysis Tool for finding the longest path in the graph.
+     * Analysis Tool for finding the longest paths in the graph.
      *
      * @param directed This is the boolean to decide if the longest path found is directed or undirected.
      * @return ArrayList<ArrayList < Integer>> The a list of longest paths in the graph.
      */
     public ArrayList<ArrayList<Integer>> findLongest(boolean directed) {
 
+        //Ensure that all graph node's have their neighbours assigned
         setNodeNeighbours();
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
-        if ((nodes.size() == 0) || (edges.size() == 0)) {
+        if ((nodes.size() == 0) || (edges.size() == 0)) { //No edges or nodes in graph i.e. path is empty.
 
             return paths;
 
-        } else if (edges.size() == 1) {
+        } else if (edges.size() == 1) {//Only 1 edge in the graph i.e. path is the source node to the target node of the edge
 
             paths.add(new ArrayList<>());
             paths.get(0).add(edges.get(0).getSource());
@@ -313,41 +314,48 @@ public class graph {
             if (!directed) {
 
                 if (connectedBFS(nodes.values().iterator().next().getId())) {
-                    ArrayList<ArrayList<Integer>> endpoints = BFS(0);
+                    //Finding the longest path in a undirected connected graph.
+
+                    //Find the longest paths from the first node in the graph.
+                    ArrayList<ArrayList<Integer>> endpoints = BFS(nodes.values().iterator().next().getId());
                     ArrayList<ArrayList<Integer>> temp;
                     ArrayList<Integer> pathEnds = new ArrayList<>();
+
+                    //Iterate through each path's end points (which is in position 0 as the path is reversed)
                     for (ArrayList<Integer> end : endpoints) {
-                        if (!pathEnds.contains(end.get(0))) {
-                            temp = BFS(end.get(0));
-                            for (ArrayList<Integer> al : temp) {
+                        if (!pathEnds.contains(end.get(0))) { //Avoids identical paths that are just reversed.
+                            temp = BFS(end.get(0)); //Finds the true longest path from this particular end point.
+                            for (ArrayList<Integer> al : temp) {//Add path to longest paths.
                                 paths.add(new ArrayList<>(al));
                                 pathEnds.add(al.get(0));
                             }
                         }
                     }
-                } else {
-                    //Default longest path set from node 0.
-                    ArrayList<ArrayList<Integer>> longest;
-                    longest = BFS(0);
+                } else { //Finding the longest path in a undirected disconnected graph.
 
+                    //Default longest path set from the first node in the graph.
+                    ArrayList<ArrayList<Integer>> longest;
+                    longest = BFS(nodes.values().iterator().next().getId());
+
+                    //Add longest paths to the overall longest paths
                     for (ArrayList<Integer> al : longest) {
                         paths.add(al);
                     }
 
                     ArrayList<ArrayList<Integer>> temp;
 
-                    //Makes each node the start node and finds the longest overall path/s.
+                    //Makes each node the start node and compared the longest paths found from that node to the current best longest path.
                     for (int i : nodes.keySet()) {
                         temp = BFS(i);
 
                         if (temp.size() != 0) {
-                            if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
+                            if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {//New path is longest than the current longest path, so overwrite the overall longest paths
                                 longest = temp;
                                 paths.clear();
                                 for (ArrayList<Integer> al : temp) {
                                     paths.add(new ArrayList<>(al));
                                 }
-                            } else if (temp.get(0).size() == longest.get(0).size()) {
+                            } else if (temp.get(0).size() == longest.get(0).size()) {//New path is the same length as the current longest path, so add it to the overall longest paths
                                 for (ArrayList<Integer> al : temp) {
                                     paths.add(new ArrayList<>(al));
                                 }
@@ -355,6 +363,7 @@ public class graph {
                         }
                     }
 
+                    //Reverse the each of the longest paths so that they start with the smaller node ID. Removes duplicate but reversed paths as well.
                     ArrayList<ArrayList<Integer>> newPaths = new ArrayList<>();
                     for (ArrayList<Integer> al : paths) {
                         if (!newPaths.contains(al)) {
@@ -366,13 +375,14 @@ public class graph {
                     }
                     return newPaths;
                 }
-            } else {
+            } else {//Finding the longest path in a directed graph.
 
-                //Default longest path set from node 0.
+                //Default longest path set from first node in the graph.
                 ArrayList<ArrayList<Integer>> longest;
-                Set<Integer> nodesInPath = new HashSet<>();
-                longest = directedLongestPaths(0);
+                Set<Integer> nodesInPath = new HashSet<>(); //Keeps track of all nodes in the overall longest path.
+                longest = directedLongestPaths(nodes.values().iterator().next().getId());
 
+                //Add longest paths to the overall longest paths
                 for (ArrayList<Integer> integers : longest) {
                     paths.add(integers);
                     for (int n : integers) {
@@ -384,11 +394,11 @@ public class graph {
 
                 //Makes each node the start node and finds the longest overall path/s.
                 for (int i : nodes.keySet()) {
-                    if (!nodesInPath.contains(i)) {
+                    if (!nodesInPath.contains(i)) {//Cuts processing time by not letting a node already in the overall longest path be a start node, as the longest path from that node will never yield a longer path than the current overall longest path.
                         temp = directedLongestPaths(i);
 
                         if (temp.size() != 0) {
-                            if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {
+                            if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {//New path is longest than the current longest path, so overwrite the overall longest paths
                                 longest = temp;
                                 paths.clear();
                                 for (ArrayList<Integer> al : temp) {
@@ -397,7 +407,7 @@ public class graph {
                                         nodesInPath.add(n);
                                     }
                                 }
-                            } else if (temp.get(0).size() == longest.get(0).size()) {
+                            } else if (temp.get(0).size() == longest.get(0).size()) {//New path is the same length as the current longest path, so add it to the overall longest paths
                                 for (ArrayList<Integer> al : temp) {
                                     paths.add(new ArrayList<>(al));
                                     for (int n : al) {
@@ -440,6 +450,7 @@ public class graph {
             }
         }
 
+        //Iterate through each edge and set the corresponding node's thier neighbours.
         for (int i = 0; i < edges.size(); i++) {
             edge currentEdge = edges.get(i);
 
@@ -471,7 +482,7 @@ public class graph {
     }
 
     /**
-     * Finds the longest distance from a given start node to all the other nodes in the system and returns the path of the longest path.
+     * Finds the longest paths from a given start node to all the other nodes in the system and returns the paths of the longest paths.
      *
      * @param startNodeID Number of the start node.
      * @return ArrayList<ArrayList < Integer>> The longest paths available from the start node.
@@ -480,22 +491,21 @@ public class graph {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
-        //Check if the start node has any neighbours
+        //Check if the start node has any neighbours, if not then return an empty path.
         if (nodes.get(startNodeID).getDirectedNeighbours().size() == 0) {
             return paths;
         }
 
-        HashMap<Integer, Integer> dist = new HashMap<>();
-        HashMap<Integer, Integer> prevNode = new HashMap<>();
+        HashMap<Integer, Integer> dist = new HashMap<>(); //Array to keep track of each node's distance from start node
+        HashMap<Integer, Integer> prevNode = new HashMap<>(); //Array to keep track of each node's previous node in the path
 
-        //Set all nodes in the graph to unvisited (i.e. visited[nodeID] = false)
-        //boolean[] visited = new boolean[nodes.size()];
+        //Set all nodes in the graph to unvisited
         HashMap<Integer, Boolean> visited = new HashMap<>();
         for (int i : nodes.keySet()) {
             visited.put(i, false);
         }
 
-        //Topologically sort every unvisited node.
+        //Topologically sort every unvisited node, which gets added to the stack.
         Stack<Integer> stack = new Stack<Integer>();
         for (int i : nodes.keySet()) {
             if (!visited.get(i)) {
@@ -515,7 +525,7 @@ public class graph {
 
             if (dist.get(u) != Integer.MIN_VALUE) {
                 for (node n : nodes.get(u).getDirectedNeighbours()) {
-                    if (dist.get(n.getId()) < dist.get(u) + 1) {
+                    if (dist.get(n.getId()) < dist.get(u) + 1) { //Check if the current distance is shorter than the new distance, if so update the distance and previous node arrays.
                         dist.put(n.getId(), dist.get(u) + 1);
                         prevNode.put(n.getId(), u);
                     }
@@ -542,7 +552,7 @@ public class graph {
 
         //Iterate through every neighbouring node of the given node.
         for (node neighbourNode : nodes.get(nodeID).getDirectedNeighbours()) {
-            if (!visited.get(neighbourNode.getId())) {
+            if (!visited.get(neighbourNode.getId())) { //If node is unvisited then topologically sort it.
                 topologicalSort(neighbourNode.getId(), visited, stack);
             }
         }
@@ -564,24 +574,26 @@ public class graph {
         //Creates a list of all directed and undirected neighbours of the start node.
         ArrayList<node> allNeighbours = combineNeighbours(startNodeID);
 
-        //Checks to see if the node has any neighbours.
+        //Checks to see if the node has any neighbours. If not, then return empty path.
         if (allNeighbours.size() == 0) {
             return paths;
         }
 
-        //All distances from start node start at -1, except the start node.
-        HashMap<Integer, Integer> dist = new HashMap<>();
+        HashMap<Integer, Integer> dist = new HashMap<>();//Array to keep track of each node's distance from start node
+
+        // All distances from start node start at -1, except the start node.
         for (int i : nodes.keySet()) {
             dist.put(i, -1);
         }
         dist.put(startNodeID, 0);
 
-        HashMap<Integer, Integer> prevNode = new HashMap<>();
+        HashMap<Integer, Integer> prevNode = new HashMap<>();//Array to keep track of each node's previous node in the path
 
         Queue<Integer> q = new LinkedList<>();
 
         q.add(startNodeID);
 
+        //Iterate through the queue of nodes until it is empty.
         while (!q.isEmpty()) {
             int currentNodeID = q.poll();
 
@@ -592,7 +604,7 @@ public class graph {
             for (int i = 0; i < allNeighbours.size(); i++) {
                 int neighbourNodeID = allNeighbours.get(i).getId();
 
-                if (dist.get(neighbourNodeID) == -1) {
+                if (dist.get(neighbourNodeID) == -1) {//Check if the node is unvisited. If so, add it to the queue, update its distance and its previous node.
                     q.add(neighbourNodeID);
                     dist.put(neighbourNodeID, dist.get(currentNodeID) + 1);
                     prevNode.put(neighbourNodeID, currentNodeID);
@@ -612,6 +624,7 @@ public class graph {
     public ArrayList<node> combineNeighbours(int nodeID) {
         ArrayList<node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
         ArrayList<node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
+        //Adds all a node's undirected neighbours and its directed neighbours together.
         allNeighbours.addAll(undirectedNeighbours);
         return allNeighbours;
     }
@@ -630,21 +643,21 @@ public class graph {
                                                              int startNodeID) {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
-        int max = Collections.max(dist.values());
+        int max = Collections.max(dist.values()); //Find the longest distance in the distance array
 
         //Uses the prevNode ArrayList to find the path of the longest distance starting at the end node.
         ArrayList<Integer> path = new ArrayList<>();
         for (int i : dist.keySet()) {
-            if (dist.get(i) == max) {
+            if (dist.get(i) == max) { //i.e. a longest path
                 path.clear();
                 path.add(i);
                 int prev = prevNode.get(i);
-                while (prev != startNodeID) {
+                while (prev != startNodeID) {//Iterate through the previous node array until you reach the start node.
                     path.add(prev);
                     prev = prevNode.get(prev);
                 }
                 path.add(startNodeID);
-                paths.add(new ArrayList<>(path));
+                paths.add(new ArrayList<>(path)); //Add the path to the list of overall longest paths
             }
         }
 
@@ -867,19 +880,22 @@ public class graph {
         setNodeNeighbours();
 
 
-        if (nodes.size() <= 1) {
+        if (nodes.size() <= 1) { //If there is only 1 node or less, then the graph is connected
             return true;
         }
+
         //Creates a list of all directed and undirected neighbours of the start node.
         ArrayList<node> allNeighbours = combineNeighbours(startNodeID);
 
-        //Checks to see if the node has any neighbours.
+        //Checks to see if the node has any neighbours, if not, return false
         if (allNeighbours.size() == 0) {
             return false;
         }
 
+
+        HashMap<Integer, Integer> dist = new HashMap<>();//Array to keep track of each node's distance from start node
+
         //All distances from start node start at -1, except the start node.
-        HashMap<Integer, Integer> dist = new HashMap<>();
         for (int i : nodes.keySet()) {
             dist.put(i, -1);
         }
@@ -890,7 +906,7 @@ public class graph {
         Queue<Integer> q = new LinkedList<>();
         q.add(startNodeID);
 
-
+        //Iterate through the queue of nodes until it is empty.
         while (!q.isEmpty()) {
             int currentNodeID = q.poll();
             nodesVisited++;
@@ -902,14 +918,14 @@ public class graph {
             for (int i = 0; i < allNeighbours.size(); i++) {
                 int neighbourNodeID = allNeighbours.get(i).getId();
 
-                if (dist.get(neighbourNodeID) == -1) {
+                if (dist.get(neighbourNodeID) == -1) {//Check if the node is unvisited. If so, add it to the queue and update its distance.
                     q.add(neighbourNodeID);
                     dist.put(neighbourNodeID, dist.get(currentNodeID) + 1);
                 }
             }
         }
 
-        if (nodesVisited < nodes.size()) {
+        if (nodesVisited < nodes.size()) { //If there were any unvisited nodes then the graph is not connected
             return false;
         } else {
             return true;
@@ -925,7 +941,7 @@ public class graph {
 
         setNodeNeighbours();
 
-        //Mark nodes as unvisited and not in the stack (stack is for directed only)
+        //Mark nodes as unvisited and not in the stack (stack is for directed graphs only)
         HashMap<node, Boolean> visited = new HashMap<>();
         HashMap<node, Boolean> stack = new HashMap<>();
         for (node n : nodes.values()) {
