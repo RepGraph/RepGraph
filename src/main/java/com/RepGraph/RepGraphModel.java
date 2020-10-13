@@ -1338,31 +1338,14 @@ public class RepGraphModel {
             finalNodes.add(singleNode);
         }
 
-        ArrayList<HashMap<String, Object>> finalTokens = new ArrayList<>();
 
-        for (token t : graph.getTokens()) {
-            HashMap<String, Object> singleToken = new HashMap<>();
-            singleToken.put("index", t.getIndex());
-            singleToken.put("x", t.getIndex() * space);
-            singleToken.put("y", totalGraphHeight + 200);
-            singleToken.put("label", t.getForm());
-            singleToken.put("type", "token");
-            singleToken.put("group", "token");
-            singleToken.put("fixed", true);
-            finalTokens.add(singleToken);
-        }
-
-
-        ArrayList<HashMap<String, Object>> finalGraphNodes = new ArrayList<>();
-        finalGraphNodes.addAll(finalNodes);
-        finalGraphNodes.addAll(finalTokens);
 
 
         ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
         int fromID = 0, toID = 0, fromLevel = 0, toLevel = 0, fromX = 0, toX = 0;
 
         graph.setNodeNeighbours();
-
+        int maxEdgeSpan = 0;
         for (edge e : graph.getEdges()) {
             HashMap<String, Object> singleEdge = new HashMap<>();
             for (HashMap<String, Object> node : finalNodes) {
@@ -1379,7 +1362,7 @@ public class RepGraphModel {
                     }
                 }
             }
-
+            maxEdgeSpan = Math.max(maxEdgeSpan, Math.abs(toX - fromX));
             String edgeType = "";
             double round = 0.5;
 
@@ -1552,6 +1535,25 @@ public class RepGraphModel {
 
             finalGraphEdges.add(singleEdge);
         }
+
+        ArrayList<HashMap<String, Object>> finalTokens = new ArrayList<>();
+
+        for (token t : graph.getTokens()) {
+            HashMap<String, Object> singleToken = new HashMap<>();
+            singleToken.put("index", t.getIndex());
+            singleToken.put("x", t.getIndex() * space);
+            singleToken.put("y", totalGraphHeight + 200 + maxEdgeSpan / 28);
+            singleToken.put("label", t.getForm());
+            singleToken.put("type", "token");
+            singleToken.put("group", "token");
+            singleToken.put("fixed", true);
+            finalTokens.add(singleToken);
+        }
+
+
+        ArrayList<HashMap<String, Object>> finalGraphNodes = new ArrayList<>();
+        finalGraphNodes.addAll(finalNodes);
+        finalGraphNodes.addAll(finalTokens);
 
         HashMap<String, Object> Visualised = new HashMap<>();
         Visualised.put("id", graph.getId());
