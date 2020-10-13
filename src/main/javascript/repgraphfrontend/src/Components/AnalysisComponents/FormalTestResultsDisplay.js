@@ -21,6 +21,7 @@ import LongestPathVisualisation from "../Main/LongestPathVisualisation";
 import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
 import Popover from "@material-ui/core/Popover";
+import PlanarVisualisation from "../Main/PlanarVisualisation";
 
 const useStyles = makeStyles({
     table: {
@@ -46,7 +47,9 @@ export default function FormalTestsResultsDisplay(props) {
 
     //Add the rows to the table of results
     for (const [test, result] of Object.entries(response)) {
-        newRows.push(createData(test, result));
+        if(test !== "PlanarVis"){
+            newRows.push(createData(test, result));
+        }
     }
 
     //Handle click on table row
@@ -66,7 +69,7 @@ export default function FormalTestsResultsDisplay(props) {
     let dialogElement; //variable to store the element to be displayed in the dialog to the user
 
     if (rowClicked === "Planar") {
-        dialogElement = <Paper> planar vis </Paper>;
+        dialogElement = <PlanarVisualisation planarGraphData={response.PlanarVis}/>;
     } else if (rowClicked === "LongestPathDirected") {
         dialogElement = (
             <LongestPathVisualisation
