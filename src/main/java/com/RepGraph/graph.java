@@ -604,7 +604,7 @@ public class graph {
             for (int i = 0; i < allNeighbours.size(); i++) {
                 int neighbourNodeID = allNeighbours.get(i).getId();
 
-                if (dist.get(neighbourNodeID) == -1) {//Check if the node is unvisited. If so, add it to the queue, updateits distance and its previous node.
+                if (dist.get(neighbourNodeID) == -1) {//Check if the node is unvisited. If so, add it to the queue, update its distance and its previous node.
                     q.add(neighbourNodeID);
                     dist.put(neighbourNodeID, dist.get(currentNodeID) + 1);
                     prevNode.put(neighbourNodeID, currentNodeID);
@@ -877,19 +877,22 @@ public class graph {
         setNodeNeighbours();
 
 
-        if (nodes.size() <= 1) {
+        if (nodes.size() <= 1) { //If there is only 1 node or less, then the graph is connected
             return true;
         }
+
         //Creates a list of all directed and undirected neighbours of the start node.
         ArrayList<node> allNeighbours = combineNeighbours(startNodeID);
 
-        //Checks to see if the node has any neighbours.
+        //Checks to see if the node has any neighbours, if not, return false
         if (allNeighbours.size() == 0) {
             return false;
         }
 
+
+        HashMap<Integer, Integer> dist = new HashMap<>();//Array to keep track of each node's distance from start node
+
         //All distances from start node start at -1, except the start node.
-        HashMap<Integer, Integer> dist = new HashMap<>();
         for (int i : nodes.keySet()) {
             dist.put(i, -1);
         }
@@ -900,7 +903,7 @@ public class graph {
         Queue<Integer> q = new LinkedList<>();
         q.add(startNodeID);
 
-
+        //Iterate through the queue of nodes until it is empty.
         while (!q.isEmpty()) {
             int currentNodeID = q.poll();
             nodesVisited++;
@@ -912,14 +915,14 @@ public class graph {
             for (int i = 0; i < allNeighbours.size(); i++) {
                 int neighbourNodeID = allNeighbours.get(i).getId();
 
-                if (dist.get(neighbourNodeID) == -1) {
+                if (dist.get(neighbourNodeID) == -1) {//Check if the node is unvisited. If so, add it to the queue and update its distance.
                     q.add(neighbourNodeID);
                     dist.put(neighbourNodeID, dist.get(currentNodeID) + 1);
                 }
             }
         }
 
-        if (nodesVisited < nodes.size()) {
+        if (nodesVisited < nodes.size()) { //If there were any unvisited nodes then the graph is not connected
             return false;
         } else {
             return true;
