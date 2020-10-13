@@ -69,6 +69,7 @@ public class RepGraphModel {
      * @return HashMap<String, Object> The Visualisation Data of the subset
      */
     public HashMap<String, Object> DisplaySubset(String graphId, int headNodeID, String SubsetType, int format) {
+        //checks which type of subset and format the user wants - creates the subset and returns the visualisation data
         if (SubsetType.equals("adjacent")) {
             if (format == 1) {
                 return VisualiseHierarchy(CreateSubsetAdjacent(graphId, headNodeID));
@@ -230,7 +231,6 @@ public class RepGraphModel {
         return subset;
     }
 
-
     /**
      * Overloaded method to search for subgraph pattern using different parameters
      *
@@ -286,7 +286,7 @@ public class RepGraphModel {
         // and if there are less edges than number of nodes -1 then it is not connected,
         // if it has a dangling edge it isnt connected
         if (subgraph.getNodes().size() == 0 || subgraph.getEdges().size() == 0 || subgraph.getEdges().size() < subgraph.getNodes().size() - 1 || subgraph.hasDanglingEdge() || !subgraph.connectedBFS(subgraph.getNodes().values().iterator().next().getId())) {
-            returninfo.put("response", "Subgraph Pattern was not entered correctly");
+            returninfo.put("response", "Failure");
             return returninfo;
         }
 
@@ -300,7 +300,7 @@ public class RepGraphModel {
         try {
             subgraph.setNodeNeighbours();
         } catch (IndexOutOfBoundsException e) {
-            returninfo.put("response", "An Error has occurred");
+            returninfo.put("response", "Failure");
             return returninfo;
 
         }
@@ -308,6 +308,7 @@ public class RepGraphModel {
 
         //Iterate over each graph in the dataset
         for (graph g : graphs.values()) {
+            //If it cant set the node neighbours then just the specific graph iteration.
             try {
                 g.setNodeNeighbours();
             } catch (IndexOutOfBoundsException f) {
@@ -376,7 +377,7 @@ public class RepGraphModel {
 
         ArrayList<HashMap<String, String>> FoundGraphs = new ArrayList<>();
         if (labels.size() == 0) {
-            returninfo.put("response", "Subgraph Pattern was not entered correctly");
+            returninfo.put("response", "No Labels were entered");
             return returninfo;
         }
 
