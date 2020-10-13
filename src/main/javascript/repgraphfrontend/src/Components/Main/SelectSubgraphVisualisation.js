@@ -275,7 +275,7 @@ const SelectSubgraphVisualisation = () => {
             <Grid item style={{height:"60vh", width:"100%"}}>
                 <Graph
                     graph={currentVis}
-                    options={options}
+                    options={state.visualisationOptions} //Options from global state
                     events={events}
                     getNetwork={(network) => {
                         network.on("hoverNode", function (params) {
