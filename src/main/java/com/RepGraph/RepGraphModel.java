@@ -629,6 +629,7 @@ public class RepGraphModel {
                 currentLevels.put(n.getAnchors().get(0).getFrom(), currentLevels.get(n.getAnchors().get(0).getFrom()) + 1);
             }
 
+            //puts all the node data in the hashmap
             HashMap<String, Object> singleNode = new HashMap<>();
             singleNode.put("id", n.getAnchors().get(0).getFrom() + currentLevels.get(n.getAnchors().get(0).getFrom()) * graph.getNodes().size());
             singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
@@ -651,6 +652,7 @@ public class RepGraphModel {
             edge e = graph.getEdges().get(i);
             anchors fromNode = null;
             anchors toNode = null;
+            //iterate through all the nodes and create the edges for the visualisation
             for (HashMap<String, Object> node : finalNodes) {
 
                 if ((Integer) node.get("id") == e.getSource()) {
@@ -725,7 +727,7 @@ public class RepGraphModel {
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
 
-
+        //simply iterate over the nodes and add their data to the visualisation object
         for (int i : graph.getNodes().keySet()) {
             node n = graph.getNodes().get(i);
             HashMap<String, Object> singleNode = new HashMap<>();
@@ -739,6 +741,7 @@ public class RepGraphModel {
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
         }
+        //create top node
         if (graph.getNodes().containsKey(graph.getTops().get(0))) {
             HashMap<String, Object> singleNode = new HashMap<>();
             singleNode.put("id", "TOP");
