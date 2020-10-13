@@ -30,11 +30,11 @@ const visualisationOptions = {
       from: 20,
       to: 0
     },
-    scaling: {
+   /* scaling: {
       min: 1,
       max: 6
     },
-    value: 1
+    value: 1*/
   },
   nodes: {
     shape: "box",
