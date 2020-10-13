@@ -552,7 +552,7 @@ public class graph {
 
         //Iterate through every neighbouring node of the given node.
         for (node neighbourNode : nodes.get(nodeID).getDirectedNeighbours()) {
-            if (!visited.get(neighbourNode.getId())) {
+            if (!visited.get(neighbourNode.getId())) { //If node is unvisited then topologically sort it.
                 topologicalSort(neighbourNode.getId(), visited, stack);
             }
         }
@@ -574,24 +574,26 @@ public class graph {
         //Creates a list of all directed and undirected neighbours of the start node.
         ArrayList<node> allNeighbours = combineNeighbours(startNodeID);
 
-        //Checks to see if the node has any neighbours.
+        //Checks to see if the node has any neighbours. If not, then return empty path.
         if (allNeighbours.size() == 0) {
             return paths;
         }
 
-        //All distances from start node start at -1, except the start node.
-        HashMap<Integer, Integer> dist = new HashMap<>();
+        HashMap<Integer, Integer> dist = new HashMap<>();//Array to keep track of each node's distance from start node
+
+        // All distances from start node start at -1, except the start node.
         for (int i : nodes.keySet()) {
             dist.put(i, -1);
         }
         dist.put(startNodeID, 0);
 
-        HashMap<Integer, Integer> prevNode = new HashMap<>();
+        HashMap<Integer, Integer> prevNode = new HashMap<>();//Array to keep track of each node's previous node in the path
 
         Queue<Integer> q = new LinkedList<>();
 
         q.add(startNodeID);
 
+        //Iterate through the queue of nodes until it is empty.
         while (!q.isEmpty()) {
             int currentNodeID = q.poll();
 
@@ -602,7 +604,7 @@ public class graph {
             for (int i = 0; i < allNeighbours.size(); i++) {
                 int neighbourNodeID = allNeighbours.get(i).getId();
 
-                if (dist.get(neighbourNodeID) == -1) {
+                if (dist.get(neighbourNodeID) == -1) {//Check if the node is unvisited. If so, add it to the queue, updateits distance and its previous node.
                     q.add(neighbourNodeID);
                     dist.put(neighbourNodeID, dist.get(currentNodeID) + 1);
                     prevNode.put(neighbourNodeID, currentNodeID);
