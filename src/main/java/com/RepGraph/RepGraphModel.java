@@ -66,7 +66,7 @@ public class RepGraphModel {
      * @param graphId    The ID of the graph where the subset is being constructed
      * @param headNodeID The node ID of the starting node of subset creation
      * @param SubsetType The type of subset to be created
-     * @param format The format of the visualisation i.e 1 - hierarchical format, 2- tree like format, 3 - flat visualisation, 4 - planar visualisation
+     * @param format     The format of the visualisation i.e 1 - hierarchical format, 2- tree like format, 3 - flat visualisation, 4 - planar visualisation
      * @return HashMap<String, Object> The Visualisation Data of the subset
      */
     public HashMap<String, Object> DisplaySubset(String graphId, int headNodeID, String SubsetType, int format) {
@@ -307,10 +307,9 @@ public class RepGraphModel {
      * subgraph pattern.
      *
      * @param subgraph This is the subgraph pattern graph object that is searched for. It needs to be a connected graph.
-     *
      * @return HashMap<String, Object> Returns a hashmap of information
-     *      * i.e the "data" key contains a list of hashmaps that contain the graph ID's and Inputs of graphs that contain the subgraph pattern.
-     *      * the "Response" key contains an error response if necessary.
+     * * i.e the "data" key contains a list of hashmaps that contain the graph ID's and Inputs of graphs that contain the subgraph pattern.
+     * * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphPattern(graph subgraph) {
         HashMap<String, Object> returninfo = new HashMap<>();
@@ -401,10 +400,11 @@ public class RepGraphModel {
 
     /**
      * Searches through all the graphs to find graphs that contain all the node labels provided.
+     *
      * @param labels This is the list of node labels to search for.
      * @return HashMap<String, Object> Returns a hashmap of information
-     *      * i.e the "data" key contains a list of hashmaps that contain the graph ID's and Inputs of graphs that have the set of node labels.
-     *      * the "Response" key contains an error response if necessary.
+     * * i.e the "data" key contains a list of hashmaps that contain the graph ID's and Inputs of graphs that have the set of node labels.
+     * * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphNodeSet(ArrayList<String> labels) {
         HashMap<String, Object> returninfo = new HashMap<>();
@@ -591,14 +591,14 @@ public class RepGraphModel {
 
     /**
      * This method returns visualisation information so that it can be visualised on the front-end
-     * @param graphID This is the graphID of the graph to be visualised
-     * @param format this is the format of the visualisation i.e
-     *               format 1 - hierarchical,
-     *               format 2 - tree like,
-     *               format 3 - flat,
-     *               format 4 - planar.
-     * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      *
+     * @param graphID This is the graphID of the graph to be visualised
+     * @param format  this is the format of the visualisation i.e
+     *                format 1 - hierarchical,
+     *                format 2 - tree like,
+     *                format 3 - flat,
+     *                format 4 - planar.
+     * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
     public HashMap<String, Object> Visualise(String graphID, int format) {
         graph graph = graphs.get(graphID);
@@ -616,6 +616,7 @@ public class RepGraphModel {
 
     /**
      * The visualisation method for visualising a planar graph.
+     *
      * @param graph the graph object to be visualised in a planar format
      * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
@@ -663,7 +664,6 @@ public class RepGraphModel {
             singleNode.put("group", "node");
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
-
 
         }
 
@@ -738,6 +738,7 @@ public class RepGraphModel {
 
     /**
      * The visualisation method for visualising a Flat graph.
+     *
      * @param graph the graph object to be visualised in a Flat format
      * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
@@ -764,14 +765,14 @@ public class RepGraphModel {
             finalNodes.add(singleNode);
         }
         if (graph.getNodes().containsKey(graph.getTops().get(0))) {
-        HashMap<String, Object> singleNode = new HashMap<>();
+            HashMap<String, Object> singleNode = new HashMap<>();
             singleNode.put("id", "TOP");
-        singleNode.put("x", graph.getTops().get(0) * 130);
-        singleNode.put("y", totalGraphHeight - 150);
-        singleNode.put("label", "TOP");
-        singleNode.put("type", "node");
-        singleNode.put("group", "token");
-        singleNode.put("fixed", true);
+            singleNode.put("x", graph.getTops().get(0) * 130);
+            singleNode.put("y", totalGraphHeight - 150);
+            singleNode.put("label", "TOP");
+            singleNode.put("type", "node");
+            singleNode.put("group", "token");
+            singleNode.put("fixed", true);
 
             finalNodes.add(singleNode);
         }
@@ -784,15 +785,15 @@ public class RepGraphModel {
             HashMap<String, Object> singleEdge = new HashMap<>();
             for (HashMap<String, Object> node : finalNodes) {
                 if (!node.get("id").equals((String) "TOP")) {
-                if ((Integer) node.get("id") == e.getSource()) {
-                    fromID = e.getSource();
+                    if ((Integer) node.get("id") == e.getSource()) {
+                        fromID = e.getSource();
 
 
-                }
-                if ((Integer) node.get("id") == e.getTarget()) {
-                    toID = e.getTarget();
+                    }
+                    if ((Integer) node.get("id") == e.getTarget()) {
+                        toID = e.getTarget();
 
-                }
+                    }
                 }
             }
             String edgeType = "curvedCW";
@@ -855,6 +856,7 @@ public class RepGraphModel {
 
     /**
      * The visualisation method for visualising a Tree like graph.
+     *
      * @param graph the graph object to be visualised in a Tree like format
      * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
@@ -867,7 +869,7 @@ public class RepGraphModel {
         for (int i : graph.getNodes().keySet()) {
             Stack<Integer> stack = new Stack<>();
             HashMap<Integer, Boolean> visited = new HashMap<>();
-            for (int j : graph.getNodes().keySet()){
+            for (int j : graph.getNodes().keySet()) {
                 visited.put(j, false);
             }
             topologicalStacks.put(i, graph.topologicalSort(i, visited, stack));
@@ -875,7 +877,7 @@ public class RepGraphModel {
 
 
         int numLevels = 0;
-        for (int i : topologicalStacks.keySet()){
+        for (int i : topologicalStacks.keySet()) {
             numLevels = Math.max(numLevels, topologicalStacks.get(i).size());
         }
 
@@ -1005,7 +1007,7 @@ public class RepGraphModel {
 
         for (token t : graph.getTokens()) {
             HashMap<String, Object> singleToken = new HashMap<>();
-            singleToken.put("id", t.getIndex() + maxID+1);
+            singleToken.put("id", t.getIndex() + maxID + 1);
             singleToken.put("x", t.getIndex() * 130);
             singleToken.put("y", totalGraphHeight + 200);
             singleToken.put("label", t.getForm());
@@ -1157,6 +1159,7 @@ public class RepGraphModel {
 
     /**
      * The visualisation method for visualising a Hierarchical graph.
+     *
      * @param graph the graph object to be visualised in a Hierarchical format
      * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
@@ -1165,7 +1168,7 @@ public class RepGraphModel {
 
         //Determine span lengths of each node
         HashMap<Integer, Integer> graphNodeSpanLengths = new HashMap<>();
-        for (node n : graph.getNodes().values()){
+        for (node n : graph.getNodes().values()) {
             int span = n.getAnchors().get(0).getEnd() - n.getAnchors().get(0).getFrom();
             graphNodeSpanLengths.put(n.getId(), span);
         }
@@ -1187,7 +1190,7 @@ public class RepGraphModel {
         ArrayList<ArrayList<node>> nodesInLevels = new ArrayList<>();
         for (int level : uniqueSpanLengths) {
             ArrayList<node> currentLevel = new ArrayList<>();
-            for (int spanIndex :graphNodeSpanLengths.keySet()) {
+            for (int spanIndex : graphNodeSpanLengths.keySet()) {
                 if (graphNodeSpanLengths.get(spanIndex) == level) {
                     currentLevel.add(graph.getNodes().get(spanIndex));
                 }
@@ -1283,13 +1286,14 @@ public class RepGraphModel {
         int space = 130;
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
+        int maxID = graph.getNodes().keySet().iterator().next();
 
         for (int level = 0; level < nodesInFinalLevels.size(); level++) {
-
             for (node n : nodesInFinalLevels.get(level)) {
                 HashMap<String, Object> singleNode = new HashMap<>();
                 singleNode.put("id", n.getId());
-                singleNode.put("x", n.getAnchors().get(0).getFrom() * space);
+                maxID = Math.max(n.getId(), maxID);
+                singleNode.put("x", (n.getAnchors().get(0).getEnd() * space + n.getAnchors().get(0).getFrom() * space) / 2);
                 singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
                 singleNode.put("label", n.getLabel());
                 singleNode.put("type", "node");
@@ -1297,9 +1301,14 @@ public class RepGraphModel {
                 singleNode.put("anchors", n.getAnchors().get(0));
                 singleNode.put("group", "node");
                 singleNode.put("fixed", true);
+                HashMap<String,Object> widthCon = new HashMap<>();
+                widthCon.put("minimum", n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom() * space + 70);
+                widthCon.put("maximum", n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom() * space + 70);
+                singleNode.put("widthConstraint", widthCon);
                 finalNodes.add(singleNode);
             }
         }
+
 
         if (graph.getNodes().containsKey(graph.getTops().get(0))) {
             HashMap<String, Object> singleNode = new HashMap<>();
@@ -1344,106 +1353,155 @@ public class RepGraphModel {
             HashMap<String, Object> singleEdge = new HashMap<>();
             for (HashMap<String, Object> node : finalNodes) {
                 if (!node.get("id").equals((String) "TOP")) {
-                if ((Integer) node.get("id") == e.getSource()) {
-                    fromID = e.getSource();
-                    fromLevel = (Integer) node.get("nodeLevel");
-                    fromX = (Integer) node.get("x");
-                }
-                if ((Integer) node.get("id") == e.getTarget()) {
-                    toID = e.getTarget();
-                    toLevel = (Integer) node.get("nodeLevel");
-                    toX = (Integer) node.get("x");
-                }
+                    if ((Integer) node.get("id") == e.getSource()) {
+                        fromID = e.getSource();
+                        fromLevel = (Integer) node.get("nodeLevel");
+                        fromX = (Integer) node.get("x");
+                    }
+                    if ((Integer) node.get("id") == e.getTarget()) {
+                        toID = e.getTarget();
+                        toLevel = (Integer) node.get("nodeLevel");
+                        toX = (Integer) node.get("x");
+                    }
                 }
             }
 
             String edgeType = "";
-            double round = 0.45;
+            double round = 0.5;
 
-            if (fromX == toX) {
+
+            int spanLower = graph.getNodes().get(fromID).getAnchors().get(0).getFrom() * space;
+            int spanUpper = graph.getNodes().get(fromID).getAnchors().get(0).getEnd() * space;
+
+            if (toX <= spanUpper && toX >= spanLower) {
                 if (Math.abs(fromLevel - toLevel) == 1) {
                     edgeType = "continuous";
                 } else {
                     boolean notFound = true;
-                    for (HashMap<String, Object> node : finalNodes) {
-                        if ((Integer) node.get("x") == fromX && ((Integer) node.get("nodeLevel") > toLevel && (Integer) node.get("nodeLevel") < fromLevel) || ((Integer) node.get("nodeLevel") < toLevel && (Integer) node.get("nodeLevel") > fromLevel)) {
-                            notFound = false;
+                    double protrusionHeight = 0.0;
+                    double protrusionWidth = 0.0;
+                    if (fromX == toX) {
+                        for (HashMap<String, Object> node : finalNodes) {
+                            if ((Integer) node.get("x") == fromX) {
+                                if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
+                                    notFound = false;
+                                }
+                            }
+                        }
+                    } else {
+                        for (HashMap<String, Object> node : finalNodes) {
+                            if ((Integer) node.get("x") <= spanUpper && (Integer) node.get("x") >= spanLower) {
+                                if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
+                                    if ((((Integer) node.get("x") >= toX) && ((Integer) node.get("x") <= fromX))) {
+                                        notFound = false;
+                                        protrusionHeight = Math.max(protrusionHeight, ((Integer) node.get("nodeLevel")) / (double) fromLevel);
+                                        protrusionWidth = Math.max(protrusionWidth, Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanLower));
+                                    } else if (((Integer) node.get("x") <= toX) && ((Integer) node.get("x") >= fromX)) {
+                                        notFound = false;
+                                        protrusionHeight = Math.max(protrusionHeight, ((Integer) node.get("nodeLevel")) / (double) fromLevel);
+                                        protrusionWidth = Math.max(protrusionWidth, Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanUpper));
+                                    }
+                                }
+                            }
                         }
                     }
                     if (notFound) {
-                        edgeType = "continuous";
+                        edgeType = "dynamic";
+
                     } else {
                         if (Math.abs(fromLevel - toLevel) > 3) {
+                            round = 0.36;
+                        }
+                        if (Math.abs(fromLevel - toLevel) > 4) {
                             round = 0.32;
                         }
+                        if ((protrusionHeight > 0.55) && (protrusionWidth > 0.55)) {
+                            round = 0.47;
+                        }
+                        if (protrusionWidth > 0.8) {
+                            round = 0.4;
+                        }
                         edgeType = "curvedCCW";
-                        if (fromLevel < toLevel){
+                        if (fromLevel < toLevel) {
                             edgeType = "curvedCW";
                         }
-                        for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()) {
-                            if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
-                                if (fromLevel < toLevel){
-                                    edgeType = "curvedCCW";
-                                }
-                                else{
-                                    edgeType = "curvedCW";
+                        if (fromX == toX) {
+                            for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()) {
+                                if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
+                                    if (fromLevel < toLevel) {
+                                        edgeType = "curvedCCW";
+                                    } else {
+                                        edgeType = "curvedCW";
+                                    }
                                 }
                             }
-                        }
-                        for (node neighbour : graph.getNodes().get(toID).getDirectedNeighbours()) {
-                            if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
-                                if (fromLevel < toLevel){
-                                    edgeType = "curvedCCW";
+                            for (node neighbour : graph.getNodes().get(toID).getDirectedNeighbours()) {
+                                if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
+                                    if (fromLevel < toLevel) {
+                                        edgeType = "curvedCCW";
+                                    } else {
+                                        edgeType = "curvedCW";
+                                    }
                                 }
-                                else{
-                                    edgeType = "curvedCW";
-                                }
+                            }
+                        } else if (fromX < toX) {
+                            if (fromLevel < toLevel) {
+                                edgeType = "curvedCCW";
+                            } else {
+                                edgeType = "curvedCW";
+                            }
+                        } else {
+                            if (fromLevel < toLevel) {
+                                edgeType = "curvedCW";
+                            } else {
+                                edgeType = "curvedCCW";
                             }
                         }
                     }
                 }
-            }
-            else{
-                    if (fromLevel == toLevel) {
-                        edgeType = "curvedCCW";
-                        int difference = fromX / space - toX / space;
-                        if (Math.abs(difference) > 4) {
-                            round = 0.2;
-                        }
-                        if (Math.abs(difference) > 10) {
-                            round = 0.1;
-                        }
-                        if (difference > 0 && fromLevel == 0) {
-                            edgeType = "curvedCW";
-                        }
-                    } else {
-                        edgeType = "dynamic";
+            } else {
+                if (fromLevel == toLevel) {
+                    edgeType = "curvedCCW";
+                    round = 0.5;
+                    int difference = fromX / space - toX / space;
+                    if (Math.abs(difference) > 4) {
+                        round = 0.3;
                     }
+                    if (Math.abs(difference) > 10) {
+                        round = 0.2;
+                    }
+                    if (difference > 0 && fromLevel == 0) {
+                        edgeType = "curvedCW";
+                    }
+                } else {
+                    edgeType = "dynamic";
                 }
-
-
-                singleEdge.put("id", graph.getEdges().indexOf(e));
-                singleEdge.put("from", fromID);
-                singleEdge.put("to", toID);
-                singleEdge.put("label", e.getLabel());
-                singleEdge.put("group", "normal");
-                singleEdge.put("shadow", false);
-                HashMap<String, Object> back = new HashMap<>();
-                back.put("enabled", false);
-                singleEdge.put("background", back);
-
-                HashMap<String, Object> smooth = new HashMap<>();
-                smooth.put("type", edgeType);
-                smooth.put("roundness", round);
-
-                HashMap<String, Object> end = new HashMap<>();
-                end.put("from", 20);
-                end.put("to", 0);
-                singleEdge.put("smooth", smooth);
-                singleEdge.put("endPointOffset", end);
-                finalGraphEdges.add(singleEdge);
-
             }
+
+
+            singleEdge.put("id", graph.getEdges().indexOf(e));
+            singleEdge.put("from", fromID);
+            singleEdge.put("to", toID);
+            singleEdge.put("label", e.getLabel());
+            singleEdge.put("group", "normal");
+            singleEdge.put("shadow", false);
+            singleEdge.put("color", "rgba(118, 118, 118, 1)");
+            HashMap<String, Object> back = new HashMap<>();
+            back.put("enabled", false);
+            singleEdge.put("background", back);
+
+            HashMap<String, Object> smooth = new HashMap<>();
+            smooth.put("type", edgeType);
+            smooth.put("roundness", round);
+
+            HashMap<String, Object> end = new HashMap<>();
+            end.put("from", 20);
+            end.put("to", 0);
+            singleEdge.put("smooth", smooth);
+            singleEdge.put("endPointOffset", end);
+            finalGraphEdges.add(singleEdge);
+
+        }
 
         if (graph.getNodes().containsKey(graph.getTops().get(0))) {
             HashMap<String, Object> singleEdge = new HashMap<>();
@@ -1468,13 +1526,13 @@ public class RepGraphModel {
             finalGraphEdges.add(singleEdge);
         }
 
-            HashMap<String, Object> Visualised = new HashMap<>();
+        HashMap<String, Object> Visualised = new HashMap<>();
         Visualised.put("id", graph.getId());
-            Visualised.put("nodes", finalGraphNodes);
-            Visualised.put("edges", finalGraphEdges);
+        Visualised.put("nodes", finalGraphNodes);
+        Visualised.put("edges", finalGraphEdges);
 
 
-            return Visualised;
-        }
-
+        return Visualised;
     }
+
+}
