@@ -820,6 +820,14 @@ public class RepGraphModel {
             end.put("to", 0);
             singleEdge.put("smooth", smooth);
             singleEdge.put("endPointOffset", end);
+
+            singleEdge.put("dashes", true);
+            HashMap<String, Object> arrows = new HashMap<>();
+            HashMap<String, Object> to = new HashMap<>();
+            to.put("enabled", false);
+            arrows.put("to", to);
+            singleEdge.put("arrows", arrows);
+
             finalGraphEdges.add(singleEdge);
         }
 
@@ -996,8 +1004,9 @@ public class RepGraphModel {
             singleToken.put("x", t.getIndex() * 130);
             singleToken.put("y", totalGraphHeight + 200);
             singleToken.put("label", t.getForm());
+            singleToken.put("shape", "text");
             singleToken.put("type", "token");
-            singleToken.put("group", "token");
+            //singleToken.put("group", "token");
             singleToken.put("fixed", true);
             finalTokens.add(singleToken);
         }
@@ -1399,12 +1408,17 @@ public class RepGraphModel {
                                 if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
                                     if ((((Integer) node.get("x") >= toX) && ((Integer) node.get("x") <= fromX))) {
                                         notFound = false;
-                                        protrusionHeight = Math.max(protrusionHeight, ((Integer) node.get("nodeLevel")) / (double) fromLevel);
-                                        protrusionWidth = Math.max(protrusionWidth, Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanLower));
+
+                                        if (protrusionHeight < ((Integer) node.get("nodeLevel")) / (double) fromLevel && protrusionWidth < Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanLower)) {
+                                            protrusionHeight = (Integer) node.get("nodeLevel") / (double) fromLevel;
+                                            protrusionWidth = Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanLower);
+                                        }
                                     } else if (((Integer) node.get("x") <= toX) && ((Integer) node.get("x") >= fromX)) {
                                         notFound = false;
-                                        protrusionHeight = Math.max(protrusionHeight, ((Integer) node.get("nodeLevel")) / (double) fromLevel);
-                                        protrusionWidth = Math.max(protrusionWidth, Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanUpper));
+                                        if (protrusionHeight < ((Integer) node.get("nodeLevel")) / (double) fromLevel && protrusionWidth < Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanUpper)) {
+                                            protrusionHeight = (Integer) node.get("nodeLevel") / (double) fromLevel;
+                                            protrusionWidth = Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanUpper);
+                                        }
                                     }
                                 }
                             }
@@ -1528,6 +1542,14 @@ public class RepGraphModel {
             end.put("to", 0);
             singleEdge.put("smooth", smooth);
             singleEdge.put("endPointOffset", end);
+
+            singleEdge.put("dashes", true);
+            HashMap<String, Object> arrows = new HashMap<>();
+            HashMap<String, Object> to = new HashMap<>();
+            to.put("enabled", false);
+            arrows.put("to", to);
+            singleEdge.put("arrows", arrows);
+
             finalGraphEdges.add(singleEdge);
         }
 
