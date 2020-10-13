@@ -91,7 +91,6 @@ public class RepGraphModel {
                 return VisualisePlanar(CreateSubsetDescendent(graphId, headNodeID));
             }
         }
-
         return null;
     }
 
@@ -287,7 +286,7 @@ public class RepGraphModel {
         // and if there are less edges than number of nodes -1 then it is not connected,
         // if it has a dangling edge it isnt connected
         if (subgraph.getNodes().size() == 0 || subgraph.getEdges().size() == 0 || subgraph.getEdges().size() < subgraph.getNodes().size() - 1 || subgraph.hasDanglingEdge() || !subgraph.connectedBFS(subgraph.getNodes().values().iterator().next().getId())) {
-            returninfo.put("response", "Subgraph Pattern was not entered correctly");
+            returninfo.put("response", "Failure");
             return returninfo;
         }
 
@@ -301,7 +300,7 @@ public class RepGraphModel {
         try {
             subgraph.setNodeNeighbours();
         } catch (IndexOutOfBoundsException e) {
-            returninfo.put("response", "An Error has occurred");
+            returninfo.put("response", "Failure");
             return returninfo;
 
         }
@@ -309,6 +308,7 @@ public class RepGraphModel {
 
         //Iterate over each graph in the dataset
         for (graph g : graphs.values()) {
+            //If it cant set the node neighbours then just the specific graph iteration.
             try {
                 g.setNodeNeighbours();
             } catch (IndexOutOfBoundsException f) {
@@ -377,7 +377,7 @@ public class RepGraphModel {
 
         ArrayList<HashMap<String, String>> FoundGraphs = new ArrayList<>();
         if (labels.size() == 0) {
-            returninfo.put("response", "Subgraph Pattern was not entered correctly");
+            returninfo.put("response", "No Labels were entered");
             return returninfo;
         }
 
@@ -1291,7 +1291,7 @@ public class RepGraphModel {
         if (graph.getNodes().containsKey(graph.getTops().get(0))) {
             HashMap<String, Object> singleNode = new HashMap<>();
             singleNode.put("id", "TOP");
-            singleNode.put("x", graph.getNodes().get(graph.getTops().get(0)).getAnchors().get(0).getFrom() * space);
+            singleNode.put("x", (graph.getNodes().get(graph.getTops().get(0)).getAnchors().get(0).getEnd() * space + graph.getNodes().get(graph.getTops().get(0)).getAnchors().get(0).getFrom() * space) / 2);
             singleNode.put("y", totalGraphHeight - nodesInFinalLevels.size() * (totalGraphHeight / height));
             singleNode.put("label", "TOP");
             singleNode.put("type", "node");

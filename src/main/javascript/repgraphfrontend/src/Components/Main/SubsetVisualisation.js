@@ -96,7 +96,7 @@ const SubsetVisualisation = (props) => {
         return (
             <Graph
                 graph={subsetGraphData}
-                options={options}
+                options={state.visualisationOptions} //Options from global state
                 events={events}
                 style={{width: "100%", height: "100%"}}
                 getNetwork={(network) => {

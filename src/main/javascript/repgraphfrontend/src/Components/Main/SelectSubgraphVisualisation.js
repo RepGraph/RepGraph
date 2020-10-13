@@ -16,6 +16,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 import Card from "@material-ui/core/Card";
 import SubgraphVisualisation from "./SubgraphVisualisation";
+import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 const options = {
     physics: {
@@ -126,6 +128,7 @@ const SelectSubgraphVisualisation = () => {
     const [searchResult, setSearchResult] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const [selectedSentenceVisualisation, setSelectedSentenceVisualisation] = React.useState(null);
+    const [alertOpen, setAlertOpen] = React.useState(false); //Local state for error alert
 
     function searchForSelectedSubgraph(){
 
@@ -144,8 +147,14 @@ const SelectSubgraphVisualisation = () => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging
                 setSearchResult(jsonResult.data); //Store the search results in local state
-                setOpen(true); //Show the results to the user
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+
+                if(jsonResult.response === "Success"){
+                    setOpen(true); //Show the results to the user
+                }else{
+                    setAlertOpen(true); //Display the error alert
+                }
+
             })
             .catch((error) => {
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
@@ -214,7 +223,7 @@ const SelectSubgraphVisualisation = () => {
                                 group: "Selected",
                                 background: {
                                     enabled: true,
-                                    color: "#ff0000"
+                                    color: "rgba(255, 0, 0, 0.65)"
                                 }
                             };
                         }
@@ -263,6 +272,11 @@ const SelectSubgraphVisualisation = () => {
             });
     }
 
+    //Handle close for error alert
+    const handleAlertClose = () => {
+        setAlertOpen(false);
+    };
+
     return (
         <Grid
             container
@@ -275,7 +289,7 @@ const SelectSubgraphVisualisation = () => {
             <Grid item style={{height:"60vh", width:"100%"}}>
                 <Graph
                     graph={currentVis}
-                    options={options}
+                    options={options} //Options from global state
                     events={events}
                     getNetwork={(network) => {
                         network.on("hoverNode", function (params) {
@@ -285,7 +299,7 @@ const SelectSubgraphVisualisation = () => {
                 />
             </Grid>
             <Grid item>
-                <Button color="Primary" onClick={searchForSelectedSubgraph}>
+                <Button color="Primary" onClick={searchForSelectedSubgraph} variant="contained">
                     Search
                 </Button>
             </Grid>
@@ -363,6 +377,11 @@ const SelectSubgraphVisualisation = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
+                <MuiAlert elevation={6} variant="filled" onClose={handleAlertClose} severity="error">
+                    Error: Could not search for sub-graph pattern - Selected sub-graph must be connected
+                </MuiAlert>
+            </Snackbar>
         </Grid>
 
     );

@@ -20,6 +20,8 @@ import ListItem from "@material-ui/core/ListItem";
 import {Virtuoso} from "react-virtuoso";
 import SelectSubgraphVisualisation from "../Main/SelectSubgraphVisualisation";
 import SubgraphVisualisation from "../Main/SubgraphVisualisation";
+import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,6 +45,8 @@ function SearchSubgraphPatternTool(props) {
     const [openNodeSet, setOpenNodeSet] = React.useState(false); //Local state for search node set dialog
     const [nodeSetResult, setNodeSetResult] = React.useState(null); //Local state for node set search result
     const [subgraphResponse, setSubgraphResponse] = React.useState(null); //Local state for subgraph pattern search results
+    const [responseMessage, setResponseMessage] = React.useState(null); //Local state for response message
+    const [alertOpen, setAlertOpen] = React.useState(false); //Local state for error alert
 
     //Handle click open for search sub-graph pattern dialog
     const handleClickOpen = () => {
@@ -52,6 +56,11 @@ function SearchSubgraphPatternTool(props) {
     //Handle close for search sub-graph pattern dialog
     const handleClose = () => {
         setOpen(false);
+    };
+
+    //Handle close for error alert
+    const handleAlertClose = () => {
+        setAlertOpen(false);
     };
 
     //Handle close for node set dialog
@@ -77,8 +86,15 @@ function SearchSubgraphPatternTool(props) {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging
                 setNodeSetResult(jsonResult.data); //Store the node set results
-                setOpenNodeSet(true); //Display the node set results
+                setResponseMessage(jsonResult.response);
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+
+                if(jsonResult.response === "Success"){
+                    setOpenNodeSet(true); //Display the node set results
+                }else{
+                    setAlertOpen(true); //Display the error alert
+                }
+
             })
             .catch((error) => {
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
@@ -279,15 +295,12 @@ function SearchSubgraphPatternTool(props) {
                         aria-describedby="alert-dialog-description"
                     >
                         <DialogTitle id="alert-dialog-title">
-                            {"Select a node on the graph:"}
+                            {"Select connected nodes and edges on the graph: "}
                         </DialogTitle>
                         <DialogContent>
                             <SelectSubgraphVisualisation/>
                         </DialogContent>
                         <DialogActions>
-                            <Chip
-                                label={`Selected Nodes and Edges: still need to get this working`}
-                            />
                             <Button onClick={handleClose} color="primary" autoFocus>
                                 Close
                             </Button>
@@ -295,6 +308,11 @@ function SearchSubgraphPatternTool(props) {
                     </Dialog>
                 </CardContent>
             </Card>
+            <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
+                <MuiAlert elevation={6} variant="filled" onClose={handleAlertClose} severity="error">
+                    Error: Could not search for node labels
+                </MuiAlert>
+            </Snackbar>
         </React.Fragment>
 
 
