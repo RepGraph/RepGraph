@@ -496,8 +496,8 @@ public class graph {
             return paths;
         }
 
-        HashMap<Integer, Integer> dist = new HashMap<>(); //Array to keep track of each node's distance from start node
-        HashMap<Integer, Integer> prevNode = new HashMap<>(); //Array to keep track of each node's previous node in the path
+        HashMap<Integer, Integer> dist = new HashMap<>(); //HashMap to keep track of each node's distance from start node
+        HashMap<Integer, Integer> prevNode = new HashMap<>(); //HashMap to keep track of each node's previous node in the path
 
         //Set all nodes in the graph to unvisited
         HashMap<Integer, Boolean> visited = new HashMap<>();
@@ -579,7 +579,7 @@ public class graph {
             return paths;
         }
 
-        HashMap<Integer, Integer> dist = new HashMap<>();//Array to keep track of each node's distance from start node
+        HashMap<Integer, Integer> dist = new HashMap<>();//HashMap to keep track of each node's distance from start node
 
         // All distances from start node start at -1, except the start node.
         for (int i : nodes.keySet()) {
@@ -587,7 +587,7 @@ public class graph {
         }
         dist.put(startNodeID, 0);
 
-        HashMap<Integer, Integer> prevNode = new HashMap<>();//Array to keep track of each node's previous node in the path
+        HashMap<Integer, Integer> prevNode = new HashMap<>();//HashMap to keep track of each node's previous node in the path
 
         Queue<Integer> q = new LinkedList<>();
 
@@ -890,7 +890,7 @@ public class graph {
         }
 
 
-        HashMap<Integer, Integer> dist = new HashMap<>();//Array to keep track of each node's distance from start node
+        HashMap<Integer, Integer> dist = new HashMap<>();//HashMap to keep track of each node's distance from start node
 
         //All distances from start node start at -1, except the start node.
         for (int i : nodes.keySet()) {
