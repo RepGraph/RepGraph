@@ -450,6 +450,7 @@ public class graph {
             }
         }
 
+        //Iterate through each edge and set the corresponding node's thier neighbours.
         for (int i = 0; i < edges.size(); i++) {
             edge currentEdge = edges.get(i);
 
@@ -481,7 +482,7 @@ public class graph {
     }
 
     /**
-     * Finds the longest distance from a given start node to all the other nodes in the system and returns the path of the longest path.
+     * Finds the longest paths from a given start node to all the other nodes in the system and returns the paths of the longest paths.
      *
      * @param startNodeID Number of the start node.
      * @return ArrayList<ArrayList < Integer>> The longest paths available from the start node.
@@ -490,22 +491,21 @@ public class graph {
 
         ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
 
-        //Check if the start node has any neighbours
+        //Check if the start node has any neighbours, if not then return an empty path.
         if (nodes.get(startNodeID).getDirectedNeighbours().size() == 0) {
             return paths;
         }
 
-        HashMap<Integer, Integer> dist = new HashMap<>();
-        HashMap<Integer, Integer> prevNode = new HashMap<>();
+        HashMap<Integer, Integer> dist = new HashMap<>(); //Array to keep track of each node's distance from start node
+        HashMap<Integer, Integer> prevNode = new HashMap<>(); //Array to keep track of each node's previous node in the path
 
-        //Set all nodes in the graph to unvisited (i.e. visited[nodeID] = false)
-        //boolean[] visited = new boolean[nodes.size()];
+        //Set all nodes in the graph to unvisited
         HashMap<Integer, Boolean> visited = new HashMap<>();
         for (int i : nodes.keySet()) {
             visited.put(i, false);
         }
 
-        //Topologically sort every unvisited node.
+        //Topologically sort every unvisited node, which gets added to the stack.
         Stack<Integer> stack = new Stack<Integer>();
         for (int i : nodes.keySet()) {
             if (!visited.get(i)) {
@@ -525,7 +525,7 @@ public class graph {
 
             if (dist.get(u) != Integer.MIN_VALUE) {
                 for (node n : nodes.get(u).getDirectedNeighbours()) {
-                    if (dist.get(n.getId()) < dist.get(u) + 1) {
+                    if (dist.get(n.getId()) < dist.get(u) + 1) { //Check if the current distance is shorter than the new distance, if so update the distance and previous node arrays.
                         dist.put(n.getId(), dist.get(u) + 1);
                         prevNode.put(n.getId(), u);
                     }
