@@ -28,6 +28,7 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import MenuOpenIcon from "@material-ui/icons/MenuOpen";
 import ReorderIcon from "@material-ui/icons/Reorder";
 import ShortTextIcon from "@material-ui/icons/ShortText";
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 import {AppContext} from "./Store/AppContextProvider.js";
 import SentenceList from "./Components/Main/SentenceList.js";
@@ -51,6 +52,8 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
+import Box from "@material-ui/core/Box";
+import Fab from "@material-ui/core/Fab";
 
 const drawerWidth = 240;
 
@@ -59,21 +62,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         display: "flex"
     },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen
-        })
-    },
-    appBarShift: {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen
-        })
-    },
+    appBar: {},
     menuButton: {
         marginRight: 36
     },
@@ -85,24 +74,6 @@ const useStyles = makeStyles((theme) => ({
         flexShrink: 0,
         whiteSpace: "nowrap"
     },
-    drawerOpen: {
-        width: drawerWidth,
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen
-        })
-    },
-    drawerClose: {
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen
-        }),
-        overflowX: "hidden",
-        width: theme.spacing(7) + 1,
-        [theme.breakpoints.up("sm")]: {
-            width: theme.spacing(9) + 1
-        }
-    },
     toolbar: {
         display: "flex",
         alignItems: "center",
@@ -112,9 +83,15 @@ const useStyles = makeStyles((theme) => ({
         ...theme.mixins.toolbar
     },
     content: {
-        flexGrow: 1,
         padding: theme.spacing(3)
-    }
+    },
+    bottomAppBar: {
+        top: 'auto',
+        bottom: 0,
+    },
+    fabButton: {
+        margin: '0 auto',
+    },
 }));
 
 export default function Main() {
@@ -125,6 +102,7 @@ export default function Main() {
     const [open, setOpen] = React.useState(false);
     const [sentenceOpen, setSentenceOpen] = React.useState(false);
     const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true);
+    const [analysisToolsOpen, setAnalysisToolsOpen] = React.useState(false);
 
     //Handle close of the alert shown after data-set upload
     const handleDataSetResponseClose = (event, reason) => {
@@ -148,6 +126,11 @@ export default function Main() {
     //Handle click close select sentence dialog
     const handleSentenceClose = () => {
         setSentenceOpen(false);
+    };
+
+    //Handle click close select sentence dialog
+    const handleAnalysisToolsClose = () => {
+        setAnalysisToolsOpen(false);
     };
 
     //Handle change visualisation format setting in application app bar
@@ -191,170 +174,145 @@ export default function Main() {
 
 
     return (
-        <div className={classes.root}>
+        <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+            style={{height: "100vh", width: "100vw"}}>
             <CssBaseline/>
-            <AppBar
-                color="primary"
-                position="fixed"
-                className={clsx(classes.appBar, {
-                    [classes.appBarShift]: open
-                })}
-            >
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        className={clsx(classes.menuButton, {
-                            [classes.hide]: open
-                        })}
-                    >
-                        <MenuIcon/>
-                    </IconButton>
-                    <Typography variant="h6">
-                        RepGraph
-                    </Typography>
-                    <Grid container justify="flex-end" spacing={2}>
-                        <Grid item color="inherit">
-                            <Tooltip arrow
-                                     title={"Select visualisation format"}>
-                                <Paper>
+            <Grid item style={{width: "100%"}}>
+                <Box
+                    bgcolor="secondary.main"
+                >
+                    <Toolbar>
+                        <Typography color="primary" variant="h5">
+                            RepGraph
+                        </Typography>
+                        <Grid container justify="flex-end" spacing={2}>
+                            <Grid item color="inherit">
+                                <Tooltip arrow
+                                         title={"Select visualisation format"}>
                                     <ToggleButtonGroup
                                         value={state.visualisationFormat}
                                         exclusive
                                         onChange={handleChangeVisualisationFormat}
                                         aria-label="Visualisation formats"
-                                        color="inherit"
+                                        color="primary"
                                     >
                                         <ToggleButton color="primary" value="1" aria-label="Hierarchical">
                                             <Typography color="primary">Hierarchical</Typography>
                                         </ToggleButton>
-                                        <ToggleButton color="primary" value="2" aria-label="Tree-like">
+                                        <ToggleButton color="secondary" value="2" aria-label="Tree-like">
                                             <Typography color="primary">Tree-like</Typography>
                                         </ToggleButton>
-                                        <ToggleButton color="primary" value="3" aria-label="Flat">
+                                        <ToggleButton color="secondary" value="3" aria-label="Flat">
                                             <Typography color="primary">Flat</Typography>
                                         </ToggleButton>
                                     </ToggleButtonGroup>
-                                </Paper>
-                            </Tooltip>
+
+                                </Tooltip>
+                            </Grid>
+                            <Grid item>
+                                <Tooltip arrow
+                                         title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
+                                    <Fab color="primary" aria-label="add" variant="extended"
+                                         className={classes.fabButton} onClick={() => {
+                                        setSentenceOpen(true);
+                                    }}>
+                                        {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                        <AddCircleOutlineIcon/> :
+                                        <BuildIcon/>}
+                                    </Fab>
+                                </Tooltip>
+                            </Grid>
+                            <Grid item>
+                                <Tooltip arrow
+                                         title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
+                                    <Fab color="primary" aria-label="add" variant="extended"
+                                         className={classes.fabButton} onClick={() => {
+                                        history.push("/");
+                                    }}>
+                                        {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
+                                        <CloudUploadIcon/> : <BuildIcon/>}
+                                    </Fab>
+                                </Tooltip>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <Tooltip arrow
-                                     title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
-                                <Chip onClick={() => {
-                                    handleDrawerOpen();
-                                }} color="inherit"
-                                      label={state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID}
-                                      icon={state.selectedSentenceID === null ? <AddCircleOutlineIcon/> :
-                                          <BuildIcon/>}/>
-                            </Tooltip>
-                        </Grid>
-                        <Grid item>
-                            <Tooltip arrow title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
-                                <Chip onClick={() => {
-                                    history.push("/");
-                                }} color="inherit"
-                                      label={state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName}
-                                      icon={state.dataSet === null ? <CloudUploadIcon/> : <BuildIcon/>}/>
-                            </Tooltip>
-                        </Grid>
+                    </Toolbar>
+                </Box>
+            </Grid>
+            <Grid item style={{width: "100%", flexGrow: "1", padding: "10px"}}>
+                {state.selectedSentenceID === null ? (
+                    <Grid item style={{height: "100%"}}>
+                        <Card variant="outlined" style={{height: "100%"}}>
+                            <CardContent style={{height: "100%"}}>
+                                <Box bgcolor="secondary.main">
+                                    <Typography variant="subtitle1">Please select a sentence</Typography>
+                                </Box>
+                            </CardContent>
+                        </Card>
+
+                    </Grid>
+                ) : (
+                    <Grid item style={{height: "90%"}} color="secondary">
+                        <Card variant="outlined" style={{height: "100%"}}>
+                            <CardContent style={{height: "100%"}}>
+                                <Box style={{height: "100%"}} bgcolor="secondary.main">
+                                    <GraphVisualisation/>
+                                </Box>
+                            </CardContent>
+                        </Card>
                     </Grid>
 
-                </Toolbar>
-
-            </AppBar>
-            <Drawer
-                variant="permanent"
-                className={clsx(classes.drawer, {
-                    [classes.drawerOpen]: open,
-                    [classes.drawerClose]: !open
-                })}
-                classes={{
-                    paper: clsx({
-                        [classes.drawerOpen]: open,
-                        [classes.drawerClose]: !open
-                    })
-                }}
+                )}
+            </Grid>
+            <Grid item style={{width: "100%"}}>
+                <Box bgcolor="secondary.main">
+                    <Toolbar>
+                        <Fab color="primary" aria-label="add" variant="extended" className={classes.fabButton}
+                             onClick={() => setAnalysisToolsOpen(true)}>
+                            Show Analysis Tools <ExpandLessIcon/>
+                        </Fab>
+                        {/*<Button
+                            color="primary"
+                            variant="outlined"
+                            endIcon={<ExpandLessIcon/>}
+                            onClick={() => setAnalysisToolsOpen(true)}
+                        >
+                            Show Analysis Tools
+                        </Button>*/}
+                    </Toolbar>
+                </Box>
+            </Grid>
+            <Dialog
+                fullWidth
+                maxWidth="md"
+                open={sentenceOpen}
+                onClose={handleSentenceClose}
             >
-                <div className={classes.toolbar}>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === "rtl" ? (
-                            <ChevronRightIcon/>
-                        ) : (
-                            <ChevronLeftIcon/>
-                        )}
-                    </IconButton>
-                </div>
-                <Divider/>
-                <List>
-                    <ListItem button onClick={() => setSentenceOpen(true)}>
-                        <ListItemIcon>
-                            {state.selectedSentenceID === null ? <AddCircleOutlineIcon/> : <BuildIcon/>}
-                        </ListItemIcon>
-                        <ListItemText primary="Select Sentence"/>
-                    </ListItem>
-                </List>
-                <Divider/>
+                <DialogTitle>
+                    Select a sentence
+                </DialogTitle>
+                <DialogContent>
+                    <SentenceList closeSelectSentence={handleSentenceClose}/>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSentenceClose}>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Drawer anchor='bottom' open={analysisToolsOpen} onClose={handleAnalysisToolsClose}>
+                <AnalysisAccordion/>
             </Drawer>
-            <main className={classes.content}>
-                <div className={classes.toolbar}/>
-                <React.Fragment>
-                    <Dialog
-                        fullWidth
-                        maxWidth="md"
-                        open={sentenceOpen}
-                        onClose={handleSentenceClose}
-                        aria-labelledby="longest-path-visualisation-title"
-                    >
-                        <DialogTitle id="longest-path-visualisation-title">
-                            Select a sentence
-                        </DialogTitle>
-                        <DialogContent>
-                            <SentenceList closeSelectSentence={handleSentenceClose}/>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleSentenceClose}>
-                                Close
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                    <Grid container spacing={2} direction="column">
-                        <Grid item>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h5">Visualisation Area</Typography>
-                                </CardContent>
-                                <CardContent style={{height: "80vh", width: "100%"}}>
-                                    {state.selectedSentenceID === null ? (
-                                        <Typography variant="subtitle1">Please select a sentence</Typography>
-                                    ) : (
-                                        <GraphVisualisation/>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        <Grid item>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h6">Analysis Features</Typography>
-                                </CardContent>
-                                <CardActions>
-                                    <AnalysisAccordion/>
-                                </CardActions>
-                            </Card>
-                        </Grid>
-                    </Grid>
-                </React.Fragment>
-                <Snackbar open={dataSetResponseOpen && state.dataSet !== null} autoHideDuration={6000}
-                          onClose={handleDataSetResponseClose}>
-                    <MuiAlert elevation={6} variant="filled" onClose={handleDataSetResponseClose}
-                              severity={state.dataSetResponse === "Duplicates Found" ? "warning" : "success"}>
-                        {state.dataSetResponse === "Duplicates Found" ? "Data-set contained duplicate IDs, which were removed." : state.dataSetResponse}
-                    </MuiAlert>
-                </Snackbar>
-            </main>
-        </div>
+            <Snackbar open={dataSetResponseOpen && state.dataSet !== null} autoHideDuration={6000}
+                      onClose={handleDataSetResponseClose}>
+                <MuiAlert elevation={6} variant="filled" onClose={handleDataSetResponseClose}
+                          severity={state.dataSetResponse === "Duplicates Found" ? "warning" : "success"}>
+                    {state.dataSetResponse === "Duplicates Found" ? "Data-set contained duplicate IDs, which were removed." : state.dataSetResponse}
+                </MuiAlert>
+            </Snackbar>
+        </Grid>
     );
 }
