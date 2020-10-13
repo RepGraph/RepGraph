@@ -195,7 +195,7 @@ public class RepGraphModel {
         Stack<node> stack = new Stack<>();
         while (n != null) {
             for (node nn : n.getDirectedNeighbours()) {
-                DescendentNodes.put(nn.getId(), nn);
+                DescendentNodes.put(nn.getId(), new node(nn));
                 stack.push(nn);
                 //Set the min and max span appropriately as found
                 if (nn.getAnchors().get(0).getFrom() < minFrom) {
@@ -205,7 +205,7 @@ public class RepGraphModel {
                     maxEnd = nn.getAnchors().get(0).getEnd();
                 }
                 for (edge ne : nn.getDirectedEdgeNeighbours()) {
-                    descEdge.put(ne.getSource() + " " + ne.getTarget(), ne);
+                    descEdge.put(ne.getSource() + " " + ne.getTarget(), new edge(ne));
                 }
             }
             if (!stack.empty()) {
