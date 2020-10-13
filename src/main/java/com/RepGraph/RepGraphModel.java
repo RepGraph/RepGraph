@@ -1133,10 +1133,10 @@ public class RepGraphModel {
                     singleEdge.put("smooth", smooth);
                     singleEdge.put("endPointOffset", end);
 
-                    singleEdge.put("dashed", true);
+                    singleEdge.put("dashes", true);
                     HashMap<String, Object> arrows = new HashMap<>();
                     HashMap<String, Object> to = new HashMap<>();
-                    to.put("enables", false);
+                    to.put("enabled", false);
                     arrows.put("to",to);
                     singleEdge.put("arrows" ,arrows);
 
