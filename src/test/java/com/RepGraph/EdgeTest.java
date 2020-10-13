@@ -35,6 +35,32 @@ public class EdgeTest {
     }
 
     @Test
+    public void test_CopyConstructor_CreatesAndAssignsMemberVariablesFromEdge() throws NoSuchFieldException, IllegalAccessException {
+
+        final edge copy = new edge(3, 5, "test", "postTest");
+
+        final edge e = new edge(copy);
+
+        final Field source = e.getClass().getDeclaredField("source");
+        source.setAccessible(true);
+
+        final Field target = e.getClass().getDeclaredField("target");
+        target.setAccessible(true);
+
+        final Field label = e.getClass().getDeclaredField("label");
+        label.setAccessible(true);
+
+        final Field postlabel = e.getClass().getDeclaredField("postLabel");
+        postlabel.setAccessible(true);
+
+        assertEquals("source value was not assigned properly in the copy constructor", source.get(e), 3);
+        assertEquals("target value was not assigned properly in the copy constructor", target.get(e), 5);
+        assertEquals("label value was not assigned properly in constructor", label.get(e), "test");
+        assertEquals("postlabel value was not assigned properly in the copy constructor", postlabel.get(e), "postTest");
+
+    }
+
+    @Test
     public void test_getSource_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
         final edge e = new edge();

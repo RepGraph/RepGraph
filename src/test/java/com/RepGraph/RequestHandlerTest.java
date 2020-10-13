@@ -72,8 +72,9 @@ public class RequestHandlerTest {
         tokens.add(new token(1, "node2", "node2", "node2"));
         tokens.add(new token(2, "node3", "node3", "node3"));
         tokens.add(new token(3, "node4", "node4", "node4"));
-
-        testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+        ArrayList<Integer> tops = new ArrayList<Integer>();
+        tops.add(2);
+        testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, tops);
 
         HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
         ArrayList<edge> edges2 = new ArrayList<>();
@@ -93,7 +94,7 @@ public class RequestHandlerTest {
         tokens2.add(new token(2, "node5", "node5", "node5"));
         tokens2.add(new token(3, "node6", "node6", "node6"));
 
-        testgraph2 = new graph("22222", "testsource", "node3 node4 node5 node6", nodes2, tokens2, edges2, new ArrayList<Integer>());
+        testgraph2 = new graph("22222", "testsource", "node3 node4 node5 node6", nodes2, tokens2, edges2, tops);
 
     }
 
@@ -128,6 +129,91 @@ public class RequestHandlerTest {
                 .andExpect(content().json("{\"id\" : \"11111\",\"input\":\"node1 node2 node3 node4\"}"));
 
     }
+
+    @Test
+    public void test_Visualise_returnsGraphVisualisation() throws Exception {
+        String URL = "/Visualise";
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+
+        String requestJSON = writer.writeValueAsString(testgraph);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
+
+        String graphID = "11111";
+
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("format", "1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("format", "2").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("format", "3").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("format", "4").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+    }
+
+    @Test
+    public void test_DisplaySubset_returnsSubsetGraphVisualisation() throws Exception {
+        String URL = "/DisplaySubset";
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+
+        String requestJSON = writer.writeValueAsString(testgraph);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
+
+        String graphID = "11111";
+
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "adjacent").param("format", "1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "adjacent").param("format", "2").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "adjacent").param("format", "3").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "descendent").param("format", "1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "descendent").param("format", "2").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "descendent").param("format", "3").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+    }
+
 
     @Test
     public void test_GetGraph_returnsGraph() throws Exception {
@@ -253,6 +339,51 @@ public class RequestHandlerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
+    @Test
+    public void test_GetSubset_returnsSubsetGraph() throws Exception {
+        String URL = "/GetSubset";
 
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+
+        String requestJSON = writer.writeValueAsString(testgraph);
+
+        mockMvc.perform(post("/UploadSingle").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJSON));
+
+        String graphID = "11111";
+
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "adjacent").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "adjacent").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "adjacent").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "descendent").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "descendent").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+        mockMvc.perform(get(URL)
+                .param("graphID", graphID).param("NodeID", "0").param("SubsetType", "descendent").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
+    }
 
 }

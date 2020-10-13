@@ -144,6 +144,7 @@ public class edge {
 
         edge e = (edge) o;
 
+
         return ((source == e.getSource()) && (target == e.getTarget()) && (label.equals(e.getLabel())) && (postLabel.equals(e.getPostLabel())));
     }
 

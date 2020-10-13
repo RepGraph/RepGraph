@@ -775,12 +775,12 @@ public class graph {
 
                 if (n.getId() == source) {
 
-                    newEdge.setSource(nodeToToken.get(i));
+                    newEdge.setSource(nodeToToken.get(n.getId()));
 
                 }
                 if (n.getId() == target) {
 
-                    newEdge.setTarget(nodeToToken.get(i));
+                    newEdge.setTarget(nodeToToken.get(n.getId()));
 
                 }
             }

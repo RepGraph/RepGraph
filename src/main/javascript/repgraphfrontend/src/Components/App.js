@@ -437,24 +437,20 @@ export const layoutGraph = (sentence) => {
 };*/
 
 const palette = {
-    primary: {},
-    secondary: {},
-    error: {},
-    warning: {},
-    success: {},
-    palette: {
-        primary:{
-            main: "#fafafa",
-            contrastText: '#fff',
-        },
-        secondary:{
-            main: "#00b0ff",
-            contrastText: '#000',
-        }}
+    primary: {main: "#ff5722"},
+    secondary: {main: "#03a9f4"},
+    info: {main: "#00b5d1"},
+    error: {main: "#fa5419"},
+    warning: {main: "#fad431"},
+    success: {main: "#70fa7f"}
+    /*primary3Color: "#03a9f4"},
+   accent1Color: "#40c4ff",
+   accent2Color: "#ff7043",*/
+
 };
 
 export const theme = createMuiTheme({
-
+    palette,
     typography: {
         fontFamily: font,
         fontSize: 14,
