@@ -938,7 +938,7 @@ public class graph {
 
         setNodeNeighbours();
 
-        //Mark nodes as unvisited and not in the stack (stack is for directed only)
+        //Mark nodes as unvisited and not in the stack (stack is for directed graphs only)
         HashMap<node, Boolean> visited = new HashMap<>();
         HashMap<node, Boolean> stack = new HashMap<>();
         for (node n : nodes.values()) {
