@@ -295,15 +295,12 @@ function SearchSubgraphPatternTool(props) {
                         aria-describedby="alert-dialog-description"
                     >
                         <DialogTitle id="alert-dialog-title">
-                            {"Select a node on the graph:"}
+                            {"Select connected nodes and edges on the graph: "}
                         </DialogTitle>
                         <DialogContent>
                             <SelectSubgraphVisualisation/>
                         </DialogContent>
                         <DialogActions>
-                            <Chip
-                                label={`Selected Nodes and Edges: still need to get this working`}
-                            />
                             <Button onClick={handleClose} color="primary" autoFocus>
                                 Close
                             </Button>
