@@ -69,6 +69,7 @@ public class RepGraphModel {
      * @return HashMap<String, Object> The Visualisation Data of the subset
      */
     public HashMap<String, Object> DisplaySubset(String graphId, int headNodeID, String SubsetType, int format) {
+        //checks which type of subset and format the user wants - creates the subset and returns the visualisation data
         if (SubsetType.equals("adjacent")) {
             if (format == 1) {
                 return VisualiseHierarchy(CreateSubsetAdjacent(graphId, headNodeID));
@@ -90,7 +91,10 @@ public class RepGraphModel {
                 return VisualisePlanar(CreateSubsetDescendent(graphId, headNodeID));
             }
         }
-        return null;
+        //if no conditions are satisfied it will not return data and return .
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("response", "Subset creation failed");
+        return response;
     }
 
     /**
@@ -229,7 +233,6 @@ public class RepGraphModel {
 
         return subset;
     }
-
 
     /**
      * Overloaded method to search for subgraph pattern using different parameters
