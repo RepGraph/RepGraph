@@ -1,5 +1,6 @@
 package com.RepGraph;
 
+import org.hibernate.validator.constraints.br.TituloEleitoral;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.TestExecutionListeners;
@@ -96,6 +97,23 @@ public class GraphTest {
         field.set(g, "node1 node2 node3 node4");
 
         assertEquals("input value was not retrieved properly.", g.getInput(), "node1 node2 node3 node4");
+    }
+
+    @Test
+    public void test_getNodelist_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+        final graph g = new graph();
+
+        ArrayList<node> nodes = new ArrayList<>();
+        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("nodelist");
+        field.setAccessible(true);
+        field.set(g, nodes);
+
+
+        assertEquals("nodelist value was not retrieved properly.", g.getNodelist(), nodes);
+
     }
 
     @Test
@@ -199,6 +217,34 @@ public class GraphTest {
         field.setAccessible(true);
 
         assertEquals("input value was not retrieved properly.", field.get(g), "node1 node2 node3 node4");
+    }
+
+    @Test
+    public void test_setNodelist_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+
+        final graph g = new graph();
+
+        ArrayList<node> nodes = new ArrayList<>();
+        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
+
+        g.setNodelist(nodes);
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("nodelist");
+        field.setAccessible(true);
+
+        assertEquals("nodes value was not retrieved properly.", field.get(g), nodes);
+
+
+        final Field fieldHash = g.getClass().getDeclaredField("nodes");
+        fieldHash.setAccessible(true);
+
+        HashMap<Integer, node> nodeHashMap = new HashMap<Integer, node>();
+        nodeHashMap.put(0, new node(0, "node1", new ArrayList<anchors>()));
+
+        assertEquals("nodes value was not set properly when nodeslist was set.", nodeHashMap, fieldHash.get(g));
+
     }
 
     @Test
@@ -2843,6 +2889,64 @@ public class GraphTest {
         graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
 
         assertTrue("Has Dangling Edge Has Not Correctly Identified dangling edge", g.hasDanglingEdge());
+    }
+
+    @Test
+    public void test_PlanarGraph_CorrectlyConstructsGraph() {
+
+        //Creating the nodes and edges for the graph
+        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
+        ArrayList<edge> edges = new ArrayList<>();
+        ArrayList anch1 = new ArrayList();
+        ArrayList anch2 = new ArrayList();
+        ArrayList anch3 = new ArrayList();
+        ArrayList anch4 = new ArrayList();
+        anchors anchor1 = new anchors(0, 0);
+        anchors anchor2 = new anchors(1, 1);
+        anchors anchor3 = new anchors(2, 2);
+        anchors anchor4 = new anchors(3, 3);
+        anch1.add(anchor1);
+        anch2.add(anchor2);
+        anch3.add(anchor3);
+        anch4.add(anchor4);
+
+        node node0 = new node(0, "node0", anch2);
+        node node1 = new node(1, "node1", anch1);
+        node node2 = new node(2, "node2", anch4);
+        node node3 = new node(3, "node3", anch3);
+        /*
+        node1
+        node0
+        node3
+        node2
+         */
+        nodes.put(0, node0);
+        nodes.put(1, node1);
+        nodes.put(2, node2);
+        nodes.put(3, node3);
+
+        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
+        edge edge1 = new edge(1, 2, "testlabel1", "testpostlabel1");
+        edge edge2 = new edge(2, 3, "testlabel2", "testpostlabel2");
+        edges.add(edge0);
+        edges.add(edge1);
+        edges.add(edge2);
+
+        graph g = new graph("11111", "testsource", "testInput", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+
+
+        ArrayList<edge> expectedEdges = new ArrayList<>();
+        edge UpdatedEdge0 = new edge(1, 0, "", "");
+        edge UpdatedEdge1 = new edge(0, 3, "", "");
+        edge UpdatedEdge2 = new edge(3, 2, "", "");
+        expectedEdges.add(UpdatedEdge0);
+        expectedEdges.add(UpdatedEdge1);
+        expectedEdges.add(UpdatedEdge2);
+
+        assertEquals("Planar graph was not constructed correctly", g.PlanarGraph().getEdges().size(), expectedEdges.size());
+
+        assertEquals("Planar graph was not constructed correctly", g.PlanarGraph().getEdges(), expectedEdges);
+
     }
 
     @Test
