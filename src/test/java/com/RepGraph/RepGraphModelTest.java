@@ -9,8 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 
 public class RepGraphModelTest {
@@ -969,5 +968,62 @@ public class RepGraphModelTest {
 
         assertEquals("compareTwoGraphs does not correctly identify similar nodes and edges.", expected, model.compareTwoGraphs("1", "2"));
 
+    }
+
+    @Test
+    public void test_containsKey_CorrectlyChecksForKey()throws NoSuchFieldException, IllegalAccessException{
+        RepGraphModel model = new RepGraphModel();
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put(g1.getId(),g1);
+        graphs.put(g2.getId(),g2);
+        graphs.put(g3.getId(),g3);
+
+        final Field field = model.getClass().getDeclaredField("graphs");
+        field.setAccessible(true);
+        field.set(model, graphs);
+
+        assertTrue("containsKey does not correctly check for a key in the model.", model.containsKey("22222"));
+    }
+
+    @Test
+    public void test_clearGraph_CorrectlyClearsGraph()throws NoSuchFieldException, IllegalAccessException{
+        RepGraphModel model = new RepGraphModel();
+        HashMap<String, graph> graphs = new HashMap<>();
+        graphs.put(g1.getId(),g1);
+        graphs.put(g2.getId(),g2);
+        graphs.put(g3.getId(),g3);
+
+        final Field fieldSet = model.getClass().getDeclaredField("graphs");
+        fieldSet.setAccessible(true);
+        fieldSet.set(model, graphs);
+
+        HashMap<String, graph> expected = new HashMap<>();
+        model.clearGraphs();
+
+        final Field fieldGet = model.getClass().getDeclaredField("graphs");
+        fieldGet.setAccessible(true);
+
+
+        assertEquals("clearGraphs does not clear graphs correctly.", fieldGet.get(model), expected );
+
+
+    }
+
+    @Test
+    public void test_areAllTrue_CorrectlyChecksBooleanArray(){
+        boolean [] array = new boolean[5];
+        array[0] = true;
+        array[1] = true;
+        array[2] = true;
+        array[3] = true;
+        array[4] = true;
+
+        RepGraphModel model = new RepGraphModel();
+
+        assertTrue("areAllTrue does not correctly identify an array of all trues", model.areAllTrue(array));
+
+        array[3] = false;
+
+        assertFalse("areAllTrue does not correctly identify an array with one false", model.areAllTrue(array));
     }
 }
