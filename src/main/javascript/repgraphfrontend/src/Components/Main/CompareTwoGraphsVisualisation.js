@@ -312,7 +312,7 @@ function CompareTwoGraphsVisualisation(props) {
             let found = [];
             for (let x of state.dataSet) {
 
-                if (x.input.toLowerCase().includes(value.toLowerCase()) || x.id.includes(value)) {
+                if (x.input.toLowerCase().trim().includes(value.toLowerCase().trim()) || x.id.includes(value.trim())) {
                     found.push(x);
                 }
             }
