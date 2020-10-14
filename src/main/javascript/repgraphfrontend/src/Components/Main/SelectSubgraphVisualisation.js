@@ -18,6 +18,7 @@ import Card from "@material-ui/core/Card";
 import SubgraphVisualisation from "./SubgraphVisualisation";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
+import TextField from "@material-ui/core/TextField/TextField";
 
 const options = {
     physics: {
@@ -126,6 +127,7 @@ const SelectSubgraphVisualisation = () => {
     ); //Store the current visualisation data locally
     const history = useHistory(); //Access routing history
     const [searchResult, setSearchResult] = React.useState(null);
+    const [searchResultSpecific, setSearchResultSpecific] = React.useState(searchResult);
     const [open, setOpen] = React.useState(false);
     const [selectedSentenceVisualisation, setSelectedSentenceVisualisation] = React.useState(null);
     const [alertOpen, setAlertOpen] = React.useState(false); //Local state for error alert
@@ -146,7 +148,8 @@ const SelectSubgraphVisualisation = () => {
             .then((result) => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging
-                setSearchResult(jsonResult.data); //Store the search results in local state
+                setSearchResult(jsonResult.data);
+                setSearchResultSpecific(jsonResult.data);//Store the search results in local state
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
 
                 if(jsonResult.response === "Success"){
@@ -277,6 +280,20 @@ const SelectSubgraphVisualisation = () => {
         setAlertOpen(false);
     };
 
+
+    function search(value) {
+        let found = [];
+        for (let x of searchResult) {
+
+            if (x.input.toLowerCase().trim().includes(value.toLowerCase().trim()) || x.id.includes(value.trim())) {
+                found.push(x);
+            }
+        }
+        setSearchResultSpecific(found);
+
+    }
+
+
     return (
         <Grid
             container
@@ -322,24 +339,27 @@ const SelectSubgraphVisualisation = () => {
                         justify="center"
                         alignItems="center"
                         spacing={2}
-                    >
+                    ><TextField id="outlined-basic"
+                                label="Search for a Sentence or ID"
+                                variant="outlined"
+                                onChange={e => (search(e.target.value))}/>
                         <Grid container item xs={12}>
                             <Card variant="outlined" style={{width:"100%", height: "15vh"}}>
                                 <CardContent style={{width:"100%", height: "100%"}}>
-                                    {searchResult &&
+                                    {searchResultSpecific &&
                                     <Virtuoso
                                         style={{width: "100%", height: "100%"}}
-                                        totalCount={searchResult.length}
+                                        totalCount={searchResultSpecific.length}
                                         item={(index) => {
                                             return (
                                                 <ListItem
                                                     button
                                                     key={index}
                                                     onClick={() => {
-                                                        handleClickSentenceResult(searchResult[index].id);
+                                                        handleClickSentenceResult(searchResultSpecific[index].id);
                                                     }}
                                                 >
-                                                    <Typography>{searchResult[index].input}</Typography>
+                                                    <Typography>{searchResultSpecific[index].input}</Typography>
                                                 </ListItem>
                                             );
                                         }}

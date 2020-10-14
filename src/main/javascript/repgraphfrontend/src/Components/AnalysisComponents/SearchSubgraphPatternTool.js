@@ -44,6 +44,7 @@ function SearchSubgraphPatternTool(props) {
     const [open, setOpen] = React.useState(false); //Local state for search sub-graph pattern dialog
     const [openNodeSet, setOpenNodeSet] = React.useState(false); //Local state for search node set dialog
     const [nodeSetResult, setNodeSetResult] = React.useState(null); //Local state for node set search result
+    const [nodeSetResultSearch, setNodeSetResultSearch] = React.useState(nodeSetResult); //Local state for node set search result
     const [subgraphResponse, setSubgraphResponse] = React.useState(null); //Local state for subgraph pattern search results
     const [responseMessage, setResponseMessage] = React.useState(null); //Local state for response message
     const [alertOpen, setAlertOpen] = React.useState(false); //Local state for error alert
@@ -70,6 +71,18 @@ function SearchSubgraphPatternTool(props) {
         setSubgraphResponse(null);
     };
 
+    function search(value) {
+        let found = [];
+        for (let x of nodeSetResult) {
+
+            if (x.input.toLowerCase().trim().includes(value.toLowerCase().trim()) || x.id.includes(value.trim())) {
+                found.push(x);
+            }
+        }
+        setNodeSetResultSearch(found);
+
+    }
+
     //Handle search for node set from backend
     function handleSearchForNodeSet() {
         console.log(nodeSet.join(","));
@@ -85,7 +98,8 @@ function SearchSubgraphPatternTool(props) {
             .then((result) => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging
-                setNodeSetResult(jsonResult.data); //Store the node set results
+                setNodeSetResult(jsonResult.data);
+                setNodeSetResultSearch(jsonResult.data)//Store the node set results
                 setResponseMessage(jsonResult.response);
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
 
@@ -213,24 +227,29 @@ function SearchSubgraphPatternTool(props) {
                             justify="center"
                             alignItems="center"
                             spacing={2}
-                        >
+                        ><TextField id="outlined-basic"
+                                    label="Search for a Sentence or ID"
+                                    variant="outlined"
+                                    onChange={e => (search(e.target.value))}/>
                             <Grid container item xs={12}>
                                 <Card variant="outlined" style={{width:"100%", height: "15vh"}}>
+
                                     <CardContent style={{width:"100%", height: "100%"}}>
-                                        {nodeSetResult &&
+
+                                        {nodeSetResultSearch &&
                                         <Virtuoso
                                             style={{width: "100%", height: "100%"}}
-                                            totalCount={nodeSetResult.length}
+                                            totalCount={nodeSetResultSearch.length}
                                             item={(index) => {
                                                 return (
                                                     <ListItem
                                                         button
                                                         key={index}
                                                         onClick={() => {
-                                                            handleClickSentenceResult(nodeSetResult[index].id);
+                                                            handleClickSentenceResult(nodeSetResultSearch[index].id);
                                                         }}
                                                     >
-                                                        <Typography>{nodeSetResult[index].input}</Typography>
+                                                        <Typography>{nodeSetResultSearch[index].input}</Typography>
                                                     </ListItem>
                                                 );
                                             }}
