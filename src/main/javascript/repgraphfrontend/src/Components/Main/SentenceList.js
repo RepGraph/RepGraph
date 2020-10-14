@@ -28,7 +28,6 @@ const styles = {
 /*Component that shows the uploaded sentences to the user in a virtualized list component and allows the user to select one.*/
 export default function SentenceList(props) {
     const {state, dispatch} = useContext(AppContext);
-    const [currentLength, setCurrentLength] = React.useState(state.dataSet.length);
     const [currentDataSet, setCurrentDataSet] = React.useState(state.dataSet);
     const history = useHistory();
 
@@ -70,7 +69,7 @@ export default function SentenceList(props) {
                 found.push(x);
             }
         }
-        setCurrentLength(found.length);
+
         setCurrentDataSet(found);
     }
     
@@ -85,7 +84,7 @@ export default function SentenceList(props) {
             ) : (
                 <Virtuoso
                     style={{width: "100%", height: "400px"}}
-                    totalCount={currentLength}
+                    totalCount={currentDataSet.length}
                     item={(index) => {
                         return (
                             <ListItem button key={currentDataSet[index].id}
