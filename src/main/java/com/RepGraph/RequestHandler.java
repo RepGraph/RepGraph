@@ -46,7 +46,7 @@ public class RequestHandler {
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) {
+    public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) throws IOException {
 
         RepModel.clearGraphs();
         HashMap<String, Object> returnobj = new HashMap<>();
@@ -54,7 +54,7 @@ public class RequestHandler {
         //List of graph ids and graph inputs in a hashmap.
         ArrayList<HashMap<String, String>> returninfo = new ArrayList<>();
 
-        try {
+
             byte[] bytes = file.getBytes();
             //Creates Directory if it does not exist otherwise it finds it in the project folder.
             File directory = new File("Dataset");
@@ -102,10 +102,8 @@ public class RequestHandler {
             }
 
             returnobj.put("data", returninfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return returnobj;
-        }
+
+
         return returnobj;
     }
 
