@@ -1,5 +1,4 @@
 import React, { useReducer } from "react";
-import { dmrsData } from "../store.js";
 
 export const AppContext = React.createContext();
 
@@ -54,7 +53,7 @@ const visualisationOptions = {
   groups: {
     node: {
       shape: "box",
-      color: "rgba(84, 135, 237, 0.5)",
+      color: "rgba(0,172,237,0.71)",
       font: { size: 14, strokeWidth: 4, strokeColor: "white" },
       widthConstraint: {
         minimum: 60,
@@ -66,7 +65,7 @@ const visualisationOptions = {
     },
     token: {
       shape: "box",
-      color: "rgba(84, 237, 110, 0.7)",
+      color: "rgba(255,87,34,0.85)",
       font: { size: 14, strokeWidth: 4, strokeColor: "white" },
       widthConstraint: {
         minimum: 60,

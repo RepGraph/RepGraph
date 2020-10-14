@@ -1024,7 +1024,7 @@ public class RepGraphModel {
             singleToken.put("label", t.getForm());
             singleToken.put("shape", "text");
             singleToken.put("type", "token");
-            //singleToken.put("group", "token");
+            singleToken.put("group", "text");
             singleToken.put("fixed", true);
             finalTokens.add(singleToken);
         }

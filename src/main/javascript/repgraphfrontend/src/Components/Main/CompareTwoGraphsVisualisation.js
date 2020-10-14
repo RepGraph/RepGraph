@@ -26,6 +26,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import {Virtuoso} from "react-virtuoso";
 import {Link, useHistory} from "react-router-dom";
+import TextField from "@material-ui/core/TextField/TextField";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -81,7 +82,7 @@ const options = {
     },
     nodes: {
         shape: "box",
-        color: "rgba(97,195,238,0.5)",
+        color: "rgba(0,172,237,0.71)",
         font: {size: 14, strokeWidth: 4, strokeColor: "white"},
         widthConstraint: {
             minimum: 60,
@@ -97,7 +98,7 @@ const options = {
     groups: {
         node: {
             shape: "box",
-            color: "rgba(84, 135, 237, 0.5)",
+            color: "rgba(0,172,237,0.71)",
             font: {size: 14, strokeWidth: 4, strokeColor: "white"},
             widthConstraint: {
                 minimum: 60,
@@ -109,7 +110,7 @@ const options = {
         },
         token: {
             shape: "box",
-            color: "rgba(33,195,238,0.7)",
+            color: "rgba(255,87,34,0.85)",
             font: {size: 14, strokeWidth: 4, strokeColor: "white"},
             widthConstraint: {
                 minimum: 60,
@@ -179,11 +180,10 @@ function highlightCompare(standardVisualisation, similarNodes, similarEdges) {
 
     let newNodes = currentStandardVisualisation.nodes.map((node, index) => ({
         ...node,
-        group: similarNodes.includes(node.id)
-            ? "similarNode"
-            : node.group === "token"
-                ? "token"
-                : "differentNode"
+        group: similarNodes.includes(node.id) ? "similarNode" :
+            node.group === "token" ? "token" :
+                node.group === "text" ? "" : "differentNode"
+
     }));
     let newEdges = currentStandardVisualisation.edges.map((edge, index) => ({
         ...edge,
@@ -250,7 +250,10 @@ function CompareTwoGraphsVisualisation(props) {
     //Component to let user select sentence from list of sentences uploaded in data-set
     function SelectSentenceList() {
         const {state, dispatch} = useContext(AppContext);
+        const [currentLength, setCurrentLength] = React.useState(state.dataSet.length);
+        const [currentDataSet, setCurrentDataSet] = React.useState(state.dataSet);
         const history = useHistory();
+
 
         function requestSentenceFromBackend(sentenceId){
 
@@ -304,22 +307,37 @@ function CompareTwoGraphsVisualisation(props) {
             }
         }
 
+        function search(value) {
+            let found = [];
+            for (let x of state.dataSet) {
+
+                if (x.input.toLowerCase().trim().includes(value.toLowerCase().trim()) || x.id.includes(value.trim())) {
+                    found.push(x);
+                }
+            }
+            setCurrentLength(found.length);
+            setCurrentDataSet(found);
+        }
         return (
             <Grid item style={{width: "100%"}}>
+                <TextField id="outlined-basic"
+                           label="Search for a Sentence or ID"
+                           variant="outlined"
+                           onChange={e => (search(e.target.value))}/>
                 {state.dataSet === null ? (
                     <div>No data-set has been uploaded yet</div>
                 ) : (
                     <Virtuoso
                         style={{width: "100%", height: "400px"}}
-                        totalCount={state.dataSet.length}
+                        totalCount={currentLength}
                         item={(index) => {
                             return (
                                 <ListItem
                                     button
-                                    key={state.dataSet[index].id}
-                                    onClick={() => handleSelectSentence(state.dataSet[index].id)}
+                                    key={currentDataSet[index].id}
+                                    onClick={() => handleSelectSentence(currentDataSet[index].id)}
                                 >
-                                    <Typography>{state.dataSet[index].input}</Typography>
+                                    <Typography>{currentDataSet[index].input}</Typography>
                                 </ListItem>
                             );
                         }}
