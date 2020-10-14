@@ -1,13 +1,10 @@
-/**
- * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
- *
- * @since 29/08/2020
- */
-
 package com.RepGraph;
 
 import java.util.*;
 
+/**
+ * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
+ */
 public class RepGraphModel {
 
     /**
@@ -380,7 +377,6 @@ public class RepGraphModel {
             returninfo.put("response", "No Labels were entered");
             return returninfo;
         }
-
 
 
         //boolean array that checks if certain nodes are found
@@ -1359,8 +1355,6 @@ public class RepGraphModel {
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
         }
-
-
 
 
         ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();

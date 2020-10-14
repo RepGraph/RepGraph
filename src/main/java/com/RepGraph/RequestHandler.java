@@ -14,9 +14,6 @@ import java.util.HashMap;
  * This is the RestAPI class and controller in the MVC format. This class will handle all communication between
  * the front-end and back-end. The class makes use of the Spring Framework to handle all the GET and POST request mappings.
  * It also handles automatic serialisation and deserialization of JSON to Java objects and vice versa.
- *
- * @author TLDEDA001
- *
  */
 @CrossOrigin
 @SpringBootApplication

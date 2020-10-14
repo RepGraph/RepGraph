@@ -1,8 +1,3 @@
-/**
- * The graph class represents a single sentence which comprises of nodes, edges and tokens.
- *
- * @since 29/08/2020
- */
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -21,6 +16,9 @@ import java.util.*;
 
 import static java.util.Collections.max;
 
+/**
+ * The graph class represents a single sentence which comprises of nodes, edges and tokens.
+ */
 public class graph {
 
 
@@ -134,7 +132,18 @@ public class graph {
     }
 
     /**
+     * This is the getter for the linear list of nodes "nodeslist"
+     *
+     * @return ArrayList<node> This is the linear list of nodes of the graph object
+     */
+    @JsonGetter("nodes")
+    public ArrayList<node> getNodelist() {
+        return this.nodelist;
+    }
+
+    /**
      * The Setter method for the linear nodeslist attribute. The setter of the linear list of nodes also resets and populates the hashmap nodes.
+     *
      * @param nodelist This is the linear list of nodes is used to set the objects list of nodes.
      */
     @JsonSetter("nodes")
@@ -144,15 +153,6 @@ public class graph {
         for (node n : nodelist) {
             nodes.put(n.getId(), n);
         }
-    }
-
-    /**
-     * This is the getter for the linear list of nodes "nodeslist"
-     * @return ArrayList<node> This is the linear list of nodes of the graph object
-     */
-    @JsonGetter("nodes")
-    public ArrayList<node> getNodelist() {
-        return this.nodelist;
     }
 
     /**
@@ -470,6 +470,7 @@ public class graph {
 
     /**
      * This method checks to see if a graph has a dangling edge i.e an edge that doesnt connect to any node
+     *
      * @return boolean returns true if the graph has a dangling edge otherwise returns false.
      */
     public boolean hasDanglingEdge() {
@@ -544,7 +545,7 @@ public class graph {
      *                representing whether a node (represented by its ID in the key of the hashmap)
      *                has already been visited or not
      *                i.e if it has been visited the boolean value of the hashmap will be true.
-     * @param stack ?
+     * @param stack   ?
      * @return Stack<Integer>
      */
     public Stack<Integer> topologicalSort(int nodeID, HashMap<Integer, Boolean> visited, Stack<Integer> stack) {
@@ -565,7 +566,7 @@ public class graph {
      * Breadth First Search algorithm for finding the longest path from a given start node in a graph.
      *
      * @param startNodeID The starting node ID.
-     * @return ArrayList<ArrayList<Integer>>
+     * @return ArrayList<ArrayList < Integer>>
      */
     public ArrayList<ArrayList<Integer>> BFS(int startNodeID) {
 
@@ -741,6 +742,7 @@ public class graph {
      * Returns a graph object in it's Planar format i.e
      * Orders the nodes linearly based on their anchor's "from" positions
      * and updates all edges to point to their corresponding new "IDs" which are represented by their token index
+     *
      * @return graph This is the graph in a format to indicate its planarity.
      */
     public graph PlanarGraph() {
@@ -934,6 +936,7 @@ public class graph {
 
     /**
      * Checks if a directed or an undirected graph is cyclic or not by calling on the appropriate recursive function required.
+     *
      * @param directed Boolean to see if the graph is directed or not.
      * @return Boolean If the graph is cyclic or not.
      */
@@ -972,9 +975,10 @@ public class graph {
 
     /**
      * Recursive function that checks for cycles in an undirected graph.
-     * @param v The current node.
+     *
+     * @param v       The current node.
      * @param visited A HashMap of node to boolean to keep track of which nodes have been visited already.
-     * @param parent The ID of the parent node of the current node.
+     * @param parent  The ID of the parent node of the current node.
      * @return Boolean If the graph is cyclic or not.
      */
     public boolean isCyclicCheckerUndirected(node v, HashMap<node, Boolean> visited, int parent) {
@@ -985,9 +989,10 @@ public class graph {
         //Iterate through all the current node's neighbouring nodes
         for (node neighbour : combineNeighbours(v.getId())) {
             if (!visited.get(neighbour)) { //If the neighbour is unvisited
-                if (isCyclicCheckerUndirected(neighbour, visited, v.getId())){
+                if (isCyclicCheckerUndirected(neighbour, visited, v.getId())) {
                     return true;
-                };
+                }
+                ;
             } else if (neighbour.getId() != parent) { //If the neighbouring is visited and not a parent of the current node, then there is a cycle.
                 return true;
             }
@@ -998,9 +1003,10 @@ public class graph {
 
     /**
      * Recursive function that checks for cycles in an directed graph.
-     * @param v The current node.
+     *
+     * @param v       The current node.
      * @param visited A HashMap of node to boolean to keep track of which nodes have been visited already.
-     * @param stack A HashMap of node to boolean to keep track of which nodes have been added to the stack.
+     * @param stack   A HashMap of node to boolean to keep track of which nodes have been added to the stack.
      * @return Boolean If the graph is cyclic or not.
      */
     public boolean isCyclicCheckerDirected(node v, HashMap<node, Boolean> visited, HashMap<node, Boolean> stack) {
