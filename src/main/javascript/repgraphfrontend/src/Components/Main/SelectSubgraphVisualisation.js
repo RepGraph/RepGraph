@@ -81,6 +81,18 @@ const options = {
                 minimum: 30
             }
         },
+        surfaceNode: {
+            shape: "box",
+            color: "rgba(0,237,107,0.76)",
+            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+            widthConstraint: {
+                minimum: 60,
+                maximum: 60
+            },
+            heightConstraint: {
+                minimum: 30
+            }
+        },
         token: {
             shape: "box",
             color: "rgba(255,87,34,0.85)",
@@ -204,12 +216,17 @@ const SelectSubgraphVisualisation = () => {
 
             //User selected or deselected a node -> update the graph visually
             for (const [i, x] of currentStandardVisualisation.nodes.entries()) {
-                if (x.id === nodes[0] && x.group === "node") {
+                if (x.id === nodes[0] && x.group !== "Selected") {
                     //If not selected - mark as selected
                     currentStandardVisualisation.nodes[i].group = "Selected";
                 } else if (x.id === nodes[0] && x.group === "Selected") {
                     //Else if selected - deselect node
-                    currentStandardVisualisation.nodes[i].group = "node";
+                    if (currentStandardVisualisation.nodes[i].label.startsWith("_")) {
+                        currentStandardVisualisation.nodes[i].group = "node";
+                    } else {
+                        currentStandardVisualisation.nodes[i].group = "node";
+                    }
+
                 }
             }
 

@@ -46,123 +46,6 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-//These are the vis.js options - look at vis.js docs
-const options = {
-    physics: {
-        enabled: true,
-        forceAtlas2Based: {
-            gravitationalConstant: -50000,
-            centralGravity: 0.0,
-            springConstant: 0.08,
-            springLength: 100,
-            damping: 0,
-            avoidOverlap: 1
-        }
-    },
-    autoResize: true,
-    edges: {
-        color: "rgba(156, 154, 154, 1)",
-        smooth: true,
-        physics: true,
-        arrows: {
-            to: {
-                scaleFactor: 1.3
-            }
-        },
-        arrowStrikethrough: false,
-        endPointOffset: {
-            from: 0,
-            to: 0
-        },
-        scaling: {
-            min: 1,
-            max: 6
-        },
-        value: 1
-    },
-    nodes: {
-        shape: "box",
-        color: "rgba(0,172,237,0.71)",
-        font: {size: 14, strokeWidth: 4, strokeColor: "white"},
-        widthConstraint: {
-            minimum: 60,
-            maximum: 60
-        },
-        heightConstraint: {
-            minimum: 30
-        }
-    },
-    height: "100%",
-    width: "100%",
-    interaction: {hover: true},
-    groups: {
-        node: {
-            shape: "box",
-            color: "rgba(0,172,237,0.71)",
-            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        token: {
-            shape: "box",
-            color: "rgba(255,87,34,0.85)",
-            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        similarNode: {
-            shape: "box",
-            color: "rgba(0,153,0,0.7)",
-            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        differentNode: {
-            shape: "box",
-            color: "rgba(245, 0, 87, 0.7)",
-            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        tokenEdge:{
-            color: "rgba(156, 154, 154, 1)",
-            smooth: true,
-            physics: true,
-            dashed: true,
-            arrows: {
-                to: {
-                    enabled: false
-                }
-            },
-            arrowStrikethrough: false,
-            endPointOffset: {
-                from: 20,
-                to: 0
-            }
-        }
-    }
-};
-
 //The events object is how you enable the vis.js events - look at vis.js docs
 const events = {
     select: function (event) {
@@ -182,7 +65,7 @@ function highlightCompare(standardVisualisation, similarNodes, similarEdges) {
         ...node,
         group: similarNodes.includes(node.id) ? "similarNode" :
             node.group === "token" ? "token" :
-                node.group === "text" ? "" : "differentNode"
+                node.group === "text" ? "text" : "differentNode"
 
     }));
     let newEdges = currentStandardVisualisation.edges.map((edge, index) => ({

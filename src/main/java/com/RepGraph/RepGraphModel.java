@@ -755,7 +755,11 @@ public class RepGraphModel {
             singleNode.put("label", n.getLabel());
             singleNode.put("type", "node");
             singleNode.put("anchors", n.getAnchors().get(0));
-            singleNode.put("group", "node");
+            if (n.getLabel().startsWith("_")) {
+                singleNode.put("group", "surfaceNode");
+            } else {
+                singleNode.put("group", "node");
+            }
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
         }
@@ -1006,7 +1010,12 @@ public class RepGraphModel {
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", levelNum);
                 singleNode.put("anchors", n.getAnchors().get(0));
-                singleNode.put("group", "node");
+                if (n.getLabel().startsWith("_")) {
+                    singleNode.put("group", "surfaceNode");
+                } else {
+                    singleNode.put("group", "node");
+                }
+
                 singleNode.put("fixed", true);
                 finalNodes.add(singleNode);
             }
@@ -1124,7 +1133,7 @@ public class RepGraphModel {
         //Add dotted edges so for the lowest node in each column to the corresponding tokens
         for (HashMap<String, Object> n : finalNodes) {
             String group = (String) n.get("group");
-            if (group.equals("node")) {
+            if (group.equals("node") || group.equals("surfaceNode")) {
 
                 HashMap<String, Object> token = null;
                 boolean Found = false;
@@ -1332,7 +1341,11 @@ public class RepGraphModel {
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", level);
                 singleNode.put("anchors", n.getAnchors().get(0));
-                singleNode.put("group", "node");
+                if (n.getLabel().startsWith("_")) {
+                    singleNode.put("group", "surfaceNode");
+                } else {
+                    singleNode.put("group", "node");
+                }
                 singleNode.put("fixed", true);
                 HashMap<String,Object> widthCon = new HashMap<>();
                 widthCon.put("minimum", n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom() * space + 70);

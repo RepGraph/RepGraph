@@ -63,6 +63,18 @@ const visualisationOptions = {
         minimum: 30
       }
     },
+    surfaceNode: {
+      shape: "box",
+      color: "rgba(0,237,107,0.76)",
+      font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+      widthConstraint: {
+        minimum: 60,
+        maximum: 60
+      },
+      heightConstraint: {
+        minimum: 30
+      }
+    },
     token: {
       shape: "box",
       color: "rgba(255,87,34,0.85)",
