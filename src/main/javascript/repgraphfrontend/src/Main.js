@@ -219,7 +219,7 @@ export default function Main() {
                                     <Fab color="primary" aria-label="add" variant="extended"
                                          className={classes.fabButton} onClick={() => {
                                         setSentenceOpen(true);
-                                    }}>
+                                    }} disabled={state.dataSet === null}>
                                         {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
                                         <AddCircleOutlineIcon/> :
                                         <BuildIcon/>}

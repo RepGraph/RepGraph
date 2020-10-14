@@ -30,7 +30,7 @@ export default function SentenceList(props) {
     const {state, dispatch} = useContext(AppContext);
     const [currentLength, setCurrentLength] = React.useState(state.dataSet.length);
     const [currentDataSet, setCurrentDataSet] = React.useState(state.dataSet);
-    const [currentSearch, setCurrentSearch] = React.useState("pierre");
+    const [currentSearch, setCurrentSearch] = React.useState(currentDataSet);
     const history = useHistory();
 
     function handleSelectSentence(sentenceId) {
