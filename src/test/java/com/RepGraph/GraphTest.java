@@ -3114,4 +3114,88 @@ public class GraphTest {
 
         assertFalse("isCylic failed to find no cycle in a undirected graph with no cycles.", g2.isCyclic(false));
     }
+
+    @Test
+    public void test_Constructor_AcceptArrayAndConvertToHashMapCorrectly()throws NoSuchFieldException, IllegalAccessException{
+
+        ArrayList<node> nodes = new ArrayList<>();
+        ArrayList<edge> edges = new ArrayList<>();
+        ArrayList<token> tokens = new ArrayList<>();
+
+        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
+        nodes.add(new node(1, "node2", new ArrayList<anchors>()));
+        nodes.add(new node(2, "node3", new ArrayList<anchors>()));
+        nodes.add(new node(3, "node4", new ArrayList<anchors>()));
+
+        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new edge(1, 3, "testlabel1", "testpostlabel1"));
+        edges.add(new edge(0, 2, "testlabel2", "testpostlabel2"));
+
+        tokens.add(new token(0, "node1 form", "node1 lemma", "node1 carg"));
+        tokens.add(new token(1, "node2 form", "node2 lemma", "node2 carg"));
+        tokens.add(new token(2, "node3 form", "node3 lemma", "node3 carg"));
+        tokens.add(new token(3, "node4 form", "node4 lemma", "node4 carg"));
+
+        graph g = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, new ArrayList<Integer>());
+
+        //Get fields without using getter
+        final Field fieldID = g.getClass().getDeclaredField("id");
+        fieldID.setAccessible(true);
+        final Field fieldSource = g.getClass().getDeclaredField("source");
+        fieldSource.setAccessible(true);
+        final Field fieldInput = g.getClass().getDeclaredField("input");
+        fieldInput.setAccessible(true);
+        final Field fieldNodes = g.getClass().getDeclaredField("nodes");
+        fieldNodes.setAccessible(true);
+        final Field fieldTokens = g.getClass().getDeclaredField("tokens");
+        fieldTokens.setAccessible(true);
+        final Field fieldEdges = g.getClass().getDeclaredField("edges");
+        fieldEdges.setAccessible(true);
+
+        HashMap<Integer, node> ExpectedNodes = new HashMap<Integer, node>();
+
+        ExpectedNodes.put(0, new node(0, "node1", new ArrayList<anchors>()));
+        ExpectedNodes.put(1, new node(1, "node2", new ArrayList<anchors>()));
+        ExpectedNodes.put(2, new node(2, "node3", new ArrayList<anchors>()));
+        ExpectedNodes.put(3, new node(3, "node4", new ArrayList<anchors>()));
+
+        assertEquals("id value was not constructed properly.", fieldID.get(g), "11111");
+        assertEquals("source value was not constructed properly.", fieldSource.get(g), "testsource");
+        assertEquals("input value was not constructed properly.", fieldInput.get(g), "node1 node2 node3 node4");
+        assertEquals("nodes value was not constructed properly.", fieldNodes.get(g), ExpectedNodes);
+        assertEquals("tokens value was not constructed properly.", fieldTokens.get(g), tokens);
+        assertEquals("edges value was not constructed properly.", fieldEdges.get(g), edges);
+    }
+
+    @Test
+    public void test_getNodelist_GetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+        final graph g = new graph();
+
+        ArrayList<node> nodes = new ArrayList<>();
+        nodes.add(new node(0, "node1", new ArrayList<>()));
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("nodelist");
+        field.setAccessible(true);
+        field.set(g, nodes);
+
+        assertEquals("nodelist value was not retrieved properly.", g.getNodelist(), nodes);
+    }
+
+    @Test
+    public void test_setNodelist_SetValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
+
+        final graph g = new graph();
+
+        ArrayList<node> nodes = new ArrayList<>();
+        nodes.add(new node(0, "node1", new ArrayList<anchors>()));
+
+        g.setNodelist(nodes);
+
+        //Set field without using setter
+        final Field field = g.getClass().getDeclaredField("nodelist");
+        field.setAccessible(true);
+
+        assertEquals("nodelist value was not set properly.", field.get(g), nodes);
+    }
 }
