@@ -251,7 +251,7 @@ const options = {
     },
     nodes: {
         shape: "box",
-        color: "rgba(97,195,238,0.5)",
+        color: "rgba(0,172,237,0.71)",
         font: { size: 14, strokeWidth: 4, strokeColor: "white" },
         widthConstraint: {
             minimum: 60,
@@ -267,7 +267,7 @@ const options = {
     groups: {
         node: {
             shape: "box",
-            color: "rgba(84, 135, 237, 0.5)",
+            color: "rgba(0,172,237,0.71)",
             font: { size: 14, strokeWidth: 4, strokeColor: "white" },
             widthConstraint: {
                 minimum: 60,
@@ -279,7 +279,7 @@ const options = {
         },
         token: {
             shape: "box",
-            color: "rgba(84, 237, 110, 0.7)",
+            color: "rgba(255,87,34,0.85)",
             font: { size: 14, strokeWidth: 4, strokeColor: "white" },
             widthConstraint: {
                 minimum: 60,
