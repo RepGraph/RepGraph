@@ -396,7 +396,7 @@ public class RepGraphModelTest {
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
 
-        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        correctResults.put("response", "No Labels were entered");
         HashMap<String, Object> results = model.searchSubgraphNodeSet(labels);
 
 
@@ -668,7 +668,7 @@ public class RepGraphModelTest {
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
 
-        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        correctResults.put("response", "Failure");
         HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
 
 
@@ -705,7 +705,7 @@ public class RepGraphModelTest {
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
 
-        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        correctResults.put("response", "Failure");
         HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
 
 
@@ -733,7 +733,7 @@ public class RepGraphModelTest {
         graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
-        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        correctResults.put("response", "Failure");
         HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
 
 
@@ -764,7 +764,7 @@ public class RepGraphModelTest {
         graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
-        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        correctResults.put("response", "Failure");
         HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
 
 
@@ -797,7 +797,7 @@ public class RepGraphModelTest {
         graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
-        correctResults.put("response", "Subgraph Pattern was not entered correctly");
+        correctResults.put("response", "Failure");
         HashMap<String, Object> results = model.searchSubgraphPattern(subgraph);
 
 
