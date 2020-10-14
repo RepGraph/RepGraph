@@ -163,7 +163,7 @@ const initialState = {
   selectedSentenceID: null,
   selectedNodeAndEdges: null,
   isLoading: false,
-  APIendpoint: "http://localhost:8080",
+  APIendpoint: "https://repgraph-api.herokuapp.com",
   testResults: null,
   longestPathVisualisation: null,
   visualisationFormat: "1",
