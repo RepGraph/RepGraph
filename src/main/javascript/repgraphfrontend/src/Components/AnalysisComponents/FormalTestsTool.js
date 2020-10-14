@@ -76,22 +76,22 @@ function FormalTestsTool(props) {
                 <FormLabel color="primary" component="legend">Graph Property Tests</FormLabel>
                 <FormGroup>
                     <FormControlLabel
-                        control={<Checkbox checked={tests.planar} onChange={handleChange} color="secondary"
+                        control={<Checkbox checked={tests.planar} onChange={handleChange} color="primary"
                                            name="planar"/>}
                         label="Graph Planar?"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={tests.longestPathDirected} onChange={handleChange} color="secondary"
+                        control={<Checkbox checked={tests.longestPathDirected} onChange={handleChange} color="primary"
                                            name="longestPathDirected"/>}
                         label="Find Longest Directed Path"
                     />
                     <FormControlLabel
                         control={<Checkbox checked={tests.longestPathUndirected} onChange={handleChange}
-                                           color="secondary" name="longestPathUndirected"/>}
+                                           color="primary" name="longestPathUndirected"/>}
                         label="Find Longest Undirected Path"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={tests.connected} onChange={handleChange} color="secondary"
+                        control={<Checkbox checked={tests.connected} onChange={handleChange} color="primary"
                                            name="connected"/>}
                         label="Graph Connected?"
                     />

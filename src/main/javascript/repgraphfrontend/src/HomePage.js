@@ -77,7 +77,7 @@ export default function HomePage(props) {
       spacing={2}
     >
       <Grid item>
-        <Typography variant="h2">Welcome to RepGraph</Typography>
+          <Typography color="primary" variant="h2">Welcome to RepGraph</Typography>
       </Grid>
       <Grid item>
         <Typography variant="h5">Please upload a data-set to begin</Typography>
@@ -94,7 +94,7 @@ export default function HomePage(props) {
         />
       </Grid>
       <Grid item>
-        <Button onClick={handleUpload} startIcon={<CloudUploadIcon />}>
+          <Button onClick={handleUpload} color={"primary"} variant={"outlined"} startIcon={<CloudUploadIcon/>}>
           <Typography variant="h6">Upload</Typography>
         </Button>
       </Grid>

@@ -26,6 +26,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import {Virtuoso} from "react-virtuoso";
 import {Link, useHistory} from "react-router-dom";
+import TextField from "@material-ui/core/TextField/TextField";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -250,7 +251,10 @@ function CompareTwoGraphsVisualisation(props) {
     //Component to let user select sentence from list of sentences uploaded in data-set
     function SelectSentenceList() {
         const {state, dispatch} = useContext(AppContext);
+        const [currentLength, setCurrentLength] = React.useState(state.dataSet.length);
+        const [currentDataSet, setCurrentDataSet] = React.useState(state.dataSet);
         const history = useHistory();
+
 
         function requestSentenceFromBackend(sentenceId){
 
@@ -304,22 +308,37 @@ function CompareTwoGraphsVisualisation(props) {
             }
         }
 
+        function search(value) {
+            let found = [];
+            for (let x of state.dataSet) {
+
+                if (x.input.toLowerCase().trim().includes(value.toLowerCase().trim()) || x.id.includes(value.trim())) {
+                    found.push(x);
+                }
+            }
+            setCurrentLength(found.length);
+            setCurrentDataSet(found);
+        }
         return (
             <Grid item style={{width: "100%"}}>
+                <TextField id="outlined-basic"
+                           label="Search for a Sentence or ID"
+                           variant="outlined"
+                           onChange={e => (search(e.target.value))}/>
                 {state.dataSet === null ? (
                     <div>No data-set has been uploaded yet</div>
                 ) : (
                     <Virtuoso
                         style={{width: "100%", height: "400px"}}
-                        totalCount={state.dataSet.length}
+                        totalCount={currentLength}
                         item={(index) => {
                             return (
                                 <ListItem
                                     button
-                                    key={state.dataSet[index].id}
-                                    onClick={() => handleSelectSentence(state.dataSet[index].id)}
+                                    key={currentDataSet[index].id}
+                                    onClick={() => handleSelectSentence(currentDataSet[index].id)}
                                 >
-                                    <Typography>{state.dataSet[index].input}</Typography>
+                                    <Typography>{currentDataSet[index].input}</Typography>
                                 </ListItem>
                             );
                         }}
