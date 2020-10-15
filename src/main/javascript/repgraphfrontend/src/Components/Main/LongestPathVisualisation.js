@@ -15,305 +15,6 @@ import Graph from "react-graph-vis";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-export const layoutGraph = (sentence) => {
-    let graph = sentence;
-
-    //Determine span lengths of each node
-    const graphNodeSpanLengths = graph.nodes
-        .map((node) => node.anchors[0])
-        .map((span) => span.end - span.from);
-    //Determine unique span lengths of all the node spans
-    let uniqueSpanLengths = [];
-    const map = new Map();
-    for (const item of graphNodeSpanLengths) {
-        if (!map.has(item)) {
-            map.set(item, true); // set any value to Map
-            uniqueSpanLengths.push(item);
-        }
-    }
-    uniqueSpanLengths.sort((a, b) => a - b); //sort unique spans ascending
-
-    //Sort the nodes into each level based on their spans
-    let nodesInLevels = [];
-    for (const level of uniqueSpanLengths) {
-        let currentLevel = [];
-
-        for (
-            let spanIndex = 0;
-            spanIndex < graphNodeSpanLengths.length;
-            spanIndex++
-        ) {
-            if (graphNodeSpanLengths[spanIndex] === level) {
-                currentLevel.push(graph.nodes[spanIndex]);
-            }
-        }
-
-        nodesInLevels.push(currentLevel);
-    }
-    //Find the nodes in each level with the same span and group them together
-    //Find the unique spans in each level
-    let uniqueSpansInLevels = [];
-    for (let level of nodesInLevels) {
-        let uniqueSpans = []; //Stores the "stringified" objects
-        const spanMap = new Map();
-        for (const node of level) {
-            if (!spanMap.has(JSON.stringify(node.anchors))) {
-                spanMap.set(JSON.stringify(node.anchors), true); // set any value to Map
-                uniqueSpans.push(JSON.stringify(node.anchors));
-            }
-        }
-        uniqueSpansInLevels.push(uniqueSpans);
-        //console.log(uniqueSpans);
-    }
-
-    //Iterate through the unique spans in each level and group the same ones together
-    for (let level = 0; level < nodesInLevels.length; level++) {
-        let newLevelOfGroups = [];
-        for (let uniqueSpan of uniqueSpansInLevels[level]) {
-            //find the nodes in the level that have the same span and group them together
-            let nodesWithCurrentSpan = nodesInLevels[level].filter(
-                (node) => JSON.stringify(node.anchors) === uniqueSpan
-            );
-            newLevelOfGroups.push(nodesWithCurrentSpan);
-        }
-        nodesInLevels[level] = newLevelOfGroups;
-    }
-
-    //Determine the actual number of levels needed
-    let height = 0;
-    let previousLevelHeights = [0];
-    for (let level of nodesInLevels) {
-        let maxLevelHeight = 0;
-        for (let item of level) {
-            maxLevelHeight = Math.max(maxLevelHeight, item.length);
-        }
-        previousLevelHeights.push(maxLevelHeight);
-        height += maxLevelHeight;
-    }
-    //console.log({height});
-    //console.log({nodesInLevels});
-    //console.log({previousLevelHeights});
-
-    //Sort the nodes into the final levels
-    let nodesInFinalLevels = [];
-    for (let index = 0; index < height; index++) {
-        nodesInFinalLevels.push([]);
-    }
-    for (let level = 0; level < nodesInLevels.length; level++) {
-        //console.log(nodesInLevels[level]);
-        for (let group of nodesInLevels[level]) {
-            //console.log({group});
-            for (
-                let nodeGroupIndex = 0;
-                nodeGroupIndex < group.length;
-                nodeGroupIndex++
-            ) {
-                //console.log(group[nodeGroupIndex]);
-                let finalLevel =
-                    previousLevelHeights
-                        .slice(0, level + 1)
-                        .reduce((accumulator, currentValue) => accumulator + currentValue) +
-                    nodeGroupIndex;
-                nodesInFinalLevels[finalLevel].push(group[nodeGroupIndex]);
-            }
-        }
-    }
-    //console.log({ nodesInFinalLevels });
-
-    //Map the nodes in each level to the correct format
-
-    const totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each node and the spaces between them
-
-    for (let level = 0; level < nodesInFinalLevels.length; level++) {
-        nodesInFinalLevels[level] = nodesInFinalLevels[level].map((node) => ({
-            id: node.id,
-            x: node.anchors[0].from * 110,
-            y: totalGraphHeight - level * (totalGraphHeight / height),
-            label: node.label,
-            type: "node",
-            nodeLevel: level,
-            anchors: node.anchors[0],
-            group: "node"
-        }));
-    }
-
-    const tokens = graph.tokens.map((token) => ({
-        index: token.index,
-        x: token.index * 110,
-        y: totalGraphHeight + 100,
-        label: token.form,
-        type: "token",
-        group: "token"
-    }));
-
-    //this.setState({graphData: nodesInFinalLevels.flat().concat(tokens)});
-
-    const finalGraphNodes = nodesInFinalLevels
-        .flat()
-        .concat(tokens)
-        .map((node) => ({
-            id: node.id,
-            x: node.x,
-            y: node.y,
-            label: node.label,
-            title: node.label + " tooltip text",
-            group: node.group,
-            anchors: node.anchors,
-            fixed: true,
-            nodeLevel: node.nodeLevel
-        }));
-
-    const finalGraphEdges = graph.edges.map((edge, index) => {
-        /*const fromID =
-              finalGraphNodes[
-                  finalGraphNodes.findIndex((node) => node.id === edge.source)
-                  ].id;
-          const toID =
-              finalGraphNodes[
-                  finalGraphNodes.findIndex((node) => node.id === edge.target)
-                  ].id;*/
-
-        const fromNode = finalGraphNodes.find((node) => node.id === edge.source);
-        const toNode = finalGraphNodes.find((node) => node.id === edge.target);
-
-        const fromID = fromNode.id;
-        const toID = toNode.id;
-
-        let edgeType = "";
-
-        if (fromNode.nodeLevel === toNode.nodeLevel && fromNode.nodeLevel === 0) {
-            edgeType = "curvedCW";
-        } else {
-            edgeType = "dynamic";
-        }
-
-        return {
-            id: index,
-            from: fromID,
-            to: toID,
-            label: edge.label,
-            smooth: { type: edgeType, roundness: 0.4 },
-            endPointOffset: {
-                from: 20,
-                to: 0
-            }
-        };
-        /*source: testGraphNodes[edge.source],
-                      target: testGraphNodes[edge.target],*/
-    });
-
-    const finalGraph = {
-        nodes: finalGraphNodes,
-        edges: finalGraphEdges
-    };
-
-    return finalGraph;
-};
-
-const options = {
-    physics: {
-        enabled: true,
-        forceAtlas2Based: {
-            gravitationalConstant: -50000,
-            centralGravity: 0.0,
-            springConstant: 0.08,
-            springLength: 100,
-            damping: 0,
-            avoidOverlap: 1
-        }
-    },
-    autoResize: true,
-    edges: {
-        color: "rgba(156, 154, 154, 1)",
-        smooth: true,
-        /*smooth: {
-                enabled: true,
-                type: "dynamic",
-                roundness: 1
-              },*/
-        physics: true,
-        arrows: {
-            to: {
-                /*enabled: true,
-                              type: "image",
-                              imageWidth: 25,
-                              imageHeight: 20,
-                              src: "data:image/svg+xml,%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 122.88 66.91' style='enable-background:new 0 0 122.88 66.91' xml:space='preserve'%3E%3Cg%3E%3Cpath style='fill:rgba(156, 154, 154, 1);' d='M11.68,64.96c-2.72,2.65-7.08,2.59-9.73-0.14c-2.65-2.72-2.59-7.08,0.13-9.73L56.87,1.97l4.8,4.93l-4.81-4.95 c2.74-2.65,7.1-2.58,9.76,0.15c0.08,0.08,0.15,0.16,0.23,0.24L120.8,55.1c2.72,2.65,2.78,7.01,0.13,9.73 c-2.65,2.72-7,2.78-9.73,0.14L61.65,16.5L11.68,64.96L11.68,64.96z'/%3E%3C/g%3E%3C/svg%3E",
-                              */
-                scaleFactor: 1.3
-            }
-        },
-        arrowStrikethrough: false,
-        endPointOffset: {
-            from: 20,
-            to: 0
-        }
-    },
-    nodes: {
-        shape: "box",
-        color: "rgba(0,172,237,0.71)",
-        font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-        widthConstraint: {
-            minimum: 60,
-            maximum: 60
-        },
-        heightConstraint: {
-            minimum: 30
-        }
-    },
-    height: "100%",
-    width: "100%",
-    interaction: { hover: true },
-    groups: {
-        node: {
-            shape: "box",
-            color: "rgba(0,172,237,0.71)",
-            font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        }, surfaceNode: {
-            shape: "box",
-            color: "rgba(0,237,107,0.76)",
-            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        token: {
-            shape: "box",
-            color: "rgba(255,87,34,0.85)",
-            font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        longestPath: {
-            shape: "box",
-            color: "rgba(245, 0, 87, 0.7)",
-            font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        }
-    }
-};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -366,16 +67,122 @@ function showLongestPath(standardVisualisation, path) {
         }
     }
 
-    return { ...currentStandardVisualisation, nodes: newNodes };
+    return {...currentStandardVisualisation, nodes: newNodes};
 }
 
-function LongestPathVisualisation({ type }) {
+function LongestPathVisualisation({type}) {
     const classes = useStyles();
     const theme = useTheme();
-    const { state, dispatch } = useContext(AppContext);
+    const {state, dispatch} = useContext(AppContext);
     const [activeStep, setActiveStep] = React.useState(0);
     //const maxSteps = tutorialSteps.length;
     const maxSteps = state.testResults[type].length;
+
+
+    const options = {
+        physics: {
+            enabled: true,
+            forceAtlas2Based: {
+                gravitationalConstant: -50000,
+                centralGravity: 0.0,
+                springConstant: 0.08,
+                springLength: 100,
+                damping: 0,
+                avoidOverlap: 1
+            }
+        },
+        autoResize: true,
+        edges: {
+            color: state.visualisationOptions.edges.color,
+            smooth: true,
+            /*smooth: {
+                    enabled: true,
+                    type: "dynamic",
+                    roundness: 1
+                  },*/
+            physics: true,
+            arrows: {
+                to: {
+                    /*enabled: true,
+                                  type: "image",
+                                  imageWidth: 25,
+                                  imageHeight: 20,
+                                  src: "data:image/svg+xml,%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 122.88 66.91' style='enable-background:new 0 0 122.88 66.91' xml:space='preserve'%3E%3Cg%3E%3Cpath style='fill:rgba(156, 154, 154, 1);' d='M11.68,64.96c-2.72,2.65-7.08,2.59-9.73-0.14c-2.65-2.72-2.59-7.08,0.13-9.73L56.87,1.97l4.8,4.93l-4.81-4.95 c2.74-2.65,7.1-2.58,9.76,0.15c0.08,0.08,0.15,0.16,0.23,0.24L120.8,55.1c2.72,2.65,2.78,7.01,0.13,9.73 c-2.65,2.72-7,2.78-9.73,0.14L61.65,16.5L11.68,64.96L11.68,64.96z'/%3E%3C/g%3E%3C/svg%3E",
+                                  */
+                    scaleFactor: 1.3
+                }
+            },
+            arrowStrikethrough: false,
+            endPointOffset: {
+                from: 20,
+                to: 0
+            }
+        },
+        nodes: {
+            shape: "box",
+            color: state.visualisationOptions.groups.node.color,
+            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+            widthConstraint: {
+                minimum: 60,
+                maximum: 60
+            },
+            heightConstraint: {
+                minimum: 30
+            }
+        },
+        height: "100%",
+        width: "100%",
+        interaction: {hover: true},
+        groups: {
+            node: {
+                shape: "box",
+                color: state.visualisationOptions.groups.node.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            }, surfaceNode: {
+                shape: "box",
+                color: state.visualisationOptions.groups.surfaceNode.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            },
+            token: {
+                shape: "box",
+                color: state.visualisationOptions.groups.token.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            },
+            longestPath: {
+                shape: "box",
+                color: state.visualisationOptions.groups.longestPath.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            }
+        }
+    };
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);

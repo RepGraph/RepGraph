@@ -21,17 +21,6 @@ import Snackbar from "@material-ui/core/Snackbar";
 import TextField from "@material-ui/core/TextField/TextField";
 
 
-const SelectSubgraphVisualisation = () => {
-    const { state, dispatch } = useContext(AppContext); //Provide access to global state
-    const [currentVis, setCurrentVis] = React.useState(
-        state.selectedSentenceVisualisation
-    ); //Store the current visualisation data locally
-    const history = useHistory(); //Access routing history
-    const [searchResult, setSearchResult] = React.useState(null);
-    const [searchResultSpecific, setSearchResultSpecific] = React.useState(searchResult);
-    const [open, setOpen] = React.useState(false);
-    const [selectedSentenceVisualisation, setSelectedSentenceVisualisation] = React.useState(null);
-    const [alertOpen, setAlertOpen] = React.useState(false); //Local state for error alert
 
     function searchForSelectedSubgraph(){
 
