@@ -18,6 +18,8 @@ import Chip from "@material-ui/core/Chip";
 
 import SubsetVisualisation from "../Main/SubsetVisualisation";
 import CardContent from "@material-ui/core/CardContent";
+import {cloneDeep} from "lodash";
+import Graph from "react-graph-vis";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,6 +36,8 @@ function DisplaySubsetTool(props) {
 
     const [open, setOpen] = React.useState(false); //Store local state for whether dialog is open or not
     const [resultOpen, setResultOpen] = React.useState(false); //Store local state for whether result dialog is open or not
+    const [currentVis, setCurrentVis] = React.useState(state.selectedSentenceVisualisation); //Store the current visualisation data locally
+    const [selectedNode, setSelectedNode] = React.useState(null); //Store local state for currently selected node id and label
 
     //Handle click open for first dialog to select subset
     const handleClickOpen = () => {
@@ -66,15 +70,15 @@ function DisplaySubsetTool(props) {
             redirect: 'follow'
         };
 
-        console.log(state.selectedSentenceID, state.selectedNodeAndEdges.nodes[0], value); //Debugging
+        console.log(state.selectedSentenceID, selectedNode.id, value); //Debugging
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation
 
         console.log(state.visualisationFormat); //Debugging
 
-        console.log(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + state.selectedNodeAndEdges.nodes[0] + "&SubsetType=" + value +"&format="+state.visualisationFormat); //Debugging
+        console.log(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNode.id + "&SubsetType=" + value +"&format="+state.visualisationFormat); //Debugging
 
         //Request subset from backend
-        fetch(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + state.selectedNodeAndEdges.nodes[0] + "&SubsetType=" + value +"&format="+state.visualisationFormat, requestOptions)
+        fetch(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNode.id + "&SubsetType=" + value +"&format="+state.visualisationFormat, requestOptions)
             .then((response) => response.text())
             .then((result) => {
                 console.log(result);//debugging
@@ -90,6 +94,39 @@ function DisplaySubsetTool(props) {
                 console.log("error", error); //Log the error
                 history.push("/404"); //Take user to error page
             });
+    }
+
+    //Events that are enabled on the graph visualisation
+    const events = {
+        //Select event for when user selects a node on the graph
+        select: function (event) {
+            let { nodes, edges } = event;
+
+            let currentStandardVisualisation = cloneDeep(state.selectedSentenceVisualisation); //Deep clone the current visualisation
+            let nodeSelected = null; //value to set local state after event
+            //User selected or deselected a node -> update the graph visually
+            if(nodes.length > 0){
+                for (const [i, x] of currentStandardVisualisation.nodes.entries()) {
+                    if (x.id === nodes[0] && x.group === "node") {
+                        //Mark as selected
+                        currentStandardVisualisation.nodes[i].group = "Selected";
+                        nodeSelected = {id: x.id, label: x.label}; //new local state value
+                        break;
+                    }
+                }
+            }
+            console.log(nodeSelected);
+            setSelectedNode(nodeSelected); //set local state for selected node
+            setCurrentVis(currentStandardVisualisation); //Update the current visualisation to reflect the selections made by the user
+        }
+    };
+
+    function getSelectedNodeLabel(){
+        if(selectedNode !== null){ //User has selected a node
+            return selectedNode.label;
+        }else{ //User has not selected a node
+            return "No node selected";
+        }
     }
 
     return (
@@ -117,17 +154,25 @@ function DisplaySubsetTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Select a node on the graph:"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Select a node on the graph:"}<Chip label={`Selected Node: ${getSelectedNodeLabel()}`}/></DialogTitle>
                 <DialogContent style={{height: "80vh"}}>
                     {state.selectedSentenceID === null ? (
                         <div>Select a sentence first.</div>
                     ) : (
-                        <GraphVisualisation/>
+                        <Graph
+                            graph={currentVis}
+                            options={state.visualisationOptions} //Options from global state
+                            events={events}
+                            getNetwork={(network) => {
+                                network.on("hoverNode", function (params) {
+                                    network.canvas.body.container.style.cursor = 'pointer'
+                                });
+                            }}
+                        />
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Chip label={`Selected Node: ${JSON.stringify(state.selectedNodeAndEdges)}`}/>
-                    <Button onClick={handleDisplaySubset} color="primary" autoFocus>
+                    <Button onClick={handleDisplaySubset} color="primary" autoFocus disabled={selectedNode === null}>
                         Display
                     </Button>
                 </DialogActions>
