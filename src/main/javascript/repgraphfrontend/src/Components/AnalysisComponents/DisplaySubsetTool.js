@@ -107,7 +107,7 @@ function DisplaySubsetTool(props) {
             //User selected or deselected a node -> update the graph visually
             if(nodes.length > 0){
                 for (const [i, x] of currentStandardVisualisation.nodes.entries()) {
-                    if (x.id === nodes[0] && x.group === "node") {
+                    if (x.id === nodes[0] && (x.group === "node" || x.group === "surfaceNode")) {
                         //Mark as selected
                         currentStandardVisualisation.nodes[i].group = "Selected";
                         nodeSelected = {id: x.id, label: x.label}; //new local state value
