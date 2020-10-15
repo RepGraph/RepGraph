@@ -8,38 +8,22 @@ import {
     CardActions
 } from "@material-ui/core";
 
-import clsx from "clsx";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import {Button} from "@material-ui/core";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import MenuOpenIcon from "@material-ui/icons/MenuOpen";
-import ReorderIcon from "@material-ui/icons/Reorder";
-import ShortTextIcon from "@material-ui/icons/ShortText";
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 import {AppContext} from "./Store/AppContextProvider.js";
 import SentenceList from "./Components/Main/SentenceList.js";
 import AnalysisAccordion from "./Components/Main/AnalysisAccordion";
-import VisualisationControls from "./Components/Main/VisualisationControls";
 import GraphVisualisation from "./Components/Main/GraphVisualisation";
 import "./Components/Main/network.css";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import BuildIcon from '@material-ui/icons/Build';
@@ -54,6 +38,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
 import Box from "@material-ui/core/Box";
 import Fab from "@material-ui/core/Fab";
+import Popover from "@material-ui/core/Popover";
 
 const drawerWidth = 240;
 
@@ -95,14 +80,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Main() {
-    const {state, dispatch} = useContext(AppContext);
-    const classes = useStyles();
+    const {state, dispatch} = useContext(AppContext); //Provide access to global state
+    const classes = useStyles(); //Use styles created above
     const theme = useTheme();
-    const history = useHistory();
-    const [open, setOpen] = React.useState(false);
-    const [sentenceOpen, setSentenceOpen] = React.useState(false);
-    const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true);
-    const [analysisToolsOpen, setAnalysisToolsOpen] = React.useState(false);
+    const history = useHistory(); //Provide access to router history
+    const [sentenceOpen, setSentenceOpen] = React.useState(false); //Local state of select sentence dialog
+    const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true); //Local state for upload dataset alert
+    const [analysisToolsOpen, setAnalysisToolsOpen] = React.useState(false); //Local state for analysis tools drawer
+    const [anchorEl, setAnchorEl] = React.useState(null); //Anchor state for popover graph legend
 
     //Handle close of the alert shown after data-set upload
     const handleDataSetResponseClose = (event, reason) => {
@@ -111,16 +96,6 @@ export default function Main() {
         }
 
         setDataSetResponseOpen(false);
-    };
-
-    //Handle click open menu drawer
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-
-    //Handle click close menu drawer
-    const handleDrawerClose = () => {
-        setOpen(false);
     };
 
     //Handle click close select sentence dialog
@@ -172,6 +147,17 @@ export default function Main() {
         }
     }
 
+    //Function to handle click on graph legend button
+    const handleClickGraphLegend = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    //Functions to handle close of graph legend
+    const handleCloseGraphLegend = () => {
+        setAnchorEl(null);
+    };
+
+    const legendOpen = Boolean(anchorEl); //State of graph legend
 
     return (
         <Grid
@@ -190,6 +176,43 @@ export default function Main() {
                             RepGraph
                         </Typography>
                         <Grid container justify="flex-end" spacing={2}>
+                            <Grid item>
+                                <div>
+                                    <Fab color="primary" aria-label="add" variant="extended"
+                                         className={classes.fabButton} onClick={handleClickGraphLegend}>
+                                        Show Graph Legend
+                                    </Fab>
+                                    <Popover
+                                        open={legendOpen}
+                                        anchorEl={anchorEl}
+                                        onClose={handleCloseGraphLegend}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }}
+                                    >
+                                        <Card>
+                                            <CardContent>
+                                                <Grid container spacing={1}>
+                                                    <Grid item>
+                                                        <Chip label="AbstractNode" style={{color:"white",fontWeight:"bold", backgroundColor:"rgba(0,172,237,1)"}}/>
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <Chip label="SurfaceNode" style={{color:"white",fontWeight:"bold", backgroundColor:"rgba(0,237,107,1)"}}/>
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <Chip label="Token" style={{color:"white",fontWeight:"bold", backgroundColor:"rgba(255,87,34,1)"}}/>
+                                                    </Grid>
+                                                </Grid>
+                                            </CardContent>
+                                        </Card>
+                                    </Popover>
+                                </div>
+                            </Grid>
                             <Grid item color="inherit">
                                 <Tooltip arrow
                                          title={"Select visualisation format"}>
