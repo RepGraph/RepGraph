@@ -1392,21 +1392,24 @@ public class RepGraphModel {
                 }
             }
             maxEdgeSpan = Math.max(maxEdgeSpan, Math.abs(toX - fromX));
+
             String edgeType = "";
-            double round = 0.5;
+            double round = 0.5; //The roundness of the edge
 
 
             int spanLower = graph.getNodes().get(fromID).getAnchors().get(0).getFrom() * space;
             int spanUpper = graph.getNodes().get(fromID).getAnchors().get(0).getEnd() * space;
 
+            //Edge layout algorithm to best avoid edges from overlapping
             if (toX <= spanUpper && toX >= spanLower) {
                 if (Math.abs(fromLevel - toLevel) == 1) {
-                    edgeType = "continuous";
+                    edgeType = "continuous"; //From node and to node are within span and only 1 level apart, so make the edge continuous
                 } else {
                     boolean notFound = true;
                     double protrusionHeight = 0.0;
                     double protrusionWidth = 0.0;
-                    if (fromX == toX) {
+                    if (fromX == toX) {//Same column
+                        //Check if there exists a node in between the From node and To node
                         for (HashMap<String, Object> node : finalNodes) {
                             if ((Integer) node.get("x") == fromX) {
                                 if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
@@ -1414,19 +1417,24 @@ public class RepGraphModel {
                                 }
                             }
                         }
-                    } else {
+                    } else {//Different column
+
+                        //Check if there exists a node in between the From node and To node
                         for (HashMap<String, Object> node : finalNodes) {
                             if ((Integer) node.get("x") <= spanUpper && (Integer) node.get("x") >= spanLower) {
                                 if ((((Integer) node.get("nodeLevel") > toLevel) && ((Integer) node.get("nodeLevel") < fromLevel)) || (((Integer) node.get("nodeLevel") < toLevel) && ((Integer) node.get("nodeLevel") > fromLevel))) {
                                     if ((((Integer) node.get("x") >= toX) && ((Integer) node.get("x") <= fromX))) {
                                         notFound = false;
 
+                                        //Set the protrusion level of the found node, to quantify how much it is in the way.
                                         if (protrusionHeight < ((Integer) node.get("nodeLevel")) / (double) fromLevel && protrusionWidth < Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanLower)) {
                                             protrusionHeight = (Integer) node.get("nodeLevel") / (double) fromLevel;
                                             protrusionWidth = Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanLower);
                                         }
                                     } else if (((Integer) node.get("x") <= toX) && ((Integer) node.get("x") >= fromX)) {
                                         notFound = false;
+
+                                        //Set the protrusion level of the found node, to quantify how much it is in the way.
                                         if (protrusionHeight < ((Integer) node.get("nodeLevel")) / (double) fromLevel && protrusionWidth < Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanUpper)) {
                                             protrusionHeight = (Integer) node.get("nodeLevel") / (double) fromLevel;
                                             protrusionWidth = Math.abs(fromX - (Integer) node.get("x")) / (double) Math.abs(fromX - spanUpper);
@@ -1437,26 +1445,29 @@ public class RepGraphModel {
                         }
                     }
                     if (notFound) {
-                        edgeType = "dynamic";
+                        edgeType = "dynamic"; //There is no node between the From node and To node, so make the edge type dynamic.
 
                     } else {
                         if (Math.abs(fromLevel - toLevel) > 3) {
-                            round = 0.36;
+                            round = 0.36; //Prevents long edges from protruding into an adjacent column
                         }
                         if (Math.abs(fromLevel - toLevel) > 4) {
-                            round = 0.32;
+                            round = 0.32; //Prevents long edges from protruding into an adjacent column
                         }
                         if ((protrusionHeight > 0.55) && (protrusionWidth > 0.55)) {
-                            round = 0.47;
+                            round = 0.47; //If the in between node found has a high level of protrusion then make the edge rounder to avoid clash
                         }
                         if (protrusionWidth > 0.8) {
-                            round = 0.4;
+                            round = 0.4; //If the in between node found has a high level of vertical protrusion then make the edge rounder to avoid clash
                         }
-                        edgeType = "curvedCCW";
-                        if (fromLevel < toLevel) {
-                            edgeType = "curvedCW";
+
+                        edgeType = "curvedCCW"; //Default edge to left to avoid clash
+                        if (fromLevel < toLevel) { //If edge is upwards
+                            edgeType = "curvedCW"; //Default edge to left to avoid clash
                         }
-                        if (fromX == toX) {
+                        if (fromX == toX) {//Same column
+
+                            //Check neighbours to see if there already exists an edge to the left, if so, change it to right. Same for edges facing upwards
                             for (node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()) {
                                 if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
                                     if (fromLevel < toLevel) {
@@ -1466,6 +1477,8 @@ public class RepGraphModel {
                                     }
                                 }
                             }
+
+                            //Check neighbours to see if there already exists an edge to the left, if so, change it to right. Same for edges facing upwards
                             for (node neighbour : graph.getNodes().get(toID).getDirectedNeighbours()) {
                                 if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
                                     if (fromLevel < toLevel) {
@@ -1491,21 +1504,21 @@ public class RepGraphModel {
                     }
                 }
             } else {
-                if (fromLevel == toLevel) {
-                    edgeType = "curvedCCW";
+                if (fromLevel == toLevel) { //Same level
+                    edgeType = "curvedCCW"; //Make edge go under the graph
                     round = 0.5;
                     int difference = fromX / space - toX / space;
                     if (Math.abs(difference) > 4) {
-                        round = 0.3;
+                        round = 0.3; //Change edge roundness to avoid going off the page for long edges
                     }
                     if (Math.abs(difference) > 10) {
-                        round = 0.2;
+                        round = 0.2; //Change edge roundness to avoid going off the page for long edges
                     }
                     if (difference > 0 && fromLevel == 0) {
-                        edgeType = "curvedCW";
+                        edgeType = "curvedCW"; //If the edge is going backwards, still make it go under the graph
                     }
                 } else {
-                    edgeType = "dynamic";
+                    edgeType = "dynamic"; //Not in the same column, level or spans
                 }
             }
 
