@@ -6,9 +6,11 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 
+@JsonIgnoreProperties(value = {"is_surface"})
 public class node {
 
     /**

@@ -4,6 +4,9 @@
  */
 package com.RepGraph;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(value = {"anchors"})
 public class token {
 
     /**
