@@ -53,7 +53,7 @@ const visualisationOptions = {
   groups: {
     node: {
       shape: "box",
-      color: "rgba(0,172,237,0.71)",
+      color: "rgba(237,95,0,0.71)",
       font: { size: 14, strokeWidth: 4, strokeColor: "white" },
       widthConstraint: {
         minimum: 60,
@@ -66,6 +66,17 @@ const visualisationOptions = {
     surfaceNode: {
       shape: "box",
       color: "rgba(0,237,107,0.76)",
+      font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+      widthConstraint: {
+        minimum: 60,
+        maximum: 60
+      },
+      heightConstraint: {
+        minimum: 30
+      }
+    }, longestPath: {
+      shape: "box",
+      color: "rgba(245, 0, 87, 0.7)",
       font: {size: 14, strokeWidth: 4, strokeColor: "white"},
       widthConstraint: {
         minimum: 60,
@@ -102,19 +113,6 @@ const visualisationOptions = {
         from: 20,
         to: 0
       },
-      longestPath: {
-        shape: "box",
-        color: "rgba(245, 0, 87, 0.7)",
-        font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-        widthConstraint: {
-          minimum: 60,
-          maximum: 60
-        },
-        heightConstraint: {
-          minimum: 30
-        }
-      }
-    },
     similarNode: {
       shape: "box",
       color: "rgba(0,153,0,0.7)",
@@ -151,6 +149,7 @@ const visualisationOptions = {
     heightConstraint: {
       minimum: 30
     }
+  }
   }
 };
 

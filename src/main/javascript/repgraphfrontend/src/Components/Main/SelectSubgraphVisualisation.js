@@ -20,120 +20,8 @@ import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
 import TextField from "@material-ui/core/TextField/TextField";
 
-const options = {
-    physics: {
-        enabled: false,
-        forceAtlas2Based: {
-            gravitationalConstant: -50000,
-            centralGravity: 0.0,
-            springConstant: 0.08,
-            springLength: 100,
-            damping: 0,
-            avoidOverlap: 1
-        }
-    },
-    autoResize: true,
-    edges: {
-        color: "rgba(156, 154, 154, 1)",
-        smooth: true,
-        /*smooth: {
-              enabled: true,
-              type: "dynamic",
-              roundness: 1
-            },*/
-        physics: true,
-        arrows: {
-            to: {
-                scaleFactor: 1.3
-            }
-        },
-        arrowStrikethrough: false,
-        endPointOffset: {
-            from: 20,
-            to: 0
-        }
-    },
-    nodes: {
-        shape: "box",
-        color: "rgba(0,172,237,0.71)",
-        font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-        widthConstraint: {
-            minimum: 60,
-            maximum: 60
-        },
-        heightConstraint: {
-            minimum: 30
-        }
-    },
-    height: "100%",
-    width: "100%",
-    interaction: { hover: true },
-    groups: {
-        node: {
-            shape: "box",
-            color: "rgba(0,172,237,0.71)",
-            font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        surfaceNode: {
-            shape: "box",
-            color: "rgba(0,237,107,0.76)",
-            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        token: {
-            shape: "box",
-            color: "rgba(255,87,34,0.85)",
-            font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        longestPath: {
-            shape: "box",
-            color: "rgba(245, 0, 87, 0.7)",
-            font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        },
-        Selected: {
-            shape: "box",
-            color: "rgba(255, 0, 0, 0.65)",
-            font: { size: 14, strokeWidth: 4, strokeColor: "white" },
-            widthConstraint: {
-                minimum: 60,
-                maximum: 60
-            },
-            heightConstraint: {
-                minimum: 30
-            }
-        }
-    }
-};
-
 const SelectSubgraphVisualisation = () => {
-    const { state, dispatch } = useContext(AppContext); //Provide access to global state
+    const {state, dispatch} = useContext(AppContext); //Provide access to global state
     const [currentVis, setCurrentVis] = React.useState(
         state.selectedSentenceVisualisation
     ); //Store the current visualisation data locally
@@ -143,6 +31,120 @@ const SelectSubgraphVisualisation = () => {
     const [open, setOpen] = React.useState(false);
     const [selectedSentenceVisualisation, setSelectedSentenceVisualisation] = React.useState(null);
     const [alertOpen, setAlertOpen] = React.useState(false); //Local state for error alert
+
+
+    const options = {
+        physics: {
+            enabled: false,
+            forceAtlas2Based: {
+                gravitationalConstant: -50000,
+                centralGravity: 0.0,
+                springConstant: 0.08,
+                springLength: 100,
+                damping: 0,
+                avoidOverlap: 1
+            }
+        },
+        autoResize: true,
+        edges: {
+            color: "rgba(156, 154, 154, 1)",
+            smooth: true,
+            /*smooth: {
+                  enabled: true,
+                  type: "dynamic",
+                  roundness: 1
+                },*/
+            physics: true,
+            arrows: {
+                to: {
+                    scaleFactor: 1.3
+                }
+            },
+            arrowStrikethrough: false,
+            endPointOffset: {
+                from: 20,
+                to: 0
+            }
+        },
+        nodes: {
+            shape: "box",
+            color: state.visualisationOptions.groups.node.color,
+            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+            widthConstraint: {
+                minimum: 60,
+                maximum: 60
+            },
+            heightConstraint: {
+                minimum: 30
+            }
+        },
+        height: "100%",
+        width: "100%",
+        interaction: {hover: true},
+        groups: {
+            node: {
+                shape: "box",
+                color: state.visualisationOptions.groups.node.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            },
+            surfaceNode: {
+                shape: "box",
+                color: state.visualisationOptions.groups.surfaceNode.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            },
+            token: {
+                shape: "box",
+                color: state.visualisationOptions.groups.token.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            },
+            longestPath: {
+                shape: "box",
+                color: state.visualisationOptions.groups.longestPath.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            },
+            Selected: {
+                shape: "box",
+                color: state.visualisationOptions.groups.Selected.color,
+                font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+                widthConstraint: {
+                    minimum: 60,
+                    maximum: 60
+                },
+                heightConstraint: {
+                    minimum: 30
+                }
+            }
+        }
+    };
+
 
     function searchForSelectedSubgraph(){
 
