@@ -181,7 +181,7 @@ export default function Main() {
             alignItems="center"
             style={{height: "100vh", width: "100vw"}}>
             <CssBaseline/>
-            <Grid item style={{width: "100%"}}>
+            <Grid item style={{width: "100%", flexGrow: "0"}}>
                 <Box
                     bgcolor="secondary.main"
                 >
@@ -242,33 +242,34 @@ export default function Main() {
                     </Toolbar>
                 </Box>
             </Grid>
-            <Grid item style={{width: "100%", flexGrow: "1", padding: "10px"}}>
+            <Grid item container style={{width: "100%", flexGrow: "1", padding: "10px"}}>
                 {state.selectedSentenceID === null ? (
-                    <Grid item style={{height: "100%"}}>
+                    <Grid item style={{height: "100%", width: "100%"}}>
                         <Card variant="outlined" style={{height: "100%"}}>
                             <CardContent style={{height: "100%"}}>
-                                <Box bgcolor="secondary.main">
-                                    <Typography variant="subtitle1">Please select a sentence</Typography>
-                                </Box>
+                                <Grid container direction="row" alignItems="center" justify="center">
+                                    <Grid item>
+                                        {
+                                            state.dataSet === null? <Typography variant="subtitle1">Please
+                                                upload a data-set</Typography> :
+                                                <Typography variant="subtitle1">Please
+                                                    select a sentence</Typography>
+                                        }
+
+                                    </Grid>
+                                </Grid>
                             </CardContent>
                         </Card>
 
                     </Grid>
                 ) : (
-                    <Grid item style={{height: "90%"}} color="secondary">
-                        <Card variant="outlined" style={{height: "100%"}}>
-                            <CardContent style={{height: "100%"}}>
-                                <Box style={{height: "100%"}} bgcolor="secondary.main">
-                                    <GraphVisualisation/>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
+                    <div style={{height: "80vh", width: "100vw"}}>
+                        <GraphVisualisation/>
+                    </div>
                 )}
             </Grid>
-            <Grid item style={{width: "100%"}}>
-                <Box bgcolor="secondary.main">
+            <Grid item style={{width: "100%", flexGrow: "0"}}>
+                <AppBar position="fixed" className={classes.bottomAppBar} color="secondary">
                     <Toolbar>
                         <Fab color="primary" aria-label="add" variant="extended" className={classes.fabButton}
                              onClick={() => setAnalysisToolsOpen(true)}>
@@ -283,7 +284,7 @@ export default function Main() {
                             Show Analysis Tools
                         </Button>*/}
                     </Toolbar>
-                </Box>
+                </AppBar>
             </Grid>
             <Dialog
                 fullWidth
