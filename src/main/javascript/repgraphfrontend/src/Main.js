@@ -30,6 +30,7 @@ import BuildIcon from '@material-ui/icons/Build';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 import {Chip} from "@material-ui/core";
+import {TextField} from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
 import {Link, useHistory} from "react-router-dom";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
@@ -88,7 +89,8 @@ export default function Main() {
     const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true); //Local state for upload dataset alert
     const [analysisToolsOpen, setAnalysisToolsOpen] = React.useState(false); //Local state for analysis tools drawer
     const [anchorEl, setAnchorEl] = React.useState(null); //Anchor state for popover graph legend
-
+    const [sentence, setSentence] = React.useState("");
+    const [anchorSen, setAnchorSen] = React.useState(null);
     //Handle close of the alert shown after data-set upload
     const handleDataSetResponseClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -157,7 +159,48 @@ export default function Main() {
         setAnchorEl(null);
     };
 
+    //Function to handle click on graph legend button
+    const handleClickSentenceParse = (event) => {
+        setAnchorSen(event.currentTarget);
+    };
+
+    //Functions to handle close of graph legend
+    const handleCloseSentenceParse = () => {
+        setAnchorSen(null);
+    };
+
     const legendOpen = Boolean(anchorEl); //State of graph legend
+    const senOpen = Boolean(anchorSen);
+
+    function parseSentence() {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch(state.APIendpoint + "/ParseSentence?sentence=" + sentence + "&format=" + state.visualisationFormat, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                const jsonResult = JSON.parse(result);
+                console.log(jsonResult); //Debugging
+                dispatch({
+                    type: "SET_SENTENCE_VISUALISATION",
+                    payload: {selectedSentenceVisualisation: jsonResult}
+                }); //Set global state for visualisation
+
+                dispatch({
+                    type: "SET_SELECTED_SENTENCE_ID",
+                    payload: {selectedSentenceID: jsonResult.id}
+                });
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
+            })
+            .catch(error => {
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
+                console.log("error", error); //Debugging
+                history.push("/404"); //Send user to error page
+            });
+
+    }
 
     return (
         <Grid
@@ -175,6 +218,37 @@ export default function Main() {
                         <Typography color="primary" variant="h5">
                             RepGraph
                         </Typography>
+                        <Grid xs={1}></Grid>
+                        <Fab color="primary" aria-label="add" variant="extended"
+                             className={classes.fabButton} onClick={handleClickSentenceParse}>
+                            Enter your own sentence
+                        </Fab>
+                        <Popover
+                            open={senOpen}
+                            anchorEl={anchorSen}
+                            onClose={handleCloseSentenceParse}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                        ><Grid>
+                            <Card>
+                                <CardContent>
+                                    <TextField id="standard-basic" style={{width: 400}} label="Standard"
+                                               onChange={e => setSentence(e.target.value)}/>
+                                </CardContent>
+                                <CardContent>
+                                    <Button variant="outlined" color="primary"
+                                            onClick={parseSentence}>Visualise</Button>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        </Popover>
+
                         <Grid container justify="flex-end" spacing={2}>
                             <Grid item>
                                 <div>
@@ -199,13 +273,25 @@ export default function Main() {
                                             <CardContent>
                                                 <Grid container spacing={1}>
                                                     <Grid item>
-                                                        <Chip label="AbstractNode" style={{color:"white",fontWeight:"bold", backgroundColor:"rgba(0,172,237,1)"}}/>
+                                                        <Chip label="AbstractNode" style={{
+                                                            color: "white",
+                                                            fontWeight: "bold",
+                                                            backgroundColor: "rgba(0,172,237,1)"
+                                                        }}/>
                                                     </Grid>
                                                     <Grid item>
-                                                        <Chip label="SurfaceNode" style={{color:"white",fontWeight:"bold", backgroundColor:"rgba(0,237,107,1)"}}/>
+                                                        <Chip label="SurfaceNode" style={{
+                                                            color: "white",
+                                                            fontWeight: "bold",
+                                                            backgroundColor: "rgba(0,237,107,1)"
+                                                        }}/>
                                                     </Grid>
                                                     <Grid item>
-                                                        <Chip label="Token" style={{color:"white",fontWeight:"bold", backgroundColor:"rgba(255,87,34,1)"}}/>
+                                                        <Chip label="Token" style={{
+                                                            color: "white",
+                                                            fontWeight: "bold",
+                                                            backgroundColor: "rgba(255,87,34,1)"
+                                                        }}/>
                                                     </Grid>
                                                 </Grid>
                                             </CardContent>
@@ -273,8 +359,8 @@ export default function Main() {
                                 <Grid container direction="row" alignItems="center" justify="center">
                                     <Grid item>
                                         {
-                                            state.dataSet === null? <Typography variant="subtitle1">Please
-                                                upload a data-set</Typography> :
+                                            state.dataSet === null ? <Typography variant="subtitle1">Please
+                                                    upload a data-set</Typography> :
                                                 <Typography variant="subtitle1">Please
                                                     select a sentence</Typography>
                                         }
