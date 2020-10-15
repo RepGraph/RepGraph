@@ -42,7 +42,7 @@ export default function SentenceList(props) {
         props.closeSelectSentence(); //Close the dialog
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
 
-        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format="+state.visualisationFormat, requestOptions)
+        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=" + state.visualisationFormat, requestOptions)
             .then((response) => response.text())
             .then((result) => {
                 const jsonResult = JSON.parse(result);
@@ -50,7 +50,7 @@ export default function SentenceList(props) {
                 //Update the global state:
                 dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: jsonResult}});
                 dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: jsonResult.id}});
-                dispatch({type: "SET_TEST_RESULTS", payload: { testResults: null } });
+                dispatch({type: "SET_TEST_RESULTS", payload: {testResults: null}});
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
             })
             .catch((error) => {
@@ -72,37 +72,54 @@ export default function SentenceList(props) {
 
         setCurrentDataSet(found);
     }
-    
+
     return (
         <Grid item style={{width: "100%"}}>
-            <TextField id="outlined-basic"
-                       label="Search for a Sentence or ID"
-                       variant="outlined"
-                       onChange={e => (search(e.target.value))}/>
-            {state.dataSet === null ? (
-                <div>No data-set has been uploaded yet</div>
-            ) : (
-                <Virtuoso
-                    style={{width: "100%", height: "400px"}}
-                    totalCount={currentDataSet.length}
-                    item={(index) => {
-                        return (
-                            <ListItem button key={currentDataSet[index].id}
-                                      onClick={() => handleSelectSentence(currentDataSet[index].id)}>
-                                <Typography>{currentDataSet[index].input}</Typography>
-                            </ListItem>
-                        );
-                    }}
-                    footer={() => (
-                        <div style={{padding: "1rem", textAlign: "center"}}>
-                            <Typography>
-                                -- end of dataset --
-                            </Typography>
-                        </div>
+            <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                style={{width: "100%"}}
+            >
+                <Grid item style={{width: "100%"}}>
+                    <TextField id="outlined-basic"
+                               label="Search for a Sentence or ID"
+                               variant="outlined"
+                               onChange={e => (search(e.target.value))}
+                               fullWidth
+                    />
+                </Grid>
+                <Grid item style={{width: "100%"}}>
+                    {state.dataSet === null ? (
+                        <div>No data-set has been uploaded yet</div>
+                    ) : (
+                        <Virtuoso
+                            style={{width: "100%", height: "400px"}}
+                            totalCount={currentDataSet.length}
+                            item={(index) => {
+                                return (
+                                    <ListItem button key={currentDataSet[index].id}
+                                              onClick={() => handleSelectSentence(currentDataSet[index].id)}>
+                                        <Typography>{currentDataSet[index].input}</Typography>
+                                    </ListItem>
+                                );
+                            }}
+                            footer={() => (
+                                <div style={{padding: "1rem", textAlign: "center"}}>
+                                    <Typography>
+                                        -- end of dataset --
+                                    </Typography>
+                                </div>
+                            )}
+                        />
                     )}
-                />
-            )}
-            <Divider/>
+                </Grid>
+
+
+                <Divider/>
+            </Grid>
+
         </Grid>
     );
 }
