@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 
 /**
@@ -294,7 +295,7 @@ public class RequestHandler {
         String jsonString = null;
         String s = "";
         try {
-            Process p = Runtime.getRuntime().exec("python3 Scripts/src/parse-convert-mrs.py --extract_syntax --convert_semantics --extract_semantics -g Scripts/src -s " + '"' + result + '"');
+            Process p = Runtime.getRuntime().exec("python3 Scripts/src/parse-convert-mrs.py --convert_semantics --extract_semantics -g Scripts/src -s " + '"' + result + '"');
 
             BufferedReader stdInput = new BufferedReader(new
                     InputStreamReader(p.getInputStream()));
@@ -319,10 +320,12 @@ public class RequestHandler {
 
         }
 
+
         ObjectMapper objectMapper = new ObjectMapper();
         //Creates graph object from JSON string
         graph currgraph = objectMapper.readValue(jsonString, graph.class);
-
+        String uniqueID = UUID.randomUUID().toString();
+        currgraph.setId(uniqueID);
         //checks if model doesnt contain the ID already
         if (!RepModel.containsKey(currgraph.getId())) {
 

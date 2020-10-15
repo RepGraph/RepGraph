@@ -57,7 +57,7 @@ def main():
     if args.grammar:
         lexicon = syntax.Lexicon(args.grammar)
 
-    with d_ace.ACEParser(args.grammar + '/erg-1214-x86-64-0.9.31.dat') as parser:
+    with d_ace.ACEParser(args.grammar + '/erg-1214-x86-64-0.9.31.dat', executable="Scripts/src/ace") as parser:
         sentence = args.sentence.replace("_&_&_*_*"," ")
         sentence = sentence[1:len(sentence)-1].strip()
         response = parser.interact(sentence)
