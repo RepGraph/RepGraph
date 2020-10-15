@@ -203,35 +203,48 @@ function CompareTwoGraphsVisualisation(props) {
         }
         return (
             <Grid item style={{width: "100%"}}>
-                <TextField id="outlined-basic"
-                           label="Search for a Sentence or ID"
-                           variant="outlined"
-                           onChange={e => (search(e.target.value))}/>
-                {state.dataSet === null ? (
-                    <div>No data-set has been uploaded yet</div>
-                ) : (
-                    <Virtuoso
-                        style={{width: "100%", height: "400px"}}
-                        totalCount={currentLength}
-                        item={(index) => {
-                            return (
-                                <ListItem
-                                    button
-                                    key={currentDataSet[index].id}
-                                    onClick={() => handleSelectSentence(currentDataSet[index].id)}
-                                >
-                                    <Typography>{currentDataSet[index].input}</Typography>
-                                </ListItem>
-                            );
-                        }}
-                        footer={() => (
-                            <div style={{padding: "1rem", textAlign: "center"}}>
-                                -- end of dataset --
-                            </div>
+                <Grid
+                    container
+                    direction="column"
+                    justify="center"
+                    alignItems="center"
+                    style={{width: "100%"}}
+                >
+                    <Grid item style={{width:"100%"}}>
+                        <TextField id="outlined-basic"
+                                   label="Search for a Sentence or ID"
+                                   variant="outlined"
+                                   fullWidth
+                                   onChange={e => (search(e.target.value))}/>
+                    </Grid>
+                    <Grid item style={{width:"100%"}}>
+                        {state.dataSet === null ? (
+                            <div>No data-set has been uploaded yet</div>
+                        ) : (
+                            <Virtuoso
+                                style={{width: "100%", height: "400px"}}
+                                totalCount={currentLength}
+                                item={(index) => {
+                                    return (
+                                        <ListItem
+                                            button
+                                            key={currentDataSet[index].id}
+                                            onClick={() => handleSelectSentence(currentDataSet[index].id)}
+                                        >
+                                            <Typography>{currentDataSet[index].input}</Typography>
+                                        </ListItem>
+                                    );
+                                }}
+                                footer={() => (
+                                    <div style={{padding: "1rem", textAlign: "center"}}>
+                                        -- end of dataset --
+                                    </div>
+                                )}
+                            />
                         )}
-                    />
-                )}
+                    </Grid>
                 <Divider/>
+                </Grid>
             </Grid>
         );
     }
