@@ -227,10 +227,14 @@ function SearchSubgraphPatternTool(props) {
                             justify="center"
                             alignItems="center"
                             spacing={2}
-                        ><TextField id="outlined-basic"
-                                    label="Search for a Sentence or ID"
-                                    variant="outlined"
-                                    onChange={e => (search(e.target.value))}/>
+                        >
+                            <Grid item style={{width:"100%"}}>
+                                <TextField id="outlined-basic"
+                                           label="Search for a Sentence or ID"
+                                           variant="outlined"
+                                           fullWidth
+                                           onChange={e => (search(e.target.value))}/>
+                            </Grid>
                             <Grid container item xs={12}>
                                 <Card variant="outlined" style={{width:"100%", height: "15vh"}}>
 
