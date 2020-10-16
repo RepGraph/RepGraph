@@ -7,6 +7,7 @@ This project sets out to deliver an application tool to equip Natural Language P
 * React Graph-Viz
 * Material UI
 * Spring Boot
+* Python
 
 ## Getting Started
 To use the RepGraph tool is simple. All that is needed are up to date versions of the following prerequisites and Language compilers/interpreters.
@@ -14,6 +15,7 @@ To use the RepGraph tool is simple. All that is needed are up to date versions o
 ## Installation
 ### Prerequisites
 * Java
+* Python
 * Maven
 * Node Package Manager
 
