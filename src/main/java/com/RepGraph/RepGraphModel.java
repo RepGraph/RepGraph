@@ -631,6 +631,11 @@ public class RepGraphModel {
             singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
             singleNode.put("y", totalGraphHeight + currentLevels.get(n.getAnchors().get(0).getFrom()) * 100);
             singleNode.put("label", n.getLabel());
+            if (n.getLabel().startsWith("_")) {
+                singleNode.put("group", "surfaceNode");
+            } else {
+                singleNode.put("group", "node");
+            }
             singleNode.put("type", "node");
             singleNode.put("anchors", n.getAnchors().get(0));
             singleNode.put("group", "node");
@@ -771,7 +776,7 @@ public class RepGraphModel {
             singleNode.put("y", totalGraphHeight - 150);
             singleNode.put("label", "TOP");
             singleNode.put("type", "node");
-            singleNode.put("group", "token");
+            singleNode.put("group", "top");
             singleNode.put("fixed", true);
 
             finalNodes.add(singleNode);
@@ -1364,7 +1369,7 @@ public class RepGraphModel {
             singleNode.put("type", "node");
             singleNode.put("nodeLevel", nodesInFinalLevels.size());
             singleNode.put("anchors", graph.getNodes().get(graph.getTops().get(0)).getAnchors().get(0));
-            singleNode.put("group", "token");
+            singleNode.put("group", "top");
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
         }

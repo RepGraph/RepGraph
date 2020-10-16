@@ -65,7 +65,7 @@ function highlightCompare(standardVisualisation, similarNodes, similarEdges) {
         ...node,
         group: similarNodes.includes(node.id) ? "similarNode" :
             node.group === "token" ? "token" :
-                node.group === "text" ? "text" : "differentNode"
+                node.group === "text" ? "text" : node.group === "top" ? "top" : "differentNode"
 
     }));
     let newEdges = currentStandardVisualisation.edges.map((edge, index) => ({

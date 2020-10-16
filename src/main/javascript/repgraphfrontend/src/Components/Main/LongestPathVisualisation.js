@@ -230,7 +230,7 @@ function LongestPathVisualisation({type}) {
                                     state.selectedSentenceVisualisation,
                                     path
                                 )} //Modified current visualisation with longest path highlighted
-                                options={options} //Options from global state
+                                options={state.visualisationOptions} //Options from global state
                                 events={events}
                                 style={{ width: "100%", height: "100%" }}
                                 getNetwork={(network) => {

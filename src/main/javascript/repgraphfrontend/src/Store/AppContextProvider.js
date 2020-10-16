@@ -119,6 +119,18 @@ const visualisationOptions = {
                 minimum: 30
             }
         },
+        top: {
+            shape: "box",
+            color: "rgba(255,243,33,0.7)",
+            font: {size: 14, strokeWidth: 4, strokeColor: "white"},
+            widthConstraint: {
+                minimum: 60,
+                maximum: 60
+            },
+            heightConstraint: {
+                minimum: 30
+            }
+        },
         differentNode: {
             shape: "box",
             color: "rgba(245, 0, 87, 0.7)",

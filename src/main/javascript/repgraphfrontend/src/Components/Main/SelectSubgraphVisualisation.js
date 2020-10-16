@@ -104,13 +104,13 @@ const SelectSubgraphVisualisation = () => {
 
             //User selected or deselected a node -> update the graph visually
             for (const [i, x] of currentStandardVisualisation.nodes.entries()) {
-                if (x.id === nodes[0] && x.group !== "Selected") {
+                if (x.id === nodes[0] && x.group !== "Selected" && x.group !== "top" && x.group !== "token" && x.group !== "text") {
                     //If not selected - mark as selected
                     currentStandardVisualisation.nodes[i].group = "Selected";
                 } else if (x.id === nodes[0] && x.group === "Selected") {
                     //Else if selected - deselect node
                     if (currentStandardVisualisation.nodes[i].label.startsWith("_")) {
-                        currentStandardVisualisation.nodes[i].group = "node";
+                        currentStandardVisualisation.nodes[i].group = "surfaceNode";
                     } else {
                         currentStandardVisualisation.nodes[i].group = "node";
                     }
