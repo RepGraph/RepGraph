@@ -127,7 +127,12 @@ export default function Main() {
 
                 //Request new visualisation from backend
                 fetch(state.APIendpoint + "/Visualise?graphID=" + state.selectedSentenceID + "&format=" + newFormat, requestOptions)
-                    .then((response) => response.text())
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw "Response not OK";
+                        }
+                        return response.text();
+                    })
                     .then((result) => {
 
                         const jsonResult = JSON.parse(result);
@@ -179,7 +184,12 @@ export default function Main() {
         };
 
         fetch(state.APIendpoint + "/ParseSentence?sentence=" + sentence + "&format=" + state.visualisationFormat, requestOptions)
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw "Response not OK";
+                }
+                return response.text();
+            })
             .then(result => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging

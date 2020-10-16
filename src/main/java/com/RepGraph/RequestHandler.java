@@ -299,7 +299,7 @@ public class RequestHandler {
      */
     @GetMapping("/ParseSentence")
     @ResponseBody
-    public HashMap<String, Object> parseSentence(@RequestParam String sentence, @RequestParam int format) throws IOException {
+    public HashMap<String, Object> parseSentence(@RequestParam String sentence, @RequestParam int format) throws Exception {
 
         //Replace all spaces with unique character to parse it to java python argument
         String result = sentence.replaceAll(" ", "_&_&_*_*");

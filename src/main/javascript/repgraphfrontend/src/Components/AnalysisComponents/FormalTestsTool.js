@@ -50,7 +50,12 @@ function FormalTestsTool(props) {
 
         //Fetch formal test results from backend
         fetch(state.APIendpoint + "/TestGraph?graphID=" + state.selectedSentenceID + "&planar=" + tests.planar + "&longestPathDirected=" + tests.longestPathDirected + "&longestPathUndirected=" + tests.longestPathUndirected + "&connected=" + tests.connected, requestOptions)
-            .then((response) => response.text())
+            .then((response) => {
+                if (!response.ok) {
+                    throw "Response not OK";
+                }
+                return response.text();
+            })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging

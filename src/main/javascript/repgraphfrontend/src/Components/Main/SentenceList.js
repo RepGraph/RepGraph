@@ -43,7 +43,12 @@ export default function SentenceList(props) {
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
 
         fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=" + state.visualisationFormat, requestOptions)
-            .then((response) => response.text())
+            .then((response) => {
+                if (!response.ok) {
+                    throw "Response not OK";
+                }
+                return response.text();
+            })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult);

@@ -114,7 +114,12 @@ function CompareTwoGraphsVisualisation(props) {
         };
 
         fetch(state.APIendpoint +"/CompareGraphs?graphID1="+sentence1+"&graphID2="+sentence2, requestOptions)
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw "Response not OK";
+                }
+                return response.text();
+            })
             .then(result => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //debugging
@@ -151,7 +156,12 @@ function CompareTwoGraphsVisualisation(props) {
             //state.APIendpoint+"/DisplayPlanarGraph?graphID=20001001
 
             fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format="+state.visualisationFormat, requestOptions)
-                .then((response) => response.text())
+                .then((response) => {
+                    if (!response.ok) {
+                        throw "Response not OK";
+                    }
+                    return response.text();
+                })
                 .then((result) => {
                     const jsonResult = JSON.parse(result);
                     console.log(jsonResult);

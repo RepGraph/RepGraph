@@ -79,7 +79,12 @@ function DisplaySubsetTool(props) {
 
         //Request subset from backend
         fetch(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNode.id + "&SubsetType=" + value +"&format="+state.visualisationFormat, requestOptions)
-            .then((response) => response.text())
+            .then((response) => {
+                if (!response.ok) {
+                    throw "Response not OK";
+                }
+                return response.text();
+            })
             .then((result) => {
                 console.log(result);//debugging
                 console.log(JSON.parse(result));//debugging
