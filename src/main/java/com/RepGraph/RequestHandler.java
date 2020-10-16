@@ -287,6 +287,16 @@ public class RequestHandler {
         return null;
     }
 
+    /**
+     * Method to parse entered sentence into ACE parser
+     * and ultimately format it into dmrs format.
+     * This graph is then added to the model and visualisation information is returned.
+     *
+     * @param sentence Sentence to be parsed
+     * @param format   Visualisation format that the sentence is returned in.
+     * @return HashMap<String, Object> Visualisation data of entered sentence
+     * @throws IOException
+     */
     @GetMapping("/ParseSentence")
     @ResponseBody
     public HashMap<String, Object> parseSentence(@RequestParam String sentence, @RequestParam int format) throws IOException {
