@@ -301,10 +301,12 @@ public class RequestHandler {
     @ResponseBody
     public HashMap<String, Object> parseSentence(@RequestParam String sentence, @RequestParam int format) throws IOException {
 
+        //Replace all spaces with unique character to parse it to java python argument
         String result = sentence.replaceAll(" ", "_&_&_*_*");
         String jsonString = null;
         String s = "";
         try {
+            //Run parser
             Process p = Runtime.getRuntime().exec("python3 Scripts/src/parse-convert-mrs.py --convert_semantics --extract_semantics -g Scripts/src -s " + '"' + result + '"');
 
             BufferedReader stdInput = new BufferedReader(new
@@ -313,7 +315,7 @@ public class RequestHandler {
             BufferedReader stdError = new BufferedReader(new
                     InputStreamReader(p.getErrorStream()));
 
-            // read the output from the command
+            // read the dmrs output from command
             while ((s = stdInput.readLine()) != null) {
                 if (s.startsWith("{\"id\":")) {
                     jsonString = s;
@@ -325,7 +327,7 @@ public class RequestHandler {
             }
 
         } catch (IOException e) {
-            System.out.println("exception happened - here's what I know: ");
+
             e.printStackTrace();
 
         }
@@ -334,8 +336,8 @@ public class RequestHandler {
         ObjectMapper objectMapper = new ObjectMapper();
         //Creates graph object from JSON string
         graph currgraph = objectMapper.readValue(jsonString, graph.class);
-        String uniqueID = UUID.randomUUID().toString();
-        currgraph.setId(uniqueID);
+
+        currgraph.setId(currgraph.getInput().hashCode() + "");
         //checks if model doesnt contain the ID already
         if (!RepModel.containsKey(currgraph.getId())) {
 
