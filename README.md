@@ -40,5 +40,5 @@ The user interface is easy to use and intuitive but for a clear and easy usage g
 
 ## Contact 
 * TLDEDA001@myuct.ac.za
-* CHNROY002 @myuct.ac.za
+* CHNROY002@myuct.ac.za
 * CHNJAR003@myuct.ac.za
