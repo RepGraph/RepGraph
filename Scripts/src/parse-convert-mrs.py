@@ -13,7 +13,6 @@ from delphin import mrs as d_mrs
 from delphin import predicate as d_predicate
 
 from delphin import ace as d_ace
-#from delphin import repp as d_repp
 
 import syntax
 import semantics
