@@ -17,7 +17,9 @@ export default function ErrorPage() {
           <Typography variant="h2">Error 404</Typography>
         </Grid>
         <Grid item>
-          <Button variant="outlined" onClick={() => {history.push("/")}}>Take Me Home</Button>
+            <Button color={"primary"} variant="outlined" onClick={() => {
+                history.push("/")
+            }}>Take Me Home</Button>
         </Grid>
       </Grid>
       );
