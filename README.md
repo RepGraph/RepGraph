@@ -38,6 +38,11 @@ The user interface is easy to use and intuitive but for a clear and easy usage g
 
 If you simply want to use the application without the hassle of compiling and running everything locally - you can go [here](http://repgraph-frontend.herokuapp.com/)
 
+## Acknowledgements
+
+Thanks to PyDelphin for providing the tools to format raw text into dmrs graph data.
+https://github.com/delph-in/pydelphin
+
 ## Authors
 * Edan Toledo
 * Roy Cohen
