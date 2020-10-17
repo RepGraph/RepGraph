@@ -18,6 +18,7 @@ To use the RepGraph tool is simple. All that is needed are up to date versions o
 * Python
 * Maven
 * Node Package Manager
+To be able to use the custom sentence parsing feature, you need to download this grammar file and place it in Scripts/src/<file>. The file can be downloaded from here http://sweaglesw.org/linguistics/ace/download/erg-1214-x86-64-0.9.31.dat.bz2.
 
 
 ### Backend
