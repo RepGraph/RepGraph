@@ -8,9 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 
 /**
@@ -295,7 +293,7 @@ public class RequestHandler {
      * @param sentence Sentence to be parsed
      * @param format   Visualisation format that the sentence is returned in.
      * @return HashMap<String, Object> Visualisation data of entered sentence
-     * @throws IOException
+     * @throws Exception
      */
     @GetMapping("/ParseSentence")
     @ResponseBody
@@ -332,9 +330,11 @@ public class RequestHandler {
 
         }
 
-
+        System.out.println(jsonString);
         ObjectMapper objectMapper = new ObjectMapper();
         //Creates graph object from JSON string
+        if (jsonString != null) {
+        }
         graph currgraph = objectMapper.readValue(jsonString, graph.class);
 
         currgraph.setId(currgraph.getInput().hashCode() + "");
@@ -346,6 +346,27 @@ public class RequestHandler {
         }
 
         return Visualise(currgraph.getId(), format);
+    }
+
+    @GetMapping("/ReturnModelList")
+    @ResponseBody
+    public ArrayList<HashMap<String, String>> GetModelList() {
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+        for (graph g : RepModel.getAllGraphs().values()) {
+            HashMap<String, String> graphinfo = new HashMap<String, String>();
+            graphinfo.put("id", g.getId());
+            graphinfo.put("input", g.getInput());
+            list.add(graphinfo);
+        }
+        Collections.sort(list, new Comparator<HashMap<String, String>>() {
+            @Override
+            public int compare(HashMap<String, String> o1, HashMap<String, String> o2) {
+                return o1.get("id").compareTo(o2.get("id"));
+
+            }
+        });
+        return list;
     }
 
 

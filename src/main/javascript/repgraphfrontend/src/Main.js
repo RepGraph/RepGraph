@@ -202,6 +202,31 @@ export default function Main() {
                     type: "SET_SELECTED_SENTENCE_ID",
                     payload: {selectedSentenceID: jsonResult.id}
                 });
+                dispatch({type: "SET_TEST_RESULTS", payload: {testResults: null}});
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
+            })
+            .catch(error => {
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
+                console.log("error", error); //Debugging
+                history.push("/404"); //Send user to error page
+            });
+
+        fetch(state.APIendpoint + "/ReturnModelList", requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw "Response not OK";
+                }
+                return response.text();
+            })
+            .then(result => {
+                const jsonResult = JSON.parse(result);
+
+                dispatch({
+                    type: "SET_DATASET",
+                    payload: {dataSet: jsonResult}
+                }); //Set global state for visualisation
+
+
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
             })
             .catch(error => {
@@ -248,7 +273,7 @@ export default function Main() {
                         ><Grid>
                             <Card>
                                 <CardContent>
-                                    <TextField id="standard-basic" style={{width: 400}} label="Standard"
+                                    <TextField id="standard-basic" style={{width: 400}} label="Enter a Sentence"
                                                onChange={e => setSentence(e.target.value)}/>
                                 </CardContent>
                                 <CardContent>
