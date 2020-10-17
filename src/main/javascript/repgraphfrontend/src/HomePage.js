@@ -49,7 +49,7 @@ export default function HomePage(props) {
                 .then((response) => {
                     console.log(response);
                     if (!response.ok) {
-                        throw "Response not OK";
+                        throw "Uploaded File Response not OK";
                     }
                     return response.text();
                 })
@@ -83,6 +83,7 @@ export default function HomePage(props) {
             justify="center"
             alignItems="center"
             style={{minHeight: "100vh", minWidth: "100vw"}}
+
             spacing={2}
         >
             <Grid item>

@@ -172,7 +172,8 @@ const initialState = {
     testResults: null,
     longestPathVisualisation: null,
     visualisationFormat: "1",
-    visualisationOptions: visualisationOptions
+    visualisationOptions: visualisationOptions,
+    darkMode: "false"
 };
 
 const reducer = (state, action) => {
@@ -197,6 +198,8 @@ const reducer = (state, action) => {
             return {...state, testResults: action.payload.testResults};
         case "SET_VISUALISATION_FORMAT":
             return {...state, visualisationFormat: action.payload.visualisationFormat};
+        case "SET_DARK_MODE":
+            return {...state, darkMode: action.payload.darkMode};
         default:
             break;
     }

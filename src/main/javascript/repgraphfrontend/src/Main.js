@@ -5,7 +5,8 @@ import {
     Paper,
     Typography,
     CardContent,
-    CardActions
+    CardActions,
+    Switch
 } from "@material-ui/core";
 
 import {makeStyles, useTheme} from "@material-ui/core/styles";
@@ -91,6 +92,7 @@ export default function Main() {
     const [anchorEl, setAnchorEl] = React.useState(null); //Anchor state for popover graph legend
     const [sentence, setSentence] = React.useState("");
     const [anchorSen, setAnchorSen] = React.useState(null);
+
     //Handle close of the alert shown after data-set upload
     const handleDataSetResponseClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -172,6 +174,10 @@ export default function Main() {
     //Functions to handle close of graph legend
     const handleCloseSentenceParse = () => {
         setAnchorSen(null);
+    };
+
+    const handleThemeChange = () => {
+        dispatch({type: "SET_DARK_MODE", payload: {darkMode: !state.darkMode}});
     };
 
     const legendOpen = Boolean(anchorEl); //State of graph legend
@@ -311,21 +317,21 @@ export default function Main() {
                                                         <Chip label="AbstractNode" style={{
                                                             color: "white",
                                                             fontWeight: "bold",
-                                                            backgroundColor: "rgba(0,172,237,1)"
+                                                            backgroundColor: state.visualisationOptions.groups.node.color
                                                         }}/>
                                                     </Grid>
                                                     <Grid item>
                                                         <Chip label="SurfaceNode" style={{
                                                             color: "white",
                                                             fontWeight: "bold",
-                                                            backgroundColor: "rgba(0,237,107,1)"
+                                                            backgroundColor: state.visualisationOptions.groups.surfaceNode.color
                                                         }}/>
                                                     </Grid>
                                                     <Grid item>
                                                         <Chip label="Token" style={{
                                                             color: "white",
                                                             fontWeight: "bold",
-                                                            backgroundColor: "rgba(255,87,34,1)"
+                                                            backgroundColor: state.visualisationOptions.groups.token.color
                                                         }}/>
                                                     </Grid>
                                                 </Grid>
@@ -383,6 +389,9 @@ export default function Main() {
                                 </Tooltip>
                             </Grid>
                         </Grid>
+
+                        <Switch color={"primary"} checked={state.darkMode} onChange={handleThemeChange}/>
+                        <Typography color={"primary"}>Dark</Typography>
                     </Toolbar>
                 </Box>
             </Grid>
