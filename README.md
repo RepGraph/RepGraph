@@ -34,12 +34,14 @@ npm start
 ```
 
 ## Usage
-The user interface is easy to use and intuitive but for a clear and easy usage guide, refer to the user manual here
+The user interface is easy to use and intuitive but for a clear and easy usage guide, refer to the user manual here: [User Manual](https://github.com/EdanToledo/RepGraph/blob/main/UserManual.pdf)
+
+If you simply want to use the application without the hassle of compiling and running everything locally - you can go [here](http://repgraph-frontend.herokuapp.com/)
 
 ## Authors
-* TLDEDA001 - Edan Toledo
-* CHNROY002 - Roy Cohen
-* CHNJAR003 - Jaron Cohen
+* Edan Toledo
+* Roy Cohen
+* Jaron Cohen
 
 ## Contact 
 * TLDEDA001@myuct.ac.za
