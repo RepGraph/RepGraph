@@ -18,6 +18,7 @@ To use the RepGraph tool is simple. All that is needed are up to date versions o
 * Python
 * Maven
 * Node Package Manager
+* To be able to use the custom sentence parsing feature, you need to download this grammar file and place it in Scripts/src/<file>. The file can be downloaded from here http://sweaglesw.org/linguistics/ace/download/erg-1214-x86-64-0.9.31.dat.bz2.
 
 
 ### Backend
@@ -33,12 +34,19 @@ npm start
 ```
 
 ## Usage
-The user interface is easy to use and intuitive but for a clear and easy usage guide, refer to the user manual here.
+The user interface is easy to use and intuitive but for a clear and easy usage guide, refer to the user manual here: [User Manual](https://github.com/EdanToledo/RepGraph/blob/main/UserManual.pdf)
+
+If you simply want to use the application without the hassle of compiling and running everything locally - you can go [here](http://repgraph-frontend.herokuapp.com/)
+
+## Acknowledgements
+
+Thanks to PyDelphin for providing the tools to format raw text into dmrs graph data.
+https://github.com/delph-in/pydelphin
 
 ## Authors
-* TLDEDA001 - Edan Toledo
-* CHNROY002 - Roy Cohen
-* CHNJAR003 - Jaron Cohen
+* Edan Toledo
+* Roy Cohen
+* Jaron Cohen
 
 ## Contact 
 * TLDEDA001@myuct.ac.za
