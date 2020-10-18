@@ -1611,7 +1611,7 @@ public class RepGraphModel {
             singleEdge.put("from", fromID);
             singleEdge.put("to", toID);
             singleEdge.put("label", e.getLabel());
-            singleEdge.put("group", "normal");
+
             singleEdge.put("shadow", false);
             HashMap<String, Object> back = new HashMap<>();
             back.put("enabled", false);

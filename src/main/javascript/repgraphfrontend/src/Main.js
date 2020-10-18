@@ -93,6 +93,7 @@ export default function Main() {
     const [sentence, setSentence] = React.useState("");
     const [anchorSen, setAnchorSen] = React.useState(null);
 
+
     //Handle close of the alert shown after data-set upload
     const handleDataSetResponseClose = (event, reason) => {
         if (reason === 'clickaway') {

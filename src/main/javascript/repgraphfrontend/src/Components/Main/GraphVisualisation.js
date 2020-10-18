@@ -17,7 +17,10 @@ const GraphVisualisation = () => {
 return (
     <Graph
         graph={state.selectedSentenceVisualisation}
-        options={state.visualisationOptions} //Options from global state
+        options={{
+            ...state.visualisationOptions,
+            edges: {...state.visualisationOptions.edges, color: state.darkMode ? "#ffffff" : "#1d1d1d"}
+        }} //Options from global state
         events={events}
         style={{width: "100%", height: "100%"}}
         getNetwork={(network) => {
