@@ -910,13 +910,6 @@ public class RepGraphModel {
                     currentLevel.add(graph.getNodes().get(n));
                 }
             }
-            System.out.println("*****************");
-            for (node ne : currentLevel
-            ) {
-                System.out.println(ne.getLabel());
-
-            }
-            System.out.println("*****************");
             nodesInLevels.add(currentLevel);
         }
 
@@ -980,9 +973,14 @@ public class RepGraphModel {
             HashMap<Integer, Integer> nodeXPos = new HashMap<>(); //Temporary HashMap of nodeId to its x position.
             nodesInFinalLevels.put(currentLevel + 1, new HashMap<>()); //Create new level above to push any overlapping nodes to that next level.
             for (node n : nodesInLevels.get(currentLevel)) { //Iterate through every node in the current level
-                System.out.println(n.getLabel());
+                System.out.println(n.getLabel() + ": " + " level = " + currentLevel + ", descendents = " + topologicalStacks.get(n.getId()).size());
                 if (nodeXPos.containsKey(xPositions.get(n.getId()))) {//Check if this x position is already occupied
                     if (topologicalStacks.get(n.getId()).size() <topologicalStacks.get(nodeXPos.get(xPositions.get(n.getId()))).size()) { //Compare each of the overlapping node's number of descendents
+
+                        //Adds new level to push node to, if the maximum level has already been reached.
+                        if (currentLevel + 1 > numLevels - 1) {
+                            nodesInLevels.add(new ArrayList<>());
+                        }
 
                         //Push the already occupying node up a level
                         int currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.getId()));
@@ -991,7 +989,8 @@ public class RepGraphModel {
                         nodesInFinalLevels.get(currentLevel).remove(currentOccupyingNodeID); //Remove the currently occupying node from this level
                         nodesInFinalLevels.get(currentLevel).put(n.getId(), n); //Add the new node to the current level.
                     } else {
-                        //One solution
+
+                        //Adds new level to push node to, if the maximum level has already been reached.
                         if (currentLevel + 1 > numLevels - 1) {
                             nodesInLevels.add(new ArrayList<>());
                         }
