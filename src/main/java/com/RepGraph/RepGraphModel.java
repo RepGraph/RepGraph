@@ -910,13 +910,6 @@ public class RepGraphModel {
                     currentLevel.add(graph.getNodes().get(n));
                 }
             }
-            System.out.println("*****************");
-            for (node ne : currentLevel
-            ) {
-                System.out.println(ne.getLabel());
-
-            }
-            System.out.println("*****************");
             nodesInLevels.add(currentLevel);
         }
 
@@ -980,9 +973,13 @@ public class RepGraphModel {
             HashMap<Integer, Integer> nodeXPos = new HashMap<>(); //Temporary HashMap of nodeId to its x position.
             nodesInFinalLevels.put(currentLevel + 1, new HashMap<>()); //Create new level above to push any overlapping nodes to that next level.
             for (node n : nodesInLevels.get(currentLevel)) { //Iterate through every node in the current level
-                System.out.println(n.getLabel());
                 if (nodeXPos.containsKey(xPositions.get(n.getId()))) {//Check if this x position is already occupied
                     if (topologicalStacks.get(n.getId()).size() <topologicalStacks.get(nodeXPos.get(xPositions.get(n.getId()))).size()) { //Compare each of the overlapping node's number of descendents
+
+                        //Adds new level to push node to, if the maximum level has already been reached.
+                        if (currentLevel + 1 > numLevels - 1) {
+                            nodesInLevels.add(new ArrayList<>());
+                        }
 
                         //Push the already occupying node up a level
                         int currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.getId()));
@@ -991,7 +988,8 @@ public class RepGraphModel {
                         nodesInFinalLevels.get(currentLevel).remove(currentOccupyingNodeID); //Remove the currently occupying node from this level
                         nodesInFinalLevels.get(currentLevel).put(n.getId(), n); //Add the new node to the current level.
                     } else {
-                        //One solution
+
+                        //Adds new level to push node to, if the maximum level has already been reached.
                         if (currentLevel + 1 > numLevels - 1) {
                             nodesInLevels.add(new ArrayList<>());
                         }
@@ -1085,7 +1083,33 @@ public class RepGraphModel {
             String edgeType = ""; //Dictate the edge type
             double round = 0.5; //The roundness the edge must take on
 
-            if (fromX == toX) {
+            //Check if there exists another edge with the same source and target node as this edge, decide on its direction based on its relative index to the other.
+            int count = 0;
+            int thisEdge = 0;
+            for (edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
+                if (edge.getTarget() == toID){
+                    count++;
+                    if (edge.equals(e)){
+                        thisEdge = count;
+                    }
+                }
+            }
+
+            if (count > 1){
+                if (fromLevel - toLevel > 1) {
+                    round = 0.2; //Decreased roundness to not overlap to the next column if the levels are more than 3 levels apart.
+                }
+                if (fromLevel - toLevel > 5) {
+                    round = 0.1; //Decreased roundness to not overlap to the next column if the levels are more than 3 levels apart.
+                }
+                if (thisEdge%2==0){
+                    edgeType = "curvedCW";
+                }
+                else{
+                    edgeType = "curvedCCW";
+                }
+            }
+            else if (fromX == toX) {
                 if (fromLevel - toLevel == 1) {
                     edgeType = "continuous"; //Same column and only level apart
                 } else {
@@ -1321,13 +1345,11 @@ public class RepGraphModel {
         }
         for (int level = 0; level < newNodeLevels.size(); level++) {
             for (ArrayList<node> group : newNodeLevels.get(level)) {
-                //console.log({group});
                 for (
                         int nodeGroupIndex = 0;
                         nodeGroupIndex < group.size();
                         nodeGroupIndex++
                 ) {
-                    //console.log(group[nodeGroupIndex]);
                     ArrayList<Integer> finalLevel = new ArrayList<>();
 
                     finalLevel.addAll(previousLevelHeights.subList(0, level + 1));
@@ -1425,6 +1447,28 @@ public class RepGraphModel {
             if (toX <= spanUpper && toX >= spanLower) {
                 if (Math.abs(fromLevel - toLevel) == 1) {
                     edgeType = "continuous"; //From node and to node are within span and only 1 level apart, so make the edge continuous
+
+                    //Check if there exists another edge with the same source and target node as this edge, decide on its direction based on its relative index to the other.
+                    int count = 0;
+                    int thisEdge = 0;
+                    for (edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
+                        if (edge.getTarget() == toID){
+                            count++;
+                            if (edge.equals(e)){
+                                thisEdge = count;
+                            }
+                        }
+                    }
+
+                    if (count > 1){
+                        if (thisEdge%2==0){
+                            edgeType = "curvedCW";
+                        }
+                        else{
+                            edgeType = "curvedCCW";
+                        }
+                    }
+
                 } else {
                     boolean notFound = true;
                     double protrusionHeight = 0.0;
@@ -1538,6 +1582,25 @@ public class RepGraphModel {
                     if (difference > 0 && fromLevel == 0) {
                         edgeType = "curvedCW"; //If the edge is going backwards, still make it go under the graph
                     }
+
+                    int count = 0;
+                    int thisEdge = 0;
+                    for (edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
+                        if (edge.getTarget() == toID){
+                            count++;
+                            if (edge.equals(e)){
+                                thisEdge = count;
+                            }
+                        }
+                    }
+
+                    if (count > 1){
+                        if (thisEdge%2==0){
+                            round = round + 0.15;
+                        }
+                    }
+
+
                 } else {
                     edgeType = "dynamic"; //Not in the same column, level or spans
                 }
