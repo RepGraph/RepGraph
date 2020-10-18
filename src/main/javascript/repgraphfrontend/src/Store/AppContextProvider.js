@@ -173,7 +173,7 @@ const initialState = {
     longestPathVisualisation: null,
     visualisationFormat: "1",
     visualisationOptions: visualisationOptions,
-    darkMode: "false"
+    darkMode: false
 };
 
 const reducer = (state, action) => {
