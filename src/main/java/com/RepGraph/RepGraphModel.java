@@ -973,7 +973,6 @@ public class RepGraphModel {
             HashMap<Integer, Integer> nodeXPos = new HashMap<>(); //Temporary HashMap of nodeId to its x position.
             nodesInFinalLevels.put(currentLevel + 1, new HashMap<>()); //Create new level above to push any overlapping nodes to that next level.
             for (node n : nodesInLevels.get(currentLevel)) { //Iterate through every node in the current level
-                System.out.println(n.getLabel() + ": " + " level = " + currentLevel + ", descendents = " + topologicalStacks.get(n.getId()).size());
                 if (nodeXPos.containsKey(xPositions.get(n.getId()))) {//Check if this x position is already occupied
                     if (topologicalStacks.get(n.getId()).size() <topologicalStacks.get(nodeXPos.get(xPositions.get(n.getId()))).size()) { //Compare each of the overlapping node's number of descendents
 
@@ -1084,7 +1083,33 @@ public class RepGraphModel {
             String edgeType = ""; //Dictate the edge type
             double round = 0.5; //The roundness the edge must take on
 
-            if (fromX == toX) {
+            //Check if there exists another edge with the same source and target node as this edge, decide on its direction based on its relative index to the other.
+            int count = 0;
+            int thisEdge = 0;
+            for (edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
+                if (edge.getTarget() == toID){
+                    count++;
+                    if (edge.equals(e)){
+                        thisEdge = count;
+                    }
+                }
+            }
+
+            if (count > 1){
+                if (fromLevel - toLevel > 1) {
+                    round = 0.2; //Decreased roundness to not overlap to the next column if the levels are more than 3 levels apart.
+                }
+                if (fromLevel - toLevel > 5) {
+                    round = 0.1; //Decreased roundness to not overlap to the next column if the levels are more than 3 levels apart.
+                }
+                if (thisEdge%2==0){
+                    edgeType = "curvedCW";
+                }
+                else{
+                    edgeType = "curvedCCW";
+                }
+            }
+            else if (fromX == toX) {
                 if (fromLevel - toLevel == 1) {
                     edgeType = "continuous"; //Same column and only level apart
                 } else {
@@ -1423,6 +1448,7 @@ public class RepGraphModel {
                 if (Math.abs(fromLevel - toLevel) == 1) {
                     edgeType = "continuous"; //From node and to node are within span and only 1 level apart, so make the edge continuous
 
+                    //Check if there exists another edge with the same source and target node as this edge, decide on its direction based on its relative index to the other.
                     int count = 0;
                     int thisEdge = 0;
                     for (edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
