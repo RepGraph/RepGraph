@@ -1320,13 +1320,11 @@ public class RepGraphModel {
         }
         for (int level = 0; level < newNodeLevels.size(); level++) {
             for (ArrayList<node> group : newNodeLevels.get(level)) {
-                //console.log({group});
                 for (
                         int nodeGroupIndex = 0;
                         nodeGroupIndex < group.size();
                         nodeGroupIndex++
                 ) {
-                    //console.log(group[nodeGroupIndex]);
                     ArrayList<Integer> finalLevel = new ArrayList<>();
 
                     finalLevel.addAll(previousLevelHeights.subList(0, level + 1));
@@ -1424,6 +1422,27 @@ public class RepGraphModel {
             if (toX <= spanUpper && toX >= spanLower) {
                 if (Math.abs(fromLevel - toLevel) == 1) {
                     edgeType = "continuous"; //From node and to node are within span and only 1 level apart, so make the edge continuous
+
+                    int count = 0;
+                    int thisEdge = 0;
+                    for (edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
+                        if (edge.getTarget() == toID){
+                            count++;
+                            if (edge.equals(e)){
+                                thisEdge = count;
+                            }
+                        }
+                    }
+
+                    if (count > 1){
+                        if (thisEdge%2==0){
+                            edgeType = "curvedCW";
+                        }
+                        else{
+                            edgeType = "curvedCCW";
+                        }
+                    }
+
                 } else {
                     boolean notFound = true;
                     double protrusionHeight = 0.0;
@@ -1537,6 +1556,25 @@ public class RepGraphModel {
                     if (difference > 0 && fromLevel == 0) {
                         edgeType = "curvedCW"; //If the edge is going backwards, still make it go under the graph
                     }
+
+                    int count = 0;
+                    int thisEdge = 0;
+                    for (edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
+                        if (edge.getTarget() == toID){
+                            count++;
+                            if (edge.equals(e)){
+                                thisEdge = count;
+                            }
+                        }
+                    }
+
+                    if (count > 1){
+                        if (thisEdge%2==0){
+                            round = round + 0.15;
+                        }
+                    }
+
+
                 } else {
                     edgeType = "dynamic"; //Not in the same column, level or spans
                 }
