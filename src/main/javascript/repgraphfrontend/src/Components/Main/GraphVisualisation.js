@@ -19,7 +19,10 @@ return (
         graph={state.selectedSentenceVisualisation}
         options={{
             ...state.visualisationOptions,
-            edges: {...state.visualisationOptions.edges, color: state.darkMode ? "#ffffff" : "#1d1d1d"}
+            edges: {
+                ...state.visualisationOptions.edges,
+                color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color
+            }
         }} //Options from global state
         events={events}
         style={{width: "100%", height: "100%"}}

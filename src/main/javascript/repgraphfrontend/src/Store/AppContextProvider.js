@@ -151,6 +151,9 @@ const visualisationOptions = {
                 minimum: 30
             }
         }
+    },
+    darkMode: {
+        edgeColor: "#FFFFFF"
     }
 
 };
