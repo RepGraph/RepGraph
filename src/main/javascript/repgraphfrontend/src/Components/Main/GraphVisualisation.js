@@ -22,48 +22,21 @@ return (
         style={{width: "100%", height: "100%"}}
         getNetwork={(network) => {
             //  if you want access to vis.js network api you can set the state in a parent component using this property
+
+            //hacky fix - calls when physics of edges stabilises
+            network.on("startStabilizing", function (params) {
+                network.fit();
+            });
+
+            //double click to center graph
+            network.on("doubleClick", function (params) {
+                network.fit();
+            });
+
             network.on("hoverNode", function (params) {
                 network.canvas.body.container.style.cursor = 'pointer'
             });
-            network.on("beforeDrawing", function (ctx) {
-                //console.log(state.selectedSentence.nodes);
-                /*
-                for (let node of state.selectedSentence.nodes) {
-                  if (node.type === "node") {
-                    let nodeId = node.id;
-                    let nodePosition = network.getPositions([nodeId]);
-                    ctx.strokeStyle = "#A6D5F7";
-                    ctx.fillStyle = "#294475";
-                    ctx.lineWidth = 3;
 
-                    let nodeBoundingBox = network.getBoundingBox(nodeId);
-                    console.log(nodePosition[nodeId]);
-
-                    ctx.beginPath();
-                    ctx.moveTo(
-                      nodePosition[nodeId].x - 40,
-                      nodeBoundingBox.bottom + 5
-                    );
-                    ctx.lineTo(nodePosition[nodeId].x - 40, nodeBoundingBox.bottom);
-                    ctx.lineTo(
-                      nodePosition[nodeId].x +
-                        40 +
-                        60 * (node.anchors.end - node.anchors.from),
-                      nodeBoundingBox.bottom
-                    );
-                    ctx.lineTo(
-                      nodePosition[nodeId].x +
-                        40 +
-                        60 * (node.anchors.end - node.anchors.from),
-                      nodeBoundingBox.bottom + 5
-                    );
-
-                    ctx.stroke();
-                    //ctx.fill();
-                    //ctx.stroke();
-                  }
-                }*/
-            });
         }}
     />
 );
