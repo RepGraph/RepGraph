@@ -6,6 +6,7 @@ import {DropzoneArea} from "material-ui-dropzone";
 import {AppContext} from "./Store/AppContextProvider.js";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 export default function HomePage(props) {
     const [fileObjects, setFileObjects] = useState([]);
@@ -76,6 +77,10 @@ export default function HomePage(props) {
         }
     }
 
+    function handleSkip() {
+        history.push("/main");
+    }
+
     return (
         <Grid
             container
@@ -108,6 +113,9 @@ export default function HomePage(props) {
                     <Typography variant="h6">Upload</Typography>
                 </Button>
             </Grid>
+            <Grid><Button onClick={handleSkip} color={"primary"} variant={"outlined"} startIcon={<ArrowForwardIcon/>}>
+                <Typography variant="h6">Skip Upload </Typography>
+            </Button></Grid>
             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                 <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="warning">
                     Please select a data-set first.

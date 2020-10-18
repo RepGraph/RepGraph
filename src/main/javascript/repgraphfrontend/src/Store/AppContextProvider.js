@@ -16,7 +16,6 @@ const visualisationOptions = {
     },
     autoResize: true,
     edges: {
-        color: "rgba(156, 154, 154, 1)",
         smooth: true,
         physics: true,
         arrows: {
@@ -25,11 +24,6 @@ const visualisationOptions = {
             }
         },
         arrowStrikethrough: false
-        /* scaling: {
-           min: 1,
-           max: 6
-         },
-         value: 1*/
     },
     nodes: {
         shape: "box",
@@ -173,7 +167,7 @@ const initialState = {
     longestPathVisualisation: null,
     visualisationFormat: "1",
     visualisationOptions: visualisationOptions,
-    darkMode: "false"
+    darkMode: false
 };
 
 const reducer = (state, action) => {
