@@ -16,6 +16,8 @@ const visualisationOptions = {
     },
     autoResize: true,
     edges: {
+        //Where it says false needs to change to dark mode global state somehow
+        color: false ? "#FFFFFF" : "#7a7a7a",
         smooth: true,
         physics: true,
         arrows: {

@@ -1613,7 +1613,6 @@ public class RepGraphModel {
             singleEdge.put("label", e.getLabel());
             singleEdge.put("group", "normal");
             singleEdge.put("shadow", false);
-            singleEdge.put("color", "rgba(118, 118, 118, 1)");
             HashMap<String, Object> back = new HashMap<>();
             back.put("enabled", false);
             singleEdge.put("background", back);
