@@ -160,6 +160,7 @@ const initialState = {
     dataSet: null,
     dataSetFileName: null,
     dataSetResponse: null,
+    parserResponse: null,
     selectedSentenceVisualisation: null,
     selectedSentenceID: null,
     selectedNodeAndEdges: null,
@@ -180,6 +181,8 @@ const reducer = (state, action) => {
             return {...state, dataSetFileName: action.payload.dataSetFileName};
         case "SET_DATASET_RESPONSE":
             return {...state, dataSetResponse: action.payload.dataSetResponse};
+        case "SET_PARSER_RESPONSE":
+            return {...state, parserResponse: action.payload.parserResponse};
         case "SET_SENTENCE_VISUALISATION":
             return {...state, selectedSentenceVisualisation: action.payload.selectedSentenceVisualisation};
         case "SET_LONGEST_VISUALISATION":

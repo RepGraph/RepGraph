@@ -303,6 +303,7 @@ public class RequestHandler {
         String result = sentence.replaceAll(" ", "_&_&_*_*");
         String jsonString = null;
         String s = "";
+        graph currgraph;
         try {
             //Run parser
             Process p = Runtime.getRuntime().exec("python3 Scripts/src/parse-convert-mrs.py --convert_semantics --extract_semantics -g Scripts/src -s " + '"' + result + '"');
@@ -324,26 +325,27 @@ public class RequestHandler {
                 System.out.println(s);
             }
 
-        } catch (IOException e) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            //Creates graph object from JSON string
 
-            e.printStackTrace();
+            currgraph = objectMapper.readValue(jsonString, graph.class);
+
+            currgraph.setId(currgraph.getInput().hashCode() + "");
+            //checks if model doesnt contain the ID already
+            if (!RepModel.containsKey(currgraph.getId())) {
+
+                RepModel.addGraph(currgraph);
+
+            }
+
+        } catch (Exception e) {
+
+            HashMap<String, Object> error = new HashMap<>();
+            error.put("Error", "Parser Error");
+            return error;
 
         }
 
-        System.out.println(jsonString);
-        ObjectMapper objectMapper = new ObjectMapper();
-        //Creates graph object from JSON string
-        if (jsonString != null) {
-        }
-        graph currgraph = objectMapper.readValue(jsonString, graph.class);
-
-        currgraph.setId(currgraph.getInput().hashCode() + "");
-        //checks if model doesnt contain the ID already
-        if (!RepModel.containsKey(currgraph.getId())) {
-
-            RepModel.addGraph(currgraph);
-
-        }
 
         return Visualise(currgraph.getId(), format);
     }
