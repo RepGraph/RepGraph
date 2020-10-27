@@ -319,7 +319,13 @@ function CompareTwoGraphsVisualisation(props) {
 
                             <Graph
                                 graph={compareVis1} //The visualisation data for the current graph
-                                options={state.visualisationOptions} //options from global state
+                                options={{
+                                    ...state.visualisationOptions,
+                                    edges: {
+                                        ...state.visualisationOptions.edges,
+                                        color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                                    }
+                                }} //options from global state
                                 events={events} //events object from above
                                 style={{width: "100%", height: "100%"}}
                                 getNetwork={(network) => {
@@ -360,7 +366,13 @@ function CompareTwoGraphsVisualisation(props) {
 
                             <Graph
                                 graph={compareVis2} //The visualisation data for the current graph
-                                options={state.visualisationOptions} //options from global state
+                                options={{
+                                    ...state.visualisationOptions,
+                                    edges: {
+                                        ...state.visualisationOptions.edges,
+                                        color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                                    }
+                                }} //options from global state
                                 events={events} //events object from above
                                 style={{width: "100%", height: "100%"}}
                                 getNetwork={(network) => {

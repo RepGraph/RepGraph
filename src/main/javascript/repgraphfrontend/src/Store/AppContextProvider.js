@@ -21,6 +21,7 @@ const visualisationOptions = {
         physics: true,
         arrows: {
             to: {
+                enabled: true,
                 scaleFactor: 1.3
             }
         },

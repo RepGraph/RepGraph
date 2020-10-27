@@ -12,7 +12,13 @@ const PlanarVisualisation = (props) => {
         return (
             <Graph
                 graph={planarGraphData}
-                options={state.visualisationOptions}
+                options={{
+                    ...state.visualisationOptions,
+                    edges: {
+                        ...state.visualisationOptions.edges,
+                        color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                    }
+                }}
                 events={events}
                 style={{width: "100%", height: "50vh"}}
                 getNetwork={(network) => {

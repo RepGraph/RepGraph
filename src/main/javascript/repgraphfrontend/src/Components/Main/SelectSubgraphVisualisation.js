@@ -144,7 +144,7 @@ const SelectSubgraphVisualisation = () => {
                     } else if (x.id === edges[0] && x.group === "Selected") {
                         currentStandardVisualisation.edges[i] = {
                             ...x,
-                            color: "rgba(156, 154, 154, 1)",
+                            color: state.darkMode === true ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
                             group: "normal",
                             shadow: false,
                             background: {
@@ -221,7 +221,13 @@ const SelectSubgraphVisualisation = () => {
             <Grid item style={{height:"60vh", width:"100%"}}>
                 <Graph
                     graph={currentVis}
-                    options={state.visualisationOptions} //Options from global state
+                    options={{
+                        ...state.visualisationOptions,
+                        edges: {
+                            ...state.visualisationOptions.edges,
+                            color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                        }
+                    }} //Options from global state
                     events={events}
                     getNetwork={(network) => {
                         network.on("hoverNode", function (params) {

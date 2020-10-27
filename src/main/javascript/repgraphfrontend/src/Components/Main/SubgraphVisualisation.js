@@ -14,7 +14,13 @@ const SubgraphVisualisation = (props) => {
         return (
             <Graph
                 graph={subgraphGraphData}
-                options={state.visualisationOptions} //Options from global state
+                options={{
+                    ...state.visualisationOptions,
+                    edges: {
+                        ...state.visualisationOptions.edges,
+                        color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                    }
+                }} //Options from global state
                 events={events}
                 style={{width: "100%", height: "100%"}}
                 getNetwork={(network) => {

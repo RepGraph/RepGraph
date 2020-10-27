@@ -21,7 +21,7 @@ return (
             ...state.visualisationOptions,
             edges: {
                 ...state.visualisationOptions.edges,
-                color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color
+                color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
             }
         }} //Options from global state
         events={events}
