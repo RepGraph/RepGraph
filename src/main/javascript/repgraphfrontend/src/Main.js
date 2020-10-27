@@ -88,6 +88,7 @@ export default function Main() {
     const history = useHistory(); //Provide access to router history
     const [sentenceOpen, setSentenceOpen] = React.useState(false); //Local state of select sentence dialog
     const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true); //Local state for upload dataset alert
+    const [parserResponseOpen, setParserResponseOpen] = React.useState(false); //Local state for parser alert
     const [analysisToolsOpen, setAnalysisToolsOpen] = React.useState(false); //Local state for analysis tools drawer
     const [anchorEl, setAnchorEl] = React.useState(null); //Anchor state for popover graph legend
     const [sentence, setSentence] = React.useState("");
@@ -100,6 +101,14 @@ export default function Main() {
         }
 
         setDataSetResponseOpen(false);
+    };
+
+    const handleParserResponseClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setParserResponseOpen(false);
     };
 
     //Handle click close select sentence dialog
@@ -199,17 +208,27 @@ export default function Main() {
             .then(result => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging
-                dispatch({
-                    type: "SET_SENTENCE_VISUALISATION",
-                    payload: {selectedSentenceVisualisation: jsonResult}
-                }); //Set global state for visualisation
+                if (!jsonResult.hasOwnProperty('Error')) {
 
-                dispatch({
-                    type: "SET_SELECTED_SENTENCE_ID",
-                    payload: {selectedSentenceID: jsonResult.id}
-                });
-                dispatch({type: "SET_TEST_RESULTS", payload: {testResults: null}});
-                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
+
+                    dispatch({
+                        type: "SET_SENTENCE_VISUALISATION",
+                        payload: {selectedSentenceVisualisation: jsonResult}
+                    }); //Set global state for visualisation
+
+                    dispatch({
+                        type: "SET_SELECTED_SENTENCE_ID",
+                        payload: {selectedSentenceID: jsonResult.id}
+                    });
+                    dispatch({type: "SET_TEST_RESULTS", payload: {testResults: null}});
+                    dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
+                } else {
+                    dispatch({
+                        type: "SET_PARSER_RESPONSE",
+                        payload: {parserResponse: jsonResult.Error}
+                    });
+                    setParserResponseOpen(true);
+                }
             })
             .catch(error => {
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
@@ -465,6 +484,13 @@ export default function Main() {
                 <MuiAlert elevation={6} variant="filled" onClose={handleDataSetResponseClose}
                           severity={state.dataSetResponse === "Duplicates Found" ? "warning" : "success"}>
                     {state.dataSetResponse === "Duplicates Found" ? "Data-set contained duplicate IDs, which were removed." : state.dataSetResponse}
+                </MuiAlert>
+            </Snackbar>
+            <Snackbar open={parserResponseOpen} autoHideDuration={6000}
+                      onClose={handleParserResponseClose}>
+                <MuiAlert elevation={6} variant="filled" onClose={handleParserResponseClose}
+                          severity={"warning"}>
+                    {state.parserResponse === "Parser Error" ? "The parser encountered an error - Please enter a different sentence" : ""}
                 </MuiAlert>
             </Snackbar>
         </Grid>
