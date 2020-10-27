@@ -16,8 +16,7 @@ const visualisationOptions = {
     },
     autoResize: true,
     edges: {
-        //Where it says false needs to change to dark mode global state somehow
-        color: false ? "#FFFFFF" : "#7a7a7a",
+        color: "#959595",
         smooth: true,
         physics: true,
         arrows: {
@@ -25,7 +24,8 @@ const visualisationOptions = {
                 scaleFactor: 1.3
             }
         },
-        arrowStrikethrough: false
+        arrowStrikethrough: false,
+        width: 1.4
     },
     nodes: {
         shape: "box",
@@ -151,6 +151,9 @@ const visualisationOptions = {
                 minimum: 30
             }
         }
+    },
+    darkMode: {
+        edgeColor: "#FFFFFF"
     }
 
 };
@@ -199,6 +202,8 @@ const reducer = (state, action) => {
             return {...state, visualisationFormat: action.payload.visualisationFormat};
         case "SET_DARK_MODE":
             return {...state, darkMode: action.payload.darkMode};
+        case "SET_VISUALISATION_OPTIONS":
+            return {...state, visualisationOptions: action.payload.visualisationOptions};
         default:
             break;
     }

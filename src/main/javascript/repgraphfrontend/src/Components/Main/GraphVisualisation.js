@@ -17,16 +17,16 @@ const GraphVisualisation = () => {
 return (
     <Graph
         graph={state.selectedSentenceVisualisation}
-        options={state.visualisationOptions} //Options from global state
+        options={{
+            ...state.visualisationOptions,
+            edges: {
+                ...state.visualisationOptions.edges,
+                color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color
+            }
+        }} //Options from global state
         events={events}
         style={{width: "100%", height: "100%"}}
         getNetwork={(network) => {
-            //  if you want access to vis.js network api you can set the state in a parent component using this property
-
-            //hacky fix - calls when physics of edges stabilises
-            network.on("startStabilizing", function (params) {
-                network.fit();
-            });
 
             //double click to center graph
             network.on("doubleClick", function (params) {
