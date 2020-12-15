@@ -1,26 +1,26 @@
 /**
- * The token class is used to represent a token (usually a word or a meaningful part of a word). Sentences are split into a sequence of tokens.
+ * The Token class is used to represent a Token (usually a word or a meaningful part of a word). Sentences are split into a sequence of tokens.
  * @since 29/08/2020
  */
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(value = {"anchors"})
-public class token {
+@JsonIgnoreProperties(value = {"Anchors"})
+public class Token {
 
     /**
-     * The token's position in a sentence.
+     * The Token's position in a sentence.
      */
     private int index;
 
     /**
-     * The token's standard form.
+     * The Token's standard form.
      */
     private String form;
 
     /**
-     * The token's canonical form, dictionary form or citation form.
+     * The Token's canonical form, dictionary form or citation form.
      */
     private String lemma;
 
@@ -30,18 +30,18 @@ public class token {
     private String carg;
 
     /**
-     * Default constructor of the token class.
+     * Default constructor of the Token class.
      */
-    public token(){}
+    public Token(){}
 
     /**
-     * Fully parameterised constructor of the token class.
-     * @param index The token's index.
-     * @param form The token's form.
-     * @param lemma The token's lemma.
-     * @param carg The token's carg.
+     * Fully parameterised constructor of the Token class.
+     * @param index The Token's index.
+     * @param form The Token's form.
+     * @param lemma The Token's lemma.
+     * @param carg The Token's carg.
      */
-    public token(int index, String form, String lemma, String carg){
+    public Token(int index, String form, String lemma, String carg){
         this.index = index;
         this.form = form;
         this.lemma = lemma;
@@ -49,71 +49,71 @@ public class token {
     }
 
     /**
-     * Getter method for the token's index.
-     * @return Integer The token's index.
+     * Getter method for the Token's index.
+     * @return Integer The Token's index.
      */
     public int getIndex() {
         return index;
     }
 
     /**
-     * Setter method for the token's index.
-     * @param index The token's index.
+     * Setter method for the Token's index.
+     * @param index The Token's index.
      */
     public void setIndex(int index) {
         this.index = index;
     }
 
     /**
-     * Getter method for the token's form.
-     * @return String The token's form.
+     * Getter method for the Token's form.
+     * @return String The Token's form.
      */
     public String getForm() {
         return form;
     }
 
     /**
-     * Setter method for the token's form.
-     * @param form The token's form.
+     * Setter method for the Token's form.
+     * @param form The Token's form.
      */
     public void setForm(String form) {
         this.form = form;
     }
 
     /**
-     * Getter method for the token's lemma.
-     * @return String The token's lemma.
+     * Getter method for the Token's lemma.
+     * @return String The Token's lemma.
      */
     public String getLemma() {
         return lemma;
     }
 
     /**
-     * Setter method for the token's lemma.
-     * @param lemma The token's lemma.
+     * Setter method for the Token's lemma.
+     * @param lemma The Token's lemma.
      */
     public void setLemma(String lemma) {
         this.lemma = lemma;
     }
 
     /**
-     * Getter method for the token's carg.
-     * @return String The token's carg.
+     * Getter method for the Token's carg.
+     * @return String The Token's carg.
      */
     public String getCarg() {
         return carg;
     }
 
     /**
-     * Setter method for the token's carg.
-     * @param carg The token's carg.
+     * Setter method for the Token's carg.
+     * @param carg The Token's carg.
      */
     public void setCarg(String carg) {
         this.carg = carg;
     }
 
     /**
-     * Equals method for the token class.
+     * Equals method for the Token class.
      * @param o Object
      * @return boolean Whether to two classes being compared are equal.
      */
@@ -124,11 +124,11 @@ public class token {
             return true;
         }
 
-        if (!(o instanceof token)){
+        if (!(o instanceof Token)){
             return false;
         }
 
-        token t = (token) o;
+        Token t = (Token) o;
 
         return ((index == t.getIndex()) && (form.equals(t.getForm())) && (lemma.equals(t.getLemma())) && (carg.equals(t.getCarg())));
     }

@@ -1,6 +1,5 @@
 package com.RepGraph;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -15,7 +14,7 @@ public class AnchorsTest {
     @Test
     public void test_constructor_CreatesAndAssignsMemberVariables() throws NoSuchFieldException, IllegalAccessException {
 
-        final anchors anch = new anchors(3, 5);
+        final Anchors anch = new Anchors(3, 5);
 
         final Field from = anch.getClass().getDeclaredField("from");
         from.setAccessible(true);
@@ -31,7 +30,7 @@ public class AnchorsTest {
     @Test
     public void test_getFrom_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final anchors anch = new anchors();
+        final Anchors anch = new Anchors();
 
         //Set Field not using setter
         final Field field = anch.getClass().getDeclaredField("from");
@@ -50,7 +49,7 @@ public class AnchorsTest {
     @Test
     public void test_setFrom_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final anchors anch = new anchors();
+        final Anchors anch = new Anchors();
 
         anch.setFrom(3);
 
@@ -63,7 +62,7 @@ public class AnchorsTest {
     @Test
     public void test_getEnd_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final anchors anch = new anchors();
+        final Anchors anch = new Anchors();
 
         //Set Field not using setter
         final Field field = anch.getClass().getDeclaredField("end");
@@ -81,7 +80,7 @@ public class AnchorsTest {
     @Test
     public void test_setEnd_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final anchors anch = new anchors();
+        final Anchors anch = new Anchors();
 
         anch.setEnd(3);
 
@@ -94,29 +93,29 @@ public class AnchorsTest {
     @Test
     public void test_equal_TwoAnchorsWithDifferentValues() {
 
-        final anchors a1 = new anchors(0, 1);
-        final anchors a2 = new anchors(2, 3);
+        final Anchors a1 = new Anchors(0, 1);
+        final Anchors a2 = new Anchors(2, 3);
 
-        assertFalse("Equals does not work with two anchors with different values.", a1.equals(a2));
+        assertFalse("Equals does not work with two Anchors with different values.", a1.equals(a2));
     }
 
     @Test
     public void test_equal_IdenticalAnchorsWithSameValues() {
 
-        final anchors a1 = new anchors(0, 1);
-        final anchors a2 = new anchors(0, 1);
+        final Anchors a1 = new Anchors(0, 1);
+        final Anchors a2 = new Anchors(0, 1);
 
-        assertTrue("Equals does not work with two identical anchors with the same values.", a1.equals(a2));
+        assertTrue("Equals does not work with two identical Anchors with the same values.", a1.equals(a2));
     }
 
     @Test
     public void test_equal_TwoObjectsOfDifferentClasses() {
 
-        ArrayList<anchors> anchs = new ArrayList<anchors>();
-        anchs.add(new anchors(0, 1));
-        final node n1 = new node(3, "proper_q", anchs);
+        ArrayList<Anchors> anchs = new ArrayList<Anchors>();
+        anchs.add(new Anchors(0, 1));
+        final Node n1 = new Node(3, "proper_q", anchs);
 
-        final anchors a1 = new anchors(0, 1);
+        final Anchors a1 = new Anchors(0, 1);
 
         assertFalse("Equals does not work with two objects of different classes", a1.equals(n1));
     }
@@ -124,9 +123,9 @@ public class AnchorsTest {
     @Test
     public void test_equal_EqualToItself() {
 
-        final anchors a1 = new anchors(0, 1);
+        final Anchors a1 = new Anchors(0, 1);
 
-        assertTrue("Equals does not work with a node equalling itself.", a1.equals(a1));
+        assertTrue("Equals does not work with a Node equalling itself.", a1.equals(a1));
     }
 
 

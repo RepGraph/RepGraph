@@ -13,7 +13,7 @@ public class EdgeTest {
     @Test
     public void test_constructor_CreatesAndAssignsMemberVariables() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge(3, 5, "test", "postTest");
+        final Edge e = new Edge(3, 5, "test", "postTest");
 
         final Field source = e.getClass().getDeclaredField("source");
         source.setAccessible(true);
@@ -37,9 +37,9 @@ public class EdgeTest {
     @Test
     public void test_CopyConstructor_CreatesAndAssignsMemberVariablesFromEdge() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge copy = new edge(3, 5, "test", "postTest");
+        final Edge copy = new Edge(3, 5, "test", "postTest");
 
-        final edge e = new edge(copy);
+        final Edge e = new Edge(copy);
 
         final Field source = e.getClass().getDeclaredField("source");
         source.setAccessible(true);
@@ -63,7 +63,7 @@ public class EdgeTest {
     @Test
     public void test_getSource_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge();
+        final Edge e = new Edge();
 
         //Set Field not using setter
         final Field field = e.getClass().getDeclaredField("source");
@@ -82,7 +82,7 @@ public class EdgeTest {
     @Test
     public void test_setSource_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge();
+        final Edge e = new Edge();
 
         e.setSource(3);
 
@@ -96,7 +96,7 @@ public class EdgeTest {
     @Test
     public void test_getTarget_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge();
+        final Edge e = new Edge();
 
         //Set Field not using setter
         final Field field = e.getClass().getDeclaredField("target");
@@ -115,7 +115,7 @@ public class EdgeTest {
     @Test
     public void test_setTarget_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge();
+        final Edge e = new Edge();
 
         e.setTarget(3);
 
@@ -130,7 +130,7 @@ public class EdgeTest {
     @Test
     public void test_getLabel_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge();
+        final Edge e = new Edge();
 
         //Set Field not using setter
         final Field field = e.getClass().getDeclaredField("label");
@@ -149,7 +149,7 @@ public class EdgeTest {
     @Test
     public void test_setLabel_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge();
+        final Edge e = new Edge();
 
         e.setLabel("test");
 
@@ -163,7 +163,7 @@ public class EdgeTest {
     @Test
     public void test_getPostLabel_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge();
+        final Edge e = new Edge();
 
         //Set Field not using setter
         final Field field = e.getClass().getDeclaredField("postLabel");
@@ -182,7 +182,7 @@ public class EdgeTest {
     @Test
     public void test_setPostLabel_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final edge e = new edge();
+        final Edge e = new Edge();
 
         e.setPostLabel("test");
 
@@ -195,8 +195,8 @@ public class EdgeTest {
     @Test
     public void test_equal_TwoEdgesWithDifferentValues() {
 
-        final edge e1 = new edge(0,2, "testLabel", "testPostLabel");
-        final edge e2 = new edge(0,3, "test3Label", "test2PostLabel");
+        final Edge e1 = new Edge(0,2, "testLabel", "testPostLabel");
+        final Edge e2 = new Edge(0,3, "test3Label", "test2PostLabel");
 
         assertFalse("Equals does not work with two edges with different values.", e1.equals(e2));
     }
@@ -204,8 +204,8 @@ public class EdgeTest {
     @Test
     public void test_equal_IdenticalEdgesWithSameValues() {
 
-        final edge e1 = new edge(0,2, "testLabel", "testPostLabel");
-        final edge e2 = new edge(0,2, "testLabel", "testPostLabel");
+        final Edge e1 = new Edge(0,2, "testLabel", "testPostLabel");
+        final Edge e2 = new Edge(0,2, "testLabel", "testPostLabel");
 
         assertTrue("Equals does not work with two identical edges with the same values.", e1.equals(e2));
     }
@@ -213,17 +213,17 @@ public class EdgeTest {
     @Test
     public void test_equal_TwoObjectsOfDifferentClasses() {
 
-        final edge e1 = new edge(0,2, "testLabel", "testPostLabel");
+        final Edge e1 = new Edge(0,2, "testLabel", "testPostLabel");
 
-        assertFalse("Equals does not work with two objects of different classes", e1.equals(new anchors(0, 1)));
+        assertFalse("Equals does not work with two objects of different classes", e1.equals(new Anchors(0, 1)));
     }
 
     @Test
     public void test_equal_EqualToItself() {
 
-        final edge e1 = new edge(0,2, "testLabel", "testPostLabel");
+        final Edge e1 = new Edge(0,2, "testLabel", "testPostLabel");
 
-        assertTrue("Equals does not work with an edge equalling itself.", e1.equals(e1));
+        assertTrue("Equals does not work with an Edge equalling itself.", e1.equals(e1));
     }
 
 

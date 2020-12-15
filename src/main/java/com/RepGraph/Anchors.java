@@ -2,9 +2,9 @@
 package com.RepGraph;
 
 /**
- * This class stores the token span information of a node
+ * This class stores the Token span information of a Node
  */
-public class anchors {
+public class Anchors {
 
     private int from;
     private int end;
@@ -12,14 +12,14 @@ public class anchors {
     /**
      * Default constructor
      */
-    public anchors(){};
+    public Anchors(){};
 
     /**
      * This is the parameterised constructor
-     * @param from This refers to the first token in the node span
-     * @param end  This refers to the last token in the node span
+     * @param from This refers to the first Token in the Node span
+     * @param end  This refers to the last Token in the Node span
      */
-    public anchors(int from, int end) {
+    public Anchors(int from, int end) {
         this.from = from;
         this.end = end;
     }
@@ -57,7 +57,7 @@ public class anchors {
     }
 
     /**
-     * Equals method for the node class.
+     * Equals method for the Node class.
      * @param o Object
      * @return boolean Whether to two classes being compared are equal.
      */
@@ -68,11 +68,11 @@ public class anchors {
             return true;
         }
 
-        if (!(o instanceof anchors)){
+        if (!(o instanceof Anchors)){
             return false;
         }
 
-        anchors a = (anchors) o;
+        Anchors a = (Anchors) o;
 
         return (from == a.getFrom()) && (end == a.getEnd());
     }

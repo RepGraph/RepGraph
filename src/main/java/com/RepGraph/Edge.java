@@ -1,5 +1,5 @@
 /**
- * Edge class used to represent relations between nodes in a graph.
+ * Edge class used to represent relations between nodes in a Graph.
  * @since 29/08/2020
  */
 
@@ -10,40 +10,40 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(value = {"id"})
-public class edge {
+public class Edge {
 
     /**
-     * ID of the node that is the source of the edge.
+     * ID of the Node that is the source of the Edge.
      */
     private int source;
 
     /**
-     * ID of the node that is the target of the edge.
+     * ID of the Node that is the target of the Edge.
      */
     private int target;
 
     /**
-     * The edge's label.
+     * The Edge's label.
      */
     private String label;
 
     /**
-     * The edge's post label.
+     * The Edge's post label.
      */
     @JsonProperty("post-label")
     private String postLabel;
 
     /**
-     * Default constructor of the edge class.
+     * Default constructor of the Edge class.
      */
-    public edge(){}
+    public Edge(){}
 
     /**
-     * The Parameterised copy constructor of the edge class
+     * The Parameterised copy constructor of the Edge class
      *
-     * @param e This is the edge object that is copied.
+     * @param e This is the Edge object that is copied.
      */
-    public edge(edge e) {
+    public Edge(Edge e) {
         this.target = e.target;
         this.source = e.source;
         this.label = e.label;
@@ -51,13 +51,13 @@ public class edge {
     }
 
     /**
-     * Fully parameterised constructor of the edge class.
-     * @param source Number of the node that is the source of the edge.
-     * @param target Number of the node that is the target of the edge.
-     * @param label The edge's label.
-     * @param postLabel Default constructor of the edge class.
+     * Fully parameterised constructor of the Edge class.
+     * @param source Number of the Node that is the source of the Edge.
+     * @param target Number of the Node that is the target of the Edge.
+     * @param label The Edge's label.
+     * @param postLabel Default constructor of the Edge class.
      */
-    public edge(int source, int target, String label, String postLabel){
+    public Edge(int source, int target, String label, String postLabel){
         this.source = source;
         this.target = target;
         this.label = label;
@@ -65,71 +65,71 @@ public class edge {
     }
 
     /**
-     * Getter method for the source node.
-     * @return Integer Number of the source node.
+     * Getter method for the source Node.
+     * @return Integer Number of the source Node.
      */
     public int getSource() {
         return source;
     }
 
     /**
-     * Setter method for the source node.
-     * @param source Number of the source node.
+     * Setter method for the source Node.
+     * @param source Number of the source Node.
      */
     public void setSource(int source) {
         this.source = source;
     }
 
     /**
-     * Getter method for the target node.
-     * @return Integer Number of the target node.
+     * Getter method for the target Node.
+     * @return Integer Number of the target Node.
      */
     public int getTarget() {
         return target;
     }
 
     /**
-     * Setter method for the target node.
-     * @param target Number of the target node.
+     * Setter method for the target Node.
+     * @param target Number of the target Node.
      */
     public void setTarget(int target) {
         this.target = target;
     }
 
     /**
-     * Getter method for the edge label.
-     * @return String The edge's label.
+     * Getter method for the Edge label.
+     * @return String The Edge's label.
      */
     public String getLabel() {
         return label;
     }
 
     /**
-     * Setter method for the edge label
-     * @param label The edge's label
+     * Setter method for the Edge label
+     * @param label The Edge's label
      */
     public void setLabel(String label) {
         this.label = label;
     }
 
     /**
-     * Getter for the edge's post label.
-     * @return String The edge's post label.
+     * Getter for the Edge's post label.
+     * @return String The Edge's post label.
      */
     public String getPostLabel() {
         return postLabel;
     }
 
     /**
-     * Setter method for the edge's post label.
-     * @param postLabel The edge's post label.
+     * Setter method for the Edge's post label.
+     * @param postLabel The Edge's post label.
      */
     public void setPostLabel(String postLabel) {
         this.postLabel = postLabel;
     }
 
     /**
-     * Equals method for the edge class.
+     * Equals method for the Edge class.
      * @param o Object
      * @return boolean Whether to two classes being compared are equal.
      */
@@ -140,11 +140,11 @@ public class edge {
             return true;
         }
 
-        if (!(o instanceof edge)){
+        if (!(o instanceof Edge)){
             return false;
         }
 
-        edge e = (edge) o;
+        Edge e = (Edge) o;
 
 
         return ((source == e.getSource()) && (target == e.getTarget()) && (label.equals(e.getLabel())) && (postLabel.equals(e.getPostLabel())));

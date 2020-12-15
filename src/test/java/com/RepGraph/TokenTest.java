@@ -14,7 +14,7 @@ public class TokenTest {
     @Test
     public void test_constructor_CreatesAndAssignsMemberVariables() throws NoSuchFieldException, IllegalAccessException {
 
-        final token t = new token(3, "testform", "testlemma", "testcarg");
+        final Token t = new Token(3, "testform", "testlemma", "testcarg");
 
         final Field index = t.getClass().getDeclaredField("index");
         index.setAccessible(true);
@@ -38,7 +38,7 @@ public class TokenTest {
     @Test
     public void test_getIndex_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final token t = new token();
+        final Token t = new Token();
 
         //Set Field not using setter
         final Field field = t.getClass().getDeclaredField("index");
@@ -56,7 +56,7 @@ public class TokenTest {
     @Test
     public void test_getForm_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final token t = new token();
+        final Token t = new Token();
 
         //Set Field not using setter
         final Field field = t.getClass().getDeclaredField("form");
@@ -74,7 +74,7 @@ public class TokenTest {
     @Test
     public void test_getLemma_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final token t = new token();
+        final Token t = new Token();
 
         //Set Field not using setter
         final Field field = t.getClass().getDeclaredField("lemma");
@@ -92,7 +92,7 @@ public class TokenTest {
     @Test
     public void test_getCarg_GetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
-        final token t = new token();
+        final Token t = new Token();
 
         //Set Field not using setter
         final Field field = t.getClass().getDeclaredField("carg");
@@ -111,7 +111,7 @@ public class TokenTest {
     public void test_setIndex_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
 
-        final token t = new token();
+        final Token t = new Token();
 
         t.setIndex(3);
 
@@ -125,7 +125,7 @@ public class TokenTest {
     public void test_setForm_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
 
-        final token t = new token();
+        final Token t = new Token();
 
         t.setForm("testform");
 
@@ -139,7 +139,7 @@ public class TokenTest {
     public void test_setLemma_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
 
-        final token t = new token();
+        final Token t = new Token();
 
         t.setLemma("testlemma");
 
@@ -153,7 +153,7 @@ public class TokenTest {
     public void test_setCarg_SetsValueCorrectly() throws NoSuchFieldException, IllegalAccessException {
 
 
-        final token t = new token();
+        final Token t = new Token();
 
         t.setCarg("testcarg");
 
@@ -167,8 +167,8 @@ public class TokenTest {
     @Test
     public void test_equal_TwoTokensWithDifferentValues() {
 
-        final token t1 = new token(0,"form1", "lemma1", "carg1");
-        final token t2 = new token(1,"form2", "lemma2", "carg2");
+        final Token t1 = new Token(0,"form1", "lemma1", "carg1");
+        final Token t2 = new Token(1,"form2", "lemma2", "carg2");
 
 
         assertFalse("Equals does not work with two tokens with different values.", t1.equals(t2));
@@ -177,8 +177,8 @@ public class TokenTest {
     @Test
     public void test_equal_IdenticalTokensWithSameValues() {
 
-        final token t1 = new token(0,"form1", "lemma1", "carg1");
-        final token t2 = new token(0,"form1", "lemma1", "carg1");
+        final Token t1 = new Token(0,"form1", "lemma1", "carg1");
+        final Token t2 = new Token(0,"form1", "lemma1", "carg1");
 
         assertTrue("Equals does not work with two identical tokens with the same values.", t1.equals(t2));
     }
@@ -186,17 +186,17 @@ public class TokenTest {
     @Test
     public void test_equal_TwoObjectsOfDifferentClasses() {
 
-        final token t1 = new token(0,"form1", "lemma1", "carg1");
+        final Token t1 = new Token(0,"form1", "lemma1", "carg1");
 
-        assertFalse("Equals does not work with two objects of different classes", t1.equals(new anchors(0, 1)));
+        assertFalse("Equals does not work with two objects of different classes", t1.equals(new Anchors(0, 1)));
     }
 
     @Test
     public void test_equal_EqualToItself() {
 
-        final token t1 = new token(0,"form1", "lemma1", "carg1");
+        final Token t1 = new Token(0,"form1", "lemma1", "carg1");
 
-        assertTrue("Equals does not work with a token equalling itself.", t1.equals(t1));
+        assertTrue("Equals does not work with a Token equalling itself.", t1.equals(t1));
     }
 
 

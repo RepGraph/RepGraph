@@ -1,7 +1,6 @@
 package com.RepGraph;
 
 
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.File;
@@ -40,61 +38,61 @@ public class RequestHandlerTest {
 
     private final String BASE_URL = "localhost:8080";
 
-    private graph testgraph, testgraph2;
+    private Graph testgraph, testgraph2;
 
 
     @Before
     public void construct_test_graph() {
 
-        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
-        ArrayList<edge> edges = new ArrayList<>();
-        ArrayList<token> tokens = new ArrayList<>();
+        HashMap<Integer, Node> nodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> edges = new ArrayList<>();
+        ArrayList<Token> tokens = new ArrayList<>();
 
-        ArrayList<anchors> anch1 = new ArrayList<anchors>();
-        ArrayList<anchors> anch2 = new ArrayList<anchors>();
-        ArrayList<anchors> anch3 = new ArrayList<anchors>();
-        ArrayList<anchors> anch4 = new ArrayList<anchors>();
-        anch1.add(new anchors(0, 0));
-        anch2.add(new anchors(1, 1));
-        anch3.add(new anchors(2, 2));
-        anch4.add(new anchors(3, 3));
+        ArrayList<Anchors> anch1 = new ArrayList<Anchors>();
+        ArrayList<Anchors> anch2 = new ArrayList<Anchors>();
+        ArrayList<Anchors> anch3 = new ArrayList<Anchors>();
+        ArrayList<Anchors> anch4 = new ArrayList<Anchors>();
+        anch1.add(new Anchors(0, 0));
+        anch2.add(new Anchors(1, 1));
+        anch3.add(new Anchors(2, 2));
+        anch4.add(new Anchors(3, 3));
 
-        nodes.put(0, new node(0, "node1", anch1));
-        nodes.put(1, new node(1, "node2", anch2));
-        nodes.put(2, new node(2, "node3", anch3));
-        nodes.put(3, new node(3, "node4", anch4));
+        nodes.put(0, new Node(0, "node1", anch1));
+        nodes.put(1, new Node(1, "node2", anch2));
+        nodes.put(2, new Node(2, "node3", anch3));
+        nodes.put(3, new Node(3, "node4", anch4));
 
-        edges.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        edges.add(new edge(1, 3, "testlabel", "testpostlabel"));
-        edges.add(new edge(2, 3, "testlabel", "testpostlabel"));
+        edges.add(new Edge(0, 1, "testlabel", "testpostlabel"));
+        edges.add(new Edge(1, 3, "testlabel", "testpostlabel"));
+        edges.add(new Edge(2, 3, "testlabel", "testpostlabel"));
 
-        tokens.add(new token(0, "node1", "node1", "node1"));
-        tokens.add(new token(1, "node2", "node2", "node2"));
-        tokens.add(new token(2, "node3", "node3", "node3"));
-        tokens.add(new token(3, "node4", "node4", "node4"));
+        tokens.add(new Token(0, "node1", "node1", "node1"));
+        tokens.add(new Token(1, "node2", "node2", "node2"));
+        tokens.add(new Token(2, "node3", "node3", "node3"));
+        tokens.add(new Token(3, "node4", "node4", "node4"));
         ArrayList<Integer> tops = new ArrayList<Integer>();
         tops.add(2);
-        testgraph = new graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, tops);
+        testgraph = new Graph("11111", "testsource", "node1 node2 node3 node4", nodes, tokens, edges, tops);
 
-        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
-        ArrayList<edge> edges2 = new ArrayList<>();
-        ArrayList<token> tokens2 = new ArrayList<>();
+        HashMap<Integer, Node> nodes2 = new HashMap<Integer, Node>();
+        ArrayList<Edge> edges2 = new ArrayList<>();
+        ArrayList<Token> tokens2 = new ArrayList<>();
 
-        nodes2.put(0, new node(0, "node3", anch1));
-        nodes2.put(1, new node(1, "node4", anch2));
-        nodes2.put(2, new node(2, "node5", anch3));
-        nodes2.put(3, new node(3, "node6", anch4));
+        nodes2.put(0, new Node(0, "node3", anch1));
+        nodes2.put(1, new Node(1, "node4", anch2));
+        nodes2.put(2, new Node(2, "node5", anch3));
+        nodes2.put(3, new Node(3, "node6", anch4));
 
-        edges2.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        edges2.add(new edge(1, 3, "testlabel", "testpostlabel"));
-        edges2.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        edges2.add(new Edge(0, 1, "testlabel", "testpostlabel"));
+        edges2.add(new Edge(1, 3, "testlabel", "testpostlabel"));
+        edges2.add(new Edge(0, 2, "testlabel", "testpostlabel"));
 
-        tokens2.add(new token(0, "node3", "node3", "node3"));
-        tokens2.add(new token(1, "node4", "node4", "node4"));
-        tokens2.add(new token(2, "node5", "node5", "node5"));
-        tokens2.add(new token(3, "node6", "node6", "node6"));
+        tokens2.add(new Token(0, "node3", "node3", "node3"));
+        tokens2.add(new Token(1, "node4", "node4", "node4"));
+        tokens2.add(new Token(2, "node5", "node5", "node5"));
+        tokens2.add(new Token(3, "node6", "node6", "node6"));
 
-        testgraph2 = new graph("22222", "testsource", "node3 node4 node5 node6", nodes2, tokens2, edges2, tops);
+        testgraph2 = new Graph("22222", "testsource", "node3 node4 node5 node6", nodes2, tokens2, edges2, tops);
 
     }
 

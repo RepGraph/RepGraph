@@ -14,47 +14,47 @@ import static junit.framework.TestCase.*;
 
 public class RepGraphModelTest {
 
-    private graph g1, g2, g3, g4;
+    private Graph g1, g2, g3, g4;
 
     @Before
     public void construct_test_graph(){
-        HashMap<Integer, node> nodes1 = new HashMap<Integer, node>();
-        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
-        HashMap<Integer, node> nodes3 = new HashMap<Integer, node>();
-        HashMap<Integer, node> nodes4 = new HashMap<Integer, node>();
-        ArrayList<edge> edges1 = new ArrayList<>();
-        ArrayList<token> tokens1 = new ArrayList<>();
-        ArrayList<token> tokens2 = new ArrayList<>();
-        ArrayList<token> tokens3 = new ArrayList<>();
-        ArrayList<token> tokens4 = new ArrayList<>();
+        HashMap<Integer, Node> nodes1 = new HashMap<Integer, Node>();
+        HashMap<Integer, Node> nodes2 = new HashMap<Integer, Node>();
+        HashMap<Integer, Node> nodes3 = new HashMap<Integer, Node>();
+        HashMap<Integer, Node> nodes4 = new HashMap<Integer, Node>();
+        ArrayList<Edge> edges1 = new ArrayList<>();
+        ArrayList<Token> tokens1 = new ArrayList<>();
+        ArrayList<Token> tokens2 = new ArrayList<>();
+        ArrayList<Token> tokens3 = new ArrayList<>();
+        ArrayList<Token> tokens4 = new ArrayList<>();
 
 
         for (int i = 0; i < 4; i++) {
-            ArrayList<anchors> anch1 = new ArrayList<anchors>();
-            anch1.add(new anchors(i, i));
-            nodes1.put(i, new node(i, "node" + (i + 1), anch1));
-            nodes2.put(i, new node(i, "node" + (i + 2), anch1));
-            nodes3.put(i, new node(i, "node" + (i + 3), anch1));
-            nodes4.put(i, new node(i, "node" + (7), anch1));
+            ArrayList<Anchors> anch1 = new ArrayList<Anchors>();
+            anch1.add(new Anchors(i, i));
+            nodes1.put(i, new Node(i, "Node" + (i + 1), anch1));
+            nodes2.put(i, new Node(i, "Node" + (i + 2), anch1));
+            nodes3.put(i, new Node(i, "Node" + (i + 3), anch1));
+            nodes4.put(i, new Node(i, "Node" + (7), anch1));
         }
 
-        edges1.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        edges1.add(new edge(1, 3, "testlabel", "testpostlabel"));
-        edges1.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        edges1.add(new Edge(0, 1, "testlabel", "testpostlabel"));
+        edges1.add(new Edge(1, 3, "testlabel", "testpostlabel"));
+        edges1.add(new Edge(0, 2, "testlabel", "testpostlabel"));
 
 
         for (int i = 0; i < 4; i++) {
-            tokens1.add(new token(i, "node" + (i + 1) + " form", "node" + (i + 1) + " lemma", "node" + (i + 1) + " carg"));
-            tokens2.add(new token(i, "node" + (i + 2) + " form", "node" + (i + 2) + " lemma", "node" + (i + 2) + " carg"));
-            tokens3.add(new token(i, "node" + (i + 3) + " form", "node" + (i + 3) + " lemma", "node" + (i + 3) + " carg"));
-            tokens4.add(new token(6, "node" + (7) + " form", "node" + (7) + " lemma", "node" + (7) + " carg"));
+            tokens1.add(new Token(i, "Node" + (i + 1) + " form", "Node" + (i + 1) + " lemma", "Node" + (i + 1) + " carg"));
+            tokens2.add(new Token(i, "Node" + (i + 2) + " form", "Node" + (i + 2) + " lemma", "Node" + (i + 2) + " carg"));
+            tokens3.add(new Token(i, "Node" + (i + 3) + " form", "Node" + (i + 3) + " lemma", "Node" + (i + 3) + " carg"));
+            tokens4.add(new Token(6, "Node" + (7) + " form", "Node" + (7) + " lemma", "Node" + (7) + " carg"));
 
         }
 
-        g1 = new graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1, new ArrayList<Integer>());
-        g2 = new graph("22222", "testsource", "node2 node3 node4 node5", nodes2, tokens2, edges1, new ArrayList<Integer>());
-        g3 = new graph("33333", "testsource", "node3 node4 node5 node6", nodes3, tokens3, edges1, new ArrayList<Integer>());
-        g4 = new graph("44444", "testsource", "node7 node7 node7 node7", nodes4, tokens4, edges1, new ArrayList<Integer>());
+        g1 = new Graph("11111", "testsource", "node1 node2 node3 node4", nodes1, tokens1, edges1, new ArrayList<Integer>());
+        g2 = new Graph("22222", "testsource", "node2 node3 node4 node5", nodes2, tokens2, edges1, new ArrayList<Integer>());
+        g3 = new Graph("33333", "testsource", "node3 node4 node5 node6", nodes3, tokens3, edges1, new ArrayList<Integer>());
+        g4 = new Graph("44444", "testsource", "node7 node7 node7 node7", nodes4, tokens4, edges1, new ArrayList<Integer>());
 
 
     }
@@ -64,7 +64,7 @@ public class RepGraphModelTest {
 
         construct_test_graph();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
 
         RepGraphModel r = new RepGraphModel();
@@ -75,7 +75,7 @@ public class RepGraphModelTest {
         field.set(r, graphs);
 
 
-        assertEquals("graph value was not retrieved properly.", r.getGraph("11111"), g1);
+        assertEquals("Graph value was not retrieved properly.", r.getGraph("11111"), g1);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class RepGraphModelTest {
 
         construct_test_graph();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
 
 
@@ -94,7 +94,7 @@ public class RepGraphModelTest {
         final Field field = r.getClass().getDeclaredField("graphs");
         field.setAccessible(true);
 
-        assertEquals("graph value was not added correctly.", field.get(r) , graphs);
+        assertEquals("Graph value was not added correctly.", field.get(r) , graphs);
     }
 
 
@@ -103,7 +103,7 @@ public class RepGraphModelTest {
 
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -114,36 +114,36 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        HashMap<Integer, node> correctNodes = new HashMap<Integer, node>();
-        ArrayList<edge> correctEdges = new ArrayList<>();
-        ArrayList<token> correctTokens = new ArrayList<>();
+        HashMap<Integer, Node> correctNodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> correctEdges = new ArrayList<>();
+        ArrayList<Token> correctTokens = new ArrayList<>();
 
 
-        ArrayList<anchors> anch1 = new ArrayList<anchors>();
-        anch1.add(new anchors(0, 0));
+        ArrayList<Anchors> anch1 = new ArrayList<Anchors>();
+        anch1.add(new Anchors(0, 0));
 
-        ArrayList<anchors> anch2 = new ArrayList<anchors>();
-        anch2.add(new anchors(1, 1));
+        ArrayList<Anchors> anch2 = new ArrayList<Anchors>();
+        anch2.add(new Anchors(1, 1));
 
-        ArrayList<anchors> anch3 = new ArrayList<anchors>();
-        anch3.add(new anchors(2, 2));
+        ArrayList<Anchors> anch3 = new ArrayList<Anchors>();
+        anch3.add(new Anchors(2, 2));
 
 
-        correctNodes.put(0, new node(0, "node" + (0 + 1), anch1));
-        correctNodes.put(1, new node(1, "node" + (1 + 1), anch2));
-        correctNodes.put(2, new node(2, "node" + (2 + 1), anch3));
+        correctNodes.put(0, new Node(0, "Node" + (0 + 1), anch1));
+        correctNodes.put(1, new Node(1, "Node" + (1 + 1), anch2));
+        correctNodes.put(2, new Node(2, "Node" + (2 + 1), anch3));
 
-        correctEdges.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        correctEdges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        correctEdges.add(new Edge(0, 1, "testlabel", "testpostlabel"));
+        correctEdges.add(new Edge(0, 2, "testlabel", "testpostlabel"));
 
         for (int i = 0; i < 3; i++) {
-            correctTokens.add(new token(i, "node" + (i + 1) + " form", "node" + (i + 1) + " lemma", "node" + (i + 1) + " carg"));
+            correctTokens.add(new Token(i, "Node" + (i + 1) + " form", "Node" + (i + 1) + " lemma", "Node" + (i + 1) + " carg"));
 
         }
 
-        graph expected = new graph("11111", g1.getSource(), "node1 form node2 form node3 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
+        Graph expected = new Graph("11111", g1.getSource(), "node1 form node2 form node3 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
 
-        graph subset = model.CreateSubsetAdjacent("11111", 0);
+        Graph subset = model.CreateSubsetAdjacent("11111", 0);
 
         assertEquals("Subset Not Constructed Properly", subset, expected);
 
@@ -154,7 +154,7 @@ public class RepGraphModelTest {
 
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -165,47 +165,47 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        HashMap<Integer, node> correctNodes = new HashMap<Integer, node>();
-        ArrayList<edge> correctEdges = new ArrayList<>();
-        ArrayList<token> correctTokens = new ArrayList<>();
+        HashMap<Integer, Node> correctNodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> correctEdges = new ArrayList<>();
+        ArrayList<Token> correctTokens = new ArrayList<>();
 
 
-        ArrayList<anchors> anch1 = new ArrayList<anchors>();
-        anch1.add(new anchors(0, 0));
+        ArrayList<Anchors> anch1 = new ArrayList<Anchors>();
+        anch1.add(new Anchors(0, 0));
 
-        ArrayList<anchors> anch2 = new ArrayList<anchors>();
-        anch2.add(new anchors(1, 1));
+        ArrayList<Anchors> anch2 = new ArrayList<Anchors>();
+        anch2.add(new Anchors(1, 1));
 
-        ArrayList<anchors> anch3 = new ArrayList<anchors>();
-        anch3.add(new anchors(2, 2));
+        ArrayList<Anchors> anch3 = new ArrayList<Anchors>();
+        anch3.add(new Anchors(2, 2));
 
-        ArrayList<anchors> anch4 = new ArrayList<anchors>();
-        anch4.add(new anchors(3, 3));
-
-
-        correctNodes.put(0, new node(0, "node" + (0 + 1), anch1));
-        correctNodes.put(1, new node(1, "node" + (1 + 1), anch2));
-        correctNodes.put(2, new node(2, "node" + (2 + 1), anch3));
-        correctNodes.put(3, new node(3, "node" + (3 + 1), anch4));
+        ArrayList<Anchors> anch4 = new ArrayList<Anchors>();
+        anch4.add(new Anchors(3, 3));
 
 
-        correctEdges.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        correctEdges.add(new edge(1, 3, "testlabel", "testpostlabel"));
-        correctEdges.add(new edge(0, 2, "testlabel", "testpostlabel"));
+        correctNodes.put(0, new Node(0, "Node" + (0 + 1), anch1));
+        correctNodes.put(1, new Node(1, "Node" + (1 + 1), anch2));
+        correctNodes.put(2, new Node(2, "Node" + (2 + 1), anch3));
+        correctNodes.put(3, new Node(3, "Node" + (3 + 1), anch4));
+
+
+        correctEdges.add(new Edge(0, 1, "testlabel", "testpostlabel"));
+        correctEdges.add(new Edge(1, 3, "testlabel", "testpostlabel"));
+        correctEdges.add(new Edge(0, 2, "testlabel", "testpostlabel"));
 
 
         for (int i = 0; i < 4; i++) {
-            correctTokens.add(new token(i, "node" + (i + 1) + " form", "node" + (i + 1) + " lemma", "node" + (i + 1) + " carg"));
+            correctTokens.add(new Token(i, "Node" + (i + 1) + " form", "Node" + (i + 1) + " lemma", "Node" + (i + 1) + " carg"));
 
         }
 
-        graph expected = new graph("11111", g1.getSource(), "node1 form node2 form node3 form node4 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
+        Graph expected = new Graph("11111", g1.getSource(), "node1 form node2 form node3 form node4 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
 
-        graph subset = model.CreateSubsetDescendent("11111", 0);
+        Graph subset = model.CreateSubsetDescendent("11111", 0);
 
-        Comparator<edge> comp = new Comparator<edge>() {
+        Comparator<Edge> comp = new Comparator<Edge>() {
             @Override
-            public int compare(edge o1, edge o2) {
+            public int compare(Edge o1, Edge o2) {
                 if (o1.getSource() < o2.getSource()) {
                     return -1;
                 } else if (o1.getSource() > o2.getSource()) {
@@ -215,9 +215,9 @@ public class RepGraphModelTest {
             }
         };
 
-        Comparator<node> compNodes = new Comparator<node>() {
+        Comparator<Node> compNodes = new Comparator<Node>() {
             @Override
-            public int compare(node o1, node o2) {
+            public int compare(Node o1, Node o2) {
                 if (o1.getId() < o2.getId()) {
                     return -1;
                 } else if (o1.getId() > o2.getId()) {
@@ -230,8 +230,8 @@ public class RepGraphModelTest {
         Collections.sort(correctEdges, comp);
         Collections.sort(subset.getEdges(), comp);
 
-        ArrayList<node> correctNodesList = new ArrayList<>(correctNodes.values());
-        ArrayList<node> SubsetNodesList = new ArrayList<>(subset.getNodes().values());
+        ArrayList<Node> correctNodesList = new ArrayList<>(correctNodes.values());
+        ArrayList<Node> SubsetNodesList = new ArrayList<>(subset.getNodes().values());
         Collections.sort(correctNodesList, compNodes);
         Collections.sort(SubsetNodesList, compNodes);
 
@@ -240,18 +240,18 @@ public class RepGraphModelTest {
         subset = model.CreateSubsetDescendent("11111", 1);
 
         correctNodes.clear();
-        correctNodes.put(1, new node(1, "node" + (1 + 1), anch2));
-        correctNodes.put(3, new node(3, "node" + (3 + 1), anch4));
+        correctNodes.put(1, new Node(1, "Node" + (1 + 1), anch2));
+        correctNodes.put(3, new Node(3, "Node" + (3 + 1), anch4));
 
         correctEdges.clear();
-        correctEdges.add(new edge(1, 3, "testlabel", "testpostlabel"));
+        correctEdges.add(new Edge(1, 3, "testlabel", "testpostlabel"));
 
         correctTokens.clear();
-        correctTokens.add(new token(1, "node" + (1 + 1) + " form", "node" + (1 + 1) + " lemma", "node" + (1 + 1) + " carg"));
-        correctTokens.add(new token(2, "node" + (2 + 1) + " form", "node" + (2 + 1) + " lemma", "node" + (2 + 1) + " carg"));
-        correctTokens.add(new token(3, "node" + (3 + 1) + " form", "node" + (3 + 1) + " lemma", "node" + (3 + 1) + " carg"));
+        correctTokens.add(new Token(1, "Node" + (1 + 1) + " form", "Node" + (1 + 1) + " lemma", "Node" + (1 + 1) + " carg"));
+        correctTokens.add(new Token(2, "Node" + (2 + 1) + " form", "Node" + (2 + 1) + " lemma", "Node" + (2 + 1) + " carg"));
+        correctTokens.add(new Token(3, "Node" + (3 + 1) + " form", "Node" + (3 + 1) + " lemma", "Node" + (3 + 1) + " carg"));
 
-        expected = new graph("11111", g1.getSource(), "node2 form node3 form node4 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
+        expected = new Graph("11111", g1.getSource(), "node2 form node3 form node4 form", correctNodes, correctTokens, correctEdges, new ArrayList<Integer>());
 
         Collections.sort(correctEdges, comp);
         Collections.sort(subset.getEdges(), comp);
@@ -270,7 +270,7 @@ public class RepGraphModelTest {
     public void test_SearchSubgraphNodeSet_FindsGraphsCorrectly() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -296,7 +296,7 @@ public class RepGraphModelTest {
         //Collections.sort(results);
         //Collections.sort(correctResults);
         correctResults.put("response", "Success");
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a set of Node labels and were not found correctly.", correctResults, results);
 
 
         correctResults = new HashMap<String, Object>();
@@ -313,7 +313,7 @@ public class RepGraphModelTest {
 
 
         correctResults.put("response", "Success");
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a set of Node labels and were not found correctly.", correctResults, results);
 
 
         correctResults = new HashMap<String, Object>();
@@ -333,7 +333,7 @@ public class RepGraphModelTest {
         results = model.searchSubgraphNodeSet(labels);
 
         correctResults.put("response", "Success");
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a set of Node labels and were not found correctly.", correctResults, results);
 
         correctResults = new HashMap<String, Object>();
         found = new ArrayList<>();
@@ -354,7 +354,7 @@ public class RepGraphModelTest {
         results = model.searchSubgraphNodeSet(labels);
 
         correctResults.put("response", "Success");
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults.size(), results.size());
+        assertEquals("Graphs were searched for a set of Node labels and were not found correctly.", correctResults.size(), results.size());
 
         ArrayList<HashMap<String, String>> obj = (ArrayList<HashMap<String, String>>) correctResults.get("data");
         ArrayList<HashMap<String, String>> Resultobj = (ArrayList<HashMap<String, String>>) results.get("data");
@@ -373,7 +373,7 @@ public class RepGraphModelTest {
         results = model.searchSubgraphNodeSet(labels);
 
         correctResults.put("response", "Success");
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a set of Node labels and were not found correctly.", correctResults, results);
 
 
     }
@@ -383,7 +383,7 @@ public class RepGraphModelTest {
 
         RepGraphModel model = new RepGraphModel();
         ArrayList<String> labels = new ArrayList<>();
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -409,7 +409,7 @@ public class RepGraphModelTest {
         RepGraphModel model = new RepGraphModel();
         ArrayList<String> labels = new ArrayList<>();
         labels.add("node7");
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -435,7 +435,7 @@ public class RepGraphModelTest {
         RepGraphModel model = new RepGraphModel();
         ArrayList<String> labels = new ArrayList<>();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -474,7 +474,7 @@ public class RepGraphModelTest {
         results = model.searchSubgraphNodeSet(labels);
 
         correctResults.put("response", "Success");
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a set of Node labels and were not found correctly.", correctResults, results);
 
 
         correctResults = new HashMap<String, Object>();
@@ -489,7 +489,7 @@ public class RepGraphModelTest {
         results = model.searchSubgraphNodeSet(labels);
 
         correctResults.put("response", "Success");
-        assertEquals("Graphs were searched for a set of node labels and were not found correctly.", correctResults, results);
+        assertEquals("Graphs were searched for a set of Node labels and were not found correctly.", correctResults, results);
 
 
     }
@@ -500,7 +500,7 @@ public class RepGraphModelTest {
 
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -510,56 +510,56 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
-        ArrayList<edge> subedges = new ArrayList<>();
+        HashMap<Integer, Node> subnodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> subedges = new ArrayList<>();
 
-        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
+        subedges.add(new Edge(0, 1, "testlabel", "testpostlabel"));
 
-        subnodes.put(0, new node(0, "node" + (2), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (4), new ArrayList<anchors>()));
-        graph subgraph1 = new graph("44444", "testsource", "node2 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        subnodes.put(0, new Node(0, "Node" + (2), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (4), new ArrayList<Anchors>()));
+        Graph subgraph1 = new Graph("44444", "testsource", "node2 node4", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
-        subnodes = new HashMap<Integer, node>();
-        subnodes.put(0, new node(0, "node" + (1), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (2), new ArrayList<anchors>()));
+        subnodes = new HashMap<Integer, Node>();
+        subnodes.put(0, new Node(0, "Node" + (1), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (2), new ArrayList<Anchors>()));
 
-        graph subgraph2 = new graph("55555", "testsource", "node1 node2", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        Graph subgraph2 = new Graph("55555", "testsource", "node1 node2", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
-        subnodes = new HashMap<Integer, node>();
-        subnodes.put(0, new node(0, "node" + (3), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (4), new ArrayList<anchors>()));
+        subnodes = new HashMap<Integer, Node>();
+        subnodes.put(0, new Node(0, "Node" + (3), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (4), new ArrayList<Anchors>()));
 
-        graph subgraph3 = new graph("66666", "testsource", "node3 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        Graph subgraph3 = new Graph("66666", "testsource", "node3 node4", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
-        subnodes = new HashMap<Integer, node>();
-        subnodes.put(0, new node(0, "node" + (3), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (5), new ArrayList<anchors>()));
+        subnodes = new HashMap<Integer, Node>();
+        subnodes.put(0, new Node(0, "Node" + (3), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (5), new ArrayList<Anchors>()));
 
-        graph subgraph4 = new graph("77777", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
-
-        subedges = new ArrayList<>();
-        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        subedges.add(new edge(1, 3, "testlabel", "testpostlabel"));
-        subedges.add(new edge(0, 2, "testlabel", "testpostlabel"));
-
-        subnodes = new HashMap<Integer, node>();
-        subnodes.put(0, new node(0, "node" + (1), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (2), new ArrayList<anchors>()));
-        subnodes.put(2, new node(2, "node" + (3), new ArrayList<anchors>()));
-        subnodes.put(3, new node(3, "node" + (4), new ArrayList<anchors>()));
-        graph subgraph5 = new graph("88888", "testsource", "node1 node2 node3 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
-
-        subnodes = new HashMap<Integer, node>();
-        subnodes.put(0, new node(0, "node" + (1), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (2), new ArrayList<anchors>()));
-        subnodes.put(2, new node(2, "node" + (3), new ArrayList<anchors>()));
-        subnodes.put(3, new node(3, "node" + (4), new ArrayList<anchors>()));
+        Graph subgraph4 = new Graph("77777", "testsource", "node3 node5", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
         subedges = new ArrayList<>();
-        subedges.add(new edge(0, 1, "testlabelWillFail", "testpostlabel"));
-        subedges.add(new edge(1, 3, "testlabel", "testpostlabel"));
-        subedges.add(new edge(0, 2, "testlabel", "testpostlabel"));
-        graph subgraph6 = new graph("88888", "testsource", "node1 node2 node3 node4", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        subedges.add(new Edge(0, 1, "testlabel", "testpostlabel"));
+        subedges.add(new Edge(1, 3, "testlabel", "testpostlabel"));
+        subedges.add(new Edge(0, 2, "testlabel", "testpostlabel"));
+
+        subnodes = new HashMap<Integer, Node>();
+        subnodes.put(0, new Node(0, "Node" + (1), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (2), new ArrayList<Anchors>()));
+        subnodes.put(2, new Node(2, "Node" + (3), new ArrayList<Anchors>()));
+        subnodes.put(3, new Node(3, "Node" + (4), new ArrayList<Anchors>()));
+        Graph subgraph5 = new Graph("88888", "testsource", "node1 node2 node3 node4", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
+
+        subnodes = new HashMap<Integer, Node>();
+        subnodes.put(0, new Node(0, "Node" + (1), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (2), new ArrayList<Anchors>()));
+        subnodes.put(2, new Node(2, "Node" + (3), new ArrayList<Anchors>()));
+        subnodes.put(3, new Node(3, "Node" + (4), new ArrayList<Anchors>()));
+
+        subedges = new ArrayList<>();
+        subedges.add(new Edge(0, 1, "testlabelWillFail", "testpostlabel"));
+        subedges.add(new Edge(1, 3, "testlabel", "testpostlabel"));
+        subedges.add(new Edge(0, 2, "testlabel", "testpostlabel"));
+        Graph subgraph6 = new Graph("88888", "testsource", "node1 node2 node3 node4", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
@@ -644,7 +644,7 @@ public class RepGraphModelTest {
     public void test_SearchSubgraphPattern_HandlesDisconnectedSubGraphPattern() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -654,16 +654,16 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
-        subnodes.put(0, new node(0, "node" + (1), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (2), new ArrayList<anchors>()));
-        subnodes.put(2, new node(2, "node" + (3), new ArrayList<anchors>()));
+        HashMap<Integer, Node> subnodes = new HashMap<Integer, Node>();
+        subnodes.put(0, new Node(0, "Node" + (1), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (2), new ArrayList<Anchors>()));
+        subnodes.put(2, new Node(2, "Node" + (3), new ArrayList<Anchors>()));
 
-        ArrayList<edge> subedges = new ArrayList<>();
-        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        subedges.add(new edge(1, 0, "testlabel", "testpostlabel"));
+        ArrayList<Edge> subedges = new ArrayList<>();
+        subedges.add(new Edge(0, 1, "testlabel", "testpostlabel"));
+        subedges.add(new Edge(1, 0, "testlabel", "testpostlabel"));
 
-        graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        Graph subgraph = new Graph("44444", "testsource", "", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
 
@@ -679,7 +679,7 @@ public class RepGraphModelTest {
     public void test_SearchSubgraphPattern_HandlesDanglingEdgeInSubGraphPattern() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -689,18 +689,18 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
-        subnodes.put(0, new node(0, "node" + (1), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (2), new ArrayList<anchors>()));
-        subnodes.put(2, new node(2, "node" + (3), new ArrayList<anchors>()));
+        HashMap<Integer, Node> subnodes = new HashMap<Integer, Node>();
+        subnodes.put(0, new Node(0, "Node" + (1), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (2), new ArrayList<Anchors>()));
+        subnodes.put(2, new Node(2, "Node" + (3), new ArrayList<Anchors>()));
 
-        ArrayList<edge> subedges = new ArrayList<>();
-        subedges.add(new edge(0, 1, "testlabel", "testpostlabel"));
-        subedges.add(new edge(1, 2, "testlabel", "testpostlabel"));
-        subedges.add(new edge(2, 3, "testlabel", "testpostlabel"));
+        ArrayList<Edge> subedges = new ArrayList<>();
+        subedges.add(new Edge(0, 1, "testlabel", "testpostlabel"));
+        subedges.add(new Edge(1, 2, "testlabel", "testpostlabel"));
+        subedges.add(new Edge(2, 3, "testlabel", "testpostlabel"));
 
 
-        graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        Graph subgraph = new Graph("44444", "testsource", "", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
 
@@ -716,7 +716,7 @@ public class RepGraphModelTest {
     public void test_SearchSubgraphPattern_HandlesEmptySubgraph() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -726,10 +726,10 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
-        ArrayList<edge> subedges = new ArrayList<>();
+        HashMap<Integer, Node> subnodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> subedges = new ArrayList<>();
 
-        graph subgraph = new graph("44444", "testsource", "", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        Graph subgraph = new Graph("44444", "testsource", "", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
         correctResults.put("response", "Failure");
@@ -744,7 +744,7 @@ public class RepGraphModelTest {
     public void test_SearchSubgraphPattern_HandlesNonConnectedSubgraph() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -754,13 +754,13 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
-        ArrayList<edge> subedges = new ArrayList<>();
+        HashMap<Integer, Node> subnodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> subedges = new ArrayList<>();
 
-        subnodes.put(0, new node(0, "node" + (3), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (5), new ArrayList<anchors>()));
+        subnodes.put(0, new Node(0, "Node" + (3), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (5), new ArrayList<Anchors>()));
 
-        graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        Graph subgraph = new Graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
         correctResults.put("response", "Failure");
@@ -776,7 +776,7 @@ public class RepGraphModelTest {
     public void test_SearchSubgraphPattern_HandlesIncorrectEdgeData() throws NoSuchFieldException, IllegalAccessException {
         RepGraphModel model = new RepGraphModel();
 
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put("11111", g1);
         graphs.put("22222", g2);
         graphs.put("33333", g3);
@@ -786,14 +786,14 @@ public class RepGraphModelTest {
         field.setAccessible(true);
         field.set(model, graphs);
 
-        HashMap<Integer, node> subnodes = new HashMap<Integer, node>();
-        ArrayList<edge> subedges = new ArrayList<>();
+        HashMap<Integer, Node> subnodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> subedges = new ArrayList<>();
 
-        subnodes.put(0, new node(0, "node" + (3), new ArrayList<anchors>()));
-        subnodes.put(1, new node(1, "node" + (5), new ArrayList<anchors>()));
-        subedges.add(new edge(2, 3, "testlabel", "testpostlabel"));
+        subnodes.put(0, new Node(0, "Node" + (3), new ArrayList<Anchors>()));
+        subnodes.put(1, new Node(1, "Node" + (5), new ArrayList<Anchors>()));
+        subedges.add(new Edge(2, 3, "testlabel", "testpostlabel"));
 
-        graph subgraph = new graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<token>(), subedges, new ArrayList<Integer>());
+        Graph subgraph = new Graph("44444", "testsource", "node3 node5", subnodes, new ArrayList<Token>(), subedges, new ArrayList<Integer>());
 
         HashMap<String, Object> correctResults = new HashMap<String, Object>();
         correctResults.put("response", "Failure");
@@ -806,45 +806,45 @@ public class RepGraphModelTest {
 
     @Test
     public void test_compareTwoGraphs_FindsSimilarNodesAndEdgesCorrectly(){
-        //Creating the nodes and edges for the graph
-        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
-        ArrayList<edge> edges = new ArrayList<>();
-        anchors anch1 = new anchors(0, 0);
-        ArrayList<anchors> anch1arr = new ArrayList<>();
+        //Creating the nodes and edges for the Graph
+        HashMap<Integer, Node> nodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> edges = new ArrayList<>();
+        Anchors anch1 = new Anchors(0, 0);
+        ArrayList<Anchors> anch1arr = new ArrayList<>();
         anch1arr.add(anch1);
-        node node0 = new node(0, "node0", anch1arr);
-        node node1 = new node(1, "node1", anch1arr);
-        node node2 = new node(2, "node2", anch1arr);
+        Node node0 = new Node(0, "node0", anch1arr);
+        Node node1 = new Node(1, "node1", anch1arr);
+        Node node2 = new Node(2, "node2", anch1arr);
         nodes.put(0, node0);
         nodes.put(1, node1);
         nodes.put(2, node2);
 
-        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 = new edge(0, 2, "testlabel", "testpostlabel");
+        Edge edge0 = new Edge(0, 1, "testlabel", "testpostlabel");
+        Edge edge1 = new Edge(0, 2, "testlabel", "testpostlabel");
 
         edges.add(edge0);
         edges.add(edge1);
 
 
-        graph g1 = new graph("1", "testsource1", "testInput1", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+        Graph g1 = new Graph("1", "testsource1", "testInput1", nodes, new ArrayList<Token>(), edges, new ArrayList<Integer>());
 
-        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
-        ArrayList<edge> edges2 = new ArrayList<>();
+        HashMap<Integer, Node> nodes2 = new HashMap<Integer, Node>();
+        ArrayList<Edge> edges2 = new ArrayList<>();
 
-        node node3 = new node(0, "node0", anch1arr);
-        node node4 = new node(1, "node3", anch1arr);
-        node node5 = new node(2, "node2", anch1arr);
+        Node node3 = new Node(0, "node0", anch1arr);
+        Node node4 = new Node(1, "node3", anch1arr);
+        Node node5 = new Node(2, "node2", anch1arr);
         nodes2.put(0, node3);
         nodes2.put(1, node4);
         nodes2.put(2, node5);
 
-        edge edge3 = new edge(0, 2, "testlabel", "testpostlabel");
+        Edge edge3 = new Edge(0, 2, "testlabel", "testpostlabel");
 
         edges2.add(edge3);
         edges2.add(edge1);
         edges2.add(edge0);
 
-        graph g2 = new graph("2", "testsource2", "testInput2", nodes2, new ArrayList<token>(), edges2, new ArrayList<Integer>());
+        Graph g2 = new Graph("2", "testsource2", "testInput2", nodes2, new ArrayList<Token>(), edges2, new ArrayList<Integer>());
         RepGraphModel model = new RepGraphModel();
         model.addGraph(g1);
         model.addGraph(g2);
@@ -879,8 +879,8 @@ public class RepGraphModelTest {
 
 
         RepGraphModel model = new RepGraphModel();
-        graph g1 = new graph("1", "", "", new ArrayList<node>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        graph g2 = new graph("2", "", "", new ArrayList<node>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Graph g1 = new Graph("1", "", "", new ArrayList<Node>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Graph g2 = new Graph("2", "", "", new ArrayList<Node>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
         model.addGraph(g1);
         model.addGraph(g2);
@@ -907,44 +907,44 @@ public class RepGraphModelTest {
 
     @Test
     public void test_compareTwoGraphs_NoSimilarEdgesOrNodes() {
-        //Creating the nodes and edges for the graph
-        HashMap<Integer, node> nodes = new HashMap<Integer, node>();
-        ArrayList<edge> edges = new ArrayList<>();
-        anchors anch1 = new anchors(0, 0);
-        ArrayList<anchors> anch1arr = new ArrayList<>();
+        //Creating the nodes and edges for the Graph
+        HashMap<Integer, Node> nodes = new HashMap<Integer, Node>();
+        ArrayList<Edge> edges = new ArrayList<>();
+        Anchors anch1 = new Anchors(0, 0);
+        ArrayList<Anchors> anch1arr = new ArrayList<>();
         anch1arr.add(anch1);
-        node node0 = new node(0, "node9", anch1arr);
-        node node1 = new node(1, "node5", anch1arr);
-        node node2 = new node(2, "node4", anch1arr);
+        Node node0 = new Node(0, "node9", anch1arr);
+        Node node1 = new Node(1, "node5", anch1arr);
+        Node node2 = new Node(2, "node4", anch1arr);
         nodes.put(0, node0);
         nodes.put(1, node1);
         nodes.put(2, node2);
 
-        edge edge0 = new edge(0, 1, "testlabel", "testpostlabel");
-        edge edge1 = new edge(0, 2, "testlabel", "testpostlabel");
+        Edge edge0 = new Edge(0, 1, "testlabel", "testpostlabel");
+        Edge edge1 = new Edge(0, 2, "testlabel", "testpostlabel");
 
         edges.add(edge0);
         edges.add(edge1);
 
 
-        graph g1 = new graph("1", "testsource1", "testInput1", nodes, new ArrayList<token>(), edges, new ArrayList<Integer>());
+        Graph g1 = new Graph("1", "testsource1", "testInput1", nodes, new ArrayList<Token>(), edges, new ArrayList<Integer>());
 
-        HashMap<Integer, node> nodes2 = new HashMap<Integer, node>();
-        ArrayList<edge> edges2 = new ArrayList<>();
+        HashMap<Integer, Node> nodes2 = new HashMap<Integer, Node>();
+        ArrayList<Edge> edges2 = new ArrayList<>();
 
-        node node3 = new node(0, "node0", anch1arr);
-        node node4 = new node(1, "node3", anch1arr);
-        node node5 = new node(2, "node2", anch1arr);
+        Node node3 = new Node(0, "node0", anch1arr);
+        Node node4 = new Node(1, "node3", anch1arr);
+        Node node5 = new Node(2, "node2", anch1arr);
         nodes2.put(0, node3);
         nodes2.put(1, node4);
         nodes2.put(2, node5);
 
-        edge edge3 = new edge(0, 2, "testlabel11", "testpostlabel22");
+        Edge edge3 = new Edge(0, 2, "testlabel11", "testpostlabel22");
 
         edges2.add(edge3);
 
 
-        graph g2 = new graph("2", "testsource2", "testInput2", nodes2, new ArrayList<token>(), edges2, new ArrayList<Integer>());
+        Graph g2 = new Graph("2", "testsource2", "testInput2", nodes2, new ArrayList<Token>(), edges2, new ArrayList<Integer>());
         RepGraphModel model = new RepGraphModel();
         model.addGraph(g1);
         model.addGraph(g2);
@@ -973,7 +973,7 @@ public class RepGraphModelTest {
     @Test
     public void test_containsKey_CorrectlyChecksForKey()throws NoSuchFieldException, IllegalAccessException{
         RepGraphModel model = new RepGraphModel();
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put(g1.getId(),g1);
         graphs.put(g2.getId(),g2);
         graphs.put(g3.getId(),g3);
@@ -988,7 +988,7 @@ public class RepGraphModelTest {
     @Test
     public void test_clearGraph_CorrectlyClearsGraph()throws NoSuchFieldException, IllegalAccessException{
         RepGraphModel model = new RepGraphModel();
-        HashMap<String, graph> graphs = new HashMap<>();
+        HashMap<String, Graph> graphs = new HashMap<>();
         graphs.put(g1.getId(),g1);
         graphs.put(g2.getId(),g2);
         graphs.put(g3.getId(),g3);
@@ -997,7 +997,7 @@ public class RepGraphModelTest {
         fieldSet.setAccessible(true);
         fieldSet.set(model, graphs);
 
-        HashMap<String, graph> expected = new HashMap<>();
+        HashMap<String, Graph> expected = new HashMap<>();
         model.clearGraphs();
 
         final Field fieldGet = model.getClass().getDeclaredField("graphs");
