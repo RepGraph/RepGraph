@@ -16,7 +16,7 @@ public class Node {
     /**
      * The Node's ID number.
      */
-    private int id;
+    private String id;
 
     /**
      * The Node's label.
@@ -68,7 +68,7 @@ public class Node {
      * @param label The Node's label.
      * @param anchors An array list of the Node's Anchors.
      */
-    public Node(int id, String label, ArrayList<Anchors> anchors) {
+    public Node(String id, String label, ArrayList<Anchors> anchors) {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
@@ -103,7 +103,7 @@ public class Node {
      * Getter method for the Node's ID number.
      * @return Integer The Node's ID number.
      */
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -111,7 +111,7 @@ public class Node {
      * Setter method for the Node's ID number.
      * @param id The Node's ID number.
      */
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

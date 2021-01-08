@@ -28,7 +28,7 @@ public class DMRSGraph extends AbstractGraph{
     }
 
 
-    public DMRSGraph(String id, String source, String input, HashMap<Integer, Node> nodes, ArrayList<Token> tokens, ArrayList<Edge> edges, String top) {
+    public DMRSGraph(String id, String source, String input, HashMap<String, Node> nodes, ArrayList<Token> tokens, ArrayList<Edge> edges, String top) {
         super(id, source, input, nodes, edges, top);
         this.tokens = tokens;
     }
@@ -50,28 +50,6 @@ public class DMRSGraph extends AbstractGraph{
         this.tokens = tokens;
 
 
-    }
-
-    /**
-     * Getter method for the Graph's nodes HashMap.
-     *
-     * @return HashMap<Integer, Node> The Graph's nodes HashMap.
-     */
-    public HashMap<Integer, Node> getNodes() {
-        return nodes;
-    }
-
-    /**
-     * Setter method for the Graph's nodes HashMap. This setter also resets and populates the linear list of nodes "nodeslist"
-     *
-     * @param nodes The Graph's nodes HashMap.
-     */
-    public void setNodes(HashMap<Integer, Node> nodes) {
-        this.nodelist.clear();
-        this.nodes = nodes;
-        for (Node n : nodes.values()) {
-            this.nodelist.add(n);
-        }
     }
 
     /**
@@ -98,12 +76,12 @@ public class DMRSGraph extends AbstractGraph{
      * @param directed This is the boolean to decide if the longest path found is directed or undirected.
      * @return ArrayList<ArrayList < Integer>> The a list of longest paths in the Graph.
      */
-    public ArrayList<ArrayList<Integer>> findLongest(boolean directed) {
+    public ArrayList<ArrayList<String>> findLongest(boolean directed) {
 
         //Ensure that all Graph Node's have their neighbours assigned
         setNodeNeighbours();
 
-        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+        ArrayList<ArrayList<String>> paths = new ArrayList<>();
 
         if ((nodes.size() == 0) || (edges.size() == 0)) { //No edges or nodes in Graph i.e. path is empty.
 
@@ -124,15 +102,15 @@ public class DMRSGraph extends AbstractGraph{
                     //Finding the longest path in a undirected connected Graph.
 
                     //Find the longest paths from the first Node in the Graph.
-                    ArrayList<ArrayList<Integer>> endpoints = BFS(nodes.values().iterator().next().getId());
-                    ArrayList<ArrayList<Integer>> temp;
-                    ArrayList<Integer> pathEnds = new ArrayList<>();
+                    ArrayList<ArrayList<String>> endpoints = BFS(nodes.values().iterator().next().getId());
+                    ArrayList<ArrayList<String>> temp;
+                    ArrayList<String> pathEnds = new ArrayList<>();
 
                     //Iterate through each path's end points (which is in position 0 as the path is reversed)
-                    for (ArrayList<Integer> end : endpoints) {
+                    for (ArrayList<String> end : endpoints) {
                         if (!pathEnds.contains(end.get(0))) { //Avoids identical paths that are just reversed.
                             temp = BFS(end.get(0)); //Finds the true longest path from this particular end point.
-                            for (ArrayList<Integer> al : temp) {//Add path to longest paths.
+                            for (ArrayList<String> al : temp) {//Add path to longest paths.
                                 paths.add(new ArrayList<>(al));
                                 pathEnds.add(al.get(0));
                             }
@@ -141,29 +119,29 @@ public class DMRSGraph extends AbstractGraph{
                 } else { //Finding the longest path in a undirected disconnected Graph.
 
                     //Default longest path set from the first Node in the Graph.
-                    ArrayList<ArrayList<Integer>> longest;
+                    ArrayList<ArrayList<String>> longest;
                     longest = BFS(nodes.values().iterator().next().getId());
 
                     //Add longest paths to the overall longest paths
-                    for (ArrayList<Integer> al : longest) {
+                    for (ArrayList<String> al : longest) {
                         paths.add(al);
                     }
 
-                    ArrayList<ArrayList<Integer>> temp;
+                    ArrayList<ArrayList<String>> temp;
 
                     //Makes each Node the start Node and compared the longest paths found from that Node to the current best longest path.
-                    for (int i : nodes.keySet()) {
+                    for (String i : nodes.keySet()) {
                         temp = BFS(i);
 
                         if (temp.size() != 0) {
                             if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {//New path is longest than the current longest path, so overwrite the overall longest paths
                                 longest = temp;
                                 paths.clear();
-                                for (ArrayList<Integer> al : temp) {
+                                for (ArrayList<String> al : temp) {
                                     paths.add(new ArrayList<>(al));
                                 }
                             } else if (temp.get(0).size() == longest.get(0).size()) {//New path is the same length as the current longest path, so add it to the overall longest paths
-                                for (ArrayList<Integer> al : temp) {
+                                for (ArrayList<String> al : temp) {
                                     paths.add(new ArrayList<>(al));
                                 }
                             }
@@ -171,8 +149,8 @@ public class DMRSGraph extends AbstractGraph{
                     }
 
                     //Reverse the each of the longest paths so that they start with the smaller Node ID. Removes duplicate but reversed paths as well.
-                    ArrayList<ArrayList<Integer>> newPaths = new ArrayList<>();
-                    for (ArrayList<Integer> al : paths) {
+                    ArrayList<ArrayList<String>> newPaths = new ArrayList<>();
+                    for (ArrayList<String> al : paths) {
                         if (!newPaths.contains(al)) {
                             Collections.reverse(al);
                             if (!newPaths.contains(al)) {
@@ -185,22 +163,22 @@ public class DMRSGraph extends AbstractGraph{
             } else {//Finding the longest path in a directed Graph.
 
                 //Default longest path set from first Node in the Graph.
-                ArrayList<ArrayList<Integer>> longest;
-                Set<Integer> nodesInPath = new HashSet<>(); //Keeps track of all nodes in the overall longest path.
+                ArrayList<ArrayList<String>> longest;
+                Set<String> nodesInPath = new HashSet<>(); //Keeps track of all nodes in the overall longest path.
                 longest = directedLongestPaths(nodes.values().iterator().next().getId());
 
                 //Add longest paths to the overall longest paths
-                for (ArrayList<Integer> integers : longest) {
+                for (ArrayList<String> integers : longest) {
                     paths.add(integers);
-                    for (int n : integers) {
+                    for (String n : integers) {
                         nodesInPath.add(n);
                     }
                 }
 
-                ArrayList<ArrayList<Integer>> temp;
+                ArrayList<ArrayList<String>> temp;
 
                 //Makes each Node the start Node and finds the longest overall path/s.
-                for (int i : nodes.keySet()) {
+                for (String i : nodes.keySet()) {
                     if (!nodesInPath.contains(i)) {//Cuts processing time by not letting a Node already in the overall longest path be a start Node, as the longest path from that Node will never yield a longer path than the current overall longest path.
                         temp = directedLongestPaths(i);
 
@@ -208,16 +186,16 @@ public class DMRSGraph extends AbstractGraph{
                             if ((longest.size() == 0) || (temp.get(0).size() > longest.get(0).size())) {//New path is longest than the current longest path, so overwrite the overall longest paths
                                 longest = temp;
                                 paths.clear();
-                                for (ArrayList<Integer> al : temp) {
+                                for (ArrayList<String> al : temp) {
                                     paths.add(new ArrayList<>(al));
-                                    for (int n : al) {
+                                    for (String n : al) {
                                         nodesInPath.add(n);
                                     }
                                 }
                             } else if (temp.get(0).size() == longest.get(0).size()) {//New path is the same length as the current longest path, so add it to the overall longest paths
-                                for (ArrayList<Integer> al : temp) {
+                                for (ArrayList<String> al : temp) {
                                     paths.add(new ArrayList<>(al));
-                                    for (int n : al) {
+                                    for (String n : al) {
                                         nodesInPath.add(n);
                                     }
                                 }
@@ -228,7 +206,7 @@ public class DMRSGraph extends AbstractGraph{
             }
 
             //Reverses the path so that start Node is first.
-            for (ArrayList<Integer> item : paths) {
+            for (ArrayList<String> item : paths) {
                 Collections.reverse(item);
             }
 
@@ -237,57 +215,6 @@ public class DMRSGraph extends AbstractGraph{
 
     }
 
-    /**
-     * Assigns all the nodes in the Graph their directed and undirected neighbouring nodes, which will be used for analysis.
-     */
-    public void setNodeNeighbours() {
-        int source;
-        int target;
-
-        if (edges.size() == 0) {
-            //Graph has no edges
-            return;
-        } else {
-
-            source = edges.get(0).getSource();
-
-            if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
-                //Node neighbours have already been set
-                return;
-            }
-        }
-
-        //Iterate through each Edge and set the corresponding Node's thier neighbours.
-        for (int i = 0; i < edges.size(); i++) {
-            Edge currentEdge = edges.get(i);
-
-            source = currentEdge.getSource();
-            target = currentEdge.getTarget();
-
-            Node sourceNode = nodes.get(source);
-            sourceNode.addDirectedNeighbour(nodes.get(target));
-            nodes.get(target).addUndirectedNeighbour(sourceNode);
-
-            sourceNode.addDirectedEdgeNeighbour(currentEdge);
-            nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
-
-        }
-
-    }
-
-    /**
-     * This method checks to see if a Graph has a dangling Edge i.e an Edge that doesnt connect to any Node
-     *
-     * @return boolean returns true if the Graph has a dangling Edge otherwise returns false.
-     */
-    public boolean hasDanglingEdge() {
-        for (Edge e : edges) {
-            if (!nodes.containsKey(e.getTarget()) || !nodes.containsKey(e.getSource())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Finds the longest paths from a given start Node to all the other nodes in the system and returns the paths of the longest paths.
@@ -295,41 +222,41 @@ public class DMRSGraph extends AbstractGraph{
      * @param startNodeID Number of the start Node.
      * @return ArrayList<ArrayList < Integer>> The longest paths available from the start Node.
      */
-    public ArrayList<ArrayList<Integer>> directedLongestPaths(int startNodeID) {
+    public ArrayList<ArrayList<String>> directedLongestPaths(String startNodeID) {
 
-        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+        ArrayList<ArrayList<String>> paths = new ArrayList<>();
 
         //Check if the start Node has any neighbours, if not then return an empty path.
         if (nodes.get(startNodeID).getDirectedNeighbours().size() == 0) {
             return paths;
         }
 
-        HashMap<Integer, Integer> dist = new HashMap<>(); //HashMap to keep track of each Node's distance from start Node
-        HashMap<Integer, Integer> prevNode = new HashMap<>(); //HashMap to keep track of each Node's previous Node in the path
+        HashMap<String, Integer> dist = new HashMap<>(); //HashMap to keep track of each Node's distance from start Node
+        HashMap<String, String> prevNode = new HashMap<>(); //HashMap to keep track of each Node's previous Node in the path
 
         //Set all nodes in the Graph to unvisited
-        HashMap<Integer, Boolean> visited = new HashMap<>();
-        for (int i : nodes.keySet()) {
+        HashMap<String, Boolean> visited = new HashMap<>();
+        for (String i : nodes.keySet()) {
             visited.put(i, false);
         }
 
         //Topologically sort every unvisited Node, which gets added to the stack.
-        Stack<Integer> stack = new Stack<Integer>();
-        for (int i : nodes.keySet()) {
+        Stack<String> stack = new Stack<>();
+        for (String i : nodes.keySet()) {
             if (!visited.get(i)) {
                 topologicalSort(i, visited, stack);
             }
         }
 
         //Set all distances to NINF except the start Node.
-        for (int i : nodes.keySet()) {
+        for (String i : nodes.keySet()) {
             dist.put(i, Integer.MIN_VALUE);
         }
         dist.put(startNodeID, 0);
 
         //Iterate through the stack to find longest path.
         while (!stack.empty()) {
-            int u = stack.pop();
+            String u = stack.pop();
 
             if (dist.get(u) != Integer.MIN_VALUE) {
                 for (Node n : nodes.get(u).getDirectedNeighbours()) {
@@ -355,7 +282,7 @@ public class DMRSGraph extends AbstractGraph{
      * @param stack   ?
      * @return Stack<Integer>
      */
-    public Stack<Integer> topologicalSort(int nodeID, HashMap<Integer, Boolean> visited, Stack<Integer> stack) {
+    public Stack<String> topologicalSort(String nodeID, HashMap<String, Boolean> visited, Stack<String> stack) {
         visited.put(nodeID, true);
 
         //Iterate through every neighbouring Node of the given Node.
@@ -375,9 +302,9 @@ public class DMRSGraph extends AbstractGraph{
      * @param startNodeID The starting Node ID.
      * @return ArrayList<ArrayList < Integer>>
      */
-    public ArrayList<ArrayList<Integer>> BFS(int startNodeID) {
+    public ArrayList<ArrayList<String>> BFS(String startNodeID) {
 
-        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+        ArrayList<ArrayList<String>> paths = new ArrayList<>();
 
         //Creates a list of all directed and undirected neighbours of the start Node.
         ArrayList<Node> allNeighbours = combineNeighbours(startNodeID);
@@ -387,30 +314,30 @@ public class DMRSGraph extends AbstractGraph{
             return paths;
         }
 
-        HashMap<Integer, Integer> dist = new HashMap<>();//HashMap to keep track of each Node's distance from start Node
+        HashMap<String, Integer> dist = new HashMap<>();//HashMap to keep track of each Node's distance from start Node
 
         // All distances from start Node start at -1, except the start Node.
-        for (int i : nodes.keySet()) {
+        for (String i : nodes.keySet()) {
             dist.put(i, -1);
         }
         dist.put(startNodeID, 0);
 
-        HashMap<Integer, Integer> prevNode = new HashMap<>();//HashMap to keep track of each Node's previous Node in the path
+        HashMap<String, String> prevNode = new HashMap<>();//HashMap to keep track of each Node's previous Node in the path
 
-        Queue<Integer> q = new LinkedList<>();
+        Queue<String> q = new LinkedList<>();
 
         q.add(startNodeID);
 
         //Iterate through the queue of nodes until it is empty.
         while (!q.isEmpty()) {
-            int currentNodeID = q.poll();
+            String currentNodeID = q.poll();
 
             //Combine the lists of all directed and undirected neighbours of the current Node.
             allNeighbours = combineNeighbours(currentNodeID);
 
             //Iterate through all neighbouring nodes.
             for (int i = 0; i < allNeighbours.size(); i++) {
-                int neighbourNodeID = allNeighbours.get(i).getId();
+                String neighbourNodeID = allNeighbours.get(i).getId();
 
                 if (dist.get(neighbourNodeID) == -1) {//Check if the Node is unvisited. If so, add it to the queue, update its distance and its previous Node.
                     q.add(neighbourNodeID);
@@ -423,19 +350,6 @@ public class DMRSGraph extends AbstractGraph{
         return traverseLongestPath(dist, prevNode, startNodeID);
     }
 
-    /**
-     * Combines the directed and undirected Node neighbours of a given Node.
-     *
-     * @param nodeID The ID of the Node.
-     * @return ArrayList<Node> List of the Node's directed and undirected neighbours.
-     */
-    public ArrayList<Node> combineNeighbours(int nodeID) {
-        ArrayList<Node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
-        ArrayList<Node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
-        //Adds all a Node's undirected neighbours and its directed neighbours together.
-        allNeighbours.addAll(undirectedNeighbours);
-        return allNeighbours;
-    }
 
     /**
      * Returns the longest paths given a list of distances and an array of each Node's previous Node in the path.
@@ -447,20 +361,20 @@ public class DMRSGraph extends AbstractGraph{
      * @param startNodeID The Node ID of the start Node.
      * @return ArrayList<ArrayList < Integer>> The longest paths.
      */
-    public ArrayList<ArrayList<Integer>> traverseLongestPath(HashMap<Integer, Integer> dist, HashMap<Integer, Integer> prevNode,
-                                                             int startNodeID) {
+    public ArrayList<ArrayList<String>> traverseLongestPath(HashMap<String, Integer> dist, HashMap<String, String> prevNode,
+                                                             String startNodeID) {
 
-        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+        ArrayList<ArrayList<String>> paths = new ArrayList<>();
         int max = Collections.max(dist.values()); //Find the longest distance in the distance array
 
         //Uses the prevNode ArrayList to find the path of the longest distance starting at the end Node.
-        ArrayList<Integer> path = new ArrayList<>();
-        for (int i : dist.keySet()) {
+        ArrayList<String> path = new ArrayList<>();
+        for (String i : dist.keySet()) {
             if (dist.get(i) == max) { //i.e. a longest path
                 path.clear();
                 path.add(i);
-                int prev = prevNode.get(i);
-                while (prev != startNodeID) {//Iterate through the previous Node array until you reach the start Node.
+                String prev = prevNode.get(i);
+                while (!prev.equals(startNodeID)) {//Iterate through the previous Node array until you reach the start Node.
                     path.add(prev);
                     prev = prevNode.get(prev);
                 }
@@ -498,16 +412,16 @@ public class DMRSGraph extends AbstractGraph{
             }
         });
 
-        HashMap<Integer, Integer> nodeToToken = new HashMap<>();
+        HashMap<String, String> nodeToToken = new HashMap<>();
 
         //Map Node ids to their Token span beginning
         for (int i = 0; i < ordered.size(); i++) {
-            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom());
+            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom()+"");
         }
 
         ArrayList<Edge> updated = new ArrayList<>();
 
-        int source, target;
+        String source, target;
 
         //for all edges change the source and target to refer to their span beginning of the respective nodes
         for (Edge e : edges) {
@@ -519,10 +433,10 @@ public class DMRSGraph extends AbstractGraph{
 
             for (int i = 0; i < ordered.size(); i++) {
                 Node n = ordered.get(i);
-                if (n.getId() == source) {
+                if (n.getId().equals(source)) {
                     newEdge.setSource(nodeToToken.get(n.getId()));
                 }
-                if (n.getId() == target) {
+                if (n.getId().equals(target)) {
                     newEdge.setTarget(nodeToToken.get(n.getId()));
                 }
             }
@@ -535,7 +449,7 @@ public class DMRSGraph extends AbstractGraph{
 
             for (Edge other : updated) {
 
-                if (Math.min(e.getSource(), e.getTarget()) < Math.min(other.getSource(), other.getTarget()) && Math.min(other.getSource(), other.getTarget()) < Math.max(e.getSource(), e.getTarget()) && Math.max(e.getSource(), e.getTarget()) < Math.max(other.getSource(), other.getTarget())) {
+                if (Math.min(Integer.parseInt(e.getSource()), Integer.parseInt(e.getTarget())) < Math.min(Integer.parseInt(other.getSource()), Integer.parseInt(other.getTarget())) && Math.min(Integer.parseInt(other.getSource()), Integer.parseInt(other.getTarget())) < Math.max(Integer.parseInt(e.getSource()), Integer.parseInt(e.getTarget())) && Math.max(Integer.parseInt(e.getSource()), Integer.parseInt(e.getTarget())) < Math.max(Integer.parseInt(other.getSource()), Integer.parseInt(other.getTarget()))) {
                     return false;
                 }
 
@@ -576,15 +490,15 @@ public class DMRSGraph extends AbstractGraph{
         });
 
 
-        HashMap<Integer, Integer> nodeToToken = new HashMap<>();
+        HashMap<String, String> nodeToToken = new HashMap<>();
 
         for (int i = 0; i < ordered.size(); i++) {
-            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom());
+            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom()+"");
         }
 
         ArrayList<Edge> updated = new ArrayList<>();
 
-        int source, target;
+        String source, target;
 
         for (Edge e : edges) {
 
@@ -598,12 +512,12 @@ public class DMRSGraph extends AbstractGraph{
 
                 Node n = ordered.get(i);
 
-                if (n.getId() == source) {
+                if (n.getId().equals(source)) {
 
                     newEdge.setSource(nodeToToken.get(n.getId()));
 
                 }
-                if (n.getId() == target) {
+                if (n.getId().equals(target)) {
 
                     newEdge.setTarget(nodeToToken.get(n.getId()));
 
@@ -613,7 +527,7 @@ public class DMRSGraph extends AbstractGraph{
 
         }
 
-        HashMap<Integer, Node> newNodes = new HashMap<>();
+        HashMap<String, Node> newNodes = new HashMap<>();
         for (Node n : ordered) {
             newNodes.put(n.getId(), n);
         }
@@ -684,7 +598,7 @@ public class DMRSGraph extends AbstractGraph{
      *
      * @return boolean Whether the Graph is connected or not.
      */
-    public boolean connectedBFS(int startNodeID) {
+    public boolean connectedBFS(String startNodeID) {
 
         setNodeNeighbours();
 
@@ -702,22 +616,22 @@ public class DMRSGraph extends AbstractGraph{
         }
 
 
-        HashMap<Integer, Integer> dist = new HashMap<>();//HashMap to keep track of each Node's distance from start Node
+        HashMap<String, Integer> dist = new HashMap<>();//HashMap to keep track of each Node's distance from start Node
 
         //All distances from start Node start at -1, except the start Node.
-        for (int i : nodes.keySet()) {
+        for (String i : nodes.keySet()) {
             dist.put(i, -1);
         }
         dist.put(startNodeID, 0);
 
         int nodesVisited = 0;
 
-        Queue<Integer> q = new LinkedList<>();
+        Queue<String> q = new LinkedList<>();
         q.add(startNodeID);
 
         //Iterate through the queue of nodes until it is empty.
         while (!q.isEmpty()) {
-            int currentNodeID = q.poll();
+            String currentNodeID = q.poll();
             nodesVisited++;
 
             //Combine the lists of all directed and undirected neighbours of the current Node.
@@ -725,7 +639,7 @@ public class DMRSGraph extends AbstractGraph{
 
             //Iterate through all neighbouring nodes
             for (int i = 0; i < allNeighbours.size(); i++) {
-                int neighbourNodeID = allNeighbours.get(i).getId();
+                String neighbourNodeID = allNeighbours.get(i).getId();
 
                 if (dist.get(neighbourNodeID) == -1) {//Check if the Node is unvisited. If so, add it to the queue and update its distance.
                     q.add(neighbourNodeID);
@@ -770,7 +684,7 @@ public class DMRSGraph extends AbstractGraph{
             //Call recursive function to detect cycles in different DFS undirected trees.
             for (Node n : nodes.values()) {
                 if (!visited.get(n)) { //Check if the Node hasn't already been visited
-                    if (isCyclicCheckerUndirected(n, visited, -1)) {
+                    if (isCyclicCheckerUndirected(n, visited, -1+"")) {
                         return true;
                     }
                 }
@@ -788,7 +702,7 @@ public class DMRSGraph extends AbstractGraph{
      * @param parent  The ID of the parent Node of the current Node.
      * @return Boolean If the Graph is cyclic or not.
      */
-    public boolean isCyclicCheckerUndirected(Node v, HashMap<Node, Boolean> visited, int parent) {
+    public boolean isCyclicCheckerUndirected(Node v, HashMap<Node, Boolean> visited, String parent) {
 
         //Set the current Node as visited.
         visited.put(v, true);
@@ -800,7 +714,7 @@ public class DMRSGraph extends AbstractGraph{
                     return true;
                 }
                 ;
-            } else if (neighbour.getId() != parent) { //If the neighbouring is visited and not a parent of the current Node, then there is a cycle.
+            } else if (!neighbour.getId().equals(parent)) { //If the neighbouring is visited and not a parent of the current Node, then there is a cycle.
                 return true;
             }
         }

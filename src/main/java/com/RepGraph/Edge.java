@@ -15,12 +15,12 @@ public class Edge {
     /**
      * ID of the Node that is the source of the Edge.
      */
-    private int source;
+    private String source;
 
     /**
      * ID of the Node that is the target of the Edge.
      */
-    private int target;
+    private String target;
 
     /**
      * The Edge's label.
@@ -57,7 +57,7 @@ public class Edge {
      * @param label The Edge's label.
      * @param postLabel Default constructor of the Edge class.
      */
-    public Edge(int source, int target, String label, String postLabel){
+    public Edge(String source, String target, String label, String postLabel){
         this.source = source;
         this.target = target;
         this.label = label;
@@ -68,7 +68,7 @@ public class Edge {
      * Getter method for the source Node.
      * @return Integer Number of the source Node.
      */
-    public int getSource() {
+    public String getSource() {
         return source;
     }
 
@@ -76,7 +76,7 @@ public class Edge {
      * Setter method for the source Node.
      * @param source Number of the source Node.
      */
-    public void setSource(int source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
@@ -84,7 +84,7 @@ public class Edge {
      * Getter method for the target Node.
      * @return Integer Number of the target Node.
      */
-    public int getTarget() {
+    public String getTarget() {
         return target;
     }
 
@@ -92,7 +92,7 @@ public class Edge {
      * Setter method for the target Node.
      * @param target Number of the target Node.
      */
-    public void setTarget(int target) {
+    public void setTarget(String target) {
         this.target = target;
     }
 

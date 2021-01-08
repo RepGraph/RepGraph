@@ -32,7 +32,7 @@ abstract class AbstractGraph {
      * A HashMap of the Graph nodes with the Node's ID as the key - used for quicker,easier and safer algorithmic use of Node data
      */
     @JsonIgnore
-    protected HashMap<Integer, Node> nodes;
+    protected HashMap<String, Node> nodes;
 
 
     /**
@@ -69,7 +69,7 @@ abstract class AbstractGraph {
      * @param input  The Graph's input/sentence.
      * @param edges  An array list of the Graph's edges.
      */
-    public AbstractGraph(String id, String source, String input, HashMap<Integer, Node> nodes, ArrayList<Edge> edges, String top) {
+    public AbstractGraph(String id, String source, String input, HashMap<String, Node> nodes, ArrayList<Edge> edges, String top) {
         this.id = id;
         this.source = source;
         this.input = input;
@@ -96,7 +96,7 @@ abstract class AbstractGraph {
         this.source = source;
         this.input = input;
         this.nodelist = nodelist;
-        this.nodes = new HashMap<Integer, Node>();
+        this.nodes = new HashMap<String, Node>();
         for (Node n : nodelist) {
             this.nodes.put(n.getId(), n);
         }
@@ -218,12 +218,100 @@ abstract class AbstractGraph {
     }
 
     /**
+     * Getter method for the Graph's nodes HashMap.
+     *
+     * @return HashMap<Integer, Node> The Graph's nodes HashMap.
+     */
+    public HashMap<String, Node> getNodes() {
+        return nodes;
+    }
+
+    /**
+     * Setter method for the Graph's nodes HashMap. This setter also resets and populates the linear list of nodes "nodeslist"
+     *
+     * @param nodes The Graph's nodes HashMap.
+     */
+    public void setNodes(HashMap<String, Node> nodes) {
+        this.nodelist.clear();
+        this.nodes = nodes;
+        for (Node n : nodes.values()) {
+            this.nodelist.add(n);
+        }
+    }
+
+    /**
+     * This method checks to see if a Graph has a dangling Edge i.e an Edge that doesnt connect to any Node
+     *
+     * @return boolean returns true if the Graph has a dangling Edge otherwise returns false.
+     */
+    public boolean hasDanglingEdge() {
+        for (Edge e : edges) {
+            if (!nodes.containsKey(e.getTarget()) || !nodes.containsKey(e.getSource())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Assigns all the nodes in the Graph their directed and undirected neighbouring nodes, which will be used for analysis.
+     */
+    public void setNodeNeighbours() {
+        String source;
+        String target;
+
+        if (edges.size() == 0) {
+            //Graph has no edges
+            return;
+        } else {
+
+            source = edges.get(0).getSource();
+
+            if (!nodes.containsKey(source) || nodes.get(source).getDirectedNeighbours().size() != 0) {
+                //Node neighbours have already been set
+                return;
+            }
+        }
+
+        //Iterate through each Edge and set the corresponding Node's thier neighbours.
+        for (int i = 0; i < edges.size(); i++) {
+            Edge currentEdge = edges.get(i);
+
+            source = currentEdge.getSource();
+            target = currentEdge.getTarget();
+
+            Node sourceNode = nodes.get(source);
+            sourceNode.addDirectedNeighbour(nodes.get(target));
+            nodes.get(target).addUndirectedNeighbour(sourceNode);
+
+            sourceNode.addDirectedEdgeNeighbour(currentEdge);
+            nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
+
+        }
+
+    }
+
+    /**
+     * Combines the directed and undirected Node neighbours of a given Node.
+     *
+     * @param nodeID The ID of the Node.
+     * @return ArrayList<Node> List of the Node's directed and undirected neighbours.
+     */
+    public ArrayList<Node> combineNeighbours(String nodeID) {
+        ArrayList<Node> allNeighbours = new ArrayList<>(nodes.get(nodeID).getDirectedNeighbours());
+        ArrayList<Node> undirectedNeighbours = new ArrayList<>(nodes.get(nodeID).getUndirectedNeighbours());
+        //Adds all a Node's undirected neighbours and its directed neighbours together.
+        allNeighbours.addAll(undirectedNeighbours);
+        return allNeighbours;
+    }
+
+    /**
      * Analysis Tool for finding the longest paths in the Graph.
      *
      * @param directed This is the boolean to decide if the longest path found is directed or undirected.
      * @return ArrayList<ArrayList < Integer>> The a list of longest paths in the Graph.
      */
-    public abstract ArrayList<ArrayList<Integer>> findLongest(boolean directed);
+    public abstract ArrayList<ArrayList<String>> findLongest(boolean directed);
 
 
     /**
