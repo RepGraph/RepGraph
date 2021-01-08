@@ -47,6 +47,11 @@ abstract class AbstractGraph {
     protected ArrayList<Edge> edges;
 
     /**
+     * An array list of the Graph's tokens.
+     */
+    protected ArrayList<Token> tokens;
+
+    /**
      * ID of the Top node
      */
     protected String top;
@@ -125,6 +130,9 @@ abstract class AbstractGraph {
     @JsonSetter("nodes")
     public void setNodelist(ArrayList<Node> nodelist) {
         this.nodelist = nodelist;
+        for (Node n: nodelist) {
+            this.nodes.put(n.getId(),n);
+        }
     }
 
     /**
@@ -199,6 +207,7 @@ abstract class AbstractGraph {
         this.edges = edges;
     }
 
+    @JsonGetter("tops")
     /**
      * Getter method for a graphs top Node array
      *
@@ -208,12 +217,17 @@ abstract class AbstractGraph {
         return top;
     }
 
+    @JsonSetter("tops")
     /**
      * Setter method for a graphs top Node array
      *
      * @param top This is an ArrayList of the ids of the top nodes in a Graph
      */
-    public void setTops(String top) {
+    public void setTop(ArrayList<String> top) {
+        this.top = top.get(0);
+    }
+
+    public void setTop(String top) {
         this.top = top;
     }
 
@@ -223,7 +237,7 @@ abstract class AbstractGraph {
      * @return HashMap<Integer, Node> The Graph's nodes HashMap.
      */
     public HashMap<String, Node> getNodes() {
-        return nodes;
+        return this.nodes;
     }
 
     /**
@@ -275,6 +289,7 @@ abstract class AbstractGraph {
 
         //Iterate through each Edge and set the corresponding Node's thier neighbours.
         for (int i = 0; i < edges.size(); i++) {
+
             Edge currentEdge = edges.get(i);
 
             source = currentEdge.getSource();

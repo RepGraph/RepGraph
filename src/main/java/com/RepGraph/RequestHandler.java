@@ -20,8 +20,8 @@ import java.util.*;
 @RestController
 public class RequestHandler {
 
-    RepGraphModel RepModel = new RepGraphModel();
-    Process mProcess;
+    AbstractModel RepModel = new DMRSModel();
+
 
     /**
      * Simple Home Mapping that returns "Welcome"
@@ -78,7 +78,7 @@ public class RequestHandler {
         boolean duplicates = false;
         while ((currentLine = reader.readLine()) != null) {
             //Creates Graph object from JSON string
-            Graph currgraph = objectMapper.readValue(currentLine, Graph.class);
+            AbstractGraph currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
             //checks if model doesnt contain the ID already and if it does dont add it and tell the user duplicates were found
             if (!RepModel.containsKey(currgraph.getId())) {
 
@@ -120,7 +120,7 @@ public class RequestHandler {
      */
     @PostMapping("/UploadSingle")
     @ResponseBody
-    public HashMap<String, String> UploadDataSingle(@RequestBody Graph data) {
+    public HashMap<String, String> UploadDataSingle(@RequestBody AbstractGraph data) {
         HashMap<String, String> returninfo = new HashMap<>();
 
         returninfo.put("input", data.getInput());
@@ -167,7 +167,7 @@ public class RequestHandler {
      */
     @GetMapping("/DisplaySubset")
     @ResponseBody
-    public HashMap<String, Object> DisplaySubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType, @RequestParam int format) {
+    public HashMap<String, Object> DisplaySubset(@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType, @RequestParam int format) {
         return RepModel.DisplaySubset(graphID, NodeID, SubsetType, format);
     }
 
@@ -203,7 +203,7 @@ public class RequestHandler {
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public HashMap<String, Object> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam int[] NodeId, @RequestParam int[] EdgeIndices) {
+    public HashMap<String, Object> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam String[] NodeId, @RequestParam int[] EdgeIndices) {
         return RepModel.searchSubgraphPattern(graphID, NodeId, EdgeIndices);
     }
 
@@ -260,7 +260,7 @@ public class RequestHandler {
      */
     @GetMapping("/GetGraph")
     @ResponseBody
-    public Graph GetGraph(@RequestParam String graphID) {
+    public AbstractGraph GetGraph(@RequestParam String graphID) {
         return RepModel.getGraph(graphID);
     }
 
@@ -275,7 +275,7 @@ public class RequestHandler {
      */
     @GetMapping("/GetSubset")
     @ResponseBody
-    public Graph GetSubset(@RequestParam String graphID, @RequestParam int NodeID, @RequestParam String SubsetType) {
+    public AbstractGraph GetSubset(@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType) {
         if (SubsetType.equals("adjacent")) {
             return RepModel.CreateSubsetAdjacent(graphID, NodeID);
         } else if (SubsetType.equals("descendent")) {
@@ -302,7 +302,7 @@ public class RequestHandler {
         String result = sentence.replaceAll(" ", "_&_&_*_*");
         String jsonString = null;
         String s = "";
-        Graph currgraph;
+        AbstractGraph currgraph;
         try {
             //Run parser
             Process p = Runtime.getRuntime().exec("python3 Scripts/src/parse-convert-mrs.py --convert_semantics --extract_semantics -g Scripts/src -s " + '"' + result + '"');
@@ -327,7 +327,7 @@ public class RequestHandler {
             ObjectMapper objectMapper = new ObjectMapper();
             //Creates Graph object from JSON string
 
-            currgraph = objectMapper.readValue(jsonString, Graph.class);
+            currgraph = objectMapper.readValue(jsonString, AbstractGraph.class);
 
             currgraph.setId(currgraph.getInput().hashCode() + "");
             //checks if model doesnt contain the ID already
@@ -354,7 +354,7 @@ public class RequestHandler {
     public ArrayList<HashMap<String, String>> GetModelList() {
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
-        for (Graph g : RepModel.getAllGraphs().values()) {
+        for (AbstractGraph g : RepModel.getAllGraphs().values()) {
             HashMap<String, String> graphinfo = new HashMap<String, String>();
             graphinfo.put("id", g.getId());
             graphinfo.put("input", g.getInput());

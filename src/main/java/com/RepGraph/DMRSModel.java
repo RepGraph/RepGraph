@@ -110,7 +110,7 @@ public class DMRSModel extends AbstractModel{
         subset.setEdges(adjacentEdges);
         subset.setTokens(SubsetTokens);
         subset.setInput(parent.getTokenInput(SubsetTokens));
-        subset.setTops(parent.getTop());
+        subset.setTop(parent.getTop());
 
         return subset;
     }
@@ -181,7 +181,7 @@ public class DMRSModel extends AbstractModel{
         subset.setEdges(DescendentEdges);
         subset.setTokens(SubsetTokens);
         subset.setInput(parent.getTokenInput(SubsetTokens));
-        subset.setTops(parent.getTop());
+        subset.setTop(parent.getTop());
 
         return subset;
     }
@@ -598,7 +598,7 @@ public class DMRSModel extends AbstractModel{
 
 
         ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
-        String fromID = "", toID = "";
+        String fromID = "0", toID = "0";
         //Add all the Edge data in the correct format readable by the frontend
         for (int i = 0; i < graph.getEdges().size(); i++) {
             HashMap<String, Object> singleEdge = new HashMap<>();
@@ -608,24 +608,24 @@ public class DMRSModel extends AbstractModel{
             //iterate through all the nodes and create the edges for the visualisation
             for (HashMap<String, Object> node : finalNodes) {
 
-                if ( node.get("id") == e.getSource()) {
+                if ( node.get("id").equals(e.getSource())) {
                     fromID = e.getSource();
                     fromNode = (Anchors) node.get("anchors");
 
                 }
-                if (node.get("id") == e.getTarget()) {
+                if (node.get("id").equals(e.getTarget())) {
                     toID = e.getTarget();
                     toNode = (Anchors) node.get("anchors");
                 }
             }
             String edgeType = "";
 
-            if (fromID.compareTo(toID)>0) {
+            if (Integer.parseInt(fromID)>Integer.parseInt(toID)) {
                 edgeType = "curvedCCW";
             } else {
                 edgeType = "curvedCW";
             }
-            if (fromID == toID || fromNode.getFrom() == toNode.getFrom()) {
+            if (fromID.equals(toID) || fromNode.getFrom() == toNode.getFrom()) {
                 continue;
             }
             singleEdge.put("id", i);
@@ -742,12 +742,12 @@ public class DMRSModel extends AbstractModel{
             HashMap<String, Object> singleEdge = new HashMap<>();
             for (HashMap<String, Object> node : finalNodes) {
                 if (!node.get("id").equals((String) "TOP")) {
-                    if (node.get("id") == e.getSource()) {
+                    if (node.get("id").equals(e.getSource())) {
                         fromID = e.getSource();
 
 
                     }
-                    if (node.get("id") == e.getTarget()) {
+                    if (node.get("id").equals( e.getTarget())) {
                         toID = e.getTarget();
 
                     }
@@ -825,6 +825,8 @@ public class DMRSModel extends AbstractModel{
 
 
         graph.setNodeNeighbours();
+
+
         HashMap<String, Stack<String>> topologicalStacks = new HashMap<>(); //HashMap of each Node's topological sorting of the DMRSGraph.
 
         //Iterate through each Node in the DMRSGraph and add its topological sorting/stack of the DMRSGraph to the HashMap of topological stacks.
@@ -1012,12 +1014,12 @@ public class DMRSModel extends AbstractModel{
             //Find the Edge's source and target Node's IDs, levels and x positions.
             for (HashMap<String, Object> node : finalNodes) {
 
-                if (node.get("id") == e.getSource()) {
+                if (node.get("id").equals(e.getSource())) {
                     fromID = e.getSource();
                     fromLevel = (Integer) node.get("nodeLevel");
                     fromX = (Integer) node.get("x");
                 }
-                if (node.get("id") == e.getTarget()) {
+                if (node.get("id").equals(e.getTarget())) {
                     toID = e.getTarget();
                     toLevel = (Integer) node.get("nodeLevel");
                     toX = (Integer) node.get("x");
@@ -1031,7 +1033,7 @@ public class DMRSModel extends AbstractModel{
             int count = 0;
             int thisEdge = 0;
             for (Edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
-                if (edge.getTarget() == toID){
+                if (edge.getTarget().equals(toID)){
                     count++;
                     if (edge.equals(e)){
                         thisEdge = count;
@@ -1192,6 +1194,8 @@ public class DMRSModel extends AbstractModel{
 
         DMRSGraph graph = (DMRSGraph)Agraph;
 
+
+
         //Determine span lengths of each Node
         HashMap<String, Integer> graphNodeSpanLengths = new HashMap<>();
         for (Node n : graph.getNodes().values()) {
@@ -1310,6 +1314,7 @@ public class DMRSModel extends AbstractModel{
         int space = 130;
 
         ArrayList<HashMap<String, Object>> finalNodes = new ArrayList<>();
+
         int maxID = Integer.parseInt(graph.getNodes().keySet().iterator().next());
 
         for (int level = 0; level < nodesInFinalLevels.size(); level++) {
@@ -1354,19 +1359,19 @@ public class DMRSModel extends AbstractModel{
 
         ArrayList<HashMap<String, Object>> finalGraphEdges = new ArrayList<>();
         int  fromLevel = 0, toLevel = 0, fromX = 0, toX = 0;
-        String fromID = "", toID = "";
+        String fromID = "0", toID = "0";
         graph.setNodeNeighbours();
         int maxEdgeSpan = 0;
         for (Edge e : graph.getEdges()) {
             HashMap<String, Object> singleEdge = new HashMap<>();
             for (HashMap<String, Object> node : finalNodes) {
                 if (!node.get("id").equals("TOP")) {
-                    if (node.get("id") == e.getSource()) {
+                    if (node.get("id").equals(e.getSource())) {
                         fromID = e.getSource();
                         fromLevel = (Integer) node.get("nodeLevel");
                         fromX = (Integer) node.get("x");
                     }
-                    if (node.get("id") == e.getTarget()) {
+                    if (node.get("id").equals(e.getTarget())) {
                         toID = e.getTarget();
                         toLevel = (Integer) node.get("nodeLevel");
                         toX = (Integer) node.get("x");
@@ -1377,7 +1382,6 @@ public class DMRSModel extends AbstractModel{
 
             String edgeType = "";
             double round = 0.5; //The roundness of the Edge
-
 
             int spanLower = graph.getNodes().get(fromID).getAnchors().get(0).getFrom() * space;
             int spanUpper = graph.getNodes().get(fromID).getAnchors().get(0).getEnd() * space;
@@ -1391,7 +1395,7 @@ public class DMRSModel extends AbstractModel{
                     int count = 0;
                     int thisEdge = 0;
                     for (Edge edge : graph.getNodes().get(fromID).getDirectedEdgeNeighbours()) {
-                        if (edge.getTarget() == toID){
+                        if (edge.getTarget().equals(toID)){
                             count++;
                             if (edge.equals(e)){
                                 thisEdge = count;

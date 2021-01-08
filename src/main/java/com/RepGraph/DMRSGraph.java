@@ -13,10 +13,7 @@ import java.util.*;
 public class DMRSGraph extends AbstractGraph{
 
 
-    /**
-     * An array list of the Graph's tokens.
-     */
-    private ArrayList<Token> tokens;
+
 
 
     /**
