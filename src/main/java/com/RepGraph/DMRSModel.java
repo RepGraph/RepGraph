@@ -74,8 +74,8 @@ public class DMRSModel extends AbstractModel{
         adjacentNodes.put(n.getId(), new Node(n));
 
         //set the minimum span to the head nodes Anchors "from" and maximum span to the Anchors "end"
-        int minFrom = n.getAnchors().get(0).getFrom();
-        int maxEnd = n.getAnchors().get(0).getEnd();
+        int minFrom = n.getAnchors().getFrom();
+        int maxEnd = n.getAnchors().getEnd();
 
         //Add all directed and undirected neighbours into their appropriate lists/hashmaps
         ArrayList<Node> nodeNeighbours = new ArrayList<>(n.getDirectedNeighbours());
@@ -87,11 +87,11 @@ public class DMRSModel extends AbstractModel{
         for (Node nn : nodeNeighbours) {
             //add a newly constructed Node with the Node neighbours data to the adjacent nodes hashmap
             adjacentNodes.put(nn.getId(), new Node(nn));
-            if (nn.getAnchors().get(0).getFrom() < minFrom) {
-                minFrom = nn.getAnchors().get(0).getFrom();
+            if (nn.getAnchors().getFrom() < minFrom) {
+                minFrom = nn.getAnchors().getFrom();
             }
-            if (nn.getAnchors().get(0).getEnd() > maxEnd) {
-                maxEnd = nn.getAnchors().get(0).getEnd();
+            if (nn.getAnchors().getEnd() > maxEnd) {
+                maxEnd = nn.getAnchors().getEnd();
             }
 
 
@@ -142,8 +142,8 @@ public class DMRSModel extends AbstractModel{
         }
 
         //set the min span to the head nodes Anchors "from" and max span to the Anchors "end"
-        int minFrom = n.getAnchors().get(0).getFrom();
-        int maxEnd = n.getAnchors().get(0).getEnd();
+        int minFrom = n.getAnchors().getFrom();
+        int maxEnd = n.getAnchors().getEnd();
 
         //Iterate through all the directed nodes and edges adding them to a hashmap to eliminate duplicates.
         HashMap<String, Edge> descEdge = new HashMap<>();
@@ -153,11 +153,11 @@ public class DMRSModel extends AbstractModel{
                 DescendentNodes.put(nn.getId(), new Node(nn));
                 stack.push(nn);
                 //Set the min and max span appropriately as found
-                if (nn.getAnchors().get(0).getFrom() < minFrom) {
-                    minFrom = nn.getAnchors().get(0).getFrom();
+                if (nn.getAnchors().getFrom() < minFrom) {
+                    minFrom = nn.getAnchors().getFrom();
                 }
-                if (nn.getAnchors().get(0).getEnd() > maxEnd) {
-                    maxEnd = nn.getAnchors().get(0).getEnd();
+                if (nn.getAnchors().getEnd() > maxEnd) {
+                    maxEnd = nn.getAnchors().getEnd();
                 }
                 for (Edge ne : nn.getDirectedEdgeNeighbours()) {
                     descEdge.put(ne.getSource() + " " + ne.getTarget(), new Edge(ne));
@@ -418,8 +418,8 @@ public class DMRSModel extends AbstractModel{
         //iterates over every Node of each DMRSGraph
         for (Node n1 : nodes1.values()) {
             for (Node n2 : nodes2.values()) {
-                int span1 = n1.getAnchors().get(0).getEnd() - n1.getAnchors().get(0).getFrom();
-                int span2 = n2.getAnchors().get(0).getEnd() - n2.getAnchors().get(0).getFrom();
+                int span1 = n1.getAnchors().getEnd() - n1.getAnchors().getFrom();
+                int span2 = n2.getAnchors().getEnd() - n2.getAnchors().getFrom();
                 //checks if their labels and spans are equal
                 if (n1.getLabel().equals(n2.getLabel()) && span1 == span2) {
                     //if they are equal then it adds the respective IDs to the individual similar nodes lists for the graphs
@@ -437,8 +437,8 @@ public class DMRSModel extends AbstractModel{
 
                             Node nn1 = nodes1.get(e1.getTarget());
                             Node nn2 = nodes2.get(e2.getTarget());
-                            span1 = nn1.getAnchors().get(0).getEnd() - nn1.getAnchors().get(0).getFrom();
-                            span2 = nn2.getAnchors().get(0).getEnd() - nn2.getAnchors().get(0).getFrom();
+                            span1 = nn1.getAnchors().getEnd() - nn1.getAnchors().getFrom();
+                            span2 = nn2.getAnchors().getEnd() - nn2.getAnchors().getFrom();
 
                             if (nn1.getLabel().equals(nn2.getLabel()) && e1.getLabel().equals(e2.getLabel()) && span1 == span2) {
 
@@ -571,17 +571,17 @@ public class DMRSModel extends AbstractModel{
         HashMap<Integer, Integer> currentLevels = new HashMap<>();
         //Add all the Node data in the correct format readable by the front end
         for (Node n : graph.getNodes().values()) {
-            if (!currentLevels.containsKey(n.getAnchors().get(0).getFrom())) {
-                currentLevels.put(n.getAnchors().get(0).getFrom(), 0);
+            if (!currentLevels.containsKey(n.getAnchors().getFrom())) {
+                currentLevels.put(n.getAnchors().getFrom(), 0);
             } else {
-                currentLevels.put(n.getAnchors().get(0).getFrom(), currentLevels.get(n.getAnchors().get(0).getFrom()) + 1);
+                currentLevels.put(n.getAnchors().getFrom(), currentLevels.get(n.getAnchors().getFrom()) + 1);
             }
 
             //puts all the Node data in the hashmap
             HashMap<String, Object> singleNode = new HashMap<>();
-            singleNode.put("id", n.getAnchors().get(0).getFrom() + currentLevels.get(n.getAnchors().get(0).getFrom()) * graph.getNodes().size());
-            singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
-            singleNode.put("y", totalGraphHeight + currentLevels.get(n.getAnchors().get(0).getFrom()) * 100);
+            singleNode.put("id", n.getAnchors().getFrom() + currentLevels.get(n.getAnchors().getFrom()) * graph.getNodes().size());
+            singleNode.put("x", n.getAnchors().getFrom() * 110);
+            singleNode.put("y", totalGraphHeight + currentLevels.get(n.getAnchors().getFrom()) * 100);
             singleNode.put("label", n.getLabel());
             if (n.getLabel().startsWith("_")) {
                 singleNode.put("group", "surfaceNode");
@@ -589,7 +589,7 @@ public class DMRSModel extends AbstractModel{
                 singleNode.put("group", "node");
             }
             singleNode.put("type", "node");
-            singleNode.put("anchors", n.getAnchors().get(0));
+            singleNode.put("anchors", n.getAnchors());
             singleNode.put("group", "node");
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
@@ -677,11 +677,11 @@ public class DMRSModel extends AbstractModel{
         Collections.sort(ordered, new Comparator<Node>() {
             @Override
             public int compare(Node o1, Node o2) {
-                o1.getAnchors().get(0).setEnd(o1.getAnchors().get(0).getFrom());
-                o2.getAnchors().get(0).setEnd(o2.getAnchors().get(0).getFrom());
-                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+                o1.getAnchors().setEnd(o1.getAnchors().getFrom());
+                o2.getAnchors().setEnd(o2.getAnchors().getFrom());
+                if (o1.getAnchors().getFrom() < o2.getAnchors().getFrom()) {
                     return -1;
-                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+                } else if (o1.getAnchors().getFrom() == o2.getAnchors().getFrom()) {
                     return 0;
                 }
                 return 1;
@@ -705,7 +705,7 @@ public class DMRSModel extends AbstractModel{
             singleNode.put("y", totalGraphHeight);
             singleNode.put("label", n.getLabel());
             singleNode.put("type", "node");
-            singleNode.put("anchors", n.getAnchors().get(0));
+            singleNode.put("anchors", n.getAnchors());
             if (n.getLabel().startsWith("_")) {
                 singleNode.put("group", "surfaceNode");
             } else {
@@ -859,7 +859,7 @@ public class DMRSModel extends AbstractModel{
         //Iterate through each level and set its xPosition to the start of its Anchors and if its the first Node in that x position then add it to the lowestNode HashMap.
         for (ArrayList<Node> level : nodesInLevels) {
             for (Node n : level) {
-                int column = n.getAnchors().get(0).getFrom();
+                int column = n.getAnchors().getFrom();
                 xPositions.put(n.getId(), column);
                 if (!lowestNode.containsKey(column)) {
                     lowestNode.put(column, n);
@@ -879,8 +879,8 @@ public class DMRSModel extends AbstractModel{
                         for (Node neighbour : n.getDirectedNeighbours()) {
                             //If the child Node is in span, then add it to the childrenInSpan array
                             if (
-                                    xPositions.get(neighbour.getId()) >= n.getAnchors().get(0).getFrom() &&
-                                            xPositions.get(neighbour.getId()) <= n.getAnchors().get(0).getEnd()
+                                    xPositions.get(neighbour.getId()) >= n.getAnchors().getFrom() &&
+                                            xPositions.get(neighbour.getId()) <= n.getAnchors().getEnd()
                             ) {
                                 childrenInSpan.add(neighbour.getId());
                             }
@@ -968,7 +968,7 @@ public class DMRSModel extends AbstractModel{
                 singleNode.put("label", n.getLabel());
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", levelNum);
-                singleNode.put("anchors", n.getAnchors().get(0));
+                singleNode.put("anchors", n.getAnchors());
                 if (n.getLabel().startsWith("_")) {
                     singleNode.put("group", "surfaceNode");
                 } else {
@@ -1193,7 +1193,7 @@ public class DMRSModel extends AbstractModel{
         //Determine span lengths of each Node
         HashMap<String, Integer> graphNodeSpanLengths = new HashMap<>();
         for (Node n : graph.getNodes().values()) {
-            int span = n.getAnchors().get(0).getEnd() - n.getAnchors().get(0).getFrom();
+            int span = n.getAnchors().getEnd() - n.getAnchors().getFrom();
             graphNodeSpanLengths.put(n.getId(), span);
         }
 
@@ -1232,7 +1232,7 @@ public class DMRSModel extends AbstractModel{
 
             HashMap<String, Boolean> spanMap = new HashMap<>();
             for (Node node : level) {
-                String span = node.getAnchors().get(0).getFrom() + " " + node.getAnchors().get(0).getEnd();
+                String span = node.getAnchors().getFrom() + " " + node.getAnchors().getEnd();
                 if (!spanMap.containsKey(span)) {
                     spanMap.put(span, true); // set any value to Map
                     uniqueSpans.add(span);
@@ -1250,7 +1250,7 @@ public class DMRSModel extends AbstractModel{
                 //find the nodes in the level that have the same span and group them together
                 ArrayList<Node> nodesWithCurrentSpan = new ArrayList<>();
                 for (Node n : nodesInLevels.get(level)) {
-                    String span = n.getAnchors().get(0).getFrom() + " " + n.getAnchors().get(0).getEnd();
+                    String span = n.getAnchors().getFrom() + " " + n.getAnchors().getEnd();
                     if (span.equals(uniqueSpan)) {
                         nodesWithCurrentSpan.add(n);
                     }
@@ -1316,12 +1316,12 @@ public class DMRSModel extends AbstractModel{
                 HashMap<String, Object> singleNode = new HashMap<>();
                 singleNode.put("id", n.getId());
                 maxID = Math.max(Integer.parseInt(n.getId()), maxID);
-                singleNode.put("x", (n.getAnchors().get(0).getEnd() * space + n.getAnchors().get(0).getFrom() * space) / 2);
+                singleNode.put("x", (n.getAnchors().getEnd() * space + n.getAnchors().getFrom() * space) / 2);
                 singleNode.put("y", totalGraphHeight - level * (totalGraphHeight / height));
                 singleNode.put("label", n.getLabel());
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", level);
-                singleNode.put("anchors", n.getAnchors().get(0));
+                singleNode.put("anchors", n.getAnchors());
                 if (n.getLabel().startsWith("_")) {
                     singleNode.put("group", "surfaceNode");
                 } else {
@@ -1329,8 +1329,8 @@ public class DMRSModel extends AbstractModel{
                 }
                 singleNode.put("fixed", true);
                 HashMap<String,Object> widthCon = new HashMap<>();
-                widthCon.put("minimum", n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom() * space + 70);
-                widthCon.put("maximum", n.getAnchors().get(0).getEnd() * space - n.getAnchors().get(0).getFrom() * space + 70);
+                widthCon.put("minimum", n.getAnchors().getEnd() * space - n.getAnchors().getFrom() * space + 70);
+                widthCon.put("maximum", n.getAnchors().getEnd() * space - n.getAnchors().getFrom() * space + 70);
                 singleNode.put("widthConstraint", widthCon);
                 finalNodes.add(singleNode);
             }
@@ -1339,12 +1339,12 @@ public class DMRSModel extends AbstractModel{
         if (graph.getNodes().containsKey(graph.getTop())) {
             HashMap<String, Object> singleNode = new HashMap<>();
             singleNode.put("id", "TOP");
-            singleNode.put("x", (graph.getNodes().get(graph.getTop()).getAnchors().get(0).getEnd() * space + graph.getNodes().get(graph.getTop()).getAnchors().get(0).getFrom() * space) / 2);
+            singleNode.put("x", (graph.getNodes().get(graph.getTop()).getAnchors().getEnd() * space + graph.getNodes().get(graph.getTop()).getAnchors().getFrom() * space) / 2);
             singleNode.put("y", totalGraphHeight - nodesInFinalLevels.size() * (totalGraphHeight / height));
             singleNode.put("label", "TOP");
             singleNode.put("type", "node");
             singleNode.put("nodeLevel", nodesInFinalLevels.size());
-            singleNode.put("anchors", graph.getNodes().get(graph.getTop()).getAnchors().get(0));
+            singleNode.put("anchors", graph.getNodes().get(graph.getTop()).getAnchors());
             singleNode.put("group", "top");
             singleNode.put("fixed", true);
             finalNodes.add(singleNode);
@@ -1377,8 +1377,8 @@ public class DMRSModel extends AbstractModel{
             String edgeType = "";
             double round = 0.5; //The roundness of the Edge
 
-            int spanLower = graph.getNodes().get(fromID).getAnchors().get(0).getFrom() * space;
-            int spanUpper = graph.getNodes().get(fromID).getAnchors().get(0).getEnd() * space;
+            int spanLower = graph.getNodes().get(fromID).getAnchors().getFrom() * space;
+            int spanUpper = graph.getNodes().get(fromID).getAnchors().getEnd() * space;
 
             //Edge layout algorithm to best avoid edges from overlapping
             if (toX <= spanUpper && toX >= spanLower) {
@@ -1471,7 +1471,7 @@ public class DMRSModel extends AbstractModel{
 
                             //Check neighbours to see if there already exists an Edge to the left, if so, change it to right. Same for edges facing upwards
                             for (Node neighbour : graph.getNodes().get(fromID).getDirectedNeighbours()) {
-                                if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
+                                if (fromX / space - neighbour.getAnchors().getFrom() == 1) {
                                     if (fromLevel < toLevel) {
                                         edgeType = "curvedCCW";
                                     } else {
@@ -1482,7 +1482,7 @@ public class DMRSModel extends AbstractModel{
 
                             //Check neighbours to see if there already exists an Edge to the left, if so, change it to right. Same for edges facing upwards
                             for (Node neighbour : graph.getNodes().get(toID).getDirectedNeighbours()) {
-                                if (fromX / space - neighbour.getAnchors().get(0).getFrom() == 1) {
+                                if (fromX / space - neighbour.getAnchors().getFrom() == 1) {
                                     if (fromLevel < toLevel) {
                                         edgeType = "curvedCCW";
                                     } else {

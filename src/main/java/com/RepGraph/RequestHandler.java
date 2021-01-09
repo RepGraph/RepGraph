@@ -20,7 +20,7 @@ import java.util.*;
 @RestController
 public class RequestHandler {
 
-    AbstractModel RepModel = new DMRSModel();
+    AbstractModel RepModel;
 
 
     /**
@@ -48,6 +48,8 @@ public class RequestHandler {
     @PostMapping("/UploadData")
     @ResponseBody
     public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) throws IOException {
+        //This is where we would change framework model
+        this.RepModel = new DMRSModel();
 
         RepModel.clearGraphs();
         HashMap<String, Object> returnobj = new HashMap<>();

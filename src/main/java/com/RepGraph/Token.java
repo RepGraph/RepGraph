@@ -1,5 +1,6 @@
 /**
  * The Token class is used to represent a Token (usually a word or a meaningful part of a word). Sentences are split into a sequence of tokens.
+ *
  * @since 29/08/2020
  */
 package com.RepGraph;
@@ -32,7 +33,8 @@ public class Token {
     /**
      * Default constructor of the Token class.
      */
-    public Token(){}
+    public Token() {
+    }
 
     /**
      * Fully parameterised constructor of the Token class.
@@ -41,7 +43,7 @@ public class Token {
      * @param lemma The Token's lemma.
      * @param carg The Token's carg.
      */
-    public Token(int index, String form, String lemma, String carg){
+    public Token(int index, String form, String lemma, String carg) {
         this.index = index;
         this.form = form;
         this.lemma = lemma;
@@ -118,13 +120,13 @@ public class Token {
      * @return boolean Whether to two classes being compared are equal.
      */
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
 
-        if (o == this){
+        if (o == this) {
             return true;
         }
 
-        if (!(o instanceof Token)){
+        if (!(o instanceof Token)) {
             return false;
         }
 

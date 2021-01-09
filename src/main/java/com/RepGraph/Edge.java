@@ -1,11 +1,13 @@
 /**
  * Edge class used to represent relations between nodes in a Graph.
+ *
  * @since 29/08/2020
  */
 
 
 package com.RepGraph;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,28 +17,32 @@ public class Edge {
     /**
      * ID of the Node that is the source of the Edge.
      */
+    @JsonAlias({"from","source"})
     private String source;
 
     /**
      * ID of the Node that is the target of the Edge.
      */
+    @JsonAlias({"to","target"})
     private String target;
 
     /**
      * The Edge's label.
      */
+    @JsonAlias({"label","rargname"})
     private String label;
 
     /**
      * The Edge's post label.
      */
-    @JsonProperty("post-label")
+    @JsonAlias({"post-label","post"})
     private String postLabel;
 
     /**
      * Default constructor of the Edge class.
      */
-    public Edge(){}
+    public Edge() {
+    }
 
     /**
      * The Parameterised copy constructor of the Edge class
@@ -57,7 +63,7 @@ public class Edge {
      * @param label The Edge's label.
      * @param postLabel Default constructor of the Edge class.
      */
-    public Edge(String source, String target, String label, String postLabel){
+    public Edge(String source, String target, String label, String postLabel) {
         this.source = source;
         this.target = target;
         this.label = label;
@@ -134,13 +140,13 @@ public class Edge {
      * @return boolean Whether to two classes being compared are equal.
      */
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
 
-        if (o == this){
+        if (o == this) {
             return true;
         }
 
-        if (!(o instanceof Edge)){
+        if (!(o instanceof Edge)) {
             return false;
         }
 

@@ -66,7 +66,7 @@ abstract class AbstractModel {
     public abstract AbstractGraph CreateSubsetAdjacent(String graphID, String headNodeID);
 
 
-    public abstract AbstractGraph CreateSubsetDescendent(String graphID, String headNodeID) ;
+    public abstract AbstractGraph CreateSubsetDescendent(String graphID, String headNodeID);
 
 
     public abstract HashMap<String, Object> searchSubgraphPattern(String graphID, String[] NodeId, int[] EdgeIndices);

@@ -1,9 +1,6 @@
 package com.RepGraph;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.*;
 
@@ -37,6 +34,7 @@ abstract class AbstractGraph {
     /**
      * An array list of the Graph's edges.
      */
+    @JsonAlias({"links","edges"})
     protected ArrayList<Edge> edges;
 
     /**
@@ -77,7 +75,6 @@ abstract class AbstractGraph {
         this.top = top;
 
     }
-
 
     /**
      * Getter method for the Graph's ID number.
@@ -176,9 +173,9 @@ abstract class AbstractGraph {
     }
 
     @JsonGetter("nodes")
-    public ArrayList<Node> returnNodeInArrayList(){
+    public ArrayList<Node> returnNodeInArrayList() {
         ArrayList<Node> returnNodes = new ArrayList<Node>();
-        for (Node n:this.nodes.values()) {
+        for (Node n : this.nodes.values()) {
             returnNodes.add(n);
         }
         return returnNodes;
@@ -203,9 +200,11 @@ abstract class AbstractGraph {
     public void setNodes(ArrayList<Node> nodelist) {
 
         for (Node n : nodelist) {
-            this.nodes.put(n.getId(),n);
+            this.nodes.put(n.getId(), n);
         }
     }
+
+    @JsonIgnore
     public void setNodes(HashMap<String, Node> nodes) {
 
         this.nodes = nodes;

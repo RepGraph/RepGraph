@@ -10,10 +10,7 @@ import java.util.*;
 /**
  * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
  */
-public class DMRSGraph extends AbstractGraph{
-
-
-
+public class DMRSGraph extends AbstractGraph {
 
 
     /**
@@ -30,6 +27,43 @@ public class DMRSGraph extends AbstractGraph{
         this.tokens = tokens;
     }
 
+    @JsonGetter("nodes")
+    public ArrayList<Node> returnNodeInArrayList() {
+        ArrayList<Node> returnNodes = new ArrayList<Node>();
+        for (Node n : this.nodes.values()) {
+            returnNodes.add(n);
+        }
+        return returnNodes;
+    }
+
+    @JsonIgnore
+    /**
+     * Getter method for the Graph's nodes HashMap.
+     *
+     * @return HashMap<Integer, Node> The Graph's nodes HashMap.
+     */
+    public HashMap<String, Node> getNodes() {
+        return this.nodes;
+    }
+
+    @JsonSetter("nodes")
+    /**
+     * Setter method for the Graph's nodes HashMap. This setter also resets and populates the linear list of nodes "nodeslist"
+     *
+     * @param nodes The Graph's nodes HashMap.
+     */
+    public void setNodes(ArrayList<Node> nodelist) {
+
+        for (Node n : nodelist) {
+            this.nodes.put(n.getId(), n);
+        }
+    }
+
+    @JsonIgnore
+    public void setNodes(HashMap<String, Node> nodes) {
+
+        this.nodes = nodes;
+    }
 
     /**
      * Getter method for the Graph's tokens.
@@ -341,7 +375,7 @@ public class DMRSGraph extends AbstractGraph{
      * @return ArrayList<ArrayList < Integer>> The longest paths.
      */
     public ArrayList<ArrayList<String>> traverseLongestPath(HashMap<String, Integer> dist, HashMap<String, String> prevNode,
-                                                             String startNodeID) {
+                                                            String startNodeID) {
 
         ArrayList<ArrayList<String>> paths = new ArrayList<>();
         int max = Collections.max(dist.values()); //Find the longest distance in the distance array
@@ -382,9 +416,9 @@ public class DMRSGraph extends AbstractGraph{
         Collections.sort(ordered, new Comparator<Node>() {
             @Override
             public int compare(Node o1, Node o2) {
-                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+                if (o1.getAnchors().getFrom() < o2.getAnchors().getFrom()) {
                     return -1;
-                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+                } else if (o1.getAnchors().getFrom() == o2.getAnchors().getFrom()) {
                     return 0;
                 }
                 return 1;
@@ -395,7 +429,7 @@ public class DMRSGraph extends AbstractGraph{
 
         //Map Node ids to their Token span beginning
         for (int i = 0; i < ordered.size(); i++) {
-            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom()+"");
+            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().getFrom() + "");
         }
 
         ArrayList<Edge> updated = new ArrayList<>();
@@ -455,12 +489,12 @@ public class DMRSGraph extends AbstractGraph{
         Collections.sort(ordered, new Comparator<Node>() {
             @Override
             public int compare(Node o1, Node o2) {
-                o1.getAnchors().get(0).setEnd(o1.getAnchors().get(0).getFrom());
-                o2.getAnchors().get(0).setEnd(o2.getAnchors().get(0).getFrom());
-                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+                o1.getAnchors().setEnd(o1.getAnchors().getFrom());
+                o2.getAnchors().setEnd(o2.getAnchors().getFrom());
+                if (o1.getAnchors().getFrom() < o2.getAnchors().getFrom()) {
 
                     return -1;
-                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+                } else if (o1.getAnchors().getFrom() == o2.getAnchors().getFrom()) {
 
                     return 0;
                 }
@@ -472,7 +506,7 @@ public class DMRSGraph extends AbstractGraph{
         HashMap<String, String> nodeToToken = new HashMap<>();
 
         for (int i = 0; i < ordered.size(); i++) {
-            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom()+"");
+            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().getFrom() + "");
         }
 
         ArrayList<Edge> updated = new ArrayList<>();
@@ -514,8 +548,6 @@ public class DMRSGraph extends AbstractGraph{
         }
 
         DMRSGraph planarVisualisation = new DMRSGraph(this.getId(), this.getSource(), this.input, newNodes, this.tokens, updated, this.top);
-
-
 
 
         return planarVisualisation;
@@ -668,7 +700,7 @@ public class DMRSGraph extends AbstractGraph{
             //Call recursive function to detect cycles in different DFS undirected trees.
             for (Node n : nodes.values()) {
                 if (!visited.get(n)) { //Check if the Node hasn't already been visited
-                    if (isCyclicCheckerUndirected(n, visited, -1+"")) {
+                    if (isCyclicCheckerUndirected(n, visited, -1 + "")) {
                         return true;
                     }
                 }

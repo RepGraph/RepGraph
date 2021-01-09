@@ -1,32 +1,35 @@
 /**
  * A semantic Node class that represents a Node in a Graph.
+ *
  * @since 29/08/2020
  */
 
 package com.RepGraph;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.ArrayList;
 
-@JsonIgnoreProperties(value = {"is_surface"})
+@JsonIgnoreProperties(value = {"is_surface","sortinfo"})
 public class Node {
 
     /**
      * The Node's ID number.
      */
+    @JsonAlias({"id","nodeid"})
     private String id;
 
     /**
      * The Node's label.
      */
+    @JsonAlias({"predicate","label"})
     private String label;
 
     /**
      * An array list of Anchors which give the Node to Token index alignment - done in ArrayList format for easier processing and compatibility with API
      */
-    private ArrayList<Anchors> anchors;
+    @JsonAlias("lnk")
+    private Anchors anchors;
 
     /**
      * An array list of directed neighbouring nodes i.e the nodes that this Node points to.
@@ -68,7 +71,7 @@ public class Node {
      * @param label The Node's label.
      * @param anchors An array list of the Node's Anchors.
      */
-    public Node(String id, String label, ArrayList<Anchors> anchors) {
+    public Node(String id, String label, Anchors anchors) {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
@@ -88,10 +91,8 @@ public class Node {
     public Node(Node n) {
         this.label = n.label;
         this.id = n.id;
-        Anchors anch = new Anchors(n.anchors.get(0).getFrom(), n.anchors.get(0).getEnd());
-        ArrayList<Anchors> anchorsarr = new ArrayList<>();
-        anchorsarr.add(anch);
-        this.anchors = anchorsarr;
+        Anchors anch = new Anchors(n.anchors.getFrom(), n.anchors.getEnd());
+        this.anchors = anch;
         this.undirectedEdgeNeighbours = new ArrayList<>();
         this.directedEdgeNeighbours = new ArrayList<>();
         this.directedNeighbours = new ArrayList<>();
@@ -135,7 +136,15 @@ public class Node {
      * Getter method for the the Node's Anchors.
      * @return ArrayList An ArrayList of the Node's Anchors.
      */
-    public ArrayList<Anchors> getAnchors() {
+    @JsonGetter("anchors")
+    public ArrayList<Anchors> getArrayAnchors() {
+        ArrayList<Anchors> arr = new ArrayList<>();
+        arr.add(this.anchors);
+        return arr;
+    }
+
+
+    public Anchors getAnchors() {
         return anchors;
     }
 
@@ -143,8 +152,13 @@ public class Node {
      * Setter method for the the Node's Anchors.
      * @param anchors An ArrayList of the Node's Anchors.
      */
-    public void setAnchors(ArrayList<Anchors> anchors) {
+    public void setAnchors(Anchors anchors) {
         this.anchors = anchors;
+    }
+
+    @JsonSetter("anchors")
+    public void setAnchors(ArrayList<Anchors> anchors) {
+        this.anchors = anchors.get(0);
     }
 
     /**
