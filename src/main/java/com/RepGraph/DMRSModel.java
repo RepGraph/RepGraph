@@ -603,21 +603,15 @@ public class DMRSModel extends AbstractModel{
         for (int i = 0; i < graph.getEdges().size(); i++) {
             HashMap<String, Object> singleEdge = new HashMap<>();
             Edge e = graph.getEdges().get(i);
-            Anchors fromNode = null;
-            Anchors toNode = null;
-            //iterate through all the nodes and create the edges for the visualisation
-            for (HashMap<String, Object> node : finalNodes) {
+            String fromNode = null;
+            String toNode = null;
 
-                if ( node.get("id").equals(e.getSource())) {
+
                     fromID = e.getSource();
-                    fromNode = (Anchors) node.get("anchors");
 
-                }
-                if (node.get("id").equals(e.getTarget())) {
                     toID = e.getTarget();
-                    toNode = (Anchors) node.get("anchors");
-                }
-            }
+
+
             String edgeType = "";
 
             if (Integer.parseInt(fromID)>Integer.parseInt(toID)) {
@@ -625,7 +619,7 @@ public class DMRSModel extends AbstractModel{
             } else {
                 edgeType = "curvedCW";
             }
-            if (fromID.equals(toID) || fromNode.getFrom() == toNode.getFrom()) {
+            if (fromID.equals(toID)) {
                 continue;
             }
             singleEdge.put("id", i);

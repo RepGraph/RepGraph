@@ -31,15 +31,8 @@ abstract class AbstractGraph {
     /**
      * A HashMap of the Graph nodes with the Node's ID as the key - used for quicker,easier and safer algorithmic use of Node data
      */
-    @JsonIgnore
+
     protected HashMap<String, Node> nodes;
-
-
-    /**
-     * The graphs linear list of nodes - used for returning Graph data correctly
-     */
-    @JsonProperty("nodes")
-    protected ArrayList<Node> nodelist;
 
     /**
      * An array list of the Graph's edges.
@@ -60,7 +53,6 @@ abstract class AbstractGraph {
      * Default constructor for the Graph class.
      */
     public AbstractGraph() {
-        this.nodelist = new ArrayList<>();
         this.edges = new ArrayList<>();
         this.nodes = new HashMap<>();
     }
@@ -78,62 +70,14 @@ abstract class AbstractGraph {
         this.id = id;
         this.source = source;
         this.input = input;
-        this.nodelist = new ArrayList<>();
+
         this.nodes = nodes;
-        for (Node n : nodes.values()) {
-            this.nodelist.add(n);
-        }
-        this.edges = edges;
-        this.top = top;
-
-    }
-    /**
-     * parameterised constructor for the Graph class that takes in the Node's Hashmap instead of the linear nodeslist
-     * and populates the nodeslist from the hashmap information.
-     *
-     * @param id     The Graph's ID number.
-     * @param source The Graph's source.
-     * @param input  The Graph's input/sentence.
-     * @param edges  An array list of the Graph's edges.
-     */
-    public AbstractGraph(String id, String source, String input, ArrayList<Node> nodelist, ArrayList<Edge> edges, String top) {
-        this.id = id;
-        this.source = source;
-        this.input = input;
-        this.nodelist = nodelist;
-        this.nodes = new HashMap<String, Node>();
-        for (Node n : nodelist) {
-            this.nodes.put(n.getId(), n);
-        }
 
         this.edges = edges;
         this.top = top;
 
     }
 
-
-    /**
-     * This is the getter for the linear list of nodes "nodeslist"
-     *
-     * @return ArrayList<Node> This is the linear list of nodes of the Graph object
-     */
-    @JsonGetter("nodes")
-    public ArrayList<Node> getNodelist() {
-        return this.nodelist;
-    }
-
-    /**
-     * The Setter method for the linear nodeslist attribute. The setter of the linear list of nodes also resets and populates the hashmap nodes.
-     *
-     * @param nodelist This is the linear list of nodes is used to set the objects list of nodes.
-     */
-    @JsonSetter("nodes")
-    public void setNodelist(ArrayList<Node> nodelist) {
-        this.nodelist = nodelist;
-        for (Node n: nodelist) {
-            this.nodes.put(n.getId(),n);
-        }
-    }
 
     /**
      * Getter method for the Graph's ID number.
@@ -231,6 +175,16 @@ abstract class AbstractGraph {
         this.top = top;
     }
 
+    @JsonGetter("nodes")
+    public ArrayList<Node> returnNodeInArrayList(){
+        ArrayList<Node> returnNodes = new ArrayList<Node>();
+        for (Node n:this.nodes.values()) {
+            returnNodes.add(n);
+        }
+        return returnNodes;
+    }
+
+    @JsonIgnore
     /**
      * Getter method for the Graph's nodes HashMap.
      *
@@ -240,17 +194,21 @@ abstract class AbstractGraph {
         return this.nodes;
     }
 
+    @JsonSetter("nodes")
     /**
      * Setter method for the Graph's nodes HashMap. This setter also resets and populates the linear list of nodes "nodeslist"
      *
      * @param nodes The Graph's nodes HashMap.
      */
-    public void setNodes(HashMap<String, Node> nodes) {
-        this.nodelist.clear();
-        this.nodes = nodes;
-        for (Node n : nodes.values()) {
-            this.nodelist.add(n);
+    public void setNodes(ArrayList<Node> nodelist) {
+
+        for (Node n : nodelist) {
+            this.nodes.put(n.getId(),n);
         }
+    }
+    public void setNodes(HashMap<String, Node> nodes) {
+
+        this.nodes = nodes;
     }
 
     /**

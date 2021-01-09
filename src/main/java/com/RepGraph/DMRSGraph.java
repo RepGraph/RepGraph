@@ -30,24 +30,6 @@ public class DMRSGraph extends AbstractGraph{
         this.tokens = tokens;
     }
 
-    /**
-     * parameterised constructor for the Graph class that takes in the linear nodeslist instead of the hashmap nodes
-     * and populates the nodes hashmap from the list information.
-     *
-     * @param id       The Graph's ID number.
-     * @param source   The Graph's source.
-     * @param input    The Graph's input/sentence.
-     * @param nodelist An ArrayList of the graphs linear list of nodes
-     * @param tokens   An array list of the Graph's tokens.
-     * @param edges    An array list of the Graph's edges.
-     * @param tops     An array list of the Graph's top Node ids.
-     */
-    public DMRSGraph(String id, String source, String input, ArrayList<Node> nodelist, ArrayList<Token> tokens, ArrayList<Edge> edges, String tops) {
-       super(id,source,input,nodelist,edges,tops);
-        this.tokens = tokens;
-
-
-    }
 
     /**
      * Getter method for the Graph's tokens.
@@ -520,16 +502,21 @@ public class DMRSGraph extends AbstractGraph{
 
                 }
             }
+
             updated.add(newEdge);
 
         }
 
         HashMap<String, Node> newNodes = new HashMap<>();
         for (Node n : ordered) {
+            //n.setId(nodeToToken.get(n.getId()));
             newNodes.put(n.getId(), n);
         }
 
         DMRSGraph planarVisualisation = new DMRSGraph(this.getId(), this.getSource(), this.input, newNodes, this.tokens, updated, this.top);
+
+
+
 
         return planarVisualisation;
 
