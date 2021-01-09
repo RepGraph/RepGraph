@@ -2,6 +2,7 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonGetter;
 
 /**
  * This class stores the Token span information of a Node
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 public class Anchors {
 
     private int from;
+
     @JsonAlias({"end","to"})
     private int end;
 
@@ -44,6 +46,7 @@ public class Anchors {
      *
      * @return int This is the value of "end"
      */
+
     public int getEnd() {
         return end;
     }

@@ -28,7 +28,7 @@ public class Node {
     /**
      * An array list of Anchors which give the Node to Token index alignment - done in ArrayList format for easier processing and compatibility with API
      */
-    @JsonAlias("lnk")
+    @JsonAlias({"lnk"})
     private Anchors anchors;
 
     /**
@@ -117,6 +117,14 @@ public class Node {
     }
 
     /**
+     * Setter method for the Node's ID number.
+     * @param id The Node's ID number.
+     */
+    public void setId(int id) {
+        this.id = id+"";
+    }
+
+    /**
      * Getter method for the Node's label.
      * @return String The Node's label.
      */
@@ -132,34 +140,21 @@ public class Node {
         this.label = label;
     }
 
-    /**
-     * Getter method for the the Node's Anchors.
-     * @return ArrayList An ArrayList of the Node's Anchors.
-     */
-    @JsonGetter("anchors")
-    public ArrayList<Anchors> getArrayAnchors() {
-        ArrayList<Anchors> arr = new ArrayList<>();
-        arr.add(this.anchors);
-        return arr;
-    }
-
 
     public Anchors getAnchors() {
         return anchors;
     }
 
-    /**
-     * Setter method for the the Node's Anchors.
-     * @param anchors An ArrayList of the Node's Anchors.
-     */
-    public void setAnchors(Anchors anchors) {
+    @JsonSetter("lnk")
+    public void setAnchorsLnk(Anchors anchors) {
         this.anchors = anchors;
     }
 
     @JsonSetter("anchors")
-    public void setAnchors(ArrayList<Anchors> anchors) {
+    public void setAnchorsArr(ArrayList<Anchors> anchors) {
         this.anchors = anchors.get(0);
     }
+
 
     /**
      * Adds a directed neighbouring Node. i.e a Node that this Node points to.

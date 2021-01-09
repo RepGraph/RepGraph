@@ -7,6 +7,7 @@ import java.util.*;
 /**
  * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
  */
+
 abstract class AbstractGraph {
 
 
@@ -37,14 +38,11 @@ abstract class AbstractGraph {
     @JsonAlias({"links","edges"})
     protected ArrayList<Edge> edges;
 
-    /**
-     * An array list of the Graph's tokens.
-     */
-    protected ArrayList<Token> tokens;
 
     /**
      * ID of the Top node
      */
+    @JsonAlias({"top","tops"})
     protected String top;
 
     /**
@@ -148,7 +146,7 @@ abstract class AbstractGraph {
         this.edges = edges;
     }
 
-    @JsonGetter("tops")
+
     /**
      * Getter method for a graphs top Node array
      *
@@ -158,18 +156,19 @@ abstract class AbstractGraph {
         return top;
     }
 
+
     @JsonSetter("tops")
-    /**
-     * Setter method for a graphs top Node array
-     *
-     * @param top This is an ArrayList of the ids of the top nodes in a Graph
-     */
-    public void setTop(ArrayList<String> top) {
-        this.top = top.get(0);
+    public void setTopArray(ArrayList<Integer> top) {
+        this.top = top.get(0)+"";
     }
 
-    public void setTop(String top) {
+    public void setTopString(String top) {
         this.top = top;
+    }
+
+    @JsonSetter("top")
+    public void setTopInt(int top) {
+        this.top = top+"";
     }
 
     @JsonGetter("nodes")
@@ -192,11 +191,6 @@ abstract class AbstractGraph {
     }
 
     @JsonSetter("nodes")
-    /**
-     * Setter method for the Graph's nodes HashMap. This setter also resets and populates the linear list of nodes "nodeslist"
-     *
-     * @param nodes The Graph's nodes HashMap.
-     */
     public void setNodes(ArrayList<Node> nodelist) {
 
         for (Node n : nodelist) {

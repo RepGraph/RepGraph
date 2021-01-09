@@ -30,8 +30,9 @@ public class RequestHandler {
      */
     @GetMapping("/")
     @ResponseBody
-    public String Home() {
-        return "Welcome";
+    public DMRSGraph Home(@RequestBody DMRSGraph data) {
+
+        return data;
     }
 
     /**

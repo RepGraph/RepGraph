@@ -7,9 +7,7 @@
 
 package com.RepGraph;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 @JsonIgnoreProperties(value = {"id"})
 public class Edge {
@@ -74,6 +72,7 @@ public class Edge {
      * Getter method for the source Node.
      * @return Integer Number of the source Node.
      */
+
     public String getSource() {
         return source;
     }
@@ -82,38 +81,40 @@ public class Edge {
      * Setter method for the source Node.
      * @param source Number of the source Node.
      */
+
     public void setSource(String source) {
         this.source = source;
     }
 
-    /**
-     * Getter method for the target Node.
-     * @return Integer Number of the target Node.
-     */
+
+
+
+
+    public void setSource(int source) {
+        this.source = source+"";
+    }
+
+
     public String getTarget() {
         return target;
     }
 
-    /**
-     * Setter method for the target Node.
-     * @param target Number of the target Node.
-     */
+
     public void setTarget(String target) {
         this.target = target;
     }
 
-    /**
-     * Getter method for the Edge label.
-     * @return String The Edge's label.
-     */
+
+    public void setTarget(int target) {
+        this.target = target+"";
+    }
+
+
     public String getLabel() {
         return label;
     }
 
-    /**
-     * Setter method for the Edge label
-     * @param label The Edge's label
-     */
+
     public void setLabel(String label) {
         this.label = label;
     }

@@ -12,6 +12,24 @@ import java.util.*;
  */
 public class DMRSGraph extends AbstractGraph {
 
+    @JsonProperty("index")
+    protected String index;
+
+
+    protected ArrayList<Token> tokens;
+
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index + "";
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
+    }
 
     /**
      * Default constructor for the Graph class.
@@ -25,6 +43,43 @@ public class DMRSGraph extends AbstractGraph {
     public DMRSGraph(String id, String source, String input, HashMap<String, Node> nodes, ArrayList<Token> tokens, ArrayList<Edge> edges, String top) {
         super(id, source, input, nodes, edges, top);
         this.tokens = tokens;
+    }
+
+    public ArrayList<Token> extractTokensFromNodes() {
+
+
+        ArrayList<Token> tokenlist = new ArrayList<>();
+        String[] list = this.input.split(" ");
+
+        for (int i =0;i<list.length;i++) {
+            list[i]+=" ";
+            tokenlist.add(new Token(i,list[i],list[i],list[i]));
+
+        }
+
+        int lengthBoundary[] = new int[list.length];
+
+        lengthBoundary[0] = list[0].length();
+
+
+        for (int i = 1; i < lengthBoundary.length; ++i) {
+            lengthBoundary[i] = lengthBoundary[i - 1] + list[i].length();
+            System.out.println(lengthBoundary[i]);
+        }
+
+        for (Node n:this.nodes.values()) {
+            for (int i = 0; i <lengthBoundary.length ; i++) {
+                if (n.getAnchors().getFrom()<lengthBoundary[i] && i<=n.getAnchors().getFrom()){
+                    n.getAnchors().setFrom(i);
+                }
+                if (n.getAnchors().getEnd()<=lengthBoundary[i] && i<=n.getAnchors().getEnd()){
+                    n.getAnchors().setEnd(i);
+                }
+
+            }
+        }
+
+        return tokenlist;
     }
 
     @JsonGetter("nodes")
@@ -65,23 +120,16 @@ public class DMRSGraph extends AbstractGraph {
         this.nodes = nodes;
     }
 
-    /**
-     * Getter method for the Graph's tokens.
-     *
-     * @return ArrayList The Graph's tokens.
-     */
+
     public ArrayList<Token> getTokens() {
         return tokens;
     }
 
-    /**
-     * Setter method for the Graph's tokens.
-     *
-     * @param tokens The Graph's tokens.
-     */
+
     public void setTokens(ArrayList<Token> tokens) {
         this.tokens = tokens;
     }
+
 
     /**
      * Analysis Tool for finding the longest paths in the Graph.
@@ -399,6 +447,7 @@ public class DMRSGraph extends AbstractGraph {
         return paths;
     }
 
+    @JsonIgnore
     /**
      * Method to check if a Graph is planar
      *
