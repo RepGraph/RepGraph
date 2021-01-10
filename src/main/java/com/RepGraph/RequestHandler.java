@@ -48,9 +48,16 @@ public class RequestHandler {
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("data") MultipartFile file) throws IOException {
+    public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
         //This is where we would change framework model
-        this.RepModel = new DMRSModel();
+        if (framework.equals("1")) {
+            this.RepModel = new DMRSModel();
+        } else if (framework.equals("2")) {
+            this.RepModel = new EDSModel();
+        } else {
+            //FOR NOW ONLY
+            this.RepModel = new DMRSModel();
+        }
 
         RepModel.clearGraphs();
         HashMap<String, Object> returnobj = new HashMap<>();
@@ -81,7 +88,17 @@ public class RequestHandler {
         boolean duplicates = false;
         while ((currentLine = reader.readLine()) != null) {
             //Creates Graph object from JSON string
-            AbstractGraph currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
+            AbstractGraph currgraph;
+            if (framework.equals("1")) {
+                 currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
+
+            } else if (framework.equals("2")) {
+                 currgraph = objectMapper.readValue(currentLine, EDSGraph.class);
+
+            } else {
+                //FOR NOW ONLY
+                 currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
+            }
             //checks if model doesnt contain the ID already and if it does dont add it and tell the user duplicates were found
             if (!RepModel.containsKey(currgraph.getId())) {
 

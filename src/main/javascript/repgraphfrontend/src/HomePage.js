@@ -7,6 +7,8 @@ import {AppContext} from "./Store/AppContextProvider.js";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+import ToggleButton from "@material-ui/lab/ToggleButton";
 
 export default function HomePage(props) {
     const [fileObjects, setFileObjects] = useState([]);
@@ -44,7 +46,7 @@ export default function HomePage(props) {
 
             //Upload the file chosen by the user
             fetch(
-                state.APIendpoint + "/UploadData?FileName=SupremeLeaderJanBuys",
+                state.APIendpoint + "/UploadData?FileName=SupremeLeaderJanBuys&Framework="+state.framework,
                 requestOptions
             )
                 .then((response) => {
@@ -81,6 +83,10 @@ export default function HomePage(props) {
         history.push("/main");
     }
 
+    const handleFormatChange = (event, newFormat) => {
+        dispatch({type: "SET_FRAMEWORK", payload: {framework: newFormat}}); //Show loading animation while awaiting response
+
+    }
     return (
         <Grid
             container
@@ -94,12 +100,31 @@ export default function HomePage(props) {
             <Grid item>
                 <Typography color="primary" variant="h2">Welcome to RepGraph</Typography>
             </Grid>
+            <ToggleButtonGroup
+                value={state.framework}
+                exclusive
+                onChange={handleFormatChange}
+                aria-label="Framework formats"
+                color="primary"
+
+
+            >
+                <ToggleButton color="primary" value="1" aria-label="DMRS">
+                    <Typography color="primary">DMRS</Typography>
+                </ToggleButton>
+                <ToggleButton color="secondary" value="2" aria-label="EDS">
+                    <Typography color="primary">EDS</Typography>
+                </ToggleButton>
+                <ToggleButton color="secondary" value="3" aria-label="MRS">
+                    <Typography color="primary">MRS</Typography>
+                </ToggleButton>
+            </ToggleButtonGroup>
             <Grid item>
                 <Typography variant="h5">Please upload a data-set to begin</Typography>
             </Grid>
             <Grid item style={{minWidth: "50vw"}}>
                 <DropzoneArea
-                    acceptedFiles={[".dmrs"]}
+                    acceptedFiles={[".dmrs",".eds",".mrs"]}
                     dropzoneText={"Drag and drop"}
                     icon={<CloudUploadIcon/>}
                     onChange={(files) => {
@@ -121,6 +146,7 @@ export default function HomePage(props) {
                     Please select a data-set first.
                 </MuiAlert>
             </Snackbar>
+
         </Grid>
     );
 }

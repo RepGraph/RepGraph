@@ -206,14 +206,11 @@ abstract class AbstractGraph {
         this.top = top.get(0)+"";
     }
 
+    @JsonSetter("top")
     public void setTopString(String top) {
         this.top = top;
     }
 
-    @JsonSetter("top")
-    public void setTopInt(int top) {
-        this.top = top+"";
-    }
 
     @JsonGetter("nodes")
     public ArrayList<Node> returnNodeInArrayList() {

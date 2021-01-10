@@ -177,10 +177,16 @@ public class Node {
     }
 
     @JsonSetter("edges")
-    public void setEdgesNeighbours(LinkedHashMap<String,String> edges){
+    public void directEdgePopulation(LinkedHashMap<String,String> edges){
         for (String edgeLabel:edges.keySet()) {
             Edge e = new Edge(this.id,edges.get(edgeLabel),edgeLabel,"");
             this.directedEdgeNeighbours.add(e);
+        }
+    }
+
+    public void updateDirectedEdges(){
+        for (Edge e:directedEdgeNeighbours) {
+           e.setSource(this.id);
         }
     }
 

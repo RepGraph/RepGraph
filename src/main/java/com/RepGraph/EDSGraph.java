@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -22,6 +25,20 @@ public class EDSGraph extends AbstractGraph {
         this.tokens = new ArrayList<>();
     }
 
+    @JsonSetter("nodes")
+    public void setNodes(LinkedHashMap<String,Object> n)throws IOException,JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+
+        for (String id:n.keySet()){
+            LinkedHashMap<String,Object> values = (LinkedHashMap<String,Object>)n.get(id);
+            String nodeValue = mapper.writeValueAsString(values);
+            Node gn = mapper.readValue(nodeValue,Node.class);
+            gn.setId(id);
+            gn.updateDirectedEdges();
+            this.nodes.put(id,gn);
+        }
+
+    }
 
     public EDSGraph(String id, String source, String input, HashMap<String, Node> nodes, ArrayList<Token> tokens, ArrayList<Edge> edges, String top) {
         super(id, source, input, nodes, edges, top);
