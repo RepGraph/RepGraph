@@ -248,6 +248,42 @@ abstract class AbstractGraph {
         this.nodes = nodes;
     }
 
+    public void populateTokens(){
+        if (tokens.size()==0){
+        setTokens(extractTokensFromNodes());}
+    }
+    /**
+     * Creates a list of tokens in a range starting at "from" and ending at "end"
+     *
+     * @param from The start of the range of tokens
+     * @param end  The End of the range of tokens
+     * @return ArrayList<Token> Returns a list of Token objects
+     */
+    public ArrayList<Token> getTokenSpan(int from, int end) {
+        ArrayList<Token> returnTokens = new ArrayList<>();
+        for (int i = from; i < end + 1; i++) {
+            returnTokens.add(tokens.get(i));
+        }
+        return returnTokens;
+    }
+
+    /**
+     * gets the "form" of tokens and turns them into a string
+     *
+     * @param tokenIn List of tokens to become a string
+     * @return String This is the string of all Token's form.
+     */
+    public String getTokenInput(ArrayList<Token> tokenIn) {
+        String output = "";
+
+        for (Token t : tokenIn) {
+            output += " " + t.getForm();
+
+        }
+
+        return output.trim();
+    }
+
     /**
      * This method checks to see if a Graph has a dangling Edge i.e an Edge that doesnt connect to any Node
      *
@@ -293,8 +329,8 @@ abstract class AbstractGraph {
             Node sourceNode = nodes.get(source);
             sourceNode.addDirectedNeighbour(nodes.get(target));
             nodes.get(target).addUndirectedNeighbour(sourceNode);
+            if (!sourceNode.getDirectedEdgeNeighbours().contains(currentEdge)){sourceNode.addDirectedEdgeNeighbour(currentEdge);}
 
-            sourceNode.addDirectedEdgeNeighbour(currentEdge);
             nodes.get(target).addUndirectedEdgeNeighbour(currentEdge);
 
         }

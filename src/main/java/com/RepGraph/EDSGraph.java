@@ -10,41 +10,33 @@ import java.util.*;
 /**
  * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
  */
-public class DMRSGraph extends AbstractGraph {
+public class EDSGraph extends AbstractGraph {
 
-    @JsonProperty("index")
-    protected String index;
-
-
-    public String getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index + "";
-    }
-
-    public void setIndex(String index) {
-        this.index = index;
-    }
 
     /**
      * Default constructor for the Graph class.
      */
-    public DMRSGraph() {
+    public EDSGraph() {
         super();
 
         this.tokens = new ArrayList<>();
     }
 
 
-    public DMRSGraph(String id, String source, String input, HashMap<String, Node> nodes, ArrayList<Token> tokens, ArrayList<Edge> edges, String top) {
+    public EDSGraph(String id, String source, String input, HashMap<String, Node> nodes, ArrayList<Token> tokens, ArrayList<Edge> edges, String top) {
         super(id, source, input, nodes, edges, top);
         this.tokens = tokens;
     }
 
-
-
+    public void populateEdges() {
+        if (this.edges.size() == 0) {
+            for (Node n : this.nodes.values()) {
+                for (Edge e : n.getDirectedEdgeNeighbours()) {
+                    this.edges.add(e);
+                }
+            }
+        }
+    }
 
     /**
      * Analysis Tool for finding the longest paths in the Graph.
@@ -363,6 +355,11 @@ public class DMRSGraph extends AbstractGraph {
     }
 
     @JsonIgnore
+    /**
+     * Method to check if a Graph is planar
+     *
+     * @return boolean returns true if the Graph is planar
+     */
     public boolean isPlanar() {
 
         ArrayList<Node> ordered = new ArrayList<>();
@@ -430,6 +427,7 @@ public class DMRSGraph extends AbstractGraph {
         return true;
     }
 
+
     /**
      * Returns a Graph object in it's Planar format i.e
      * Orders the nodes linearly based on their anchor's "from" positions
@@ -437,7 +435,7 @@ public class DMRSGraph extends AbstractGraph {
      *
      * @return Graph This is the Graph in a format to indicate its planarity.
      */
-    public DMRSGraph PlanarGraph() {
+    public EDSGraph PlanarGraph() {
 
         ArrayList<Node> ordered = new ArrayList<>();
         for (Node n : nodes.values()) {
@@ -505,7 +503,7 @@ public class DMRSGraph extends AbstractGraph {
             newNodes.put(n.getId(), n);
         }
 
-        DMRSGraph planarVisualisation = new DMRSGraph(this.getId(), this.getSource(), this.input, newNodes, this.tokens, updated, this.top);
+        EDSGraph planarVisualisation = new EDSGraph(this.getId(), this.getSource(), this.input, newNodes, this.tokens, updated, this.top);
 
 
         return planarVisualisation;
@@ -525,11 +523,11 @@ public class DMRSGraph extends AbstractGraph {
             return true;
         }
 
-        if (!(o instanceof DMRSGraph)) {
+        if (!(o instanceof EDSGraph)) {
             return false;
         }
 
-        DMRSGraph g = (DMRSGraph) o;
+        EDSGraph g = (EDSGraph) o;
 
 
         return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes())) && (tokens.equals(g.getTokens())) && (edges.equals(g.getEdges())) && top.equals(g.getTop()));

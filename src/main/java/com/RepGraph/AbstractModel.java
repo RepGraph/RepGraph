@@ -59,7 +59,7 @@ abstract class AbstractModel {
         graphs.clear();
     }
 
-    public void populateTokens() {
+    public void populateAllTokens() {
         AbstractGraph t = this.graphs.values().iterator().next();
         if (t.tokens.size() == 0) {
 

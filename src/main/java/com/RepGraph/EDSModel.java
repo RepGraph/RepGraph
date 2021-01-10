@@ -5,20 +5,18 @@ import java.util.*;
 /**
  * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
  */
-public class DMRSModel extends AbstractModel {
+public class EDSModel extends AbstractModel {
 
 
-    public DMRSModel() {
+    public EDSModel() {
         super();
     }
-
-
 
     /**
      * Display Subset overloaded method to decide which type of subset to construct
      * and what type of visualisation the subset should be displayed in
      *
-     * @param graphId    The ID of the DMRSGraph where the subset is being constructed
+     * @param graphId    The ID of the EDSGraph where the subset is being constructed
      * @param headNodeID The Node ID of the starting Node of subset creation
      * @param SubsetType The type of subset to be created
      * @param format     The format of the visualisation i.e 1 - hierarchical format, 2- tree like format, 3 - flat visualisation, 4 - planar visualisation
@@ -51,17 +49,17 @@ public class DMRSModel extends AbstractModel {
     }
 
     /**
-     * Uses a DMRSGraph ID and the number of a Node in the DMRSGraph and returns a subset of the DMRSGraph. The subset is all the adjacent nodes around the head Node id given
+     * Uses a EDSGraph ID and the number of a Node in the EDSGraph and returns a subset of the EDSGraph. The subset is all the adjacent nodes around the head Node id given
      *
-     * @param graphID    The DMRSGraph ID.
-     * @param headNodeID The DMRSGraph's Node which will be the head Node of the subset.
-     * @return DMRSGraph The subset of the DMRSGraph.
+     * @param graphID    The EDSGraph ID.
+     * @param headNodeID The EDSGraph's Node which will be the head Node of the subset.
+     * @return EDSGraph The subset of the EDSGraph.
      */
-    public DMRSGraph CreateSubsetAdjacent(String graphID, String headNodeID) {
+    public EDSGraph CreateSubsetAdjacent(String graphID, String headNodeID) {
 
 
-        DMRSGraph subset = new DMRSGraph();
-        DMRSGraph parent = (DMRSGraph) getGraph(graphID);
+        EDSGraph subset = new EDSGraph();
+        EDSGraph parent = (EDSGraph) getGraph(graphID);
         parent.setNodeNeighbours();
 
         HashMap<String, Node> adjacentNodes = new HashMap<String, Node>();
@@ -69,7 +67,7 @@ public class DMRSModel extends AbstractModel {
         ArrayList<Token> SubsetTokens = new ArrayList<>();
 
         //Get the head Node where the subset creation starts from
-        DMRSGraph t = (DMRSGraph) graphs.get(graphID);
+        EDSGraph t = (EDSGraph) graphs.get(graphID);
         Node n = t.getNodes().get(headNodeID);
 
         //Put the head Node in the hashmap of nodes
@@ -103,9 +101,9 @@ public class DMRSModel extends AbstractModel {
             adjacentEdges.add(new Edge(ne));
         }
 
-        //Use "getTokenSpan" to get all the tokens from the DMRSGraph that are in the subsets span and add it to the subset DMRSGraph object
+        //Use "getTokenSpan" to get all the tokens from the EDSGraph that are in the subsets span and add it to the subset EDSGraph object
         SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
-        //Set all the details of the subset DMRSGraph object.
+        //Set all the details of the subset EDSGraph object.
         subset.setId(parent.getId());
         subset.setSource(parent.getSource());
         subset.setNodes(adjacentNodes);
@@ -118,16 +116,16 @@ public class DMRSModel extends AbstractModel {
     }
 
     /**
-     * Uses a DMRSGraph ID and the number of a Node in the DMRSGraph and returns a subset of the DMRSGraph. The subset is all the descendent nodes from the head Node id given
+     * Uses a EDSGraph ID and the number of a Node in the EDSGraph and returns a subset of the EDSGraph. The subset is all the descendent nodes from the head Node id given
      *
-     * @param graphID    The DMRSGraph ID.
-     * @param headNodeID The DMRSGraph's Node which will be the head Node of the subset.
-     * @return DMRSGraph The subset of the DMRSGraph.
+     * @param graphID    The EDSGraph ID.
+     * @param headNodeID The EDSGraph's Node which will be the head Node of the subset.
+     * @return EDSGraph The subset of the EDSGraph.
      */
-    public DMRSGraph CreateSubsetDescendent(String graphID, String headNodeID) {
+    public EDSGraph CreateSubsetDescendent(String graphID, String headNodeID) {
 
-        DMRSGraph subset = new DMRSGraph();
-        DMRSGraph parent = (DMRSGraph) getGraph(graphID);
+        EDSGraph subset = new EDSGraph();
+        EDSGraph parent = (EDSGraph) getGraph(graphID);
         parent.setNodeNeighbours();
 
         HashMap<String, Node> DescendentNodes = new HashMap<String, Node>();
@@ -191,15 +189,15 @@ public class DMRSModel extends AbstractModel {
     /**
      * Overloaded method to search for subgraph pattern using different parameters
      *
-     * @param graphID     ID of DMRSGraph that contains the selected pattern
+     * @param graphID     ID of EDSGraph that contains the selected pattern
      * @param NodeId      Int array of Node IDs of the pattern selected
      * @param EdgeIndices int array of the Edge indices of the pattern selected
      * @return HashMap<String, Object> Returns a hashmap of information
-     * i.e the "data" key contains a list of hashmaps that contain the DMRSGraph ID's and Inputs of graphs that contain the subgraph pattern.
+     * i.e the "data" key contains a list of hashmaps that contain the EDSGraph ID's and Inputs of graphs that contain the subgraph pattern.
      * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphPattern(String graphID, String[] NodeId, int[] EdgeIndices) {
-        DMRSGraph parent = (DMRSGraph) graphs.get(graphID);
+        EDSGraph parent = (EDSGraph) graphs.get(graphID);
         HashMap<String, Node> subnodes = new HashMap<String, Node>();
         ArrayList<Edge> subedges = new ArrayList<>();
 
@@ -212,7 +210,7 @@ public class DMRSModel extends AbstractModel {
             subedges.add(new Edge(parent.getEdges().get(n)));
         }
 
-        DMRSGraph subgraph = new DMRSGraph();
+        EDSGraph subgraph = new EDSGraph();
 
 
         subgraph.setNodes(subnodes);
@@ -224,7 +222,7 @@ public class DMRSModel extends AbstractModel {
 
     public HashMap<String, Object> searchSubgraphPattern(AbstractGraph Asubgraph) {
 
-        DMRSGraph subgraph = (DMRSGraph) Asubgraph;
+        EDSGraph subgraph = (EDSGraph) Asubgraph;
 
         HashMap<String, Object> returninfo = new HashMap<>();
 
@@ -242,10 +240,10 @@ public class DMRSModel extends AbstractModel {
         }
 
 
-        // Hashmap with a string key and boolean value - this is used to confirm that each unique Edge in the subgraph has been found in the DMRSGraph being checked.
+        // Hashmap with a string key and boolean value - this is used to confirm that each unique Edge in the subgraph has been found in the EDSGraph being checked.
         //This is necessary because there can be multiple of the same two Node links so a counter or an array cant be used.
         HashMap<String, Boolean> checks = new HashMap<>();
-        //This is just used to easily check that all the required edges in the subgraph are true because all values in this array need to be true before a DMRSGraph is added
+        //This is just used to easily check that all the required edges in the subgraph are true because all values in this array need to be true before a EDSGraph is added
         //to foundgraphs arraylist.
         boolean[] checksarr = new boolean[subgraph.getEdges().size()];
         try {
@@ -257,11 +255,11 @@ public class DMRSModel extends AbstractModel {
         }
 
 
-        //Iterate over each DMRSGraph in the dataset
+        //Iterate over each EDSGraph in the dataset
 
         for (AbstractGraph t : graphs.values()) {
-            DMRSGraph g = (DMRSGraph) t;
-            //If it cant set the Node neighbours then just the specific DMRSGraph iteration.
+            EDSGraph g = (EDSGraph) t;
+            //If it cant set the Node neighbours then just the specific EDSGraph iteration.
             try {
                 g.setNodeNeighbours();
             } catch (IndexOutOfBoundsException f) {
@@ -270,12 +268,12 @@ public class DMRSModel extends AbstractModel {
 
             //Iterate over each Node in the subgraph patttern
             for (Node sn : subgraph.getNodes().values()) {
-                //for each Node in the subgraph pattern, it iterates over every Node in the current DMRSGraph that is being checked.
-                //This is to find a Node label equal to the current sub DMRSGraph Node being checked.
+                //for each Node in the subgraph pattern, it iterates over every Node in the current EDSGraph that is being checked.
+                //This is to find a Node label equal to the current sub EDSGraph Node being checked.
                 for (Node n : g.getNodes().values()) {
                     //This checks if the labels are equal
                     if (n.getLabel().equals(sn.getLabel())) {
-                        //Once it finds a Node in the DMRSGraph that is the same as the subgraph Node label it has to iterate over the subgraph edges list
+                        //Once it finds a Node in the EDSGraph that is the same as the subgraph Node label it has to iterate over the subgraph edges list
                         //to find the corresponding Edge of the subgraph Node that found a match.
 
                         for (int i = 0; i < sn.getDirectedNeighbours().size(); i++) {
@@ -298,7 +296,7 @@ public class DMRSModel extends AbstractModel {
 
                 }
             }
-            //This checks to see if all values in the boolean array are true and if so adds the current DMRSGraph to the list of found graphs.
+            //This checks to see if all values in the boolean array are true and if so adds the current EDSGraph to the list of found graphs.
             if (areAllTrue(checksarr)) {
                 HashMap<String, String> found = new HashMap<String, String>();
                 found.put("id", g.getId());
@@ -321,7 +319,7 @@ public class DMRSModel extends AbstractModel {
      *
      * @param labels This is the list of Node labels to search for.
      * @return HashMap<String, Object> Returns a hashmap of information
-     * * i.e the "data" key contains a list of hashmaps that contain the DMRSGraph ID's and Inputs of graphs that have the set of Node labels.
+     * * i.e the "data" key contains a list of hashmaps that contain the EDSGraph ID's and Inputs of graphs that have the set of Node labels.
      * * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphNodeSet(ArrayList<String> labels) {
@@ -337,11 +335,11 @@ public class DMRSModel extends AbstractModel {
 
         //boolean array that checks if certain nodes are found
         //could use a hashmap with the label as a key and boolean as value.
-        //this would allow to avoid using a for loop inside DMRSGraph iteration
+        //this would allow to avoid using a for loop inside EDSGraph iteration
         boolean[] checks = new boolean[labels.size()];
 
         for (AbstractGraph t : graphs.values()) {
-            DMRSGraph g = (DMRSGraph) t;
+            EDSGraph g = (EDSGraph) t;
             HashMap<String, Node> tempNodes = new HashMap<String, Node>(g.getNodes());
             for (int i = 0; i < labels.size(); i++) {
                 for (Node n : tempNodes.values()) {
@@ -363,7 +361,7 @@ public class DMRSModel extends AbstractModel {
                 FoundGraphs.add(found);
 
             }
-            //resets the checks array when its done checking a DMRSGraph
+            //resets the checks array when its done checking a EDSGraph
             for (int i = 0; i < checks.length; i++) {
                 checks[i] = false;
             }
@@ -374,12 +372,11 @@ public class DMRSModel extends AbstractModel {
         return returninfo;
     }
 
-
     /**
      * Compares two graphs and searches for similarities and differences.
      *
-     * @param graphID1 DMRSGraph ID of the first DMRSGraph.
-     * @param graphID2 DMRSGraph ID of the second DMRSGraph.
+     * @param graphID1 EDSGraph ID of the first EDSGraph.
+     * @param graphID2 EDSGraph ID of the second EDSGraph.
      * @return HashMap<String, Object> The differences and similarities of the two graphs i.e
      * the "SimilarNodes1" key gives the Node ids of the similar nodes in graph1.
      * the "SimilarNodes2" key gives the Node ids of the similar nodes in graph2.
@@ -387,8 +384,8 @@ public class DMRSModel extends AbstractModel {
      * the "SimilarEdge2" key gives the Node ids of the similar edges in graph2.
      */
     public HashMap<String, Object> compareTwoGraphs(String graphID1, String graphID2) {
-        DMRSGraph g1 = (DMRSGraph) graphs.get(graphID1);
-        DMRSGraph g2 = (DMRSGraph) graphs.get(graphID2);
+        EDSGraph g1 = (EDSGraph) graphs.get(graphID1);
+        EDSGraph g2 = (EDSGraph) graphs.get(graphID2);
         HashMap<String, Node> nodes1 = g1.getNodes();
         HashMap<String, Node> nodes2 = g2.getNodes();
         ArrayList<Edge> edges1 = graphs.get(graphID1).getEdges();
@@ -404,7 +401,7 @@ public class DMRSModel extends AbstractModel {
         g1.setNodeNeighbours();
         g2.setNodeNeighbours();
 
-        //iterates over every Node of each DMRSGraph
+        //iterates over every Node of each EDSGraph
         for (Node n1 : nodes1.values()) {
             for (Node n2 : nodes2.values()) {
                 int span1 = n1.getAnchors().getEnd() - n1.getAnchors().getFrom();
@@ -460,37 +457,37 @@ public class DMRSModel extends AbstractModel {
     }
 
     /**
-     * Runs formal tests on a DMRSGraph.
+     * Runs formal tests on a EDSGraph.
      *
-     * @param graphID               The DMRSGraph ID which the tests will be run.
-     * @param planar                Boolean to decide if to test for if the DMRSGraph is planar.
+     * @param graphID               The EDSGraph ID which the tests will be run.
+     * @param planar                Boolean to decide if to test for if the EDSGraph is planar.
      * @param longestPathDirected   Boolean to decide if to find the longest directed path.
      * @param longestPathUndirected Boolean to decide if to find the longest undirected path.
-     * @param connected             Boolean to decide if to test for if the DMRSGraph is connected.
+     * @param connected             Boolean to decide if to test for if the EDSGraph is connected.
      * @return HashMap<String, Object> Results of the tests i.e
-     * the "Planar" key returns a boolean of whether or not the DMRSGraph is planar
+     * the "Planar" key returns a boolean of whether or not the EDSGraph is planar
      * the "PlanarVis" key returns the visualisation data
      * the "LongestPathDirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest directed paths in the graphs
      * the "LongestPathUndirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest undirected paths in the graphs
-     * the "Connected" returns a boolean of whether or not the DMRSGraph is connected.
+     * the "Connected" returns a boolean of whether or not the EDSGraph is connected.
      */
     public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestPathDirected, boolean longestPathUndirected, boolean connected) {
         HashMap<String, Object> returnObj = new HashMap<>();
-        DMRSGraph g = (DMRSGraph) graphs.get(graphID);
+        EDSGraph g = (EDSGraph) graphs.get(graphID);
         if (planar) {
 
             returnObj.put("Planar", g.isPlanar());
             returnObj.put("PlanarVis", VisualisePlanar(graphs.get(graphID)));
         }
         if (longestPathDirected) {
-            //checks if graphs are cyclic, if so returns a message indicating the DMRSGraph is cyclic otherwise sends back the longest path directed information
+            //checks if graphs are cyclic, if so returns a message indicating the EDSGraph is cyclic otherwise sends back the longest path directed information
             if (graphs.get(graphID).isCyclic(true)) {
                 returnObj.put("LongestPathDirected", "Cycle Detected");
             } else {
                 returnObj.put("LongestPathDirected", graphs.get(graphID).findLongest(true));
             }
         }
-        //checks if graphs are cyclic, if so returns a message indicating the DMRSGraph is cyclic otherwise sends back the longest path directed information
+        //checks if graphs are cyclic, if so returns a message indicating the EDSGraph is cyclic otherwise sends back the longest path directed information
         if (longestPathUndirected) {
             if (graphs.get(graphID).isCyclic(false)) {
                 returnObj.put("LongestPathUndirected", "Cycle Detected");
@@ -507,7 +504,7 @@ public class DMRSModel extends AbstractModel {
     /**
      * This method returns visualisation information so that it can be visualised on the front-end
      *
-     * @param graphID This is the graphID of the DMRSGraph to be visualised
+     * @param graphID This is the graphID of the EDSGraph to be visualised
      * @param format  this is the format of the visualisation i.e
      *                format 1 - hierarchical,
      *                format 2 - tree like,
@@ -516,9 +513,9 @@ public class DMRSModel extends AbstractModel {
      * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
     public HashMap<String, Object> Visualise(String graphID, int format) {
-
-        DMRSGraph graph = (DMRSGraph) graphs.get(graphID);
+        EDSGraph graph = (EDSGraph) graphs.get(graphID);
         graph.populateTokens();
+        graph.populateEdges();
 
         if (format == 1) {
             return VisualiseHierarchy(graph);
@@ -534,9 +531,9 @@ public class DMRSModel extends AbstractModel {
 
     public HashMap<String, Object> VisualisePlanar(AbstractGraph Agraph) {
 
-        //gets the planar optimised DMRSGraph
-        DMRSGraph Dgraph = (DMRSGraph) Agraph;
-        DMRSGraph graph = Dgraph.PlanarGraph();
+        //gets the planar optimised EDSGraph
+        EDSGraph Dgraph = (EDSGraph) Agraph;
+        EDSGraph graph = Dgraph.PlanarGraph();
 
         ArrayList<Edge> crossingEdges = new ArrayList<>();
 
@@ -653,9 +650,9 @@ public class DMRSModel extends AbstractModel {
     }
 
     /**
-     * The visualisation method for visualising a Flat DMRSGraph.
+     * The visualisation method for visualising a Flat EDSGraph.
      *
-     * @param graph the DMRSGraph object to be visualised in a Flat format
+     * @param graph the EDSGraph object to be visualised in a Flat format
      * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
     public HashMap<String, Object> VisualiseFlat(AbstractGraph graph) {
@@ -807,19 +804,19 @@ public class DMRSModel extends AbstractModel {
 
     public HashMap<String, Object> VisualiseTree(AbstractGraph Agraph) {
 
-        DMRSGraph graph = (DMRSGraph) Agraph;
+        EDSGraph graph = (EDSGraph) Agraph;
 
 
         graph.setNodeNeighbours();
 
 
-        HashMap<String, Stack<String>> topologicalStacks = new HashMap<>(); //HashMap of each Node's topological sorting of the DMRSGraph.
+        HashMap<String, Stack<String>> topologicalStacks = new HashMap<>(); //HashMap of each Node's topological sorting of the EDSGraph.
 
-        //Iterate through each Node in the DMRSGraph and add its topological sorting/stack of the DMRSGraph to the HashMap of topological stacks.
+        //Iterate through each Node in the EDSGraph and add its topological sorting/stack of the EDSGraph to the HashMap of topological stacks.
         for (String i : graph.getNodes().keySet()) {
             Stack<String> stack = new Stack<>();
             HashMap<String, Boolean> visited = new HashMap<>();
-            for (String j : graph.getNodes().keySet()) {//Set each Node in the DMRSGraph to unvisited
+            for (String j : graph.getNodes().keySet()) {//Set each Node in the EDSGraph to unvisited
                 visited.put(j, false);
             }
             topologicalStacks.put(i, graph.topologicalSort(i, visited, stack));
@@ -834,7 +831,7 @@ public class DMRSModel extends AbstractModel {
 
         ArrayList<ArrayList<Node>> nodesInLevels = new ArrayList<>();
 
-        //Set each Node in the DMRSGraph to the level based on the the number of descendent nodes they have (the length of their topological stacks). i.e. stack length 2 means 1 descendant which means level 1.
+        //Set each Node in the EDSGraph to the level based on the the number of descendent nodes they have (the length of their topological stacks). i.e. stack length 2 means 1 descendant which means level 1.
         for (int level = 1; level < numLevels + 1; level++) {
             ArrayList<Node> currentLevel = new ArrayList<>();
             for (String n : graph.getNodes().keySet()) {
@@ -845,7 +842,7 @@ public class DMRSModel extends AbstractModel {
             nodesInLevels.add(currentLevel);
         }
 
-        HashMap<String, Integer> xPositions = new HashMap<>(); //HashMap to keep track of the x position of each Node in the DMRSGraph
+        HashMap<String, Integer> xPositions = new HashMap<>(); //HashMap to keep track of the x position of each Node in the EDSGraph
         HashMap<Integer, Node> lowestNode = new HashMap<>(); // HashMap to keep track of the lowest Node in ech x position
 
         //Iterate through each level and set its xPosition to the start of its Anchors and if its the first Node in that x position then add it to the lowestNode HashMap.
@@ -1176,7 +1173,7 @@ public class DMRSModel extends AbstractModel {
 
     public HashMap<String, Object> VisualiseHierarchy(AbstractGraph Agraph) {
 
-        DMRSGraph graph = (DMRSGraph) Agraph;
+        EDSGraph graph = (EDSGraph) Agraph;
 
 
         //Determine span lengths of each Node
@@ -1495,7 +1492,7 @@ public class DMRSModel extends AbstractModel {
                 }
             } else {
                 if (fromLevel == toLevel) { //Same level
-                    edgeType = "curvedCCW"; //Make Edge go under the DMRSGraph
+                    edgeType = "curvedCCW"; //Make Edge go under the EDSGraph
                     round = 0.5;
                     int difference = fromX / space - toX / space;
                     if (Math.abs(difference) > 4) {
@@ -1505,7 +1502,7 @@ public class DMRSModel extends AbstractModel {
                         round = 0.2; //Change Edge roundness to avoid going off the page for long edges
                     }
                     if (difference > 0 && fromLevel == 0) {
-                        edgeType = "curvedCW"; //If the Edge is going backwards, still make it go under the DMRSGraph
+                        edgeType = "curvedCW"; //If the Edge is going backwards, still make it go under the EDSGraph
                     }
 
                     int count = 0;
