@@ -59,6 +59,17 @@ abstract class AbstractModel {
         graphs.clear();
     }
 
+    public void populateTokens() {
+        AbstractGraph t = this.graphs.values().iterator().next();
+        if (t.tokens.size() == 0) {
+
+            for (AbstractGraph g : this.graphs.values()) {
+
+                g.setTokens(g.extractTokensFromNodes());
+            }
+        }
+
+    }
 
     public abstract HashMap<String, Object> DisplaySubset(String graphId, String headNodeID, String SubsetType, int format);
 

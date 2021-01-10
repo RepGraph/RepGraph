@@ -12,16 +12,7 @@ public class DMRSModel extends AbstractModel {
         super();
     }
 
-    public void populateTokens() {
-        DMRSGraph t = (DMRSGraph) this.graphs.values().iterator().next();
-        if (t.tokens.size() == 0) {
-            for (AbstractGraph g : this.graphs.values()) {
-                DMRSGraph dg = (DMRSGraph) g;
-                dg.setTokens(dg.extractTokensFromNodes());
-            }
-        }
 
-    }
 
     /**
      * Display Subset overloaded method to decide which type of subset to construct

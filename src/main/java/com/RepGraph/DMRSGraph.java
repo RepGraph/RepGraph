@@ -16,9 +16,6 @@ public class DMRSGraph extends AbstractGraph {
     protected String index;
 
 
-    protected ArrayList<Token> tokens;
-
-
     public String getIndex() {
         return index;
     }
@@ -36,6 +33,7 @@ public class DMRSGraph extends AbstractGraph {
      */
     public DMRSGraph() {
         super();
+
         this.tokens = new ArrayList<>();
     }
 
@@ -45,42 +43,7 @@ public class DMRSGraph extends AbstractGraph {
         this.tokens = tokens;
     }
 
-    public ArrayList<Token> extractTokensFromNodes() {
 
-
-        ArrayList<Token> tokenlist = new ArrayList<>();
-        String[] list = this.input.split(" ");
-
-        for (int i =0;i<list.length;i++) {
-            list[i]+=" ";
-            tokenlist.add(new Token(i,list[i],list[i],list[i]));
-
-        }
-
-        int lengthBoundary[] = new int[list.length];
-
-        lengthBoundary[0] = list[0].length();
-
-
-        for (int i = 1; i < lengthBoundary.length; ++i) {
-            lengthBoundary[i] = lengthBoundary[i - 1] + list[i].length();
-            System.out.println(lengthBoundary[i]);
-        }
-
-        for (Node n:this.nodes.values()) {
-            for (int i = 0; i <lengthBoundary.length ; i++) {
-                if (n.getAnchors().getFrom()<lengthBoundary[i] && i<=n.getAnchors().getFrom()){
-                    n.getAnchors().setFrom(i);
-                }
-                if (n.getAnchors().getEnd()<=lengthBoundary[i] && i<=n.getAnchors().getEnd()){
-                    n.getAnchors().setEnd(i);
-                }
-
-            }
-        }
-
-        return tokenlist;
-    }
 
     @JsonGetter("nodes")
     public ArrayList<Node> returnNodeInArrayList() {
@@ -118,16 +81,6 @@ public class DMRSGraph extends AbstractGraph {
     public void setNodes(HashMap<String, Node> nodes) {
 
         this.nodes = nodes;
-    }
-
-
-    public ArrayList<Token> getTokens() {
-        return tokens;
-    }
-
-
-    public void setTokens(ArrayList<Token> tokens) {
-        this.tokens = tokens;
     }
 
 

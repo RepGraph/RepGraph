@@ -7,10 +7,17 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-@JsonIgnoreProperties(value = {"is_surface","sortinfo"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Node {
 
     /**
@@ -31,10 +38,13 @@ public class Node {
     @JsonAlias({"lnk"})
     private Anchors anchors;
 
+    @JsonAlias({"sortinfo"})
+    private HashMap<String,String> properties = new HashMap<>();
+
     /**
      * An array list of directed neighbouring nodes i.e the nodes that this Node points to.
      */
-    @JsonIgnore
+    @JsonAlias("edges")
     private ArrayList<Node> directedNeighbours;
 
     /**
@@ -155,6 +165,24 @@ public class Node {
         this.anchors = anchors.get(0);
     }
 
+    @JsonGetter("properties")
+    public HashMap<String, String> properties() {
+        return this.properties;
+    }
+
+    @JsonSetter("sortinfo")
+    public void setPropertyValues(LinkedHashMap<String,String> prop) throws IOException {
+       properties = prop;
+
+    }
+
+    @JsonSetter("edges")
+    public void setEdgesNeighbours(LinkedHashMap<String,String> edges){
+        for (String edgeLabel:edges.keySet()) {
+            Edge e = new Edge(this.id,edges.get(edgeLabel),edgeLabel,"");
+            this.directedEdgeNeighbours.add(e);
+        }
+    }
 
     /**
      * Adds a directed neighbouring Node. i.e a Node that this Node points to.

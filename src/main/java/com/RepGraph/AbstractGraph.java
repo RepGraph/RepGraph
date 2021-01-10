@@ -26,9 +26,7 @@ abstract class AbstractGraph {
      */
     protected String input;
 
-    /**
-     * A HashMap of the Graph nodes with the Node's ID as the key - used for quicker,easier and safer algorithmic use of Node data
-     */
+    protected ArrayList<Token> tokens;
 
     protected HashMap<String, Node> nodes;
 
@@ -146,6 +144,52 @@ abstract class AbstractGraph {
         this.edges = edges;
     }
 
+
+    public ArrayList<Token> getTokens() {
+        return tokens;
+    }
+
+
+    public void setTokens(ArrayList<Token> tokens) {
+        this.tokens = tokens;
+    }
+
+    public ArrayList<Token> extractTokensFromNodes() {
+
+
+        ArrayList<Token> tokenlist = new ArrayList<>();
+        String[] list = this.input.split(" ");
+
+        for (int i =0;i<list.length;i++) {
+            list[i]+=" ";
+            tokenlist.add(new Token(i,list[i],list[i],list[i]));
+
+        }
+
+        int lengthBoundary[] = new int[list.length];
+
+        lengthBoundary[0] = list[0].length();
+
+
+        for (int i = 1; i < lengthBoundary.length; ++i) {
+            lengthBoundary[i] = lengthBoundary[i - 1] + list[i].length();
+
+        }
+
+        for (Node n:this.nodes.values()) {
+            for (int i = 0; i <lengthBoundary.length ; i++) {
+                if (n.getAnchors().getFrom()<lengthBoundary[i] && i<=n.getAnchors().getFrom()){
+                    n.getAnchors().setFrom(i);
+                }
+                if (n.getAnchors().getEnd()<=lengthBoundary[i] && i<=n.getAnchors().getEnd()){
+                    n.getAnchors().setEnd(i);
+                }
+
+            }
+        }
+
+        return tokenlist;
+    }
 
     /**
      * Getter method for a graphs top Node array
