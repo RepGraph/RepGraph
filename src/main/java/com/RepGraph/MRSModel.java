@@ -5,10 +5,10 @@ import java.util.*;
 /**
  * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
  */
-public class EDSModel extends AbstractModel {
+public class MRSModel extends AbstractModel {
 
 
-    public EDSModel() {
+    public MRSModel() {
         super();
     }
 
@@ -16,7 +16,7 @@ public class EDSModel extends AbstractModel {
      * Display Subset overloaded method to decide which type of subset to construct
      * and what type of visualisation the subset should be displayed in
      *
-     * @param graphId    The ID of the EDSGraph where the subset is being constructed
+     * @param graphId    The ID of the MRSGraph where the subset is being constructed
      * @param headNodeID The Node ID of the starting Node of subset creation
      * @param SubsetType The type of subset to be created
      * @param format     The format of the visualisation i.e 1 - hierarchical format, 2- tree like format, 3 - flat visualisation, 4 - planar visualisation
@@ -49,17 +49,17 @@ public class EDSModel extends AbstractModel {
     }
 
     /**
-     * Uses a EDSGraph ID and the number of a Node in the EDSGraph and returns a subset of the EDSGraph. The subset is all the adjacent nodes around the head Node id given
+     * Uses a MRSGraph ID and the number of a Node in the MRSGraph and returns a subset of the MRSGraph. The subset is all the adjacent nodes around the head Node id given
      *
-     * @param graphID    The EDSGraph ID.
-     * @param headNodeID The EDSGraph's Node which will be the head Node of the subset.
-     * @return EDSGraph The subset of the EDSGraph.
+     * @param graphID    The MRSGraph ID.
+     * @param headNodeID The MRSGraph's Node which will be the head Node of the subset.
+     * @return MRSGraph The subset of the MRSGraph.
      */
-    public EDSGraph CreateSubsetAdjacent(String graphID, String headNodeID) {
+    public MRSGraph CreateSubsetAdjacent(String graphID, String headNodeID) {
 
 
-        EDSGraph subset = new EDSGraph();
-        EDSGraph parent = (EDSGraph) getGraph(graphID);
+        MRSGraph subset = new MRSGraph();
+        MRSGraph parent = (MRSGraph) getGraph(graphID);
         parent.setNodeNeighbours();
 
         HashMap<String, Node> adjacentNodes = new HashMap<String, Node>();
@@ -67,7 +67,7 @@ public class EDSModel extends AbstractModel {
         ArrayList<Token> SubsetTokens = new ArrayList<>();
 
         //Get the head Node where the subset creation starts from
-        EDSGraph t = (EDSGraph) graphs.get(graphID);
+        MRSGraph t = (MRSGraph) graphs.get(graphID);
         Node n = t.getNodes().get(headNodeID);
 
         //Put the head Node in the hashmap of nodes
@@ -101,9 +101,9 @@ public class EDSModel extends AbstractModel {
             adjacentEdges.add(new Edge(ne));
         }
 
-        //Use "getTokenSpan" to get all the tokens from the EDSGraph that are in the subsets span and add it to the subset EDSGraph object
+        //Use "getTokenSpan" to get all the tokens from the MRSGraph that are in the subsets span and add it to the subset MRSGraph object
         SubsetTokens.addAll(parent.getTokenSpan(minFrom, maxEnd));
-        //Set all the details of the subset EDSGraph object.
+        //Set all the details of the subset MRSGraph object.
         subset.setId(parent.getId());
         subset.setSource(parent.getSource());
         subset.setNodes(adjacentNodes);
@@ -116,16 +116,16 @@ public class EDSModel extends AbstractModel {
     }
 
     /**
-     * Uses a EDSGraph ID and the number of a Node in the EDSGraph and returns a subset of the EDSGraph. The subset is all the descendent nodes from the head Node id given
+     * Uses a MRSGraph ID and the number of a Node in the MRSGraph and returns a subset of the MRSGraph. The subset is all the descendent nodes from the head Node id given
      *
-     * @param graphID    The EDSGraph ID.
-     * @param headNodeID The EDSGraph's Node which will be the head Node of the subset.
-     * @return EDSGraph The subset of the EDSGraph.
+     * @param graphID    The MRSGraph ID.
+     * @param headNodeID The MRSGraph's Node which will be the head Node of the subset.
+     * @return MRSGraph The subset of the MRSGraph.
      */
-    public EDSGraph CreateSubsetDescendent(String graphID, String headNodeID) {
+    public MRSGraph CreateSubsetDescendent(String graphID, String headNodeID) {
 
-        EDSGraph subset = new EDSGraph();
-        EDSGraph parent = (EDSGraph) getGraph(graphID);
+        MRSGraph subset = new MRSGraph();
+        MRSGraph parent = (MRSGraph) getGraph(graphID);
         parent.setNodeNeighbours();
 
         HashMap<String, Node> DescendentNodes = new HashMap<String, Node>();
@@ -189,15 +189,15 @@ public class EDSModel extends AbstractModel {
     /**
      * Overloaded method to search for subgraph pattern using different parameters
      *
-     * @param graphID     ID of EDSGraph that contains the selected pattern
+     * @param graphID     ID of MRSGraph that contains the selected pattern
      * @param NodeId      Int array of Node IDs of the pattern selected
      * @param EdgeIndices int array of the Edge indices of the pattern selected
      * @return HashMap<String, Object> Returns a hashmap of information
-     * i.e the "data" key contains a list of hashmaps that contain the EDSGraph ID's and Inputs of graphs that contain the subgraph pattern.
+     * i.e the "data" key contains a list of hashmaps that contain the MRSGraph ID's and Inputs of graphs that contain the subgraph pattern.
      * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphPattern(String graphID, String[] NodeId, int[] EdgeIndices) {
-        EDSGraph parent = (EDSGraph) graphs.get(graphID);
+        MRSGraph parent = (MRSGraph) graphs.get(graphID);
         HashMap<String, Node> subnodes = new HashMap<String, Node>();
         ArrayList<Edge> subedges = new ArrayList<>();
 
@@ -210,7 +210,7 @@ public class EDSModel extends AbstractModel {
             subedges.add(new Edge(parent.getEdges().get(n)));
         }
 
-        EDSGraph subgraph = new EDSGraph();
+        MRSGraph subgraph = new MRSGraph();
 
 
         subgraph.setNodes(subnodes);
@@ -222,7 +222,7 @@ public class EDSModel extends AbstractModel {
 
     public HashMap<String, Object> searchSubgraphPattern(AbstractGraph Asubgraph) {
 
-        EDSGraph subgraph = (EDSGraph) Asubgraph;
+        MRSGraph subgraph = (MRSGraph) Asubgraph;
 
         HashMap<String, Object> returninfo = new HashMap<>();
 
@@ -240,10 +240,10 @@ public class EDSModel extends AbstractModel {
         }
 
 
-        // Hashmap with a string key and boolean value - this is used to confirm that each unique Edge in the subgraph has been found in the EDSGraph being checked.
+        // Hashmap with a string key and boolean value - this is used to confirm that each unique Edge in the subgraph has been found in the MRSGraph being checked.
         //This is necessary because there can be multiple of the same two Node links so a counter or an array cant be used.
         HashMap<String, Boolean> checks = new HashMap<>();
-        //This is just used to easily check that all the required edges in the subgraph are true because all values in this array need to be true before a EDSGraph is added
+        //This is just used to easily check that all the required edges in the subgraph are true because all values in this array need to be true before a MRSGraph is added
         //to foundgraphs arraylist.
         boolean[] checksarr = new boolean[subgraph.getEdges().size()];
         try {
@@ -255,11 +255,11 @@ public class EDSModel extends AbstractModel {
         }
 
 
-        //Iterate over each EDSGraph in the dataset
+        //Iterate over each MRSGraph in the dataset
 
         for (AbstractGraph t : graphs.values()) {
-            EDSGraph g = (EDSGraph) t;
-            //If it cant set the Node neighbours then just the specific EDSGraph iteration.
+            MRSGraph g = (MRSGraph) t;
+            //If it cant set the Node neighbours then just the specific MRSGraph iteration.
             try {
                 g.setNodeNeighbours();
             } catch (IndexOutOfBoundsException f) {
@@ -268,12 +268,12 @@ public class EDSModel extends AbstractModel {
 
             //Iterate over each Node in the subgraph patttern
             for (Node sn : subgraph.getNodes().values()) {
-                //for each Node in the subgraph pattern, it iterates over every Node in the current EDSGraph that is being checked.
-                //This is to find a Node label equal to the current sub EDSGraph Node being checked.
+                //for each Node in the subgraph pattern, it iterates over every Node in the current MRSGraph that is being checked.
+                //This is to find a Node label equal to the current sub MRSGraph Node being checked.
                 for (Node n : g.getNodes().values()) {
                     //This checks if the labels are equal
                     if (n.getLabel().equals(sn.getLabel())) {
-                        //Once it finds a Node in the EDSGraph that is the same as the subgraph Node label it has to iterate over the subgraph edges list
+                        //Once it finds a Node in the MRSGraph that is the same as the subgraph Node label it has to iterate over the subgraph edges list
                         //to find the corresponding Edge of the subgraph Node that found a match.
 
                         for (int i = 0; i < sn.getDirectedNeighbours().size(); i++) {
@@ -296,7 +296,7 @@ public class EDSModel extends AbstractModel {
 
                 }
             }
-            //This checks to see if all values in the boolean array are true and if so adds the current EDSGraph to the list of found graphs.
+            //This checks to see if all values in the boolean array are true and if so adds the current MRSGraph to the list of found graphs.
             if (areAllTrue(checksarr)) {
                 HashMap<String, String> found = new HashMap<String, String>();
                 found.put("id", g.getId());
@@ -319,7 +319,7 @@ public class EDSModel extends AbstractModel {
      *
      * @param labels This is the list of Node labels to search for.
      * @return HashMap<String, Object> Returns a hashmap of information
-     * * i.e the "data" key contains a list of hashmaps that contain the EDSGraph ID's and Inputs of graphs that have the set of Node labels.
+     * * i.e the "data" key contains a list of hashmaps that contain the MRSGraph ID's and Inputs of graphs that have the set of Node labels.
      * * the "Response" key contains an error response if necessary.
      */
     public HashMap<String, Object> searchSubgraphNodeSet(ArrayList<String> labels) {
@@ -335,11 +335,11 @@ public class EDSModel extends AbstractModel {
 
         //boolean array that checks if certain nodes are found
         //could use a hashmap with the label as a key and boolean as value.
-        //this would allow to avoid using a for loop inside EDSGraph iteration
+        //this would allow to avoid using a for loop inside MRSGraph iteration
         boolean[] checks = new boolean[labels.size()];
 
         for (AbstractGraph t : graphs.values()) {
-            EDSGraph g = (EDSGraph) t;
+            MRSGraph g = (MRSGraph) t;
             HashMap<String, Node> tempNodes = new HashMap<String, Node>(g.getNodes());
             for (int i = 0; i < labels.size(); i++) {
                 for (Node n : tempNodes.values()) {
@@ -361,7 +361,7 @@ public class EDSModel extends AbstractModel {
                 FoundGraphs.add(found);
 
             }
-            //resets the checks array when its done checking a EDSGraph
+            //resets the checks array when its done checking a MRSGraph
             for (int i = 0; i < checks.length; i++) {
                 checks[i] = false;
             }
@@ -375,8 +375,8 @@ public class EDSModel extends AbstractModel {
     /**
      * Compares two graphs and searches for similarities and differences.
      *
-     * @param graphID1 EDSGraph ID of the first EDSGraph.
-     * @param graphID2 EDSGraph ID of the second EDSGraph.
+     * @param graphID1 MRSGraph ID of the first MRSGraph.
+     * @param graphID2 MRSGraph ID of the second MRSGraph.
      * @return HashMap<String, Object> The differences and similarities of the two graphs i.e
      * the "SimilarNodes1" key gives the Node ids of the similar nodes in graph1.
      * the "SimilarNodes2" key gives the Node ids of the similar nodes in graph2.
@@ -384,8 +384,8 @@ public class EDSModel extends AbstractModel {
      * the "SimilarEdge2" key gives the Node ids of the similar edges in graph2.
      */
     public HashMap<String, Object> compareTwoGraphs(String graphID1, String graphID2) {
-        EDSGraph g1 = (EDSGraph) graphs.get(graphID1);
-        EDSGraph g2 = (EDSGraph) graphs.get(graphID2);
+        MRSGraph g1 = (MRSGraph) graphs.get(graphID1);
+        MRSGraph g2 = (MRSGraph) graphs.get(graphID2);
         HashMap<String, Node> nodes1 = g1.getNodes();
         HashMap<String, Node> nodes2 = g2.getNodes();
         ArrayList<Edge> edges1 = graphs.get(graphID1).getEdges();
@@ -401,7 +401,7 @@ public class EDSModel extends AbstractModel {
         g1.setNodeNeighbours();
         g2.setNodeNeighbours();
 
-        //iterates over every Node of each EDSGraph
+        //iterates over every Node of each MRSGraph
         for (Node n1 : nodes1.values()) {
             for (Node n2 : nodes2.values()) {
                 int span1 = n1.getAnchors().getEnd() - n1.getAnchors().getFrom();
@@ -457,37 +457,37 @@ public class EDSModel extends AbstractModel {
     }
 
     /**
-     * Runs formal tests on a EDSGraph.
+     * Runs formal tests on a MRSGraph.
      *
-     * @param graphID               The EDSGraph ID which the tests will be run.
-     * @param planar                Boolean to decide if to test for if the EDSGraph is planar.
+     * @param graphID               The MRSGraph ID which the tests will be run.
+     * @param planar                Boolean to decide if to test for if the MRSGraph is planar.
      * @param longestPathDirected   Boolean to decide if to find the longest directed path.
      * @param longestPathUndirected Boolean to decide if to find the longest undirected path.
-     * @param connected             Boolean to decide if to test for if the EDSGraph is connected.
+     * @param connected             Boolean to decide if to test for if the MRSGraph is connected.
      * @return HashMap<String, Object> Results of the tests i.e
-     * the "Planar" key returns a boolean of whether or not the EDSGraph is planar
+     * the "Planar" key returns a boolean of whether or not the MRSGraph is planar
      * the "PlanarVis" key returns the visualisation data
      * the "LongestPathDirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest directed paths in the graphs
      * the "LongestPathUndirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest undirected paths in the graphs
-     * the "Connected" returns a boolean of whether or not the EDSGraph is connected.
+     * the "Connected" returns a boolean of whether or not the MRSGraph is connected.
      */
     public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestPathDirected, boolean longestPathUndirected, boolean connected) {
         HashMap<String, Object> returnObj = new HashMap<>();
-        EDSGraph g = (EDSGraph) graphs.get(graphID);
+        MRSGraph g = (MRSGraph) graphs.get(graphID);
         if (planar) {
 
             returnObj.put("Planar", g.isPlanar());
             returnObj.put("PlanarVis", VisualisePlanar(graphs.get(graphID)));
         }
         if (longestPathDirected) {
-            //checks if graphs are cyclic, if so returns a message indicating the EDSGraph is cyclic otherwise sends back the longest path directed information
+            //checks if graphs are cyclic, if so returns a message indicating the MRSGraph is cyclic otherwise sends back the longest path directed information
             if (graphs.get(graphID).isCyclic(true)) {
                 returnObj.put("LongestPathDirected", "Cycle Detected");
             } else {
                 returnObj.put("LongestPathDirected", graphs.get(graphID).findLongest(true));
             }
         }
-        //checks if graphs are cyclic, if so returns a message indicating the EDSGraph is cyclic otherwise sends back the longest path directed information
+        //checks if graphs are cyclic, if so returns a message indicating the MRSGraph is cyclic otherwise sends back the longest path directed information
         if (longestPathUndirected) {
             if (graphs.get(graphID).isCyclic(false)) {
                 returnObj.put("LongestPathUndirected", "Cycle Detected");
@@ -504,7 +504,7 @@ public class EDSModel extends AbstractModel {
     /**
      * This method returns visualisation information so that it can be visualised on the front-end
      *
-     * @param graphID This is the graphID of the EDSGraph to be visualised
+     * @param graphID This is the graphID of the MRSGraph to be visualised
      * @param format  this is the format of the visualisation i.e
      *                format 1 - hierarchical,
      *                format 2 - tree like,
@@ -513,7 +513,7 @@ public class EDSModel extends AbstractModel {
      * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
     public HashMap<String, Object> Visualise(String graphID, int format) {
-        EDSGraph graph = (EDSGraph) graphs.get(graphID);
+        MRSGraph graph = (MRSGraph) graphs.get(graphID);
         graph.populateTokens();
         graph.populateEdges();
 
@@ -531,9 +531,9 @@ public class EDSModel extends AbstractModel {
 
     public HashMap<String, Object> VisualisePlanar(AbstractGraph Agraph) {
 
-        //gets the planar optimised EDSGraph
-        EDSGraph Dgraph = (EDSGraph) Agraph;
-        EDSGraph graph = Dgraph.PlanarGraph();
+        //gets the planar optimised MRSGraph
+        MRSGraph Dgraph = (MRSGraph) Agraph;
+        MRSGraph graph = Dgraph.PlanarGraph();
 
         ArrayList<Edge> crossingEdges = new ArrayList<>();
 
@@ -650,20 +650,17 @@ public class EDSModel extends AbstractModel {
     }
 
     /**
-     * The visualisation method for visualising a Flat EDSGraph.
+     * The visualisation method for visualising a Flat MRSGraph.
      *
-     * @param graph the EDSGraph object to be visualised in a Flat format
+     * @param graph the MRSGraph object to be visualised in a Flat format
      * @return HashMap<String, Object> This is the visualisation information that is used to display the visualisation on the front-end
      */
     public HashMap<String, Object> VisualiseFlat(AbstractGraph graph) {
-
-
 
         ArrayList<Node> ordered = new ArrayList<>();
 
         for (Node n : graph.getNodes().values()) {
             ordered.add(new Node(n));
-            System.out.println(n.getId());
         }
 
         Collections.sort(ordered, new Comparator<Node>() {

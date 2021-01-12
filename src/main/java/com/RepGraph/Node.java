@@ -24,12 +24,14 @@ public class Node {
      * The Node's ID number.
      */
     @JsonAlias({"id","nodeid"})
+    @JsonProperty("id")
     private String id;
 
     /**
      * The Node's label.
      */
     @JsonAlias({"predicate","label"})
+    @JsonProperty("predicate")
     private String label;
 
     /**
@@ -122,17 +124,12 @@ public class Node {
      * Setter method for the Node's ID number.
      * @param id The Node's ID number.
      */
+    @JsonSetter("id")
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * Setter method for the Node's ID number.
-     * @param id The Node's ID number.
-     */
-    public void setId(int id) {
-        this.id = id+"";
-    }
+
 
     /**
      * Getter method for the Node's label.

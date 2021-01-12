@@ -1,6 +1,6 @@
 package com.RepGraph;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -13,35 +13,47 @@ import java.util.*;
 /**
  * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
  */
-public class EDSGraph extends AbstractGraph {
+public class MRSGraph extends AbstractGraph {
+
+    protected String index;
+
+    @JsonProperty("constraints")
+    protected ArrayList<LinkedHashMap<String,String>> constraints;
+
+
+    @JsonProperty("variables")
+    protected LinkedHashMap<String,LinkedHashMap<String,Object>> nodeProperties;
+
 
 
     /**
      * Default constructor for the Graph class.
      */
-    public EDSGraph() {
+    public MRSGraph() {
         super();
 
         this.tokens = new ArrayList<>();
     }
 
-    @JsonSetter("nodes")
-    public void setNodes(LinkedHashMap<String,Object> n)throws IOException,JsonProcessingException{
-        ObjectMapper mapper = new ObjectMapper();
+    public void setNodeProperties(LinkedHashMap<String, LinkedHashMap<String, Object>> nodeProperties) {
+        this.nodeProperties = nodeProperties;
+    }
 
-        for (String id:n.keySet()){
-            LinkedHashMap<String,Object> values = (LinkedHashMap<String,Object>)n.get(id);
-            String nodeValue = mapper.writeValueAsString(values);
-            Node gn = mapper.readValue(nodeValue,Node.class);
-            gn.setId(id);
-            gn.updateDirectedEdges();
-
-            this.nodes.put(id,gn);
-        }
+    @JsonSetter("relations")
+    public void setNodes(Object obj){
+        ArrayList<Object> nodelist = (ArrayList<Object>) obj;
 
     }
 
-    public EDSGraph(String id, String source, String input, HashMap<String, Node> nodes, ArrayList<Token> tokens, ArrayList<Edge> edges, String top) {
+    public void setConstraints(ArrayList<LinkedHashMap<String, String>> constraints) {
+        this.constraints = constraints;
+    }
+
+    public String getIndex(){return this.index;}
+
+    public void setIndex(String s){this.index=s;}
+
+    public MRSGraph(String id, String source, String input, HashMap<String, Node> nodes, ArrayList<Token> tokens, ArrayList<Edge> edges, String top) {
         super(id, source, input, nodes, edges, top);
         this.tokens = tokens;
     }
@@ -453,7 +465,7 @@ public class EDSGraph extends AbstractGraph {
      *
      * @return Graph This is the Graph in a format to indicate its planarity.
      */
-    public EDSGraph PlanarGraph() {
+    public MRSGraph PlanarGraph() {
 
         ArrayList<Node> ordered = new ArrayList<>();
         for (Node n : nodes.values()) {
@@ -521,7 +533,7 @@ public class EDSGraph extends AbstractGraph {
             newNodes.put(n.getId(), n);
         }
 
-        EDSGraph planarVisualisation = new EDSGraph(this.getId(), this.getSource(), this.input, newNodes, this.tokens, updated, this.top);
+        MRSGraph planarVisualisation = new MRSGraph(this.getId(), this.getSource(), this.input, newNodes, this.tokens, updated, this.top);
 
 
         return planarVisualisation;
@@ -541,11 +553,11 @@ public class EDSGraph extends AbstractGraph {
             return true;
         }
 
-        if (!(o instanceof EDSGraph)) {
+        if (!(o instanceof MRSGraph)) {
             return false;
         }
 
-        EDSGraph g = (EDSGraph) o;
+        MRSGraph g = (MRSGraph) o;
 
 
         return ((id.equals(g.getId())) && (source.equals(g.getSource())) && (input.equals(g.getInput())) && (nodes.equals(g.getNodes())) && (tokens.equals(g.getTokens())) && (edges.equals(g.getEdges())) && top.equals(g.getTop()));

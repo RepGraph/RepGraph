@@ -28,6 +28,8 @@ abstract class AbstractGraph {
 
     protected ArrayList<Token> tokens;
 
+    @JsonAlias({"relations","nodes"})
+    @JsonProperty("nodes")
     protected HashMap<String, Node> nodes;
 
     /**

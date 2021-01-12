@@ -56,7 +56,7 @@ public class RequestHandler {
             this.RepModel = new EDSModel();
         } else {
             //FOR NOW ONLY
-            this.RepModel = new DMRSModel();
+            this.RepModel = new MRSModel();
         }
 
         RepModel.clearGraphs();
@@ -97,7 +97,7 @@ public class RequestHandler {
 
             } else {
                 //FOR NOW ONLY
-                 currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
+                 currgraph = objectMapper.readValue(currentLine, MRSGraph.class);
             }
             //checks if model doesnt contain the ID already and if it does dont add it and tell the user duplicates were found
             if (!RepModel.containsKey(currgraph.getId())) {
