@@ -39,6 +39,9 @@ public class Node {
     private ArrayList<String> values;
 
     @JsonIgnore
+    private boolean surface;
+
+    @JsonIgnore
     private ArrayList<Node> directedNeighbours;
 
 
@@ -88,10 +91,11 @@ public class Node {
         this.label = n.label;
         this.id = n.id;
         ArrayList<Anchors> anch = new ArrayList<Anchors>();
-        for (Anchors anchor: n.getAnchors()) {
-            anch.add(new Anchors(anchor.getFrom(),anchor.getEnd()));
+        if (n.getAnchors()!=null) {
+            for (Anchors anchor : n.getAnchors()) {
+                anch.add(new Anchors(anchor.getFrom(), anchor.getEnd()));
+            }
         }
-
         this.anchors = anch;
         this.undirectedEdgeNeighbours = new ArrayList<>();
         this.directedEdgeNeighbours = new ArrayList<>();
@@ -150,6 +154,16 @@ public class Node {
 
     public void setValues(ArrayList<String> values) {
         this.values = values;
+    }
+
+
+    public boolean isSurface() {
+        return surface;
+    }
+
+    @JsonIgnore
+    public void setSurface(boolean surface) {
+        this.surface = surface;
     }
 
     /**

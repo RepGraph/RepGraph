@@ -119,7 +119,7 @@ public class UCCAModel extends AbstractModel {
             singleNode.put("x", n.getAnchors().get(0).getFrom() * 110);
             singleNode.put("y", totalGraphHeight + currentLevels.get(n.getAnchors().get(0).getFrom()) * 100);
             singleNode.put("label", n.getLabel());
-            if (n.getLabel().startsWith("_")) {
+            if (n.isSurface()) {
                 singleNode.put("group", "surfaceNode");
             } else {
                 singleNode.put("group", "node");
@@ -242,7 +242,7 @@ public class UCCAModel extends AbstractModel {
             singleNode.put("label", n.getLabel());
             singleNode.put("type", "node");
             singleNode.put("anchors", n.getAnchors());
-            if (n.getLabel().startsWith("_")) {
+            if (n.isSurface()) {
                 singleNode.put("group", "surfaceNode");
             } else {
                 singleNode.put("group", "node");
@@ -504,7 +504,7 @@ public class UCCAModel extends AbstractModel {
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", levelNum);
                 singleNode.put("anchors", n.getAnchors());
-                if (n.getLabel().startsWith("_")) {
+                if (n.isSurface()) {
                     singleNode.put("group", "surfaceNode");
                 } else {
                     singleNode.put("group", "node");
@@ -851,7 +851,7 @@ public class UCCAModel extends AbstractModel {
                 singleNode.put("type", "node");
                 singleNode.put("nodeLevel", level);
                 singleNode.put("anchors", n.getAnchors());
-                if (n.getLabel().startsWith("_")) {
+                if (n.isSurface()) {
                     singleNode.put("group", "surfaceNode");
                 } else {
                     singleNode.put("group", "node");

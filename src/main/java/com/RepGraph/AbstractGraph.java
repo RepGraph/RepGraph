@@ -174,6 +174,7 @@ class AbstractGraph {
 
         for (Node n : this.nodes.values()) {
             for (int i = 0; i < lengthBoundary.length; i++) {
+                if (n.getAnchors()==null){continue;}
                 if (n.getAnchors().get(0).getFrom() < lengthBoundary[i] && i <= n.getAnchors().get(0).getFrom()) {
                     n.getAnchors().get(0).setFrom(i);
                 }

@@ -9,6 +9,8 @@ package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.*;
 
+import java.util.ArrayList;
+
 @JsonIgnoreProperties(value = {"id"})
 public class Edge {
 
@@ -39,9 +41,14 @@ public class Edge {
 
     @JsonProperty("normal")
     private String normal;
+
+    private ArrayList<String> attributes;
+
+    private ArrayList<String> values;
     /**
      * Default constructor of the Edge class.
      */
+
     public Edge() {
     }
 
@@ -88,8 +95,6 @@ public class Edge {
     public void setSource(String source) {
         this.source = source;
     }
-
-
 
 
 
@@ -144,6 +149,22 @@ public class Edge {
 
     public void setNormal(String normal) {
         this.normal = normal;
+    }
+
+    public void setValues(ArrayList<String> values) {
+        this.values = values;
+    }
+
+    public ArrayList<String> getValues() {
+        return values;
+    }
+
+    public ArrayList<String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(ArrayList<String> attributes) {
+        this.attributes = attributes;
     }
 
     /**

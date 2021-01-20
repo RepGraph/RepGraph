@@ -27,6 +27,12 @@ public class PTGGraph extends AbstractGraph {
     public void setNodes(ArrayList<Node> nodelist) {
 
         for (Node n : nodelist) {
+            if (n.getLabel()!=null){
+            if (n.getLabel().startsWith("#")){
+                n.setSurface(false);
+            }else{n.setSurface(true);}
+
+        }
             this.nodes.put(n.getId(), n);
         }
         ArrayList<Anchors> anchArr = new ArrayList<>();
@@ -34,7 +40,8 @@ public class PTGGraph extends AbstractGraph {
         anchArr.add(anchors);
 
         this.nodes.get("0").setAnchors(anchArr);
-        this.nodes.get("0").setLabel("Top");
+        this.nodes.get("0").setLabel("top");
+
         populateTokens();
     }
 }

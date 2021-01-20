@@ -130,7 +130,7 @@ export default function HomePage(props) {
             </Grid>
             <Grid item style={{minWidth: "50vw"}}>
                 <DropzoneArea
-                    acceptedFiles={[".dmrs",".eds",".amr",".ptg",".ucca"]}
+                    acceptedFiles={[".dmrs",".eds",".amr",".ptg",".ucca",".mrp"]}
                     dropzoneText={"Drag and drop"}
                     icon={<CloudUploadIcon/>}
                     onChange={(files) => {

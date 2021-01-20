@@ -28,6 +28,15 @@ public class EDSGraph extends AbstractGraph {
 
     }
 
+    @JsonSetter("nodes")
+    public void setNodes(ArrayList<Node> nodelist) {
 
+        //Dont understand the CARG property thing
+        for (Node n : nodelist) {
+            if (n.getLabel().startsWith("_")){n.setSurface(true);}else{n.setSurface(false);}
+            this.nodes.put(n.getId(), n);
+        }
+        populateTokens();
+    }
 
 }

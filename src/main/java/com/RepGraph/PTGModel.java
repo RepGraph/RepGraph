@@ -204,25 +204,8 @@ public class PTGModel extends AbstractModel {
      */
     public HashMap<String, Object> VisualiseFlat(AbstractGraph graph) {
 
-        ArrayList<Node> ordered = new ArrayList<>();
+        ArrayList<Node> ordered = new ArrayList<>(graph.nodes.values());
 
-        for (Node n : graph.getNodes().values()) {
-            ordered.add(new Node(n));
-        }
-
-        Collections.sort(ordered, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                o1.getAnchors().get(0).setEnd(o1.getAnchors().get(0).getFrom());
-                o2.getAnchors().get(0).setEnd(o2.getAnchors().get(0).getFrom());
-                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
-                    return -1;
-                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
-                    return 0;
-                }
-                return 1;
-            }
-        });
 
         int height = 1;
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each Node and the spaces between them
