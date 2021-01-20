@@ -5,10 +5,10 @@ import java.util.*;
 /**
  * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
  */
-public class DMRSModel extends AbstractModel {
+public class AMRModel extends AbstractModel {
 
 
-    public DMRSModel() {
+    public AMRModel() {
         super();
     }
 
@@ -62,7 +62,7 @@ public class DMRSModel extends AbstractModel {
      */
     public HashMap<String, Object> Visualise(String graphID, int format) {
 
-        AbstractGraph graph = graphs.get(graphID);
+        AbstractGraph graph =  graphs.get(graphID);
 
 
         if (format == 1) {
@@ -79,7 +79,7 @@ public class DMRSModel extends AbstractModel {
 
     public HashMap<String, Object> VisualisePlanar(AbstractGraph Agraph) {
 
-        //gets the planar optimised DMRSGraph
+
         AbstractGraph graph =  Agraph.PlanarGraph();
 
         ArrayList<Edge> crossingEdges = new ArrayList<>();
@@ -204,25 +204,8 @@ public class DMRSModel extends AbstractModel {
      */
     public HashMap<String, Object> VisualiseFlat(AbstractGraph graph) {
 
-        ArrayList<Node> ordered = new ArrayList<>();
+        ArrayList<Node> ordered = new ArrayList<Node>(graph.nodes.values());
 
-        for (Node n : graph.getNodes().values()) {
-            ordered.add(new Node(n));
-        }
-
-        Collections.sort(ordered, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                o1.getAnchors().get(0).setEnd(o1.getAnchors().get(0).getFrom());
-                o2.getAnchors().get(0).setEnd(o2.getAnchors().get(0).getFrom());
-                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
-                    return -1;
-                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
-                    return 0;
-                }
-                return 1;
-            }
-        });
 
         int height = 1;
         int totalGraphHeight = height * 50 + (height - 1) * 70; //number of levels times the height of each Node and the spaces between them
@@ -241,7 +224,6 @@ public class DMRSModel extends AbstractModel {
             singleNode.put("y", totalGraphHeight);
             singleNode.put("label", n.getLabel());
             singleNode.put("type", "node");
-            singleNode.put("anchors", n.getAnchors());
             if (n.getLabel().startsWith("_")) {
                 singleNode.put("group", "surfaceNode");
             } else {

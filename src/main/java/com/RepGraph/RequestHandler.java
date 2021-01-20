@@ -22,15 +22,12 @@ public class RequestHandler {
 
     AbstractModel RepModel;
 
-
     /**
-     * Simple Home Mapping that returns "Welcome"
-     *
-     * @return String This is the welcome message
+     * Testing function
      */
     @GetMapping("/")
     @ResponseBody
-    public DMRSGraph Home(@RequestBody DMRSGraph data) {
+    public EDSGraph Home(@RequestBody EDSGraph data) {
 
         return data;
     }
@@ -54,9 +51,12 @@ public class RequestHandler {
             this.RepModel = new DMRSModel();
         } else if (framework.equals("2")) {
             this.RepModel = new EDSModel();
+        } else if (framework.equals("3")) {
+            this.RepModel = new PTGModel();
+        } else if (framework.equals("4")) {
+            this.RepModel = new UCCAModel();
         } else {
-            //FOR NOW ONLY
-            this.RepModel = new MRSModel();
+            this.RepModel = new AMRModel();
         }
 
         RepModel.clearGraphs();
@@ -90,14 +90,20 @@ public class RequestHandler {
             //Creates Graph object from JSON string
             AbstractGraph currgraph;
             if (framework.equals("1")) {
-                 currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
+                currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
 
             } else if (framework.equals("2")) {
-                 currgraph = objectMapper.readValue(currentLine, EDSGraph.class);
+                currgraph = objectMapper.readValue(currentLine, EDSGraph.class);
 
-            } else {
-                //FOR NOW ONLY
-                 currgraph = objectMapper.readValue(currentLine, MRSGraph.class);
+            } else if (framework.equals("3")) {
+                currgraph = objectMapper.readValue(currentLine, PTGGraph.class);
+
+            }else if (framework.equals("4")) {
+                currgraph = objectMapper.readValue(currentLine, UCCAGraph.class);
+
+            }else {
+                currgraph = objectMapper.readValue(currentLine, AMRGraph.class);
+
             }
             //checks if model doesnt contain the ID already and if it does dont add it and tell the user duplicates were found
             if (!RepModel.containsKey(currgraph.getId())) {
@@ -296,10 +302,11 @@ public class RequestHandler {
     @GetMapping("/GetSubset")
     @ResponseBody
     public AbstractGraph GetSubset(@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType) {
+        AbstractGraph graph = RepModel.graphs.get(graphID);
         if (SubsetType.equals("adjacent")) {
-            return RepModel.CreateSubsetAdjacent(graphID, NodeID);
+            return RepModel.CreateSubsetAdjacent(graph, NodeID);
         } else if (SubsetType.equals("descendent")) {
-            return RepModel.CreateSubsetDescendent(graphID, NodeID);
+            return RepModel.CreateSubsetDescendent(graph, NodeID);
         }
         return null;
     }

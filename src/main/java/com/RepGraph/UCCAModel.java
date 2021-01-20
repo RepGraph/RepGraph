@@ -5,10 +5,10 @@ import java.util.*;
 /**
  * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
  */
-public class DMRSModel extends AbstractModel {
+public class UCCAModel extends AbstractModel {
 
 
-    public DMRSModel() {
+    public UCCAModel() {
         super();
     }
 
@@ -62,7 +62,7 @@ public class DMRSModel extends AbstractModel {
      */
     public HashMap<String, Object> Visualise(String graphID, int format) {
 
-        AbstractGraph graph = graphs.get(graphID);
+        AbstractGraph graph =  graphs.get(graphID);
 
 
         if (format == 1) {
@@ -79,7 +79,7 @@ public class DMRSModel extends AbstractModel {
 
     public HashMap<String, Object> VisualisePlanar(AbstractGraph Agraph) {
 
-        //gets the planar optimised DMRSGraph
+
         AbstractGraph graph =  Agraph.PlanarGraph();
 
         ArrayList<Edge> crossingEdges = new ArrayList<>();

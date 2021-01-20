@@ -36,6 +36,9 @@ public class Edge {
     @JsonAlias({"post-label","post"})
     private String postLabel;
 
+
+    @JsonProperty("normal")
+    private String normal;
     /**
      * Default constructor of the Edge class.
      */
@@ -133,6 +136,14 @@ public class Edge {
      */
     public void setPostLabel(String postLabel) {
         this.postLabel = postLabel;
+    }
+
+    public String getNormal() {
+        return normal;
+    }
+
+    public void setNormal(String normal) {
+        this.normal = normal;
     }
 
     /**

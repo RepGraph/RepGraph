@@ -20,56 +20,40 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Node {
 
-    /**
-     * The Node's ID number.
-     */
-    @JsonAlias({"id","nodeid"})
+
     @JsonProperty("id")
     private String id;
 
-    /**
-     * The Node's label.
-     */
-    @JsonAlias({"predicate","label"})
-    @JsonProperty("predicate")
+
+    @JsonProperty("label")
     private String label;
 
-    /**
-     * An array list of Anchors which give the Node to Token index alignment - done in ArrayList format for easier processing and compatibility with API
-     */
-    @JsonAlias({"lnk"})
-    private Anchors anchors;
 
-    @JsonAlias({"sortinfo"})
-    private HashMap<String,String> properties = new HashMap<>();
+    @JsonProperty("anchors")
+    private ArrayList<Anchors> anchors;
 
-    /**
-     * An array list of directed neighbouring nodes i.e the nodes that this Node points to.
-     */
-    @JsonAlias("edges")
+    @JsonProperty("properties")
+    private ArrayList<String> properties;
+
+    @JsonProperty("values")
+    private ArrayList<String> values;
+
+    @JsonIgnore
     private ArrayList<Node> directedNeighbours;
 
-    /**
-     * An array list of undirected neighbouring nodes i.e the nodes that point to this Node.
-     */
+
     @JsonIgnore
     private ArrayList<Node> undirectedNeighbours;
 
-    /**
-     * An array list of edges to the directed neighbouring edges i.e the edges leaving this Node.
-     */
+
     @JsonIgnore
     private ArrayList<Edge> directedEdgeNeighbours;
 
-    /**
-     * An array list of edges to the undirected neighbouring edges i.e the edges coming into this Node.
-     */
+
     @JsonIgnore
     private ArrayList<Edge> undirectedEdgeNeighbours;
 
-    /**
-     * Default constructor for the Node class.
-     */
+
     public Node() {
         this.directedNeighbours = new ArrayList<>();
         this.undirectedNeighbours = new ArrayList<>();
@@ -83,7 +67,7 @@ public class Node {
      * @param label The Node's label.
      * @param anchors An array list of the Node's Anchors.
      */
-    public Node(String id, String label, Anchors anchors) {
+    public Node(String id, String label, ArrayList<Anchors> anchors) {
         this.id = id;
         this.label = label;
         this.anchors = anchors;
@@ -103,7 +87,11 @@ public class Node {
     public Node(Node n) {
         this.label = n.label;
         this.id = n.id;
-        Anchors anch = new Anchors(n.anchors.getFrom(), n.anchors.getEnd());
+        ArrayList<Anchors> anch = new ArrayList<Anchors>();
+        for (Anchors anchor: n.getAnchors()) {
+            anch.add(new Anchors(anchor.getFrom(),anchor.getEnd()));
+        }
+
         this.anchors = anch;
         this.undirectedEdgeNeighbours = new ArrayList<>();
         this.directedEdgeNeighbours = new ArrayList<>();
@@ -120,71 +108,48 @@ public class Node {
         return id;
     }
 
-    /**
-     * Setter method for the Node's ID number.
-     * @param id The Node's ID number.
-     */
-    @JsonSetter("id")
+
+
     public void setId(String id) {
         this.id = id;
     }
 
 
 
-    /**
-     * Getter method for the Node's label.
-     * @return String The Node's label.
-     */
+
     public String getLabel() {
         return label;
     }
 
-    /**
-     * Setter method for the Node's label.
-     * @param label The Node's label.
-     */
+
     public void setLabel(String label) {
         this.label = label;
     }
 
 
-    public Anchors getAnchors() {
+    public ArrayList<Anchors> getAnchors() {
         return anchors;
     }
 
-    @JsonSetter("lnk")
-    public void setAnchorsLnk(Anchors anchors) {
+
+    public void setAnchors(ArrayList<Anchors> anchors) {
         this.anchors = anchors;
     }
 
-    @JsonSetter("anchors")
-    public void setAnchorsArr(ArrayList<Anchors> anchors) {
-        this.anchors = anchors.get(0);
+    public ArrayList<String> getProperties() {
+        return properties;
     }
 
-    @JsonGetter("properties")
-    public HashMap<String, String> properties() {
-        return this.properties;
+    public ArrayList<String> getValues() {
+        return values;
     }
 
-    @JsonSetter("sortinfo")
-    public void setPropertyValues(LinkedHashMap<String,String> prop) throws IOException {
-       properties = prop;
-
+    public void setProperties(ArrayList<String> properties) {
+        this.properties = properties;
     }
 
-    @JsonSetter("edges")
-    public void directEdgePopulation(LinkedHashMap<String,String> edges){
-        for (String edgeLabel:edges.keySet()) {
-            Edge e = new Edge(this.id,edges.get(edgeLabel),edgeLabel,"");
-            this.directedEdgeNeighbours.add(e);
-        }
-    }
-
-    public void updateDirectedEdges(){
-        for (Edge e:directedEdgeNeighbours) {
-           e.setSource(this.id);
-        }
+    public void setValues(ArrayList<String> values) {
+        this.values = values;
     }
 
     /**

@@ -115,8 +115,14 @@ export default function HomePage(props) {
                 <ToggleButton color="secondary" value="2" aria-label="EDS">
                     <Typography color="primary">EDS</Typography>
                 </ToggleButton>
-                <ToggleButton color="secondary" value="3" aria-label="MRS">
-                    <Typography color="primary">MRS</Typography>
+                <ToggleButton color="secondary" value="3" aria-label="PTG">
+                    <Typography color="primary">PTG</Typography>
+                </ToggleButton>
+                <ToggleButton color="secondary" value="4" aria-label="UCCA">
+                    <Typography color="primary">UCCA</Typography>
+                </ToggleButton>
+                <ToggleButton color="secondary" value="5" aria-label="AMR">
+                    <Typography color="primary">AMR</Typography>
                 </ToggleButton>
             </ToggleButtonGroup>
             <Grid item>
@@ -124,7 +130,7 @@ export default function HomePage(props) {
             </Grid>
             <Grid item style={{minWidth: "50vw"}}>
                 <DropzoneArea
-                    acceptedFiles={[".dmrs",".eds",".mrs"]}
+                    acceptedFiles={[".dmrs",".eds",".amr",".ptg",".ucca"]}
                     dropzoneText={"Drag and drop"}
                     icon={<CloudUploadIcon/>}
                     onChange={(files) => {
