@@ -10,6 +10,9 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
+import {
+    Typography
+} from "@material-ui/core";
 
 import {AppContext} from "../../Store/AppContextProvider.js";
 import {useHistory} from "react-router-dom";
@@ -138,11 +141,11 @@ function DisplaySubsetTool(props) {
 
 
         <CardContent>
-            <FormLabel component="legend">Select Type of Subset</FormLabel>
+            <FormLabel color={"textSecondary"} component="legend">Select Type of Subset</FormLabel>
             <RadioGroup aria-label="subset-type" name="subset" value={value} onChange={handleChange}>
-                <FormControlLabel value="adjacent" control={<Radio color="primary"/>} label="Display Adjacent Nodes"/>
+                <FormControlLabel value="adjacent" control={<Radio color="primary"/>} label={<Typography color={"textSecondary"}> Display Adjacent Nodes</Typography>}/>
                 <FormControlLabel value="descendent" control={<Radio color="primary"/>}
-                                  label="Display Descendent Nodes"/>
+                                  label={<Typography color={"textSecondary"}> Display Descendent Nodes</Typography>}/>
             </RadioGroup>
             <Button
                 variant="contained" color="primary" onClick={handleClickOpen}

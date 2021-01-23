@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React, {useContext} from "react";
 import "../../src/styles.css";
 import Routes from "../../src/Routes";
-import { BrowserRouter as Router } from "react-router-dom";
+import {BrowserRouter as Router} from "react-router-dom";
 
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import {MuiThemeProvider, createMuiTheme} from "@material-ui/core/styles";
 
-import { AppContext } from "../../src/Store/AppContextProvider";
+import {AppContext} from "../../src/Store/AppContextProvider";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -21,19 +21,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function App() {
-    const { state, dispatch } = useContext(AppContext);
+    const {state, dispatch} = useContext(AppContext);
     const classes = useStyles();
 
 
     const font = "'Open Sans', 'Helvetica', 'Arial', sans-serif";
 
-    const primaryColor = state.darkMode ? "#ff5722" : "#ff5722";
-    const secondaryColor = state.darkMode ? "#434343" : "#ffffff";
+    const primaryColor = state.darkMode ? "#444444" : "#7e006c";
+    const secondaryColor = state.darkMode ? "#7e006c" : "#444444";
+    const textPrimary = state.darkMode ? "#ffffff" : "#ffffff";
+    const textSecondary = state.darkMode ? "#000000" : "#000000";
 
     const palette = {
         type: state.darkMode ? "dark" : "light",
         primary: {main: primaryColor},
         secondary: {main: secondaryColor},
+        text: {
+            primary: textPrimary,
+            secondary: textSecondary
+        },
         info: {main: "#03a9f4"},
         error: {main: "#fa5419"},
         warning: {main: "#fad431"},
@@ -139,14 +145,13 @@ export default function App() {
     });
 
 
-
     return (
         <MuiThemeProvider theme={theme}>
-            <Backdrop className={classes.backdrop} open={state.isLoading} >
-                <CircularProgress color="inherit" />
+            <Backdrop className={classes.backdrop} open={state.isLoading}>
+                <CircularProgress color="inherit"/>
             </Backdrop>
             <Router>
-                <Routes />
+                <Routes/>
             </Router>
         </MuiThemeProvider>
     );

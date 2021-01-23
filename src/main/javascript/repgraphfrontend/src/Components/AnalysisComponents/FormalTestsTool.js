@@ -11,6 +11,7 @@ import Grid from "@material-ui/core/Grid";
 import {makeStyles} from "@material-ui/core/styles";
 import {AppContext} from "../../Store/AppContextProvider";
 import {useHistory} from "react-router-dom";
+import {Typography} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -83,22 +84,23 @@ function FormalTestsTool(props) {
                     <FormControlLabel
                         control={<Checkbox checked={tests.planar} onChange={handleChange} color="primary"
                                            name="planar"/>}
-                        label="Graph Planar?"
+                        label={<Typography color={"textSecondary"}> Graph Planar?</Typography>}
                     />
                     <FormControlLabel
                         control={<Checkbox checked={tests.longestPathDirected} onChange={handleChange} color="primary"
                                            name="longestPathDirected"/>}
-                        label="Find Longest Directed Path"
+
+                        label={<Typography color={"textSecondary"}> Find The Longest Directed Path</Typography>}
                     />
                     <FormControlLabel
                         control={<Checkbox checked={tests.longestPathUndirected} onChange={handleChange}
                                            color="primary" name="longestPathUndirected"/>}
-                        label="Find Longest Undirected Path"
+                        label={<Typography color={"textSecondary"}> Find The Longest Undirected Path</Typography>}
                     />
                     <FormControlLabel
                         control={<Checkbox checked={tests.connected} onChange={handleChange} color="primary"
                                            name="connected"/>}
-                        label="Graph Connected?"
+                        label={<Typography color={"textSecondary"}> Graph Connected?</Typography>}
                     />
                     <Button
                         disabled={state.selectedSentenceID === null}

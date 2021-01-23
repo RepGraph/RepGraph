@@ -88,7 +88,7 @@ export default function AnalysisAccordion() {
             >
                 <DialogTitle id="alert-dialog-title">{`Some information about the ${infoClicked}:`}</DialogTitle>
                 <DialogContent>
-                    <Typography>blah blah blah</Typography>
+                    <Typography></Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary" autoFocus>
@@ -97,13 +97,14 @@ export default function AnalysisAccordion() {
                 </DialogActions>
             </Dialog>
             <Paper elevation={1}>
-                <Accordion>
+                <Accordion >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel2a-content"
                         id="display-subset-header"
+
                     >
-                        <Typography className={classes.heading}>Display a subset of a graph</Typography>
+                        <Typography color={"textSecondary"} className={classes.heading}>Display a subset of a graph</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Grid
@@ -113,17 +114,18 @@ export default function AnalysisAccordion() {
                             justify="space-between"
                             alignItems="center"
                             spacing={2}
+
                         >
                             <Grid item xs={6} className={classes.body}>
                                 <Card className={classes.body} variant="outlined">
-                                    <CardContent className={classes.body}>
+                                    <CardContent className={classes.body} >
                                         <Typography
                                             className={classes.title}
-                                            color="textPrimary"
+                                            color="textSecondary"
                                             gutterBottom
                                         >
                                             About the tool:
-                                            <IconButton aria-label="Display subset information button"
+                                            <IconButton aria-label="Display subset information button" color={"primary"}
                                                         onClick={() => handleInfoClick("display subset tool")}>
                                                 <InfoIcon/>
                                             </IconButton>
@@ -151,7 +153,7 @@ export default function AnalysisAccordion() {
                         aria-controls="panel2a-content"
                         id="search-sub-graph-header"
                     >
-                        <Typography className={classes.heading}>
+                        <Typography color={"textSecondary"} className={classes.heading}>
                             Search for a sub-graph pattern
                         </Typography>
                     </AccordionSummary>
@@ -169,11 +171,11 @@ export default function AnalysisAccordion() {
                                     <CardContent>
                                         <Typography
                                             className={classes.title}
-                                            color="textPrimary"
+                                            color="textSecondary"
                                             gutterBottom
                                         >
                                             About the tool:
-                                            <IconButton aria-label="Search for sub-graph pattern information button"
+                                            <IconButton aria-label="Search for sub-graph pattern information button" color={"primary"}
                                                         onClick={() => handleInfoClick("search for sub-graph pattern tool")}>
                                                 <InfoIcon/>
                                             </IconButton>
@@ -199,7 +201,7 @@ export default function AnalysisAccordion() {
                         aria-controls="panel2a-content"
                         id="compare-two-header"
                     >
-                        <Typography className={classes.heading}>
+                        <Typography color={"textSecondary"} className={classes.heading}>
                             Compare Two Graphs
                         </Typography>
                     </AccordionSummary>
@@ -217,11 +219,11 @@ export default function AnalysisAccordion() {
                                     <CardContent>
                                         <Typography
                                             className={classes.title}
-                                            color="textPrimary"
+                                            color="textSecondary"
                                             gutterBottom
                                         >
                                             About the tool:
-                                            <IconButton aria-label="Compare two graphs information button"
+                                            <IconButton aria-label="Compare two graphs information button" color={"primary"}
                                                         onClick={() => handleInfoClick("compare two graphs tool")}>
                                                 <InfoIcon/>
                                             </IconButton>
@@ -249,7 +251,7 @@ export default function AnalysisAccordion() {
                         aria-controls="panel2a-content"
                         id="run-formal-header"
                     >
-                        <Typography className={classes.heading}>
+                        <Typography color={"textSecondary"} className={classes.heading}>
                             Run Formal Tests
                         </Typography>
                     </AccordionSummary>
@@ -275,11 +277,11 @@ export default function AnalysisAccordion() {
                                             <CardContent className={classes.body}>
                                                 <Typography
                                                     className={classes.title}
-                                                    color="textPrimary"
+                                                    color="textSecondary"
                                                     gutterBottom
                                                 >
                                                     About the tool:
-                                                    <IconButton aria-label="Formal tests information button" onClick={() => handleInfoClick("formal tests tool")}>
+                                                    <IconButton color={"primary"} aria-label="Formal tests information button" onClick={() => handleInfoClick("formal tests tool")}>
                                                         <InfoIcon />
                                                     </IconButton>
                                                 </Typography>

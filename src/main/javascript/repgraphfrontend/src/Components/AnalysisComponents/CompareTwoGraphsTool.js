@@ -48,6 +48,7 @@ function CompareTwoGraphsTool(props){
                     endIcon={<LocationSearchingIcon/>}
                     disabled={state.dataSet === null}
                 >
+
                     Compare Two Graphs
                 </Button>
                 <Dialog
