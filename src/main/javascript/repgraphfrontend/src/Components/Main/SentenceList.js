@@ -106,13 +106,13 @@ export default function SentenceList(props) {
                                 return (
                                     <ListItem button key={currentDataSet[index].id}
                                               onClick={() => handleSelectSentence(currentDataSet[index].id)}>
-                                        <Typography color={"textSecondary"}>{currentDataSet[index].input}</Typography>
+                                        <Typography color={"textPrimary"}>{currentDataSet[index].input}</Typography>
                                     </ListItem>
                                 );
                             }}
                             footer={() => (
                                 <div style={{padding: "1rem", textAlign: "center"}}>
-                                    <Typography color={"textSecondary"}>
+                                    <Typography color={"textPrimary"}>
                                         -- end of dataset --
                                     </Typography>
                                 </div>

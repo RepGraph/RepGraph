@@ -44,7 +44,7 @@ function CompareTwoGraphsTool(props){
             className={classes.root}
         >
                 <Button
-                    variant="contained" color="primary" onClick={handleClickOpen}
+                    variant="contained" color="secondary" onClick={handleClickOpen}
                     endIcon={<LocationSearchingIcon/>}
                     disabled={state.dataSet === null}
                 >
@@ -64,7 +64,7 @@ function CompareTwoGraphsTool(props){
                             <CompareTwoGraphsVisualisation />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose} color="primary" autoFocus >
+                        <Button onClick={handleClose} color="secondary" autoFocus >
                             Close
                         </Button>
                     </DialogActions>

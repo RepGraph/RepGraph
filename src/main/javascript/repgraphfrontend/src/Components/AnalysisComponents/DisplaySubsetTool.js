@@ -141,14 +141,14 @@ function DisplaySubsetTool(props) {
 
 
         <CardContent>
-            <FormLabel color={"textSecondary"} component="legend">Select Type of Subset</FormLabel>
+            <FormLabel><Typography color={"textPrimary"}>Select Type of Subset</Typography></FormLabel>
             <RadioGroup aria-label="subset-type" name="subset" value={value} onChange={handleChange}>
-                <FormControlLabel value="adjacent" control={<Radio color="primary"/>} label={<Typography color={"textSecondary"}> Display Adjacent Nodes</Typography>}/>
-                <FormControlLabel value="descendent" control={<Radio color="primary"/>}
-                                  label={<Typography color={"textSecondary"}> Display Descendent Nodes</Typography>}/>
+                <FormControlLabel value="adjacent" control={<Radio />} label={<Typography color={"textPrimary"}> Display Adjacent Nodes</Typography>}/>
+                <FormControlLabel value="descendent" control={<Radio color="secondary"/>}
+                                  label={<Typography color={"textPrimary"}> Display Descendent Nodes</Typography>}/>
             </RadioGroup>
             <Button
-                variant="contained" color="primary" onClick={handleClickOpen}
+                variant="contained" color="secondary" onClick={handleClickOpen}
                 endIcon={<LocationSearchingIcon/>}
                 disabled={state.selectedSentenceID === null}
             >
@@ -180,7 +180,7 @@ function DisplaySubsetTool(props) {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDisplaySubset} color="primary" autoFocus disabled={selectedNode === null}>
+                    <Button onClick={handleDisplaySubset} color="secondary" autoFocus disabled={selectedNode === null}>
                         Display
                     </Button>
                 </DialogActions>
@@ -202,7 +202,7 @@ function DisplaySubsetTool(props) {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleResultClose} color="primary" autoFocus>
+                    <Button onClick={handleResultClose} color="secondary" autoFocus>
                         close
                     </Button>
                 </DialogActions>

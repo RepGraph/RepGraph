@@ -79,33 +79,33 @@ function FormalTestsTool(props) {
             className={classes.root}
         >
             <FormControl component="fieldset">
-                <FormLabel color="primary" component="legend">Graph Property Tests</FormLabel>
+                <FormLabel component="legend"><Typography color={"textPrimary"}> Graph Property Tests</Typography></FormLabel>
                 <FormGroup>
                     <FormControlLabel
-                        control={<Checkbox checked={tests.planar} onChange={handleChange} color="primary"
+                        control={<Checkbox checked={tests.planar} onChange={handleChange} color="secondary"
                                            name="planar"/>}
-                        label={<Typography color={"textSecondary"}> Graph Planar?</Typography>}
+                        label={<Typography color={"textPrimary"}> Graph Planar?</Typography>}
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={tests.longestPathDirected} onChange={handleChange} color="primary"
+                        control={<Checkbox checked={tests.longestPathDirected} onChange={handleChange} color="secondary"
                                            name="longestPathDirected"/>}
 
-                        label={<Typography color={"textSecondary"}> Find The Longest Directed Path</Typography>}
+                        label={<Typography color={"textPrimary"}> Find The Longest Directed Path</Typography>}
                     />
                     <FormControlLabel
                         control={<Checkbox checked={tests.longestPathUndirected} onChange={handleChange}
-                                           color="primary" name="longestPathUndirected"/>}
-                        label={<Typography color={"textSecondary"}> Find The Longest Undirected Path</Typography>}
+                                           color="secondary" name="longestPathUndirected"/>}
+                        label={<Typography color={"textPrimary"}> Find The Longest Undirected Path</Typography>}
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={tests.connected} onChange={handleChange} color="primary"
+                        control={<Checkbox checked={tests.connected} onChange={handleChange} color="secondary"
                                            name="connected"/>}
-                        label={<Typography color={"textSecondary"}> Graph Connected?</Typography>}
+                        label={<Typography color={"textPrimary"}> Graph Connected?</Typography>}
                     />
                     <Button
                         disabled={state.selectedSentenceID === null}
                         variant="contained"
-                        color="primary"
+                        color="secondary"
                         endIcon={<ArrowForwardIcon/>}
                         onClick={() => {
                             console.log(tests); //Debugging

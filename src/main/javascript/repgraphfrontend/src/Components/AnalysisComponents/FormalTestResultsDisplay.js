@@ -128,6 +128,7 @@ export default function FormalTestsResultsDisplay(props) {
                         <TableRow
                             hover
                             key={row.test}
+
                         >
                             <TableCell component="th" scope="row">
                                 {row.test}
@@ -136,7 +137,7 @@ export default function FormalTestsResultsDisplay(props) {
                             <TableCell>
                                 {
                                     row.test !== "Connected" && (
-                                    <Button variant="contained" color="primary" onClick={(event) => handleClickOpen(event, row.test)} disabled={row.result === "Cycle Detected" ? true : false}>
+                                    <Button variant="contained" color="secondary" onClick={(event) => handleClickOpen(event, row.test)} disabled={row.result === "Cycle Detected" ? true : false}>
                                         Visualise
                                     </Button>
                                 )}
@@ -162,7 +163,7 @@ export default function FormalTestsResultsDisplay(props) {
                     {dialogElement}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleClose} color={"secondary"}>
                         Close
                     </Button>
                 </DialogActions>

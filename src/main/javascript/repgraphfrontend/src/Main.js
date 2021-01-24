@@ -283,7 +283,7 @@ export default function Main() {
                         <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
                             <MenuIcon/>
                         </IconButton>
-                        <Typography variant="h4" color="textPrimary" style={{fontWeight: 600}}>
+                        <Typography variant="h4" color={state.darkMode ? "textPrimary" : "textSecondary"} style={{fontWeight: 600}}>
                             RepGraph
                         </Typography>
 
@@ -350,13 +350,13 @@ export default function Main() {
 
                                 >
                                     <ToggleButton value="1" aria-label="Hierarchical">
-                                        <Typography color={"textPrimary"}>Hierarchical</Typography>
+                                        <Typography color={state.darkMode ? "textPrimary" : "textSecondary"}>Hierarchical</Typography>
                                     </ToggleButton>
                                     <ToggleButton value="2" aria-label="Tree-like">
-                                        <Typography color={"textPrimary"}>Tree-like</Typography>
+                                        <Typography color={state.darkMode ? "textPrimary" : "textSecondary"}>Tree-like</Typography>
                                     </ToggleButton>
                                     <ToggleButton value="3" aria-label="Flat">
-                                        <Typography color={"textPrimary"}>Flat</Typography>
+                                        <Typography color={state.darkMode ? "textPrimary" : "textSecondary"}>Flat</Typography>
                                     </ToggleButton>
                                 </ToggleButtonGroup>
 
@@ -381,6 +381,7 @@ export default function Main() {
                                      title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
                                 <Fab color="primary" aria-label="add" variant="extended"
                                      className={classes.fabButton} onClick={() => {
+                                    dispatch({type: "SET_DARK_MODE", payload: {darkMode: false}});
                                     history.push("/");
                                 }}>
                                     {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
@@ -389,7 +390,7 @@ export default function Main() {
                             </Tooltip>
                         </Grid>
                         <Switch color={"primary"} checked={state.darkMode} onChange={handleThemeChange}/>
-                        <Typography color={"textPrimary"}>Dark</Typography>
+                        <Typography color={state.darkMode ? "textPrimary" : "textSecondary"}>Dark</Typography>
                     </Toolbar>
 
                 </AppBar>

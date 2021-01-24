@@ -27,10 +27,10 @@ export default function App() {
 
     const font = "'Open Sans', 'Helvetica', 'Arial', sans-serif";
 
-    const primaryColor = state.darkMode ? "#444444" : "#7e006c";
-    const secondaryColor = state.darkMode ? "#7e006c" : "#444444";
-    const textPrimary = state.darkMode ? "#ffffff" : "#ffffff";
-    const textSecondary = state.darkMode ? "#000000" : "#000000";
+    const primaryColor = state.darkMode ? "#444444" : "#7e0600";
+    const secondaryColor = state.darkMode ? "#7e0600" : "#444444";
+    const textPrimary = state.darkMode ? "#ffffff" : "#000000";
+    const textSecondary = state.darkMode ? "#000000" : "#ffffff";
 
     const palette = {
         type: state.darkMode ? "dark" : "light",
@@ -141,7 +141,35 @@ export default function App() {
                 letterSpacing: "0.00714em",
                 lineHeight: 1.57
             }
+        },
+        overrides: {
+            MuiRadio: {
+                root: {
+                    color: secondaryColor,
+                },
+                colorSecondary: {
+                    '&$checked': {
+                        color: secondaryColor,
+                    },
+                },
+            },
+            MuiCheckbox : {
+                root: {
+                    color: secondaryColor,
+                },
+                colorSecondary: {
+                    '&$checked': {
+                        color: secondaryColor,
+                    },
+                },
+            },
+            MuiInputLabel: {
+                root: {
+                    color: textPrimary,
+                },
+            },
         }
+
     });
 
 

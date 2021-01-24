@@ -104,7 +104,7 @@ export default function AnalysisAccordion() {
                         id="display-subset-header"
 
                     >
-                        <Typography color={"textSecondary"} className={classes.heading}>Display a subset of a graph</Typography>
+                        <Typography color={"textPrimary"} className={classes.heading}>Display a subset of a graph</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Grid
@@ -121,16 +121,16 @@ export default function AnalysisAccordion() {
                                     <CardContent className={classes.body} >
                                         <Typography
                                             className={classes.title}
-                                            color="textSecondary"
+                                            color="textPrimary"
                                             gutterBottom
                                         >
                                             About the tool:
-                                            <IconButton aria-label="Display subset information button" color={"primary"}
+                                            <IconButton aria-label="Display subset information button" color={"secondary"}
                                                         onClick={() => handleInfoClick("display subset tool")}>
                                                 <InfoIcon/>
                                             </IconButton>
                                         </Typography>
-                                        <Typography variant="body2" color="textSecondary">
+                                        <Typography variant="body2" color="textPrimary">
                                             Select a node on the graph displayed in the visualization area to
                                             see the corresponding subset of the graph.
                                         </Typography>
@@ -153,7 +153,7 @@ export default function AnalysisAccordion() {
                         aria-controls="panel2a-content"
                         id="search-sub-graph-header"
                     >
-                        <Typography color={"textSecondary"} className={classes.heading}>
+                        <Typography color={"textPrimary"} className={classes.heading}>
                             Search for a sub-graph pattern
                         </Typography>
                     </AccordionSummary>
@@ -171,16 +171,16 @@ export default function AnalysisAccordion() {
                                     <CardContent>
                                         <Typography
                                             className={classes.title}
-                                            color="textSecondary"
+                                            color="textPrimary"
                                             gutterBottom
                                         >
                                             About the tool:
-                                            <IconButton aria-label="Search for sub-graph pattern information button" color={"primary"}
+                                            <IconButton aria-label="Search for sub-graph pattern information button" color={"secondary"}
                                                         onClick={() => handleInfoClick("search for sub-graph pattern tool")}>
                                                 <InfoIcon/>
                                             </IconButton>
                                         </Typography>
-                                        <Typography variant="body2" color="textSecondary">
+                                        <Typography variant="body2" color="textPrimary">
                                             Search for a sub-graph pattern using the nodes and labels of the current
                                             graph.
                                         </Typography>
@@ -201,7 +201,7 @@ export default function AnalysisAccordion() {
                         aria-controls="panel2a-content"
                         id="compare-two-header"
                     >
-                        <Typography color={"textSecondary"} className={classes.heading}>
+                        <Typography color={"textPrimary"} className={classes.heading}>
                             Compare Two Graphs
                         </Typography>
                     </AccordionSummary>
@@ -219,16 +219,16 @@ export default function AnalysisAccordion() {
                                     <CardContent>
                                         <Typography
                                             className={classes.title}
-                                            color="textSecondary"
+                                            color="textPrimary"
                                             gutterBottom
                                         >
                                             About the tool:
-                                            <IconButton aria-label="Compare two graphs information button" color={"primary"}
+                                            <IconButton aria-label="Compare two graphs information button" color={"secondary"}
                                                         onClick={() => handleInfoClick("compare two graphs tool")}>
                                                 <InfoIcon/>
                                             </IconButton>
                                         </Typography>
-                                        <Typography variant="body2" color="textSecondary">
+                                        <Typography variant="body2" color="textPrimary">
                                             Click the button to compare the similarities and differences of any two
                                             graphs.
                                         </Typography>
@@ -251,7 +251,7 @@ export default function AnalysisAccordion() {
                         aria-controls="panel2a-content"
                         id="run-formal-header"
                     >
-                        <Typography color={"textSecondary"} className={classes.heading}>
+                        <Typography color={"textPrimary"} className={classes.heading}>
                             Run Formal Tests
                         </Typography>
                     </AccordionSummary>
@@ -277,15 +277,15 @@ export default function AnalysisAccordion() {
                                             <CardContent className={classes.body}>
                                                 <Typography
                                                     className={classes.title}
-                                                    color="textSecondary"
+                                                    color="textPrimary"
                                                     gutterBottom
                                                 >
                                                     About the tool:
-                                                    <IconButton color={"primary"} aria-label="Formal tests information button" onClick={() => handleInfoClick("formal tests tool")}>
+                                                    <IconButton color={"secondary"} aria-label="Formal tests information button" onClick={() => handleInfoClick("formal tests tool")}>
                                                         <InfoIcon />
                                                     </IconButton>
                                                 </Typography>
-                                                <Typography variant="body2" color="textSecondary">
+                                                <Typography variant="body2" color="textPrimary">
                                                     Select a number of graph properties with which to test the
                                                     currently displayed graph.
                                                 </Typography>

@@ -178,19 +178,21 @@ function SearchSubgraphPatternTool(props) {
             <Card variant="outlined" style={{marginBottom: "10px"}}>
                 <CardContent>
                     <Grid item style={{width: "100%"}}>
-                        <Typography>Search for a set of node labels:</Typography>
+                        <Typography color={"textPrimary"}>Search for a set of node labels:</Typography>
                         <Autocomplete
                             style={{width: "100%"}}
                             disabled={state.selectedSentenceID === null}
                             multiple
                             disableCloseOnSelect
                             freeSolo
+                            color={"textPrimary"}
                             onChange={(event, values) => setNodeSet(values)}
                             id="tags-standard"
                             options={getLabels(state.selectedSentenceVisualisation)}
                             renderTags={(value, getTagProps) =>
                                 value.map((option, index) => (
                                     <Chip
+
                                         variant="outlined"
                                         label={option}
                                         {...getTagProps({index})}
@@ -200,6 +202,7 @@ function SearchSubgraphPatternTool(props) {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
+                                    color={"textPrimary"}
                                     variant="standard"
                                     label="Select Node Labels or Enter Your Own"
                                 />
@@ -209,7 +212,7 @@ function SearchSubgraphPatternTool(props) {
                     <Grid item style={{width: "100%"}}>
                         <Button
                             variant="contained"
-                            color="primary"
+                            color={"secondary"}
                             onClick={handleSearchForNodeSet}
                             style={{marginBottom: 10, marginTop: 10}}
                             disabled={nodeSet === null || nodeSet.length === 0}
@@ -263,13 +266,13 @@ function SearchSubgraphPatternTool(props) {
                                                             handleClickSentenceResult(nodeSetResultSearch[index].id);
                                                         }}
                                                     >
-                                                        <Typography>{nodeSetResultSearch[index].input}</Typography>
+                                                        <Typography color={"textPrimary"}>{nodeSetResultSearch[index].input}</Typography>
                                                     </ListItem>
                                                 );
                                             }}
                                             footer={() => (
                                                 <div style={{padding: "1rem", textAlign: "center"}}>
-                                                    -- end of dataset --
+                                                    <Typography color={"textPrimary"}>-- end of dataset --</Typography>
                                                 </div>
                                             )}
                                         />}
@@ -281,7 +284,7 @@ function SearchSubgraphPatternTool(props) {
                                     <CardContent style={{width:"100%", height: "100%"}}>
                                         {subgraphResponse === null ?
 
-                                                        <Typography>Select
+                                                        <Typography color={"textPrimary"}>Select
                                                             a sentence from the results above.</Typography>
 
                                             :
@@ -296,7 +299,7 @@ function SearchSubgraphPatternTool(props) {
                         </Grid>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleCloseNodeSet} color="primary" autoFocus>
+                        <Button onClick={handleCloseNodeSet} color={"secondary"} autoFocus>
                             Close
                         </Button>
                     </DialogActions>
@@ -304,13 +307,13 @@ function SearchSubgraphPatternTool(props) {
             </Card>
             <Card variant="outlined">
                 <CardContent><Grid item style={{width: "100%"}}>
-                    <Typography>
+                    <Typography color={"textPrimary"}>
                         Or visually select a sub-graph pattern on the currently displayed
                         graph:
                     </Typography>
                     <Button
                         variant="contained"
-                        color="primary"
+                        color={"secondary"}
                         endIcon={<LocationSearchingIcon/>}
                         onClick={handleClickOpen}
                         style={{marginBottom: 10, marginTop: 10}}
@@ -334,7 +337,7 @@ function SearchSubgraphPatternTool(props) {
                             <SelectSubgraphVisualisation/>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleClose} color="primary" autoFocus>
+                            <Button onClick={handleClose} color={"secondary"} autoFocus>
                                 Close
                             </Button>
                         </DialogActions>

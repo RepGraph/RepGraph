@@ -284,13 +284,13 @@ const SelectSubgraphVisualisation = () => {
                                                         handleClickSentenceResult(searchResultSpecific[index].id);
                                                     }}
                                                 >
-                                                    <Typography>{searchResultSpecific[index].input}</Typography>
+                                                    <Typography color={"textPrimary"}>{searchResultSpecific[index].input}</Typography>
                                                 </ListItem>
                                             );
                                         }}
                                         footer={() => (
                                             <div style={{padding: "1rem", textAlign: "center"}}>
-                                                -- end of dataset --
+                                               <Typography color={"textPrimary"}> -- end of dataset -- </Typography>
                                             </div>
                                         )}
                                     />}
@@ -302,7 +302,7 @@ const SelectSubgraphVisualisation = () => {
                                 <CardContent style={{width:"100%", height: "100%"}}>
                                     {selectedSentenceVisualisation === null ?
 
-                                        <Typography>Select
+                                        <Typography color={"textPrimary"}>Select
                                             a sentence from the results above.</Typography>
 
                                         :
@@ -317,7 +317,7 @@ const SelectSubgraphVisualisation = () => {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpen(false)} color="primary" autoFocus>
+                    <Button onClick={() => setOpen(false)} color="secondary" autoFocus>
                         Close
                     </Button>
                 </DialogActions>

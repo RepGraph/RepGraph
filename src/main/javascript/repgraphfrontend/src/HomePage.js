@@ -105,24 +105,24 @@ export default function HomePage(props) {
                 exclusive
                 onChange={handleFormatChange}
                 aria-label="Framework formats"
-                color="primary"
+
 
 
             >
-                <ToggleButton color="primary" value="1" aria-label="DMRS">
-                    <Typography color="primary">DMRS</Typography>
+                <ToggleButton color="secondary" value="1" aria-label="DMRS">
+                    <Typography color="secondary">DMRS</Typography>
                 </ToggleButton>
                 <ToggleButton color="secondary" value="2" aria-label="EDS">
-                    <Typography color="primary">EDS</Typography>
+                    <Typography color="secondary">EDS</Typography>
                 </ToggleButton>
                 <ToggleButton color="secondary" value="3" aria-label="PTG">
-                    <Typography color="primary">PTG</Typography>
+                    <Typography color="secondary">PTG</Typography>
                 </ToggleButton>
                 <ToggleButton color="secondary" value="4" aria-label="UCCA">
-                    <Typography color="primary">UCCA</Typography>
+                    <Typography color="secondary">UCCA</Typography>
                 </ToggleButton>
                 <ToggleButton color="secondary" value="5" aria-label="AMR">
-                    <Typography color="primary">AMR</Typography>
+                    <Typography color="secondary">AMR</Typography>
                 </ToggleButton>
             </ToggleButtonGroup>
             <Grid item>
