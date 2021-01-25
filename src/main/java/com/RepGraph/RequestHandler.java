@@ -1,8 +1,10 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,16 +22,19 @@ import java.util.*;
 @RestController
 public class RequestHandler {
 
-    AbstractModel RepModel;
+    public static final String USER_HEADER = "X-USER";
+
+
+    HashMap<String,AbstractModel> RepModel = new HashMap<>();
 
     /**
      * Testing function
      */
-    @GetMapping("/")
+    @GetMapping(value = "/")
     @ResponseBody
-    public EDSGraph Home(@RequestBody EDSGraph data) {
+    public String Home(@RequestHeader(USER_HEADER) String id) {
 
-        return data;
+        return id;
     }
 
     /**
@@ -45,21 +50,21 @@ public class RequestHandler {
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public HashMap<String, Object> UploadData(@RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
+    public HashMap<String, Object> UploadData(@RequestHeader(USER_HEADER)String userID,@RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
         //This is where we would change framework model
         if (framework.equals("1")) {
-            this.RepModel = new DMRSModel();
+            this.RepModel.put(userID,new DMRSModel());
         } else if (framework.equals("2")) {
-            this.RepModel = new EDSModel();
+            this.RepModel.put(userID,new EDSModel());
         } else if (framework.equals("3")) {
-            this.RepModel = new PTGModel();
+            this.RepModel.put(userID,new PTGModel());
         } else if (framework.equals("4")) {
-            this.RepModel = new UCCAModel();
+            this.RepModel.put(userID,new UCCAModel());
         } else {
-            this.RepModel = new AMRModel();
+            this.RepModel.put(userID,new AMRModel());
         }
 
-        RepModel.clearGraphs();
+        RepModel.get(userID).clearGraphs();
         HashMap<String, Object> returnobj = new HashMap<>();
 
         //List of Graph ids and Graph inputs in a hashmap.
@@ -108,7 +113,7 @@ public class RequestHandler {
             //checks if model doesnt contain the ID already and if it does dont add it and tell the user duplicates were found
             if (!RepModel.containsKey(currgraph.getId())) {
 
-                RepModel.addGraph(currgraph);
+                RepModel.get(userID).addGraph(currgraph);
 
                 HashMap<String, String> returnGraph = new HashMap<>();
                 returnGraph.put("id", currgraph.getId());
@@ -146,13 +151,13 @@ public class RequestHandler {
      */
     @PostMapping("/UploadSingle")
     @ResponseBody
-    public HashMap<String, String> UploadDataSingle(@RequestBody AbstractGraph data) {
+    public HashMap<String, String> UploadDataSingle(@RequestHeader(USER_HEADER)String userID,@RequestBody AbstractGraph data) {
         HashMap<String, String> returninfo = new HashMap<>();
 
         returninfo.put("input", data.getInput());
         returninfo.put("id", data.getId());
         //add Graph to model
-        RepModel.addGraph(data);
+        RepModel.get(userID).addGraph(data);
 
         return returninfo;
     }
@@ -173,8 +178,8 @@ public class RequestHandler {
      */
     @GetMapping("/Visualise")
     @ResponseBody
-    public HashMap<String, Object> Visualise(@RequestParam String graphID, @RequestParam int format) {
-        return RepModel.Visualise(graphID, format);
+    public HashMap<String, Object> Visualise(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam int format) {
+        return RepModel.get(userID).Visualise(graphID, format);
     }
 
     /**
@@ -193,8 +198,8 @@ public class RequestHandler {
      */
     @GetMapping("/DisplaySubset")
     @ResponseBody
-    public HashMap<String, Object> DisplaySubset(@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType, @RequestParam int format) {
-        return RepModel.DisplaySubset(graphID, NodeID, SubsetType, format);
+    public HashMap<String, Object> DisplaySubset(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType, @RequestParam int format) {
+        return RepModel.get(userID).DisplaySubset(graphID, NodeID, SubsetType, format);
     }
 
 
@@ -211,9 +216,9 @@ public class RequestHandler {
      */
     @GetMapping("/SearchSubgraphNodeSet")
     @ResponseBody
-    public HashMap<String, Object> SearchSubgraphNodeSet(@RequestParam ArrayList<String> labels) {
+    public HashMap<String, Object> SearchSubgraphNodeSet(@RequestHeader(USER_HEADER)String userID,@RequestParam ArrayList<String> labels) {
 
-        return RepModel.searchSubgraphNodeSet(labels);
+        return RepModel.get(userID).searchSubgraphNodeSet(labels);
 
     }
 
@@ -229,8 +234,8 @@ public class RequestHandler {
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public HashMap<String, Object> SearchSubgraphPattern(@RequestParam String graphID, @RequestParam String[] NodeId, @RequestParam int[] EdgeIndices) {
-        return RepModel.searchSubgraphPattern(graphID, NodeId, EdgeIndices);
+    public HashMap<String, Object> SearchSubgraphPattern(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String[] NodeId, @RequestParam int[] EdgeIndices) {
+        return RepModel.get(userID).searchSubgraphPattern(graphID, NodeId, EdgeIndices);
     }
 
     /**
@@ -249,8 +254,8 @@ public class RequestHandler {
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public HashMap<String, Object> CompareGraphs(@RequestParam String graphID1, @RequestParam String graphID2) {
-        return RepModel.compareTwoGraphs(graphID1, graphID2);
+    public HashMap<String, Object> CompareGraphs(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID1, @RequestParam String graphID2) {
+        return RepModel.get(userID).compareTwoGraphs(graphID1, graphID2);
     }
 
     /**
@@ -272,8 +277,8 @@ public class RequestHandler {
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public HashMap<String, Object> TestGraph(@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestPathDirected, @RequestParam boolean longestPathUndirected, @RequestParam boolean connected) {
-        return RepModel.runFormalTests(graphID, planar, longestPathDirected, longestPathUndirected, connected);
+    public HashMap<String, Object> TestGraph(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestPathDirected, @RequestParam boolean longestPathUndirected, @RequestParam boolean connected) {
+        return RepModel.get(userID).runFormalTests(graphID, planar, longestPathDirected, longestPathUndirected, connected);
 
     }
 
@@ -286,8 +291,8 @@ public class RequestHandler {
      */
     @GetMapping("/GetGraph")
     @ResponseBody
-    public AbstractGraph GetGraph(@RequestParam String graphID) {
-        return RepModel.getGraph(graphID);
+    public AbstractGraph GetGraph(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID) {
+        return RepModel.get(userID).getGraph(graphID);
     }
 
     /**
@@ -301,87 +306,23 @@ public class RequestHandler {
      */
     @GetMapping("/GetSubset")
     @ResponseBody
-    public AbstractGraph GetSubset(@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType) {
-        AbstractGraph graph = RepModel.graphs.get(graphID);
+    public AbstractGraph GetSubset(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType) {
+        AbstractGraph graph = RepModel.get(userID).graphs.get(graphID);
         if (SubsetType.equals("adjacent")) {
-            return RepModel.CreateSubsetAdjacent(graph, NodeID);
+            return RepModel.get(userID).CreateSubsetAdjacent(graph, NodeID);
         } else if (SubsetType.equals("descendent")) {
-            return RepModel.CreateSubsetDescendent(graph, NodeID);
+            return RepModel.get(userID).CreateSubsetDescendent(graph, NodeID);
         }
         return null;
     }
 
-    /**
-     * Method to parse entered sentence into ACE parser
-     * and ultimately format it into dmrs format.
-     * This Graph is then added to the model and visualisation information is returned.
-     *
-     * @param sentence Sentence to be parsed
-     * @param format   Visualisation format that the sentence is returned in.
-     * @return HashMap<String, Object> Visualisation data of entered sentence
-     * @throws Exception
-     */
-    @GetMapping("/ParseSentence")
-    @ResponseBody
-    public HashMap<String, Object> parseSentence(@RequestParam String sentence, @RequestParam int format) throws Exception {
-
-        //Replace all spaces with unique character to parse it to java python argument
-        String result = sentence.replaceAll(" ", "_&_&_*_*");
-        String jsonString = null;
-        String s = "";
-        AbstractGraph currgraph;
-        try {
-            //Run parser
-            Process p = Runtime.getRuntime().exec("python3 Scripts/src/parse-convert-mrs.py --convert_semantics --extract_semantics -g Scripts/src -s " + '"' + result + '"');
-
-            BufferedReader stdInput = new BufferedReader(new
-                    InputStreamReader(p.getInputStream()));
-
-            BufferedReader stdError = new BufferedReader(new
-                    InputStreamReader(p.getErrorStream()));
-
-            // read the dmrs output from command
-            while ((s = stdInput.readLine()) != null) {
-                if (s.startsWith("{\"id\":")) {
-                    jsonString = s;
-                }
-            }
-            // read any errors from the attempted command
-            while ((s = stdError.readLine()) != null) {
-                System.out.println(s);
-            }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            //Creates Graph object from JSON string
-
-            currgraph = objectMapper.readValue(jsonString, AbstractGraph.class);
-
-            currgraph.setId(currgraph.getInput().hashCode() + "");
-            //checks if model doesnt contain the ID already
-            if (!RepModel.containsKey(currgraph.getId())) {
-
-                RepModel.addGraph(currgraph);
-
-            }
-
-        } catch (Exception e) {
-
-            HashMap<String, Object> error = new HashMap<>();
-            error.put("Error", "Parser Error");
-            return error;
-
-        }
-
-
-        return Visualise(currgraph.getId(), format);
-    }
 
     @GetMapping("/ReturnModelList")
     @ResponseBody
-    public ArrayList<HashMap<String, String>> GetModelList() {
+    public ArrayList<HashMap<String, String>> GetModelList(@RequestHeader(USER_HEADER)String userID) {
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
-        for (AbstractGraph g : RepModel.getAllGraphs().values()) {
+        for (AbstractGraph g : RepModel.get(userID).getAllGraphs().values()) {
             HashMap<String, String> graphinfo = new HashMap<String, String>();
             graphinfo.put("id", g.getId());
             graphinfo.put("input", g.getInput());

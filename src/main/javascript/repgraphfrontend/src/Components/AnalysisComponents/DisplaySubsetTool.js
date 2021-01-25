@@ -68,8 +68,11 @@ function DisplaySubsetTool(props) {
     function handleDisplaySubset() {
         setOpen(false);
 
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
         let requestOptions = {
             method: 'GET',
+            headers : myHeaders,
             redirect: 'follow'
         };
 

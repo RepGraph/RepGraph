@@ -41,9 +41,11 @@ function FormalTestsTool(props) {
 
     //Handle request to perform formal tests
     function handleFormalTests() {
-
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
         let requestOptions = {
             method: 'GET',
+            headers : myHeaders,
             redirect: 'follow'
         };
 

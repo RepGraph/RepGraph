@@ -86,8 +86,12 @@ function SearchSubgraphPatternTool(props) {
     //Handle search for node set from backend
     function handleSearchForNodeSet() {
         console.log(nodeSet.join(","));
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
+
         let requestOptions = {
             method: 'GET',
+            headers : myHeaders,
             redirect: 'follow'
         };
 
@@ -145,9 +149,11 @@ function SearchSubgraphPatternTool(props) {
     //Handle when user selects one of the sentences returned in the results from the backend
     function handleClickSentenceResult(sentenceId) {
         console.log(sentenceId); //Debugging
-
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
         let requestOptions = {
             method: 'GET',
+            headers : myHeaders,
             redirect: 'follow'
         };
 

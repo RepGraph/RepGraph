@@ -34,9 +34,12 @@ export default function SentenceList(props) {
     function handleSelectSentence(sentenceId) {
         //Request formatted sentence data from the back-end
         //Set the Context state accordingly through dispatch
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
 
         let requestOptions = {
             method: 'GET',
+            headers : myHeaders,
             redirect: 'follow'
         };
         props.closeSelectSentence(); //Close the dialog

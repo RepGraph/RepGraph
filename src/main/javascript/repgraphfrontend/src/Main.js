@@ -135,8 +135,11 @@ export default function Main() {
             console.log(newFormat);
             //Update the currently displayed graph as well
             if (state.selectedSentenceID !== null) {
+                var myHeaders = new Headers();
+                myHeaders.append("X-USER", state.userID);
                 let requestOptions = {
                     method: 'GET',
+                    headers : myHeaders,
                     redirect: 'follow'
                 };
 
@@ -199,8 +202,11 @@ export default function Main() {
     const senOpen = Boolean(anchorSen);
 
     function parseSentence() {
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
         var requestOptions = {
             method: 'GET',
+            headers : myHeaders,
             redirect: 'follow'
         };
 

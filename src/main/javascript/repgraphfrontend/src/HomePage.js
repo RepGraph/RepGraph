@@ -9,12 +9,14 @@ import MuiAlert from '@material-ui/lab/Alert';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
+import uuid from 'react-uuid'
 
 export default function HomePage(props) {
     const [fileObjects, setFileObjects] = useState([]);
     const [open, setOpen] = React.useState(false);
     const history = useHistory();
     const {state, dispatch} = useContext(AppContext);
+    const [userID,setUserID] = useState(uuid())
 
     //Handle close for the alert shown to user
     const handleClose = (event, reason) => {
@@ -31,13 +33,20 @@ export default function HomePage(props) {
     }
 
     function handleUpload() {
+
+        dispatch({type: "SET_USER_ID", payload: {userID: state.userID}}); //Show loading animation while awaiting response
+
         console.log(fileObjects); //Debugging
         if (fileObjects.length > 0) {
             let formData = new FormData();
             formData.append("data", fileObjects[0]);
 
+            var myHeaders = new Headers();
+            myHeaders.append("X-USER", state.userID);
+
             let requestOptions = {
                 method: "POST",
+                headers : myHeaders,
                 body: formData,
                 redirect: "follow"
             };

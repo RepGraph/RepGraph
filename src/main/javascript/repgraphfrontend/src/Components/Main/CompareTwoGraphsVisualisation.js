@@ -108,8 +108,12 @@ function CompareTwoGraphsVisualisation(props) {
 
     function handleCompareClick(){
 
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
+
         let requestOptions = {
             method: 'GET',
+            headers : myHeaders,
             redirect: 'follow'
         };
 
@@ -147,8 +151,12 @@ function CompareTwoGraphsVisualisation(props) {
 
             console.log("requestSentenceFromBackend: ", sentenceId);
 
+            var myHeaders = new Headers();
+            myHeaders.append("X-USER", state.userID);
+
             let requestOptions = {
                 method: 'GET',
+                headers : myHeaders,
                 redirect: 'follow'
             };
 

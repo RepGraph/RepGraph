@@ -208,6 +208,8 @@ const reducer = (state, action) => {
             return {...state, visualisationOptions: action.payload.visualisationOptions};
         case "SET_FRAMEWORK":
             return {...state, framework: action.payload.framework};
+        case "SET_USER_ID":
+            return {...state, userID: action.payload.userID};
 
         default:
             break;

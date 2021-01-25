@@ -35,8 +35,12 @@ const SelectSubgraphVisualisation = () => {
     function searchForSelectedSubgraph(){
 
         const currentSelection = getSelected(); //Get the currently selected nodes and edges
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
+
         let requestOptions = {
             method: 'GET',
+            headers : myHeaders,
             redirect: 'follow'
         };
 
@@ -163,8 +167,12 @@ const SelectSubgraphVisualisation = () => {
     function handleClickSentenceResult(sentenceId) {
         console.log(sentenceId); //Debugging
 
+        var myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
+
         let requestOptions = {
             method: 'GET',
+            headers:myHeaders,
             redirect: 'follow'
         };
 
