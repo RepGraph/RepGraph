@@ -16,7 +16,7 @@ export default function HomePage(props) {
     const [open, setOpen] = React.useState(false);
     const history = useHistory();
     const {state, dispatch} = useContext(AppContext);
-    const [userID,setUserID] = useState(uuid())
+
 
     //Handle close for the alert shown to user
     const handleClose = (event, reason) => {
@@ -33,16 +33,16 @@ export default function HomePage(props) {
     }
 
     function handleUpload() {
+        let userID = uuid()
+        dispatch({type: "SET_USER_ID", payload: {userID: userID}}); //Show loading animation while awaiting response
 
-        dispatch({type: "SET_USER_ID", payload: {userID: state.userID}}); //Show loading animation while awaiting response
-
-        console.log(fileObjects); //Debugging
+        console.log(userID); //Debugging
         if (fileObjects.length > 0) {
             let formData = new FormData();
             formData.append("data", fileObjects[0]);
 
             var myHeaders = new Headers();
-            myHeaders.append("X-USER", state.userID);
+            myHeaders.append("X-USER", userID);
 
             let requestOptions = {
                 method: "POST",

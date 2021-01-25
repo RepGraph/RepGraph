@@ -44,7 +44,7 @@ export default function SentenceList(props) {
         };
         props.closeSelectSentence(); //Close the dialog
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
-
+        console.log("userID : "+state.userID)
         fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=" + state.visualisationFormat, requestOptions)
             .then((response) => {
                 if (!response.ok) {

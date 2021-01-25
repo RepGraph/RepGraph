@@ -51,6 +51,7 @@ public class RequestHandler {
     @PostMapping("/UploadData")
     @ResponseBody
     public HashMap<String, Object> UploadData(@RequestHeader(USER_HEADER)String userID,@RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
+        System.out.println(userID);
         //This is where we would change framework model
         if (framework.equals("1")) {
             this.RepModel.put(userID,new DMRSModel());
@@ -179,6 +180,7 @@ public class RequestHandler {
     @GetMapping("/Visualise")
     @ResponseBody
     public HashMap<String, Object> Visualise(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam int format) {
+        System.out.println(userID);
         return RepModel.get(userID).Visualise(graphID, format);
     }
 
