@@ -27,8 +27,8 @@ export default function App() {
 
     const font = "'Open Sans', 'Helvetica', 'Arial', sans-serif";
 
-    const primaryColor = state.darkMode ? "#444444" : "#7e0600";
-    const secondaryColor = state.darkMode ? "#7e0600" : "#444444";
+    const primaryColor = state.darkMode ? "#eaeaea" : "#00c072";
+    const secondaryColor = state.darkMode ? "#00c072" : "#eaeaea";
     const textPrimary = state.darkMode ? "#ffffff" : "#000000";
     const textSecondary = state.darkMode ? "#000000" : "#ffffff";
 

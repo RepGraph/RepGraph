@@ -55,8 +55,8 @@ const useStyles = makeStyles((theme) => ({
     },
     appBar: {},
     menuButton: {
-        marginRight: 36,
-        marginLeft: 36
+        marginRight: 25,
+        marginLeft: 25
     },
     hide: {
         display: "none"
@@ -289,7 +289,7 @@ export default function Main() {
                         <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
                             <MenuIcon/>
                         </IconButton>
-                        <Typography variant="h4" color={state.darkMode ? "textPrimary" : "textSecondary"} style={{fontWeight: 600}}>
+                        <Typography variant="h4" color={"textPrimary"} style={{fontWeight: 700}}>
                             RepGraph
                         </Typography>
 
@@ -356,13 +356,13 @@ export default function Main() {
 
                                 >
                                     <ToggleButton value="1" aria-label="Hierarchical">
-                                        <Typography color={state.darkMode ? "textPrimary" : "textSecondary"}>Hierarchical</Typography>
+                                        <Typography color={ "textPrimary" }>Hierarchical</Typography>
                                     </ToggleButton>
                                     <ToggleButton value="2" aria-label="Tree-like">
-                                        <Typography color={state.darkMode ? "textPrimary" : "textSecondary"}>Tree-like</Typography>
+                                        <Typography color={ "textPrimary"}>Tree-like</Typography>
                                     </ToggleButton>
                                     <ToggleButton value="3" aria-label="Flat">
-                                        <Typography color={state.darkMode ? "textPrimary" : "textSecondary"}>Flat</Typography>
+                                        <Typography color={"textPrimary"}>Flat</Typography>
                                     </ToggleButton>
                                 </ToggleButtonGroup>
 
@@ -382,7 +382,7 @@ export default function Main() {
                                 </Fab>
                             </Tooltip>
                         </Grid>
-                        <Grid>
+                        <Grid className={classes.menuButton}>
                             <Tooltip arrow
                                      title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
                                 <Fab color="primary" aria-label="add" variant="extended"
@@ -396,7 +396,7 @@ export default function Main() {
                             </Tooltip>
                         </Grid>
                         <Switch color={"primary"} checked={state.darkMode} onChange={handleThemeChange}/>
-                        <Typography color={state.darkMode ? "textPrimary" : "textSecondary"}>Dark</Typography>
+                        <Typography color={ "textPrimary"}>Dark</Typography>
                     </Toolbar>
 
                 </AppBar>

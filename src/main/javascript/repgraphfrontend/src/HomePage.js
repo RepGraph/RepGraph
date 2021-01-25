@@ -118,20 +118,20 @@ export default function HomePage(props) {
 
 
             >
-                <ToggleButton color="secondary" value="1" aria-label="DMRS">
-                    <Typography color="secondary">DMRS</Typography>
+                <ToggleButton color="primary" value="1" aria-label="DMRS">
+                    <Typography color="textPrimary">DMRS</Typography>
                 </ToggleButton>
-                <ToggleButton color="secondary" value="2" aria-label="EDS">
-                    <Typography color="secondary">EDS</Typography>
+                <ToggleButton color="primary" value="2" aria-label="EDS">
+                    <Typography color="textPrimary">EDS</Typography>
                 </ToggleButton>
-                <ToggleButton color="secondary" value="3" aria-label="PTG">
-                    <Typography color="secondary">PTG</Typography>
+                <ToggleButton color="primary" value="3" aria-label="PTG">
+                    <Typography color="textPrimary">PTG</Typography>
                 </ToggleButton>
-                <ToggleButton color="secondary" value="4" aria-label="UCCA">
-                    <Typography color="secondary">UCCA</Typography>
+                <ToggleButton color="primary" value="4" aria-label="UCCA">
+                    <Typography color="textPrimary">UCCA</Typography>
                 </ToggleButton>
-                <ToggleButton color="secondary" value="5" aria-label="AMR">
-                    <Typography color="secondary">AMR</Typography>
+                <ToggleButton color="primary" value="5" aria-label="AMR">
+                    <Typography color="textPrimary">AMR</Typography>
                 </ToggleButton>
             </ToggleButtonGroup>
             <Grid item>
