@@ -145,21 +145,21 @@ export default function App() {
         overrides: {
             MuiRadio: {
                 root: {
-                    color: secondaryColor,
+                    color: primaryColor,
                 },
                 colorSecondary: {
                     '&$checked': {
-                        color: secondaryColor,
+                        color: primaryColor,
                     },
                 },
             },
             MuiCheckbox : {
                 root: {
-                    color: secondaryColor,
+                    color: primaryColor,
                 },
                 colorSecondary: {
                     '&$checked': {
-                        color: secondaryColor,
+                        color: primaryColor,
                     },
                 },
             },

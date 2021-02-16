@@ -151,7 +151,7 @@ function DisplaySubsetTool(props) {
                                   label={<Typography color={"textPrimary"}> Display Descendent Nodes</Typography>}/>
             </RadioGroup>
             <Button
-                variant="contained" color="secondary" onClick={handleClickOpen}
+                variant="contained" color="primary" onClick={handleClickOpen}
                 endIcon={<LocationSearchingIcon/>}
                 disabled={state.selectedSentenceID === null}
             >
