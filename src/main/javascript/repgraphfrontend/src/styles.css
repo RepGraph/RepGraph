@@ -1,6 +1,50 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
+
+body {
+  margin: 0;
+}
+* {
+  box-sizing: border-box;
+}
 
 .App {
-  font-family: sans-serif;
+  font-family: "Quicksand", sans-serif;
   text-align: center;
+  height: 100vh;
+  border: 0px solid red;
+}
+
+.tooltip {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+.tooltipSection {
+  background-color: "#efefef";
+  border: 2px solid #dedede;
+  padding: 0.4rem;
+  border-radius: 8px;
+  text-align: center;
+  font-family: "Quicksand";
+  font-weight: bold;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.extraInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.tooltipDivider {
+  width: 80%;
+  height: 0px;
+  border: 1px solid #dedede;
+  border-radius: 8px;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
 }
