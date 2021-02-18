@@ -164,48 +164,6 @@ public class RequestHandler {
     }
 
     /**
-     * This method will be called when the class receives a GET HTTP request with "/Visualise".
-     * The Request URL also requires the "graphID" and "format" Request Params to be present.
-     * This method finds the Graph in the model dataset and constructs it into the required
-     * format according to the format type specified.
-     *
-     * @param graphID This refers to which Graph the user wants to be visualised on the front end.
-     * @param format  This refers to which format the user wants the Graph to be visualised in.
-     *                format = 1 - hierarchical
-     *                format = 2 - tree-like
-     *                format = 3 - flat
-     *                format = 4 - planar
-     * @return HashMap<String, Object> This is the Graph visualisation information.
-     */
-    @GetMapping("/Visualise")
-    @ResponseBody
-    public HashMap<String, Object> Visualise(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam int format) {
-        System.out.println(userID);
-        return RepModel.get(userID).Visualise(graphID, format);
-    }
-
-    /**
-     * This method creates and visualises a subset of a Graph in a desired format. This method is mapped to "/DisplaySubset" URL
-     * and requires the Request Parameters as follows:
-     *
-     * @param graphID    This is the Graph ID of the Graph where the subset is constructed from
-     * @param NodeID     This is the ID of the Node which the subset is constructed from
-     * @param SubsetType This is the type of subset i.e descendent or adjacent
-     * @param format     this is the format of the visualisation
-     *                   format = 1 - hierarchical
-     *                   format = 2 - tree-like
-     *                   format = 3 - flat
-     *                   format = 4 - planar
-     * @return HashMap<String, Object> This is the Graph visualisation information.
-     */
-    @GetMapping("/DisplaySubset")
-    @ResponseBody
-    public HashMap<String, Object> DisplaySubset(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType, @RequestParam int format) {
-        return RepModel.get(userID).DisplaySubset(graphID, NodeID, SubsetType, format);
-    }
-
-
-    /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
      * The Request URL also requires the Request Parameter "labels" - List of Node labels to be present.
      * This method searches the model's dataset for graphs containing the specified list of Node labels and

@@ -526,13 +526,4 @@ class AbstractModel {
         return true;
     }
 
-    public HashMap<String, Object> DisplaySubset(String graphId, String headNodeID, String SubsetType, int format) {
-        return null;
-    }
-
-
-    public HashMap<String, Object> Visualise(String graphID, int format) {
-        return null;
-    }
-
 }
