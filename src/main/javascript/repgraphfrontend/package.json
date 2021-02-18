@@ -59,9 +59,12 @@
     ]
   },
   "devDependencies": {
+    "@visx/tooltip": "^1.5.0",
+    "@visx/visx": "^1.5.0",
     "@vx/clip-path": "0.0.199",
     "@vx/group": "0.0.199",
     "@vx/responsive": "0.0.199",
+    "react-spring": "^8.0.27",
     "react-virtuoso": "^0.20.0"
   }
 }
