@@ -13,6 +13,10 @@ import {AppContext} from "../../Store/AppContextProvider.js";
 
 import {Virtuoso} from "react-virtuoso";
 
+import {layoutHierarchy, determineAdjacentLinks} from "../../LayoutAlgorithms/layoutHierarchy";
+import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
+import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+
 const styles = {
     Paper: {
         padding: 20,
@@ -34,7 +38,7 @@ export default function SentenceList(props) {
     function handleSelectSentence(sentenceId) {
         //Request formatted sentence data from the back-end
         //Set the Context state accordingly through dispatch
-        var myHeaders = new Headers();
+        let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
 
         let requestOptions = {
@@ -45,7 +49,8 @@ export default function SentenceList(props) {
         props.closeSelectSentence(); //Close the dialog
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
         console.log("userID : "+state.userID)
-        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=" + state.visualisationFormat, requestOptions)
+
+        fetch(state.APIendpoint + "/GetGraph?graphID=" + sentenceId, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -56,8 +61,27 @@ export default function SentenceList(props) {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult);
                 //Update the global state:
-                dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: jsonResult}});
-                dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: jsonResult.id}});
+
+                let graphData = null;
+
+                switch (state.visualisationFormat) {
+                    case "1":
+                        graphData = layoutHierarchy(jsonResult);
+                        break;
+                    case "2":
+                        graphData = layoutTree(jsonResult);
+                        break;
+                    case "3":
+                        graphData = layoutFlat(jsonResult);
+                        break;
+                    default:
+                        graphData = layoutHierarchy(jsonResult);
+                        break;
+                }
+
+                dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: jsonResult}});
+                dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
+                dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: graphData.id}});
                 dispatch({type: "SET_TEST_RESULTS", payload: {testResults: null}});
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
             })
