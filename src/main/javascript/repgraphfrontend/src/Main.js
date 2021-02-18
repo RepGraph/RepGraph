@@ -46,6 +46,11 @@ import Box from "@material-ui/core/Box";
 import Fab from "@material-ui/core/Fab";
 import Popover from "@material-ui/core/Popover";
 
+import {Graph} from "./Components/Graph/Graph";
+import {determineAdjacentLinks, layoutHierarchy} from "./LayoutAlgorithms/layoutHierarchy";
+import {layoutTree} from "./LayoutAlgorithms/layoutTree";
+import {layoutFlat} from "./LayoutAlgorithms/layoutFlat";
+
 const drawerWidth = 240;
 
 //Styles for the app bar and menu drawer of the application
@@ -86,6 +91,9 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+const width = "95vw";
+const height = "100%";
+
 export default function Main() {
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
     const classes = useStyles(); //Use styles created above
@@ -98,6 +106,23 @@ export default function Main() {
     const [anchorEl, setAnchorEl] = React.useState(null); //Anchor state for popover graph legend
     const [sentence, setSentence] = React.useState("");
     const [anchorSen, setAnchorSen] = React.useState(null);
+
+    //Determine graphFormatCode
+    let graphFormatCode = null;
+    switch (state.visualisationFormat) {
+        case "1":
+            graphFormatCode = "hierarchical";
+            break;
+        case "2":
+            graphFormatCode = "tree";
+            break;
+        case "3":
+            graphFormatCode = "flat";
+            break;
+        default:
+            graphFormatCode = "hierarchical";
+            break;
+    }
 
 
     //Handle close of the alert shown after data-set upload
@@ -135,7 +160,7 @@ export default function Main() {
             console.log(newFormat);
             //Update the currently displayed graph as well
             if (state.selectedSentenceID !== null) {
-                var myHeaders = new Headers();
+                let myHeaders = new Headers();
                 myHeaders.append("X-USER", state.userID);
                 let requestOptions = {
                     method: 'GET',
@@ -145,30 +170,26 @@ export default function Main() {
 
                 dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation
 
-                //Request new visualisation from backend
-                fetch(state.APIendpoint + "/Visualise?graphID=" + state.selectedSentenceID + "&format=" + newFormat, requestOptions)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw "Response not OK";
-                        }
-                        return response.text();
-                    })
-                    .then((result) => {
+                let graphData = null;
+                switch (newFormat) {
+                    case "1":
+                        graphData = layoutHierarchy(state.selectedSentenceGraphData);
+                        break;
+                    case "2":
+                        graphData = layoutTree(state.selectedSentenceGraphData);
+                        break;
+                    case "3":
+                        graphData = layoutFlat(state.selectedSentenceGraphData);
+                        break;
+                    default:
+                        graphData = layoutHierarchy(state.selectedSentenceGraphData);
+                        break;
+                }
 
-                        const jsonResult = JSON.parse(result);
-                        console.log(jsonResult); //Debugging
+                console.log("newFormat", newFormat, "graphData",graphData);
 
-                        dispatch({
-                            type: "SET_SENTENCE_VISUALISATION",
-                            payload: {selectedSentenceVisualisation: jsonResult}
-                        }); //Set global state for visualisation
-                        dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
-                    })
-                    .catch((error) => {
-                        dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop loading animation
-                        console.log("error", error); //Debugging
-                        history.push("/404"); //Send user to error page
-                    });
+                dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}});
             }
 
         }
@@ -202,9 +223,9 @@ export default function Main() {
     const senOpen = Boolean(anchorSen);
 
     function parseSentence() {
-        var myHeaders = new Headers();
+        let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
-        var requestOptions = {
+        let requestOptions = {
             method: 'GET',
             headers : myHeaders,
             redirect: 'follow'
@@ -444,7 +465,7 @@ export default function Main() {
                     {state.parserResponse === "Parser Error" ? "The parser encountered an error - Please enter a different sentence" : ""}
                 </MuiAlert>
             </Snackbar>
-            <Grid item container style={{width: "100%", flexGrow: "1", padding: "10px"}}>
+            <Grid item container style={{width: "100%", flexGrow: "1", padding: "10px", border:"0px solid red"}}>
                 {state.selectedSentenceID === null ? (
                     <Grid item style={{height: "100%", width: "100%"}}>
                         <Card variant="outlined" style={{height: "100%"}}>
@@ -465,10 +486,39 @@ export default function Main() {
 
                     </Grid>
                 ) : (
+                    // <div style={{height: "80vh", width: "100vw"}}>
+                    //     <GraphVisualisation/>
+                    // </div>
+                    // <div style={{height:"100%", border:"1px solid blue"}}>
+                    //     <Graph
+                    //         width={width}
+                    //         height={height}
+                    //         graph={state.selectedSentenceGraphData}
+                    //         adjacentLinks={determineAdjacentLinks(state.selectedSentenceGraphData)}
+                    //         graphFormatCode={graphFormatCode}
+                    //     />
+                    // </div>
                     <div style={{height: "80vh", width: "100vw"}}>
-                        <GraphVisualisation/>
+                             <Graph
+                                width={width}
+                                height={height}
+                                graph={state.selectedSentenceVisualisation}
+                                adjacentLinks={determineAdjacentLinks(state.selectedSentenceVisualisation)}
+                                graphFormatCode={graphFormatCode}
+                            />
                     </div>
                 )}
+                {/*<div item style={{height: "100%", width: "100%", display:"flex",flexDirection: "column",}}>*/}
+                {/*<div style={{border:"1px solid blue", flex: "1"}}>*/}
+                {/*    <Graph*/}
+                {/*        width={width}*/}
+                {/*        height={height}*/}
+                {/*        graph={state.selectedSentenceGraphData}*/}
+                {/*        adjacentLinks={determineAdjacentLinks(state.selectedSentenceGraphData)}*/}
+                {/*        graphFormatCode={graphFormatCode}*/}
+                {/*    />*/}
+                {/*</div>*/}
+                {/*</div>*/}
             </Grid>
         </Grid>
     );
