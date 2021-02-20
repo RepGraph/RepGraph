@@ -241,8 +241,8 @@ public class RequestHandler {
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public HashMap<String, Object> CompareGraphs(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID1, @RequestParam String graphID2) {
-        return RepModel.get(userID).compareTwoGraphs(graphID1, graphID2);
+    public HashMap<String, Object> CompareGraphs(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID1, @RequestParam String graphID2,@RequestParam boolean strict,@RequestParam boolean noAbstract,@RequestParam boolean noSurface ) {
+        return RepModel.get(userID).compareTwoGraphs(graphID1, graphID2,strict,noAbstract,noSurface);
     }
 
     /**

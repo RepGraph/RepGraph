@@ -90,9 +90,18 @@ class AbstractModel {
         adjacentNodes.put(n.getId(), new Node(n));
 
         //set the minimum span to the head nodes Anchors "from" and maximum span to the Anchors "end"
-        int minFrom = n.getAnchors().get(0).getFrom();
-        int maxEnd = n.getAnchors().get(0).getEnd();
-
+        int minFrom = Integer.MAX_VALUE;
+        int maxEnd = Integer.MIN_VALUE;
+        if (n.getAnchors() != null) {
+            for (int i = 0; i < n.getAnchors().size(); i++) {
+                if (n.getAnchors().get(i).getFrom() < minFrom) {
+                    minFrom = n.getAnchors().get(i).getFrom();
+                }
+                if (n.getAnchors().get(i).getEnd() > maxEnd) {
+                    maxEnd = n.getAnchors().get(i).getEnd();
+                }
+            }
+        }
         //Add all directed and undirected neighbours into their appropriate lists/hashmaps
         ArrayList<Node> nodeNeighbours = new ArrayList<>(n.getDirectedNeighbours());
         ArrayList<Edge> edgeNeighbours = new ArrayList<>(n.getDirectedEdgeNeighbours());
@@ -103,13 +112,16 @@ class AbstractModel {
         for (Node nn : nodeNeighbours) {
             //add a newly constructed Node with the Node neighbours data to the adjacent nodes hashmap
             adjacentNodes.put(nn.getId(), new Node(nn));
-            if (nn.getAnchors().get(0).getFrom() < minFrom) {
-                minFrom = nn.getAnchors().get(0).getFrom();
+            if (nn.getAnchors() != null) {
+                for (int i = 0; i < nn.getAnchors().size(); i++) {
+                    if (nn.getAnchors().get(i).getFrom() < minFrom) {
+                        minFrom = nn.getAnchors().get(i).getFrom();
+                    }
+                    if (nn.getAnchors().get(i).getEnd() > maxEnd) {
+                        maxEnd = nn.getAnchors().get(i).getEnd();
+                    }
+                }
             }
-            if (nn.getAnchors().get(0).getEnd() > maxEnd) {
-                maxEnd = nn.getAnchors().get(0).getEnd();
-            }
-
 
         }
         //add a newly constructed Edge with the Edge neighbours data to the adjacent edges list
@@ -150,8 +162,18 @@ class AbstractModel {
         }
 
         //set the min span to the head nodes Anchors "from" and max span to the Anchors "end"
-        int minFrom = n.getAnchors().get(0).getFrom();
-        int maxEnd = n.getAnchors().get(0).getEnd();
+        int minFrom = Integer.MAX_VALUE;
+        int maxEnd = Integer.MIN_VALUE;
+        if (n.getAnchors() != null) {
+            for (int i = 0; i < n.getAnchors().size(); i++) {
+                if (n.getAnchors().get(i).getFrom() < minFrom) {
+                    minFrom = n.getAnchors().get(i).getFrom();
+                }
+                if (n.getAnchors().get(i).getEnd() > maxEnd) {
+                    maxEnd = n.getAnchors().get(i).getEnd();
+                }
+            }
+        }
 
         //Iterate through all the directed nodes and edges adding them to a hashmap to eliminate duplicates.
         HashMap<String, Edge> descEdge = new HashMap<>();
@@ -161,11 +183,15 @@ class AbstractModel {
                 DescendentNodes.put(nn.getId(), new Node(nn));
                 stack.push(nn);
                 //Set the min and max span appropriately as found
-                if (nn.getAnchors().get(0).getFrom() < minFrom) {
-                    minFrom = nn.getAnchors().get(0).getFrom();
-                }
-                if (nn.getAnchors().get(0).getEnd() > maxEnd) {
-                    maxEnd = nn.getAnchors().get(0).getEnd();
+                if (nn.getAnchors() != null) {
+                    for (int i = 0; i < nn.getAnchors().size(); i++) {
+                        if (nn.getAnchors().get(i).getFrom() < minFrom) {
+                            minFrom = nn.getAnchors().get(i).getFrom();
+                        }
+                        if (nn.getAnchors().get(i).getEnd() > maxEnd) {
+                            maxEnd = nn.getAnchors().get(i).getEnd();
+                        }
+                    }
                 }
                 for (Edge ne : nn.getDirectedEdgeNeighbours()) {
                     descEdge.put(ne.getSource() + " " + ne.getTarget(), new Edge(ne));
@@ -392,7 +418,7 @@ class AbstractModel {
      * the "SimilarEdges1" key gives the Node ids of the similar edges in graph1.
      * the "SimilarEdge2" key gives the Node ids of the similar edges in graph2.
      */
-    public HashMap<String, Object> compareTwoGraphs(String graphID1, String graphID2) {
+    public HashMap<String, Object> compareTwoGraphs(String graphID1, String graphID2, boolean strict, boolean noAbstract, boolean noSurface) {
         AbstractGraph g1 = (AbstractGraph) graphs.get(graphID1);
         AbstractGraph g2 = (AbstractGraph) graphs.get(graphID2);
         HashMap<String, Node> nodes1 = g1.getNodes();
@@ -413,44 +439,105 @@ class AbstractModel {
         //iterates over every Node of each AbstractGraph
         for (Node n1 : nodes1.values()) {
             for (Node n2 : nodes2.values()) {
-                int span1 = n1.getAnchors().get(0).getEnd() - n1.getAnchors().get(0).getFrom();
-                int span2 = n2.getAnchors().get(0).getEnd() - n2.getAnchors().get(0).getFrom();
-                //checks if their labels and spans are equal
-                if (n1.getLabel().equals(n2.getLabel()) && span1 == span2) {
-                    //if they are equal then it adds the respective IDs to the individual similar nodes lists for the graphs
-                    if (!similarNodes1.contains(n1.getId())) {
-                        similarNodes1.add(n1.getId());
-                    }
-                    if (!similarNodes2.contains(n2.getId())) {
-                        similarNodes2.add(n2.getId());
-                    }
+                if (!strict) {
+                    if (n1.getLabel().equals(n2.getLabel())) {
+                        if (((n1.isSurface() && n2.isSurface()) && noSurface == false) || (!n1.isSurface() && !n2.isSurface() && noAbstract == false) || (noAbstract == false && noSurface == false)) {
+                            if (!similarNodes1.contains(n1.getId())) {
+                                similarNodes1.add(n1.getId());
+                            }
+                            if (!similarNodes2.contains(n2.getId())) {
+                                similarNodes2.add(n2.getId());
+                            }
+                        }
+                        //if they are equal then it adds the respective IDs to the individual similar nodes lists for the graphs
 
-                    //It then iterates over all the edges and checks if the edges are connected to similar nodes on both sides as well as have the same label. if so
-                    //they are regarded as similar edges and their respective indexes are added to the respective lists
-                    for (Edge e1 : n1.getDirectedEdgeNeighbours()) {
-                        for (Edge e2 : n2.getDirectedEdgeNeighbours()) {
 
-                            Node nn1 = nodes1.get(e1.getTarget());
-                            Node nn2 = nodes2.get(e2.getTarget());
-                            span1 = nn1.getAnchors().get(0).getEnd() - nn1.getAnchors().get(0).getFrom();
-                            span2 = nn2.getAnchors().get(0).getEnd() - nn2.getAnchors().get(0).getFrom();
+                        //It then iterates over all the edges and checks if the edges are connected to similar nodes on both sides as well as have the same label. if so
+                        //they are regarded as similar edges and their respective indexes are added to the respective lists
+                        for (Edge e1 : n1.getDirectedEdgeNeighbours()) {
+                            for (Edge e2 : n2.getDirectedEdgeNeighbours()) {
 
-                            if (nn1.getLabel().equals(nn2.getLabel()) && e1.getLabel().equals(e2.getLabel()) && span1 == span2) {
+                                Node nn1 = nodes1.get(e1.getTarget());
+                                Node nn2 = nodes2.get(e2.getTarget());
 
-                                if (!similarEdges1.contains(edges1.indexOf(e1))) {
+                                if (nn1.getLabel().equals(nn2.getLabel()) && e1.getLabel().equals(e2.getLabel())) {
 
-                                    similarEdges1.add(edges1.indexOf(e1));
+                                    if (!similarEdges1.contains(edges1.indexOf(e1))) {
+
+                                        similarEdges1.add(edges1.indexOf(e1));
+                                    }
+                                    if (!similarEdges2.contains(edges2.indexOf(e2))) {
+
+                                        similarEdges2.add(edges2.indexOf(e2));
+                                    }
+
                                 }
-                                if (!similarEdges2.contains(edges2.indexOf(e2))) {
+                            }
 
-                                    similarEdges2.add(edges2.indexOf(e2));
-                                }
+                        }
+                    }
+                } else {
+                    String phrase1 = "";
+                    String phrase2 = "";
 
+                    for (Anchors a : n1.getAnchors()) {
+                        phrase1 += g1.getTokenInput(g1.getTokenSpan(a.getFrom(), a.getEnd()));
+                    }
+
+                    for (Anchors a : n2.getAnchors()) {
+                        phrase2 += g2.getTokenInput(g2.getTokenSpan(a.getFrom(), a.getEnd()));
+                    }
+
+                    if (n1.getLabel().equals(n2.getLabel()) && phrase1.equals(phrase2)) {
+                        //if they are equal then it adds the respective IDs to the individual similar nodes lists for the graphs
+                        if (((n1.isSurface() && n2.isSurface()) && noSurface == false) || (!n1.isSurface() && !n2.isSurface() && noAbstract == false) || (noAbstract == false && noSurface == false)) {
+                            if (!similarNodes1.contains(n1.getId())) {
+                                similarNodes1.add(n1.getId());
+                            }
+                            if (!similarNodes2.contains(n2.getId())) {
+                                similarNodes2.add(n2.getId());
                             }
                         }
 
+                        //It then iterates over all the edges and checks if the edges are connected to similar nodes on both sides as well as have the same label. if so
+                        //they are regarded as similar edges and their respective indexes are added to the respective lists
+                        for (Edge e1 : n1.getDirectedEdgeNeighbours()) {
+                            for (Edge e2 : n2.getDirectedEdgeNeighbours()) {
+
+                                Node nn1 = nodes1.get(e1.getTarget());
+                                Node nn2 = nodes2.get(e2.getTarget());
+                                phrase1 = "";
+                                phrase2 = "";
+
+                                for (Anchors a : nn1.getAnchors()) {
+                                    phrase1 += g1.getTokenInput(g1.getTokenSpan(a.getFrom(), a.getEnd()));
+                                }
+
+                                for (Anchors a : nn2.getAnchors()) {
+                                    phrase2 += g2.getTokenInput(g2.getTokenSpan(a.getFrom(), a.getEnd()));
+                                }
+                                if (nn1.getLabel().equals(nn2.getLabel()) && e1.getLabel().equals(e2.getLabel()) && phrase1.equals(phrase2)) {
+                                    if (((nn1.isSurface() && nn2.isSurface()) && noSurface == false) || (!nn1.isSurface() && !nn2.isSurface() && noAbstract == false) || (noAbstract == false && noSurface == false)) {
+                                        if (!similarEdges1.contains(edges1.indexOf(e1))) {
+
+                                            similarEdges1.add(edges1.indexOf(e1));
+                                        }
+                                        if (!similarEdges2.contains(edges2.indexOf(e2))) {
+
+                                            similarEdges2.add(edges2.indexOf(e2));
+                                        }
+                                    }
+
+
+                                }
+                            }
+
+                        }
                     }
                 }
+
+                //checks if their labels and spans are equal
+
 
             }
         }
