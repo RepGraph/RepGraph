@@ -195,7 +195,6 @@ class AbstractModel {
     }
 
 
-
     /**
      * Overloaded method to search for subgraph pattern using different parameters
      *
@@ -487,7 +486,7 @@ class AbstractModel {
         if (planar) {
 
             returnObj.put("Planar", g.isPlanar());
-            returnObj.put("PlanarVis", (graphs.get(graphID).PlanarGraph()));
+            returnObj.put("PlanarVis", (graphs.get(graphID).getPlanarForm()));
         }
         if (longestPathDirected) {
             //checks if graphs are cyclic, if so returns a message indicating the AbstractGraph is cyclic otherwise sends back the longest path directed information
@@ -526,13 +525,5 @@ class AbstractModel {
         return true;
     }
 
-    public HashMap<String, Object> DisplaySubset(String graphId, String headNodeID, String SubsetType, int format) {
-        return null;
-    }
-
-
-    public HashMap<String, Object> Visualise(String graphID, int format) {
-        return null;
-    }
 
 }

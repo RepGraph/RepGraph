@@ -33,7 +33,6 @@ public class RequestHandler {
     @GetMapping(value = "/")
     @ResponseBody
     public String Home(@RequestHeader(USER_HEADER) String id) {
-
         return id;
     }
 
@@ -53,16 +52,22 @@ public class RequestHandler {
     public HashMap<String, Object> UploadData(@RequestHeader(USER_HEADER)String userID,@RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
         System.out.println(userID);
         //This is where we would change framework model
-        if (framework.equals("1")) {
-            this.RepModel.put(userID,new DMRSModel());
-        } else if (framework.equals("2")) {
-            this.RepModel.put(userID,new EDSModel());
-        } else if (framework.equals("3")) {
-            this.RepModel.put(userID,new PTGModel());
-        } else if (framework.equals("4")) {
-            this.RepModel.put(userID,new UCCAModel());
-        } else {
-            this.RepModel.put(userID,new AMRModel());
+        switch (framework){
+            case "1":
+                this.RepModel.put(userID,new DMRSModel());
+                break;
+            case "2":
+                this.RepModel.put(userID,new EDSModel());
+                break;
+            case "3":
+                this.RepModel.put(userID,new PTGModel());
+                break;
+            case "4":
+                this.RepModel.put(userID,new UCCAModel());
+                break;
+            case "5":
+                this.RepModel.put(userID,new AMRModel());
+                break;
         }
 
         RepModel.get(userID).clearGraphs();
@@ -152,7 +157,25 @@ public class RequestHandler {
      */
     @PostMapping("/UploadSingle")
     @ResponseBody
-    public HashMap<String, String> UploadDataSingle(@RequestHeader(USER_HEADER)String userID,@RequestBody AbstractGraph data) {
+    public HashMap<String, String> UploadDataSingle(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestBody EDSGraph data) {
+        switch (framework){
+            case "1":
+                this.RepModel.put(userID,new DMRSModel());
+                break;
+            case "2":
+                this.RepModel.put(userID,new EDSModel());
+                break;
+            case "3":
+                this.RepModel.put(userID,new PTGModel());
+                break;
+            case "4":
+                this.RepModel.put(userID,new UCCAModel());
+                break;
+            case "5":
+                this.RepModel.put(userID,new AMRModel());
+                break;
+        }
+
         HashMap<String, String> returninfo = new HashMap<>();
 
         returninfo.put("input", data.getInput());
@@ -163,46 +186,8 @@ public class RequestHandler {
         return returninfo;
     }
 
-    /**
-     * This method will be called when the class receives a GET HTTP request with "/Visualise".
-     * The Request URL also requires the "graphID" and "format" Request Params to be present.
-     * This method finds the Graph in the model dataset and constructs it into the required
-     * format according to the format type specified.
-     *
-     * @param graphID This refers to which Graph the user wants to be visualised on the front end.
-     * @param format  This refers to which format the user wants the Graph to be visualised in.
-     *                format = 1 - hierarchical
-     *                format = 2 - tree-like
-     *                format = 3 - flat
-     *                format = 4 - planar
-     * @return HashMap<String, Object> This is the Graph visualisation information.
-     */
-    @GetMapping("/Visualise")
-    @ResponseBody
-    public HashMap<String, Object> Visualise(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam int format) {
-        System.out.println(userID);
-        return RepModel.get(userID).Visualise(graphID, format);
-    }
 
-    /**
-     * This method creates and visualises a subset of a Graph in a desired format. This method is mapped to "/DisplaySubset" URL
-     * and requires the Request Parameters as follows:
-     *
-     * @param graphID    This is the Graph ID of the Graph where the subset is constructed from
-     * @param NodeID     This is the ID of the Node which the subset is constructed from
-     * @param SubsetType This is the type of subset i.e descendent or adjacent
-     * @param format     this is the format of the visualisation
-     *                   format = 1 - hierarchical
-     *                   format = 2 - tree-like
-     *                   format = 3 - flat
-     *                   format = 4 - planar
-     * @return HashMap<String, Object> This is the Graph visualisation information.
-     */
-    @GetMapping("/DisplaySubset")
-    @ResponseBody
-    public HashMap<String, Object> DisplaySubset(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType, @RequestParam int format) {
-        return RepModel.get(userID).DisplaySubset(graphID, NodeID, SubsetType, format);
-    }
+
 
 
     /**
@@ -236,8 +221,8 @@ public class RequestHandler {
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public HashMap<String, Object> SearchSubgraphPattern(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String[] NodeId, @RequestParam int[] EdgeIndices) {
-        return RepModel.get(userID).searchSubgraphPattern(graphID, NodeId, EdgeIndices);
+    public HashMap<String, Object> SearchSubgraphPattern(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String[] NodeID, @RequestParam int[] EdgeIndices) {
+        return RepModel.get(userID).searchSubgraphPattern(graphID, NodeID, EdgeIndices);
     }
 
     /**

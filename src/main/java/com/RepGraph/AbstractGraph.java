@@ -1,8 +1,18 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.*;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.HasWord;
+import edu.stanford.nlp.process.CoreLabelTokenFactory;
+import edu.stanford.nlp.process.LexedTokenFactory;
+import edu.stanford.nlp.process.PTBTokenizer;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.StringReader;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
@@ -34,9 +44,11 @@ class AbstractGraph {
     @JsonProperty("edges")
     protected ArrayList<Edge> edges;
 
-
     @JsonProperty("tops")
     protected String top;
+
+    @JsonIgnore
+    protected AbstractGraph planarForm;
 
     /**
      * Default constructor for the Graph class.
@@ -150,42 +162,38 @@ class AbstractGraph {
         this.tokens = tokens;
     }
 
+
+
+
     public ArrayList<Token> extractTokensFromNodes() {
-
-
         ArrayList<Token> tokenlist = new ArrayList<>();
-        String[] list = this.input.split(" ");
+        ArrayList<String> list = new ArrayList<>();
+        int index =0;
 
-        for (int i = 0; i < list.length; i++) {
-            list[i] += " ";
-            tokenlist.add(new Token(i, list[i], list[i], list[i]));
+        PTBTokenizer<CoreLabel> ptbt = PTBTokenizer.newPTBTokenizer(new StringReader(this.input),false,true);
+        while (ptbt.hasNext()) {
+            CoreLabel label = ptbt.next();
+            tokenlist.add(new Token(index,label.originalText(),label.word(),label.word()));
 
-        }
-
-        int lengthBoundary[] = new int[list.length];
-
-        lengthBoundary[0] = list[0].length();
-
-
-        for (int i = 1; i < lengthBoundary.length; ++i) {
-            lengthBoundary[i] = lengthBoundary[i - 1] + list[i].length();
-
-        }
-
-        for (Node n : this.nodes.values()) {
-            for (int i = 0; i < lengthBoundary.length; i++) {
-                if (n.getAnchors()==null){continue;}
-                if (n.getAnchors().get(0).getFrom() < lengthBoundary[i] && i <= n.getAnchors().get(0).getFrom()) {
-                    n.getAnchors().get(0).setFrom(i);
+            for (Node n : this.nodes.values()) {
+                if (n.getAnchors() == null) {
+                    continue;
                 }
-                if (n.getAnchors().get(0).getEnd() <= lengthBoundary[i] && i <= n.getAnchors().get(0).getEnd()) {
-                    n.getAnchors().get(0).setEnd(i);
+                for (Anchors a : n.getAnchors()) {
+                    if (a.getFrom() == label.beginPosition()){
+                        a.setFrom(index);
+                    }
+                    if (a.getEnd()== label.endPosition()){
+                        a.setEnd(index);
+                    }
                 }
-
             }
+
+            index++;
         }
 
         return tokenlist;
+
     }
 
 
@@ -874,6 +882,17 @@ class AbstractGraph {
 
         }
 
+        HashMap<String, Node> newNodes = new HashMap<>();
+
+        if (this.planarForm == null) {
+            for (Node n : ordered) {
+                //n.setId(nodeToToken.get(n.getId()));
+                newNodes.put(n.getId(), n);
+            }
+
+            this.planarForm = new AbstractGraph(this.getId(), this.getSource(), this.input, newNodes, updated, this.tokens, this.top);
+        }
+
         //check every Edge with every other Edge to see if any are crossing
         for (Edge e : updated) {
 
@@ -888,88 +907,10 @@ class AbstractGraph {
         return true;
     }
 
-    /**
-     * Returns a Graph object in it's Planar format i.e
-     * Orders the nodes linearly based on their anchor's "from" positions
-     * and updates all edges to point to their corresponding new "IDs" which are represented by their Token index
-     *
-     * @return Graph This is the Graph in a format to indicate its planarity.
-     */
-    public AbstractGraph PlanarGraph() {
-
-        ArrayList<Node> ordered = new ArrayList<>();
-        for (Node n : nodes.values()) {
-            ordered.add(new Node(n));
-        }
-
-        Collections.sort(ordered, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                o1.getAnchors().get(0).setEnd(o1.getAnchors().get(0).getFrom());
-                o2.getAnchors().get(0).setEnd(o2.getAnchors().get(0).getFrom());
-                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
-
-                    return -1;
-                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
-
-                    return 0;
-                }
-                return 1;
-            }
-        });
-
-
-        HashMap<String, String> nodeToToken = new HashMap<>();
-
-        for (int i = 0; i < ordered.size(); i++) {
-            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom() + "");
-        }
-
-        ArrayList<Edge> updated = new ArrayList<>();
-
-        String source, target;
-
-        for (Edge e : edges) {
-
-            source = e.getSource();
-            target = e.getTarget();
-
-            Edge newEdge = new Edge();
-            newEdge.setLabel("");
-            newEdge.setPostLabel("");
-            for (int i = 0; i < ordered.size(); i++) {
-
-                Node n = ordered.get(i);
-
-                if (n.getId().equals(source)) {
-
-                    newEdge.setSource(nodeToToken.get(n.getId()));
-
-                }
-                if (n.getId().equals(target)) {
-
-                    newEdge.setTarget(nodeToToken.get(n.getId()));
-
-                }
-            }
-
-            updated.add(newEdge);
-
-        }
-
-        HashMap<String, Node> newNodes = new HashMap<>();
-        for (Node n : ordered) {
-            //n.setId(nodeToToken.get(n.getId()));
-            newNodes.put(n.getId(), n);
-        }
-
-        AbstractGraph planarVisualisation = new AbstractGraph(this.getId(), this.getSource(), this.input, newNodes, updated, this.tokens, this.top);
-
-
-        return planarVisualisation;
-
+    @JsonIgnore
+    public AbstractGraph getPlanarForm() {
+        return planarForm;
     }
-
 
     @Override
     public boolean equals(Object o) {
