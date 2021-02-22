@@ -22,12 +22,23 @@ import Chip from "@material-ui/core/Chip";
 import SubsetVisualisation from "../Main/SubsetVisualisation";
 import CardContent from "@material-ui/core/CardContent";
 import {cloneDeep} from "lodash";
-import Graph from "react-graph-vis";
+
+import {Graph} from "../Graph/Graph";
+import {determineAdjacentLinks, layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
+import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
+import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+import {ParentSize} from "@visx/responsive";
 
 const useStyles = makeStyles((theme) => ({
     root: {
         height: "100%",
         width: "100%",
+    },
+    graphDiv: {
+        height: "100%",
+        //border: "1px solid red",
+        flex: "1",
+        width: "100%"
     }
 }));
 
@@ -39,8 +50,24 @@ function DisplaySubsetTool(props) {
 
     const [open, setOpen] = React.useState(false); //Store local state for whether dialog is open or not
     const [resultOpen, setResultOpen] = React.useState(false); //Store local state for whether result dialog is open or not
-    const [currentVis, setCurrentVis] = React.useState(state.selectedSentenceVisualisation); //Store the current visualisation data locally
-    const [selectedNode, setSelectedNode] = React.useState(null); //Store local state for currently selected node id and label
+    const [selectedNodes, setSelectedNodes] = React.useState(null); //Store local state for currently selected node ids
+
+    //Determine graphFormatCode
+    let graphFormatCode = null;
+    switch (state.visualisationFormat) {
+        case "1":
+            graphFormatCode = "hierarchical";
+            break;
+        case "2":
+            graphFormatCode = "tree";
+            break;
+        case "3":
+            graphFormatCode = "flat";
+            break;
+        default:
+            graphFormatCode = "hierarchical";
+            break;
+    }
 
     //Handle click open for first dialog to select subset
     const handleClickOpen = () => {
@@ -56,11 +83,11 @@ function DisplaySubsetTool(props) {
         setResultOpen(false);
     };
 
-    const [value, setValue] = React.useState('adjacent'); //Store subset type in local state
+    const [subsetType, setSubsetType] = React.useState('adjacent'); //Store subset type in local state
 
     //Handle change of selected subset type
     const handleChange = (event) => {
-        setValue(event.target.value);
+        setSubsetType(event.target.value);
     };
 
     const classes = useStyles();
@@ -68,7 +95,7 @@ function DisplaySubsetTool(props) {
     function handleDisplaySubset() {
         setOpen(false);
 
-        var myHeaders = new Headers();
+        let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
         let requestOptions = {
             method: 'GET',
@@ -76,15 +103,13 @@ function DisplaySubsetTool(props) {
             redirect: 'follow'
         };
 
-        console.log(state.selectedSentenceID, selectedNode.id, value); //Debugging
+        console.log(state.selectedSentenceID, selectedNodes[0].id); //Debugging
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation
 
         console.log(state.visualisationFormat); //Debugging
 
-        console.log(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNode.id + "&SubsetType=" + value +"&format="+state.visualisationFormat); //Debugging
-
         //Request subset from backend
-        fetch(state.APIendpoint + "/DisplaySubset?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNode.id + "&SubsetType=" + value +"&format="+state.visualisationFormat, requestOptions)
+        fetch(state.APIendpoint + "/GetSubset?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNodes[0] + "&SubsetType=" + subsetType, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -95,9 +120,36 @@ function DisplaySubsetTool(props) {
                 console.log(result);//debugging
                 console.log(JSON.parse(result));//debugging
                 const jsonResult = JSON.parse(result); //Parse response into JSON
-                setSubsetResponse(jsonResult); //Store the response in local state
+
+                let graphData = null;
+
+                switch (state.visualisationFormat) {
+                    case "1":
+                        graphData = layoutHierarchy(jsonResult);
+                        break;
+                    case "2":
+                        graphData = layoutTree(jsonResult);
+                        break;
+                    case "3":
+                        graphData = layoutFlat(jsonResult);
+                        break;
+                    default:
+                        graphData = layoutHierarchy(jsonResult);
+                        break;
+                }
+
+                console.log("graphData", graphData);
+                console.log("graphData", JSON.stringify(graphData));
+
+                setSelectedNodes(null);
+                setSubsetResponse(graphData); //Store the response in local state
                 setResultOpen(true); //Show the result in dialog
+
+                // dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: jsonResult}});
+                // dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+
+                //setOpen(false);
 
             })
             .catch((error) => {
@@ -108,44 +160,49 @@ function DisplaySubsetTool(props) {
     }
 
     //Events that are enabled on the graph visualisation
-    const events = {
-        //Select event for when user selects a node on the graph
-        select: function (event) {
-            let { nodes, edges } = event;
+    // const events = {
+    //     //Select event for when user selects a node on the graph
+    //     select: function (event) {
+    //         let { nodes, edges } = event;
+    //
+    //         let currentStandardVisualisation = cloneDeep(state.selectedSentenceVisualisation); //Deep clone the current visualisation
+    //         let nodeSelected = null; //value to set local state after event
+    //         //User selected or deselected a node -> update the graph visually
+    //         if(nodes.length > 0){
+    //             for (const [i, x] of currentStandardVisualisation.nodes.entries()) {
+    //                 if (x.id === nodes[0] && (x.group === "node" || x.group === "surfaceNode")) {
+    //                     //Mark as selected
+    //                     currentStandardVisualisation.nodes[i].group = "Selected";
+    //                     nodeSelected = {id: x.id, label: x.label}; //new local state value
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //         console.log(nodeSelected);
+    //         setSelectedNode(nodeSelected); //set local state for selected node
+    //         setCurrentVis(currentStandardVisualisation); //Update the current visualisation to reflect the selections made by the user
+    //     }
+    // };
 
-            let currentStandardVisualisation = cloneDeep(state.selectedSentenceVisualisation); //Deep clone the current visualisation
-            let nodeSelected = null; //value to set local state after event
-            //User selected or deselected a node -> update the graph visually
-            if(nodes.length > 0){
-                for (const [i, x] of currentStandardVisualisation.nodes.entries()) {
-                    if (x.id === nodes[0] && (x.group === "node" || x.group === "surfaceNode")) {
-                        //Mark as selected
-                        currentStandardVisualisation.nodes[i].group = "Selected";
-                        nodeSelected = {id: x.id, label: x.label}; //new local state value
-                        break;
-                    }
-                }
-            }
-            console.log(nodeSelected);
-            setSelectedNode(nodeSelected); //set local state for selected node
-            setCurrentVis(currentStandardVisualisation); //Update the current visualisation to reflect the selections made by the user
+    const events = {
+        select: {
+            selectMode: "subset",
+            selectedNodesStateSetter: setSelectedNodes,
         }
-    };
+    }
 
     function getSelectedNodeLabel(){
-        if(selectedNode !== null){ //User has selected a node
-            return selectedNode.label;
+        if(selectedNodes !== null && selectedNodes.length === 1){ //User has selected a node
+            return state.selectedSentenceGraphData.nodes.find(node => node.id === selectedNodes[0]).label;
         }else{ //User has not selected a node
             return "No node selected";
         }
     }
 
     return (
-
-
         <CardContent>
             <FormLabel><Typography color={"textPrimary"}>Select Type of Subset</Typography></FormLabel>
-            <RadioGroup aria-label="subset-type" name="subset" value={value} onChange={handleChange}>
+            <RadioGroup aria-label="subset-type" name="subset" value={subsetType} onChange={handleChange}>
                 <FormControlLabel value="adjacent" control={<Radio />} label={<Typography color={"textPrimary"}> Display Adjacent Nodes</Typography>}/>
                 <FormControlLabel value="descendent" control={<Radio color="secondary"/>}
                                   label={<Typography color={"textPrimary"}> Display Descendent Nodes</Typography>}/>
@@ -170,20 +227,49 @@ function DisplaySubsetTool(props) {
                     {state.selectedSentenceID === null ? (
                         <div>Select a sentence first.</div>
                     ) : (
-                        <Graph
-                            graph={currentVis}
-                            options={state.visualisationOptions} //Options from global state
-                            events={events}
-                            getNetwork={(network) => {
-                                network.on("hoverNode", function (params) {
-                                    network.canvas.body.container.style.cursor = 'pointer'
-                                });
-                            }}
-                        />
+                        // <Graph
+                        //     graph={currentVis}
+                        //     options={state.visualisationOptions} //Options from global state
+                        //     events={events}
+                        //     getNetwork={(network) => {
+                        //         network.on("hoverNode", function (params) {
+                        //             network.canvas.body.container.style.cursor = 'pointer'
+                        //         });
+                        //     }}
+                        // />
+                        <div className={classes.graphDiv}>
+                            <ParentSize>
+                                {parent => (
+                                    <Graph
+                                        width={parent.width}
+                                        height={parent.height}
+                                        graph={state.selectedSentenceVisualisation}
+                                        adjacentLinks={determineAdjacentLinks(state.selectedSentenceVisualisation)}
+                                        graphFormatCode={graphFormatCode}
+                                        events={events}
+                                    />
+                                    // <Graph
+                                    //     width={parent.width}
+                                    //     height={parent.height}
+                                    //     graph={JSON.parse(
+                                    //         '{"nodes":[{"id":"5","label":"_year_n_1","anchors":[{"from":3,"end":3}],"properties":null,"values":null,"x":130,"y":120,"relativeX":1,"relativeY":0,"type":"node","group":"node","span":true},{"id":"8","label":"_old_a_1","anchors":[{"from":4,"end":4}],"properties":null,"values":null,"x":260,"y":120,"relativeX":2,"relativeY":0,"type":"node","group":"node","span":true},{"id":"6","label":"measure","anchors":[{"from":2,"end":3}],"properties":null,"values":null,"x":65,"y":0,"relativeX":0,"relativeY":1,"type":"node","group":"node","span":true},{"index":2,"form":"61","lemma":"61","carg":"61","x":0,"y":300,"label":"61","type":"token","group":"token"},{"index":3,"form":"years","lemma":"year","carg":null,"x":130,"y":300,"label":"years","type":"token","group":"token"},{"index":4,"form":"old,","lemma":"old","carg":null,"x":260,"y":300,"label":"old,","type":"token","group":"token"}],"links":[{"id":0,"source":{"id":"6","label":"measure","anchors":[{"from":2,"end":3}],"properties":null,"values":null,"x":65,"y":0,"relativeX":0,"relativeY":1,"type":"node","group":"node","span":true},"target":{"id":"8","label":"_old_a_1","anchors":[{"from":4,"end":4}],"properties":null,"values":null,"x":260,"y":120,"relativeX":2,"relativeY":0,"type":"node","group":"node","span":true},"label":"ARG1","x1":162.5,"y1":60,"type":"link"},{"id":1,"source":{"id":"6","label":"measure","anchors":[{"from":2,"end":3}],"properties":null,"values":null,"x":65,"y":0,"relativeX":0,"relativeY":1,"type":"node","group":"node","span":true},"target":{"id":"5","label":"_year_n_1","anchors":[{"from":3,"end":3}],"properties":null,"values":null,"x":130,"y":120,"relativeX":1,"relativeY":0,"type":"node","group":"node","span":true},"label":"ARG2","x1":97.5,"y1":60,"type":"link"}]}'
+                                    //     )}
+                                    //     adjacentLinks={determineAdjacentLinks(
+                                    //         JSON.parse(
+                                    //             '{"nodes":[{"id":"5","label":"_year_n_1","anchors":[{"from":3,"end":3}],"properties":null,"values":null,"x":130,"y":120,"relativeX":1,"relativeY":0,"type":"node","group":"node","span":true},{"id":"8","label":"_old_a_1","anchors":[{"from":4,"end":4}],"properties":null,"values":null,"x":260,"y":120,"relativeX":2,"relativeY":0,"type":"node","group":"node","span":true},{"id":"6","label":"measure","anchors":[{"from":2,"end":3}],"properties":null,"values":null,"x":65,"y":0,"relativeX":0,"relativeY":1,"type":"node","group":"node","span":true},{"index":2,"form":"61","lemma":"61","carg":"61","x":0,"y":300,"label":"61","type":"token","group":"token"},{"index":3,"form":"years","lemma":"year","carg":null,"x":130,"y":300,"label":"years","type":"token","group":"token"},{"index":4,"form":"old,","lemma":"old","carg":null,"x":260,"y":300,"label":"old,","type":"token","group":"token"}],"links":[{"id":0,"source":{"id":"6","label":"measure","anchors":[{"from":2,"end":3}],"properties":null,"values":null,"x":65,"y":0,"relativeX":0,"relativeY":1,"type":"node","group":"node","span":true},"target":{"id":"8","label":"_old_a_1","anchors":[{"from":4,"end":4}],"properties":null,"values":null,"x":260,"y":120,"relativeX":2,"relativeY":0,"type":"node","group":"node","span":true},"label":"ARG1","x1":162.5,"y1":60,"type":"link"},{"id":1,"source":{"id":"6","label":"measure","anchors":[{"from":2,"end":3}],"properties":null,"values":null,"x":65,"y":0,"relativeX":0,"relativeY":1,"type":"node","group":"node","span":true},"target":{"id":"5","label":"_year_n_1","anchors":[{"from":3,"end":3}],"properties":null,"values":null,"x":130,"y":120,"relativeX":1,"relativeY":0,"type":"node","group":"node","span":true},"label":"ARG2","x1":97.5,"y1":60,"type":"link"}]}'
+                                    //         )
+                                    //     )}
+                                    //     graphFormatCode={graphFormatCode}
+                                    // />
+                                )}
+                            </ParentSize>
+                        </div>
+
+
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDisplaySubset} color="secondary" autoFocus disabled={selectedNode === null}>
+                    <Button onClick={handleDisplaySubset} color="secondary" autoFocus disabled={selectedNodes === null || selectedNodes.length === 0}>
                         Display
                     </Button>
                 </DialogActions>
@@ -201,9 +287,38 @@ function DisplaySubsetTool(props) {
                     {subsetResponse === null ? (
                         <div>No result to display</div>
                     ) : (
-                        <SubsetVisualisation subsetGraphData={subsetResponse}/>
+                        <div className={classes.graphDiv}>
+                            <ParentSize>
+                                {parent => (
+                                    <Graph
+                                        width={parent.width}
+                                        height={parent.height}
+                                        graph={subsetResponse}
+                                        adjacentLinks={determineAdjacentLinks(subsetResponse)}
+                                        graphFormatCode={graphFormatCode}
+                                    />
+                                )}
+                            </ParentSize>
+                        </div>
                     )}
                 </DialogContent>
+                {/*{subsetResponse === null ? (*/}
+                {/*    <div>No result to display</div>*/}
+                {/*) : (*/}
+                {/*    <div className={classes.graphDiv}>*/}
+                {/*        <ParentSize>*/}
+                {/*            {parent => (*/}
+                {/*                <Graph*/}
+                {/*                    width={parent.width}*/}
+                {/*                    height={parent.height}*/}
+                {/*                    graph={subsetResponse}*/}
+                {/*                    adjacentLinks={determineAdjacentLinks(subsetResponse)}*/}
+                {/*                    graphFormatCode={graphFormatCode}*/}
+                {/*                />*/}
+                {/*            )}*/}
+                {/*        </ParentSize>*/}
+                {/*    </div>*/}
+                {/*)}*/}
                 <DialogActions>
                     <Button onClick={handleResultClose} color="secondary" autoFocus>
                         close
