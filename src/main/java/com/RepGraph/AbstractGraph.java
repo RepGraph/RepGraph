@@ -835,6 +835,13 @@ class AbstractGraph {
         //add the Node objects to a list
         for (Node n : nodes.values()) {
             ordered.add(new Node(n));
+            if (n.getAnchors().size() > 1){
+                for (int i = 1; i < n.getAnchors().size();i++) {
+                    ArrayList<Anchors> anchs = new ArrayList<>();
+                    anchs.add(n.getAnchors().get(i));
+                    ordered.add(new Node(UUID.randomUUID().toString(), n.getLabel(), anchs));
+                }
+            }
         }
 
         //order the nodes according to the beginning of their span
