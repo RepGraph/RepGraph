@@ -32,8 +32,9 @@ public class RequestHandler {
      */
     @GetMapping(value = "/")
     @ResponseBody
-    public String Home(@RequestHeader(USER_HEADER) String id) {
-        return id;
+    public void Home(@RequestHeader(USER_HEADER) String userID,@RequestParam String graphID) throws IOException {
+
+
     }
 
     /**
