@@ -6,70 +6,93 @@ import { Link } from "./Link";
 
 import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
 
-const reducer = (state, action) => {
-    switch (action.type) {
-        case "add":
-            return [...state, action.id];
-        case "remove":
-            return state.filter((item) => item !== action.id);
-        default:
-            throw new Error();
-    }
-};
-
 export const Graph = ({
                           graph,
                           height,
                           width,
-                          selectMultiple,
                           graphFormatCode,
-                          adjacentLinks
+                          adjacentLinks,
+                          events
                       }) => {
     const { nodes, links } = graph;
     const [tooltipData, setTooltipData] = useState({ extraInformation: {} });
-    const [selectedNodes, dispatchSelectedNodes] = useReducer(reducer, []);
-    const [selectedLinks, dispatchSelectedLinks] = useReducer(reducer, []);
 
-    // const styles = {
-    //   backgroundColour: "#efefef",
-    //   standardStyles: {
-    //     nodeStyles: {
-    //       nodeColour: "rgba(0,172,237,1)",
-    //       hoverColour: "rgba(82, 208, 255,1)",
-    //       spanColour: "rgba(0,0,0,0.3)",
-    //       selectedColour: "#3de68c"
-    //     },
-    //     linkStyles: {
-    //       linkColour: "rgba(0,0,0,1)",
-    //       hoverColour: "rgba(0,0,0,0.5)",
-    //       selectedColour: "#3de68c"
-    //     },
-    //     tokenStyles: {
-    //       tokenColour: "rgba(255, 220, 106,1)",
-    //       hoverColour: "rgba(255, 232, 156,1)",
-    //       selectedColour: "#3de68c"
-    //     }
-    //   },
-    //   longestPathStyles: {
-    //     linkColour: "rgba(225, 9, 9, 1)",
-    //     nodeColour: "rgba(225, 9, 9, 1)",
-    //     hoverColour: "rgba(248, 84, 84, 1)"
-    //   },
-    //   compareStyles: {
-    //     linkColourDifferent: "rgba(225, 9, 9, 1)",
-    //     linkColourSame: "rgba(67, 220, 24, 1)",
-    //     nodeColourDifferent: "rgba(225, 9, 9, 1)",
-    //     nodeColourSame: "rgba(67, 220, 24, 1)",
-    //     hoverNodeColourSame: "rgba(125, 237, 94, 1)",
-    //     hoverNodeColourDifferent: "rgba(248, 84, 84, 1)",
-    //     hoverLinkColourSame: "rgba(125, 237, 94, 1)",
-    //     hoverLinkColourDifferent: "rgba(248, 84, 84, 1)"
-    //   },
-    //   planarStyles: {
-    //     linkColourCross: "rgba(225, 9, 9, 1)",
-    //     hoverColour: "rgba(248, 84, 84, 1)"
-    //   }
-    // };
+    const reducerNodes = (state, action) => {
+        switch (action.type) {
+            case "add":
+                switch (events.select.selectMode) {
+                    case "subset":
+                        if (state.length !== 0) {
+                            events.select.selectedNodesStateSetter(state);
+                            return state;
+                        } else {
+                            events.select.selectedNodesStateSetter([action.id]);
+                            return [action.id];
+                        }
+                    case "subgraph":
+                        events.select.selectedNodesStateSetter([...state, action.id]);
+                        return [...state, action.id];
+                    default:
+                        events.select.selectedNodesStateSetter([...state, action.id]);
+                        return [...state, action.id];
+                }
+
+            case "remove":
+                switch (events.select.selectMode) {
+                    case "subset":
+                        if (state.length === 1 && state[0] === action.id) {
+                            events.select.selectedNodesStateSetter([]);
+                            return [];
+                        } else {
+                            events.select.selectedNodesStateSetter(state);
+                            return state;
+                        }
+                    case "subgraph":
+                        events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        return state.filter((item) => item !== action.id);
+                    default:
+                        events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        return state.filter((item) => item !== action.id);
+                }
+
+            default:
+                throw new Error();
+        }
+    };
+
+    const reducerLinks = (state, action) => {
+        switch (action.type) {
+            case "add":
+                switch (events.select.selectMode) {
+                    case "subset":
+                        events.select.selectedLinksStateSetter([]);
+                        return [];
+                    case "subgraph":
+                        events.select.selectedLinksStateSetter([...state, action.id]);
+                        return [...state, action.id];
+                    default:
+                        events.select.selectedLinksStateSetter([...state, action.id]);
+                        return [...state, action.id];
+                }
+            case "remove":
+                switch (events.select.selectMode) {
+                    case "subset":
+                        events.select.selectedLinksStateSetter([]);
+                        return [];
+                    case "subgraph":
+                        events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        return state.filter((item) => item !== action.id);
+                    default:
+                        events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        return state.filter((item) => item !== action.id);
+                }
+            default:
+                throw new Error();
+        }
+    };
+
+    const [selectedNodes, dispatchSelectedNodes] = useReducer(reducerNodes, []);
+    const [selectedLinks, dispatchSelectedLinks] = useReducer(reducerLinks, []);
 
     const styles = {
         backgroundColour: "#efefef",
@@ -211,14 +234,10 @@ export const Graph = ({
                 display: "flex",
                 flexDirection: "column",
                 border: "0px solid red",
-                height: "100%"
+                height: "100%",
                 // touchAction: "none"
             }}
         >
-            {/*<div>*/}
-            {/*    <h4>selectedNodes:{JSON.stringify(selectedNodes)}</h4>*/}
-            {/*    <h4>selectedLinks:{JSON.stringify(selectedLinks)}</h4>*/}
-            {/*</div>*/}
             <ZoomPortal
                 width={width}
                 height={height}
@@ -228,13 +247,14 @@ export const Graph = ({
                     <Link
                         key={`link-${i}`}
                         link={link}
-                        selectMultiple={selectMultiple}
                         dispatchSelectedLinks={dispatchSelectedLinks}
+                        selectedLinks={selectedLinks}
                         styles={graphStyles}
                         graphFormatCode={graphFormatCode}
                         tooltipData={tooltipData}
                         adjacentLinks={adjacentLinks}
                         tooltipOpen={tooltipOpen}
+                        events={events}
                     />
                 ))}
                 {nodes.map((node, i) => (
@@ -244,10 +264,11 @@ export const Graph = ({
                         handleMouseOver={handleMouseOver}
                         hideTooltip={hideTooltip}
                         setTooltipData={setTooltipData}
-                        selectMultiple={selectMultiple}
                         dispatchSelectedNodes={dispatchSelectedNodes}
+                        selectedNodes={selectedNodes}
                         styles={graphStyles}
                         graphFormatCode={graphFormatCode}
+                        events={events}
                     />
                 ))}
                 {tooltipOpen && (
@@ -259,7 +280,8 @@ export const Graph = ({
                         style={{
                             ...defaultStyles,
                             borderRadius: "8px",
-                            padding: "0.4rem"
+                            padding: "0.4rem",
+                            zIndex: 10000
                         }}
                     >
                         <div className="tooltip">
