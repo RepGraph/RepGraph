@@ -1,32 +1,29 @@
-import React, { useState } from "react";
-import { Group } from "@visx/visx";
+import React, {useState} from "react";
+import {Group} from "@visx/visx";
 import uuid from "react-uuid";
 
 export const Link = ({
                          link,
-                         selectMode,
                          dispatchSelectedLinks,
+                         selectedLinks,
                          styles,
                          graphFormatCode,
                          tooltipData,
                          adjacentLinks,
                          tooltipOpen,
-                         selectedLinks
+                         events
                      }) => {
     const [highlighted, setHighlighted] = useState(false);
-    const [selected, setSelected] = useState(false);
+
+    const selected = selectedLinks.includes(link.id);
 
     const handleOnClick = (event) => {
 
-        if (selectMode === "displaySubset") {
-            return;
-        }else{
+        if (events && events.hasOwnProperty('select')) {
             if (!selected) {
-                dispatchSelectedLinks({ type: "add", id: link.id });
-                setSelected(true);
+                dispatchSelectedLinks({type: "add", id: link.id});
             } else {
-                dispatchSelectedLinks({ type: "remove", id: link.id });
-                setSelected(false);
+                dispatchSelectedLinks({type: "remove", id: link.id});
             }
         }
     };

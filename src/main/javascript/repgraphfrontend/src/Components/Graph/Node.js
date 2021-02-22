@@ -7,13 +7,14 @@ export const Node = ({
                          handleMouseOver,
                          hideTooltip,
                          setTooltipData,
-                         selectMultiple,
                          dispatchSelectedNodes,
+                         selectedNodes,
                          styles,
-                         graphFormatCode
+                         graphFormatCode,
+                         events
                      }) => {
     const [highlighted, setHighlighted] = useState(false);
-    const [selected, setSelected] = useState(false);
+
     let label = (
         <text
             textAnchor="middle"
@@ -51,6 +52,8 @@ export const Node = ({
     //   ? styles.tokenStyles.tokenColour
     //   : styles.nodeStyles.nodeColour;
 
+    const selected = selectedNodes.includes(node.id);
+
     let fillColor = null;
 
     switch (node.group) {
@@ -87,16 +90,6 @@ export const Node = ({
         default:
             fillColor = "black"; //dunno about this
     }
-
-    // const fillColor = highlighted
-    //   ? node.group === "node"
-    //     ? styles.standardStyles.nodeStyles.hoverColour
-    //     : styles.standardStyles.tokenStyles.hoverColour
-    //   : selected
-    //   ? styles.standardStyles.nodeStyles.selectedColour
-    //   : node.group === "token"
-    //   ? styles.standardStyles.tokenStyles.tokenColour
-    //   : styles.standardStyles.nodeStyles.nodeColour;
 
     const outline = (
         <rect
@@ -140,16 +133,36 @@ export const Node = ({
     }
 
     const handleOnClick = (event) => {
-        if (selectMultiple) {
-            console.log(node.id);
+
+        if(events && events.hasOwnProperty('select')){
             if (!selected) {
                 dispatchSelectedNodes({ type: "add", id: node.id });
-                setSelected(true);
             } else {
                 dispatchSelectedNodes({ type: "remove", id: node.id });
-                setSelected(false);
             }
         }
+
+
+
+
+        // if (selectMode === "displaySubset") {
+        //     if (!selected && (node.group === "node") && (selectedNodes.length === 0)) {
+        //         console.log(node.id);
+        //         dispatchSelectedNodes({ type: "add", id: node.id });
+        //         setSelected(true);
+        //     } else if (selected && (node.group === "node") && selectedNodes.includes(node.id)){
+        //         dispatchSelectedNodes({ type: "remove", id: node.id });
+        //         setSelected(false);
+        //     }
+        // }else{
+        //     if (!selected) {
+        //         dispatchSelectedNodes({ type: "add", id: node.id });
+        //         setSelected(true);
+        //     } else {
+        //         dispatchSelectedNodes({ type: "remove", id: node.id });
+        //         setSelected(false);
+        //     }
+        // }
     };
 
     let notAllowed = [
