@@ -22,6 +22,11 @@ import SelectSubgraphVisualisation from "../Main/SelectSubgraphVisualisation";
 import SubgraphVisualisation from "../Main/SubgraphVisualisation";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
+import {ParentSize} from "@visx/responsive";
+import {Graph} from "../Graph/Graph";
+import {determineAdjacentLinks, layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
+import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
+import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,31 +37,69 @@ const useStyles = makeStyles((theme) => ({
     },
     autoComplete: {
         marginBottom: 10
+    },
+    graphDiv: {
+        height: "100%",
+        //border: "1px solid red",
+        flex: "1",
+        width: "100%"
     }
 }));
 
 function SearchSubgraphPatternTool(props) {
     const classes = useStyles();
-
-    const [nodeSet, setNodeSet] = React.useState(null); //Local state of entered node labels
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
     const history = useHistory(); //Use routing history
-    const [open, setOpen] = React.useState(false); //Local state for search sub-graph pattern dialog
-    const [openNodeSet, setOpenNodeSet] = React.useState(false); //Local state for search node set dialog
+
+    //Node set state
+    const [nodeSet, setNodeSet] = React.useState(null); //Local state of entered node labels
+    const [openNodeSetDialog, setOpenNodeSetDialog] = React.useState(false); //Local state for search node set dialog
     const [nodeSetResult, setNodeSetResult] = React.useState(null); //Local state for node set search result
     const [nodeSetResultSearch, setNodeSetResultSearch] = React.useState(nodeSetResult); //Local state for node set search result
+
+    //Subgraph state
+    const [openSelectSubgraphDialog, setOpenSelectSubgraphDialog] = React.useState(false); //Local state for search sub-graph pattern dialog
+    const [openSubgraphResultsDialog, setOpenSubgraphResultsDialog] = React.useState(false); //Local state for search sub-graph pattern results dialog
+    const [subgraphResult, setSubgraphResult] = React.useState(null); //Local state for subgraph search result
+    const [subgraphResultSearch, setSubgraphResultSearch] = React.useState(null); //Local state for subgraph search result
+
     const [subgraphResponse, setSubgraphResponse] = React.useState(null); //Local state for subgraph pattern search results
-    const [responseMessage, setResponseMessage] = React.useState(null); //Local state for response message
+
+
+    // const [responseMessage, setResponseMessage] = React.useState(null); //Local state for response message
+
+
     const [alertOpen, setAlertOpen] = React.useState(false); //Local state for error alert
 
+    const [selectedNodes, setSelectedNodes] = React.useState(null); //Store local state for currently selected node ids
+    const [selectedLinks, setSelectedLinks] = React.useState(null); //Store local state for currently selected link ids
+
+
+
+    let graphFormatCode = null;
+    switch (state.visualisationFormat) {
+        case "1":
+            graphFormatCode = "hierarchical";
+            break;
+        case "2":
+            graphFormatCode = "tree";
+            break;
+        case "3":
+            graphFormatCode = "flat";
+            break;
+        default:
+            graphFormatCode = "hierarchical";
+            break;
+    }
+
     //Handle click open for search sub-graph pattern dialog
-    const handleClickOpen = () => {
-        setOpen(true);
+    const handleClickSelectSubgraph = () => {
+        setOpenSelectSubgraphDialog(true);
     };
 
     //Handle close for search sub-graph pattern dialog
-    const handleClose = () => {
-        setOpen(false);
+    const handleCloseSelectSubgraphDialog = () => {
+        setOpenSelectSubgraphDialog(false);
     };
 
     //Handle close for error alert
@@ -66,12 +109,19 @@ function SearchSubgraphPatternTool(props) {
 
     //Handle close for node set dialog
     const handleCloseNodeSet = () => {
-        setOpenNodeSet(false);
+        setOpenNodeSetDialog(false);
         setNodeSetResult(null);
         setSubgraphResponse(null);
     };
 
-    function search(value) {
+    //Handle close for subgraph results dialog
+    const handleCloseSubgraphResultsDialog = () => {
+        setOpenSubgraphResultsDialog(false);
+        setSubgraphResult(null);
+        setSubgraphResponse(null);
+    };
+
+    function searchNodeSet(value) {
         let found = [];
         for (let x of nodeSetResult) {
 
@@ -80,18 +130,28 @@ function SearchSubgraphPatternTool(props) {
             }
         }
         setNodeSetResultSearch(found);
+    }
 
+    function searchSubgraph(value) {
+        let found = [];
+        for (let x of subgraphResult) {
+
+            if (x.input.toLowerCase().trim().includes(value.toLowerCase().trim()) || x.id.includes(value.trim())) {
+                found.push(x);
+            }
+        }
+        setSubgraphResultSearch(found);
     }
 
     //Handle search for node set from backend
     function handleSearchForNodeSet() {
         console.log(nodeSet.join(","));
-        var myHeaders = new Headers();
+        let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
 
         let requestOptions = {
             method: 'GET',
-            headers : myHeaders,
+            headers: myHeaders,
             redirect: 'follow'
         };
 
@@ -107,14 +167,17 @@ function SearchSubgraphPatternTool(props) {
             .then((result) => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging
+
                 setNodeSetResult(jsonResult.data);
                 setNodeSetResultSearch(jsonResult.data)//Store the node set results
-                setResponseMessage(jsonResult.response);
+
+                // setResponseMessage(jsonResult.response);
+
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
 
-                if(jsonResult.response === "Success"){
-                    setOpenNodeSet(true); //Display the node set results
-                }else{
+                if (jsonResult.response === "Success") {
+                    setOpenNodeSetDialog(true); //Display the node set results
+                } else {
                     setAlertOpen(true); //Display the error alert
                 }
 
@@ -122,6 +185,49 @@ function SearchSubgraphPatternTool(props) {
             .catch((error) => {
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
                 console.log("error", error); //Log the error
+                history.push("/404"); //Take the user to the error page
+            });
+
+    }
+
+    function searchForSelectedSubgraph() {
+        let myHeaders = new Headers();
+        myHeaders.append("X-USER", state.userID);
+
+        let requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
+
+        //Search the backend for matches
+        fetch(state.APIendpoint + "/SearchSubgraphPattern?graphID=" + state.selectedSentenceID + "&NodeId=" + selectedNodes.join(",") + "&EdgeIndices=" + selectedLinks.join(","), requestOptions)
+            .then((response) => {
+                if (!response.ok) {
+                    throw "Response not OK";
+                }
+                return response.text();
+            })
+            .then((result) => {
+                const jsonResult = JSON.parse(result);
+                console.log(jsonResult); //Debugging
+
+                setSubgraphResult(jsonResult.data);
+                setSubgraphResultSearch(jsonResult.data)//Store the subgraph results
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+
+                if (jsonResult.response === "Success") {
+                    setOpenSubgraphResultsDialog(true); //Show the results to the user
+                } else {
+                    setAlertOpen(true); //Display the error alert
+                }
+
+            })
+            .catch((error) => {
+                dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+                console.log("error", error); //Log the error to console
                 history.push("/404"); //Take the user to the error page
             });
 
@@ -149,17 +255,17 @@ function SearchSubgraphPatternTool(props) {
     //Handle when user selects one of the sentences returned in the results from the backend
     function handleClickSentenceResult(sentenceId) {
         console.log(sentenceId); //Debugging
-        var myHeaders = new Headers();
+        let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
         let requestOptions = {
             method: 'GET',
-            headers : myHeaders,
+            headers: myHeaders,
             redirect: 'follow'
         };
 
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
 
-        fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format=" + state.visualisationFormat, requestOptions)
+        fetch(state.APIendpoint + "/GetGraph?graphID=" + sentenceId, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -169,7 +275,25 @@ function SearchSubgraphPatternTool(props) {
             .then((result) => {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //Debugging
-                setSubgraphResponse(jsonResult); //Store graph visualisation result
+
+                let graphData = null;
+
+                switch (state.visualisationFormat) {
+                    case "1":
+                        graphData = layoutHierarchy(jsonResult);
+                        break;
+                    case "2":
+                        graphData = layoutTree(jsonResult);
+                        break;
+                    case "3":
+                        graphData = layoutFlat(jsonResult);
+                        break;
+                    default:
+                        graphData = layoutHierarchy(jsonResult);
+                        break;
+                }
+
+                setSubgraphResponse(graphData); //Store graph visualisation result
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
             })
             .catch((error) => {
@@ -177,6 +301,14 @@ function SearchSubgraphPatternTool(props) {
                 console.log("error", error); //Log the error to console
                 history.push("/404"); //Take the user to the error page
             });
+    }
+
+    const events = {
+        select: {
+            selectMode: "subgraph",
+            selectedNodesStateSetter: setSelectedNodes,
+            selectedLinksStateSetter: setSelectedLinks,
+        }
     }
 
     return (
@@ -228,7 +360,7 @@ function SearchSubgraphPatternTool(props) {
                     </Grid>
                 </CardContent>
                 <Dialog
-                    open={openNodeSet}
+                    open={openNodeSetDialog}
                     fullWidth={true}
                     maxWidth="xl"
                     onClose={handleCloseNodeSet}
@@ -240,24 +372,24 @@ function SearchSubgraphPatternTool(props) {
                     </DialogTitle>
                     <DialogContent>
                         <Grid
-                            style={{width:"100%", height:"100%"}}
+                            style={{width: "100%", height: "100%"}}
                             container
                             direction="column"
                             justify="center"
                             alignItems="center"
                             spacing={2}
                         >
-                            <Grid item style={{width:"100%"}}>
+                            <Grid item style={{width: "100%"}}>
                                 <TextField id="outlined-basic"
                                            label="Search for a Sentence or ID"
                                            variant="outlined"
                                            fullWidth
-                                           onChange={e => (search(e.target.value))}/>
+                                           onChange={e => (searchNodeSet(e.target.value))}/>
                             </Grid>
                             <Grid container item xs={12}>
-                                <Card variant="outlined" style={{width:"100%", height: "15vh"}}>
+                                <Card variant="outlined" style={{width: "100%", height: "15vh"}}>
 
-                                    <CardContent style={{width:"100%", height: "100%"}}>
+                                    <CardContent style={{width: "100%", height: "100%"}}>
 
                                         {nodeSetResultSearch &&
                                         <Virtuoso
@@ -272,7 +404,8 @@ function SearchSubgraphPatternTool(props) {
                                                             handleClickSentenceResult(nodeSetResultSearch[index].id);
                                                         }}
                                                     >
-                                                        <Typography color={"textPrimary"}>{nodeSetResultSearch[index].input}</Typography>
+                                                        <Typography
+                                                            color={"textPrimary"}>{nodeSetResultSearch[index].input}</Typography>
                                                     </ListItem>
                                                 );
                                             }}
@@ -286,17 +419,28 @@ function SearchSubgraphPatternTool(props) {
                                 </Card>
                             </Grid>
                             <Grid container item xs={12}>
-                                <Card variant="outlined" style={{width:"100%", height: "40vh"}}>
-                                    <CardContent style={{width:"100%", height: "100%"}}>
+                                <Card variant="outlined" style={{width: "100%", height: "45vh"}}>
+                                    <CardContent style={{width: "100%", height: "100%"}}>
                                         {subgraphResponse === null ?
 
-                                                        <Typography color={"textPrimary"}>Select
-                                                            a sentence from the results above.</Typography>
+                                            <Typography color={"textPrimary"}>Select
+                                                a sentence from the results above.</Typography>
 
                                             :
 
-                                                        <SubgraphVisualisation
-                                                            subgraphGraphData={subgraphResponse}/>
+                                            <div className={classes.graphDiv}>
+                                                <ParentSize>
+                                                    {parent => (
+                                                        <Graph
+                                                            width={parent.width}
+                                                            height={parent.height}
+                                                            graph={subgraphResponse}
+                                                            adjacentLinks={determineAdjacentLinks(subgraphResponse)}
+                                                            graphFormatCode={graphFormatCode}
+                                                        />
+                                                    )}
+                                                </ParentSize>
+                                            </div>
 
                                         }
                                     </CardContent>
@@ -312,47 +456,155 @@ function SearchSubgraphPatternTool(props) {
                 </Dialog>
             </Card>
             <Card variant="outlined">
-                <CardContent><Grid item style={{width: "100%"}}>
-                    <Typography color={"textPrimary"}>
-                        Or visually select a sub-graph pattern on the currently displayed
-                        graph:
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        color={"secondary"}
-                        endIcon={<LocationSearchingIcon/>}
-                        onClick={handleClickOpen}
-                        style={{marginBottom: 10, marginTop: 10}}
-                        disabled={state.selectedSentenceID === null}
-                    >
-                        Select sub-graph pattern
-                    </Button>
-                </Grid>
+                <CardContent>
+                    <Grid item style={{width: "100%"}}>
+                        <Typography color={"textPrimary"}>
+                            Or visually select a sub-graph pattern on the currently displayed
+                            graph:
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            color={"secondary"}
+                            endIcon={<LocationSearchingIcon/>}
+                            onClick={handleClickSelectSubgraph}
+                            style={{marginBottom: 10, marginTop: 10}}
+                            disabled={state.selectedSentenceID === null}
+                        >
+                            Select sub-graph pattern
+                        </Button>
+                    </Grid>
                     <Dialog
-                        open={open}
+                        open={openSelectSubgraphDialog}
                         fullWidth={true}
                         maxWidth="xl"
-                        onClose={handleClose}
+                        onClose={handleCloseSelectSubgraphDialog}
                         aria-labelledby="alert-dialog-title"
                         aria-describedby="alert-dialog-description"
                     >
                         <DialogTitle id="alert-dialog-title">
                             {"Select connected nodes and edges on the graph: "}
                         </DialogTitle>
-                        <DialogContent>
-                            <SelectSubgraphVisualisation/>
+                        <DialogContent style={{height: "80vh"}}>
+                            <div className={classes.graphDiv}>
+                                <ParentSize>
+                                    {parent => (
+                                        <Graph
+                                            width={parent.width}
+                                            height={parent.height}
+                                            graph={state.selectedSentenceVisualisation}
+                                            adjacentLinks={determineAdjacentLinks(state.selectedSentenceVisualisation)}
+                                            graphFormatCode={graphFormatCode}
+                                            events={events}
+                                        />
+                                    )}
+                                </ParentSize>
+                            </div>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleClose} color={"secondary"} autoFocus>
+                            <Button onClick={searchForSelectedSubgraph} color="primary" autoFocus
+                                    disabled={selectedNodes === null || selectedLinks === null || selectedNodes.length === 0 || selectedLinks.length === 0}>
+                                Display
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Dialog
+                        open={openSubgraphResultsDialog}
+                        fullWidth={true}
+                        maxWidth="xl"
+                        onClose={handleCloseSubgraphResultsDialog}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                            {"Search Results:"}
+                        </DialogTitle>
+                        <DialogContent>
+                            <Grid
+                                style={{width: "100%", height: "100%"}}
+                                container
+                                direction="column"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}
+                            >
+                                <Grid item style={{width: "100%"}}>
+                                    <TextField id="outlined-basic"
+                                               label="Search for a Sentence or ID"
+                                               variant="outlined"
+                                               fullWidth
+                                               onChange={e => (searchSubgraph(e.target.value))}/>
+                                </Grid>
+                                <Grid container item xs={12}>
+                                    <Card variant="outlined" style={{width: "100%", height: "15vh"}}>
+                                        <CardContent style={{width: "100%", height: "100%"}}>
+                                            {subgraphResultSearch &&
+                                            <Virtuoso
+                                                style={{width: "100%", height: "100%"}}
+                                                totalCount={subgraphResultSearch.length}
+                                                item={(index) => {
+                                                    return (
+                                                        <ListItem
+                                                            button
+                                                            key={index}
+                                                            onClick={() => {
+                                                                handleClickSentenceResult(subgraphResultSearch[index].id);
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                color={"textPrimary"}>{subgraphResultSearch[index].input}</Typography>
+                                                        </ListItem>
+                                                    );
+                                                }}
+                                                footer={() => (
+                                                    <div style={{padding: "1rem", textAlign: "center"}}>
+                                                        <Typography color={"textPrimary"}> -- end of dataset
+                                                            -- </Typography>
+                                                    </div>
+                                                )}
+                                            />}
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+                                <Grid container item xs={12}>
+                                    <Card variant="outlined" style={{width: "100%", height: "45vh"}}>
+                                        <CardContent style={{width: "100%", height: "100%"}}>
+                                            {subgraphResponse=== null ?
+
+                                                <Typography color={"textPrimary"}>Select
+                                                    a sentence from the results above.</Typography>
+
+                                                :
+                                                    <div className={classes.graphDiv}>
+                                                        <ParentSize>
+                                                            {parent => (
+                                                                <Graph
+                                                                    width={parent.width}
+                                                                    height={parent.height}
+                                                                    graph={subgraphResponse}
+                                                                    adjacentLinks={determineAdjacentLinks(subgraphResponse)}
+                                                                    graphFormatCode={graphFormatCode}
+                                                                />
+                                                            )}
+                                                        </ParentSize>
+                                                    </div>
+                                            }
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setOpenSubgraphResultsDialog(false)} color="secondary" autoFocus>
                                 Close
                             </Button>
                         </DialogActions>
                     </Dialog>
                 </CardContent>
             </Card>
+
             <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
                 <MuiAlert elevation={6} variant="filled" onClose={handleAlertClose} severity="error">
-                    Error: Could not search for node labels
+                    Error: Could not search for subgraph
                 </MuiAlert>
             </Snackbar>
         </React.Fragment>
