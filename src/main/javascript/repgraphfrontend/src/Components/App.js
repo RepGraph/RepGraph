@@ -25,7 +25,7 @@ export default function App() {
     const classes = useStyles();
 
 
-    const font = "'Open Sans', 'Helvetica', 'Arial', sans-serif";
+    const font = "'Quicksand', 'Helvetica', 'Arial', sans-serif";
 
     const primaryColor = state.darkMode ? "#eaeaea" : "#00c072";
     const secondaryColor = state.darkMode ? "#00c072" : "#eaeaea";
