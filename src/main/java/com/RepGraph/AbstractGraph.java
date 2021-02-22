@@ -832,14 +832,18 @@ class AbstractGraph {
     public boolean isPlanar() {
 
         ArrayList<Node> ordered = new ArrayList<>();
+        HashMap<String, ArrayList<String>> dummyNodes = new HashMap<>();
         //add the Node objects to a list
         for (Node n : nodes.values()) {
             ordered.add(new Node(n));
             if (n.getAnchors().size() > 1){
+                dummyNodes.put(n.getId(), new ArrayList<String>());
                 for (int i = 1; i < n.getAnchors().size();i++) {
                     ArrayList<Anchors> anchs = new ArrayList<>();
                     anchs.add(n.getAnchors().get(i));
-                    ordered.add(new Node(UUID.randomUUID().toString(), n.getLabel(), anchs));
+                    String uuid = UUID.randomUUID().toString();
+                    ordered.add(new Node(uuid, n.getLabel(), anchs));
+                    dummyNodes.get(n.getId()).add(uuid);
                 }
             }
         }
@@ -884,16 +888,19 @@ class AbstractGraph {
 
             Edge newEdge = new Edge();
 
-            for (int i = 0; i < ordered.size(); i++) {
-                Node n = ordered.get(i);
-                if (n.getId().equals(source)) {
-                    newEdge.setSource(nodeToToken.get(n.getId()));
-                }
-                if (n.getId().equals(target)) {
-                    newEdge.setTarget(nodeToToken.get(n.getId()));
+            newEdge.setSource(nodeToToken.get(source));
+            newEdge.setTarget(nodeToToken.get(target));
+
+            updated.add(newEdge);
+            for (String sourceID : dummyNodes.get(source)){
+                for (String targetID : dummyNodes.get(target)){
+                    newEdge = new Edge();
+
+                    newEdge.setSource(nodeToToken.get(sourceID));
+                    newEdge.setTarget(nodeToToken.get(targetID));
+                    updated.add(newEdge);
                 }
             }
-            updated.add(newEdge);
 
         }
 
