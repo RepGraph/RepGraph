@@ -844,7 +844,15 @@ class AbstractGraph {
                 if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
                     return -1;
                 } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
-                    return 0;
+                    if (o1.getAnchors().get(0).getEnd() < o2.getAnchors().get(0).getEnd()){
+                        return -1;
+                    }
+                    else if (o1.getAnchors().get(0).getEnd() == o2.getAnchors().get(0).getEnd()){
+                        return 0;
+                    }
+                    else{
+                        return 1;
+                    }
                 }
                 return 1;
             }
