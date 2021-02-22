@@ -1,21 +1,26 @@
 import React, { useState } from "react";
 import { Group } from "@visx/visx";
+import uuid from "react-uuid";
 
 export const Link = ({
                          link,
-                         selectMultiple,
+                         selectMode,
                          dispatchSelectedLinks,
                          styles,
                          graphFormatCode,
                          tooltipData,
                          adjacentLinks,
-                         tooltipOpen
+                         tooltipOpen,
+                         selectedLinks
                      }) => {
     const [highlighted, setHighlighted] = useState(false);
     const [selected, setSelected] = useState(false);
 
     const handleOnClick = (event) => {
-        if (selectMultiple) {
+
+        if (selectMode === "displaySubset") {
+            return;
+        }else{
             if (!selected) {
                 dispatchSelectedLinks({ type: "add", id: link.id });
                 setSelected(true);
@@ -109,10 +114,12 @@ function EdgeLayout(link, strokeColor) {
         labelOffset = 20;
     }
 
+    const textPathID = uuid();
+
     if (link.type === "tokenLink") {
         return (
             <path
-                id={`edge${link.id}`}
+                id={`edge${link.id}${textPathID}`}
                 d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
                 stroke={strokeColor}
                 strokeWidth="2"
@@ -124,15 +131,30 @@ function EdgeLayout(link, strokeColor) {
         return (
             <Group>
                 <path
-                    id={`edge${link.id}`}
+                    id={`edge${link.id}${textPathID}`}
                     d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
                     stroke={strokeColor}
                     strokeWidth="2"
                     fill="none"
                 />
+                {/*<text textAnchor="middle" dy="-1.5px" x={xMid}*/}
+                {/*      y={yMid} stroke={strokeColor} fill={strokeColor} dominantBaseline="central" side="left">*/}
+                {/*    ➤*/}
+                {/*    /!*<textPath*!/*/}
+                {/*    /!*    href={`#edge${link.id}`}*!/*/}
+                {/*    /!*    startOffset={`50%`}*!/*/}
+                {/*    /!*    side="left"*!/*/}
+                {/*    /!*    stroke={strokeColor}*!/*/}
+                {/*    /!*    fill={strokeColor}*!/*/}
+                {/*    /!*    fontSize="25px"*!/*/}
+                {/*    /!*    dominantBaseline="central"*!/*/}
+                {/*    /!*>*!/*/}
+                {/*    /!*    ➤*!/*/}
+                {/*    /!*</textPath>*!/*/}
+                {/*</text>*/}
                 <text textAnchor="middle" dy="-1.5px">
                     <textPath
-                        href={`#edge${link.id}`}
+                        href={`#edge${link.id}${textPathID}`}
                         startOffset={`50%`}
                         side="left"
                         stroke={strokeColor}
