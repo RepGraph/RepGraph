@@ -33,7 +33,6 @@ public class RequestHandler {
     @GetMapping(value = "/")
     @ResponseBody
     public String Home(@RequestHeader(USER_HEADER) String id) {
-
         return id;
     }
 
@@ -53,16 +52,22 @@ public class RequestHandler {
     public HashMap<String, Object> UploadData(@RequestHeader(USER_HEADER)String userID,@RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
         System.out.println(userID);
         //This is where we would change framework model
-        if (framework.equals("1")) {
-            this.RepModel.put(userID,new DMRSModel());
-        } else if (framework.equals("2")) {
-            this.RepModel.put(userID,new EDSModel());
-        } else if (framework.equals("3")) {
-            this.RepModel.put(userID,new PTGModel());
-        } else if (framework.equals("4")) {
-            this.RepModel.put(userID,new UCCAModel());
-        } else {
-            this.RepModel.put(userID,new AMRModel());
+        switch (framework){
+            case "1":
+                this.RepModel.put(userID,new DMRSModel());
+                break;
+            case "2":
+                this.RepModel.put(userID,new EDSModel());
+                break;
+            case "3":
+                this.RepModel.put(userID,new PTGModel());
+                break;
+            case "4":
+                this.RepModel.put(userID,new UCCAModel());
+                break;
+            case "5":
+                this.RepModel.put(userID,new AMRModel());
+                break;
         }
 
         RepModel.get(userID).clearGraphs();
@@ -152,7 +157,25 @@ public class RequestHandler {
      */
     @PostMapping("/UploadSingle")
     @ResponseBody
-    public HashMap<String, String> UploadDataSingle(@RequestHeader(USER_HEADER)String userID,@RequestBody AbstractGraph data) {
+    public HashMap<String, String> UploadDataSingle(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestBody EDSGraph data) {
+        switch (framework){
+            case "1":
+                this.RepModel.put(userID,new DMRSModel());
+                break;
+            case "2":
+                this.RepModel.put(userID,new EDSModel());
+                break;
+            case "3":
+                this.RepModel.put(userID,new PTGModel());
+                break;
+            case "4":
+                this.RepModel.put(userID,new UCCAModel());
+                break;
+            case "5":
+                this.RepModel.put(userID,new AMRModel());
+                break;
+        }
+
         HashMap<String, String> returninfo = new HashMap<>();
 
         returninfo.put("input", data.getInput());
@@ -162,6 +185,10 @@ public class RequestHandler {
 
         return returninfo;
     }
+
+
+
+
 
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
@@ -194,8 +221,8 @@ public class RequestHandler {
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public HashMap<String, Object> SearchSubgraphPattern(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String[] NodeId, @RequestParam int[] EdgeIndices) {
-        return RepModel.get(userID).searchSubgraphPattern(graphID, NodeId, EdgeIndices);
+    public HashMap<String, Object> SearchSubgraphPattern(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String[] NodeID, @RequestParam int[] EdgeIndices) {
+        return RepModel.get(userID).searchSubgraphPattern(graphID, NodeID, EdgeIndices);
     }
 
     /**
@@ -214,8 +241,8 @@ public class RequestHandler {
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public HashMap<String, Object> CompareGraphs(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID1, @RequestParam String graphID2) {
-        return RepModel.get(userID).compareTwoGraphs(graphID1, graphID2);
+    public HashMap<String, Object> CompareGraphs(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID1, @RequestParam String graphID2,@RequestParam boolean strict,@RequestParam boolean noAbstract,@RequestParam boolean noSurface ) {
+        return RepModel.get(userID).compareTwoGraphs(graphID1, graphID2,strict,noAbstract,noSurface);
     }
 
     /**

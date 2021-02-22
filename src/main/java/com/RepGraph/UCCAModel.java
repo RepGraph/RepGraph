@@ -7,8 +7,10 @@ import java.util.*;
  */
 public class UCCAModel extends AbstractModel {
 
+
     public UCCAModel() {
         super();
     }
+
 
 }
