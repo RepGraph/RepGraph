@@ -32,7 +32,6 @@ const ZoomPortal = (props) => {
                     skewX: 0,
                     skewY: 0
                 }}
-                style={{ flexGrow: 1, marginBottom: "2.5vw" }}
             >
                 {(zoom) => (
                     <svg
