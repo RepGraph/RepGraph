@@ -62,7 +62,7 @@ export const layoutHierarchy = (graphData) => {
     });
 
     //Determine span lengths of each node
-    const graphNodeSpanLengths = nodesWithAnchors.nodes
+    const graphNodeSpanLengths = nodesWithAnchors
         .map((node) => node.anchors[0])
         .map((span) => span.end - span.from);
 
@@ -90,7 +90,7 @@ export const layoutHierarchy = (graphData) => {
             spanIndex++
         ) {
             if (graphNodeSpanLengths[spanIndex] === level) {
-                currentLevel.push(nodesWithAnchors.nodes[spanIndex]);
+                currentLevel.push(nodesWithAnchors[spanIndex]);
             }
         }
         nodesInLevels.push(currentLevel);
@@ -213,7 +213,6 @@ export const layoutHierarchy = (graphData) => {
         type: "node",
         group: "node",
         label: node.label,
-        span: true
     }));
 
     console.log("nodes", nodes);
@@ -320,10 +319,10 @@ function controlPoints(source, target, direction, degree) {
         y1 = (source.y + target.y) / 2;
     } else if (direction === "horizontal-left") {
         x1 = (source.x + target.x) / 2;
-        y1 = target.y + (source.x - target.x) * degree;
+        y1 = Math.min(target.y + (source.x - target.x) * degree,target.y + tokenLevelSpacing);
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
-        y1 = target.y - (source.x - target.x) * degree;
+        y1 =  y1 = Math.min(target.y - (source.x - target.x) * degree,target.y + tokenLevelSpacing);;
     } else if (direction === "custom") {
         x1 = degree;
         y1 = source.y + nodeHeight;
@@ -427,15 +426,34 @@ function edgeRulesSameRow(
     let direction = "";
     let degree = 0.25;
 
-    if (Math.abs(target.x - source.x) !== nodeWidth + intraLevelSpacing) {
+    if (Math.abs(target.x - source.x) !== intraLevelSpacing + nodeWidth) {
         //On the same level and more than 1 space apart
-        if (source.x < target.x) {
-            direction = "horizontal-right";
-        } else {
-            direction = "horizontal-left";
-        }
 
-        //Check if there is an identical edge, change their curviture
+        let found = false;
+        for (let node of finalGraphNodes) {
+            if (node.y === source.y) {
+                if (
+                    (node.x > source.x && node.x < target.x) ||
+                    (node.x < source.x && node.x > target.x)
+                ) {
+                    //There exists a node in between the target and source node
+                    //console.log(node);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (found) {
+            if (source.x < target.x) {
+                direction = "horizontal-right";
+            } else {
+                direction = "horizontal-left";
+            }
+        }
+    }
+
+    if (Math.abs(source.x - target.x)/(intraLevelSpacing+nodeWidth) > 6){
+        degree = 0.15;
     }
 
     return controlPoints(source, target, direction, degree);
