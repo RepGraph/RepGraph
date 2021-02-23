@@ -54,13 +54,17 @@ export const layoutTree = (graphData) => {
 
         topologicalStacks.set(
             nodeOuter.id,
-            topological(nodeOuter.id, visited, stack, children).length
+            topological(nodeOuter.id, visited, stack, children)
         );
     }
 
     //Find the node with the most descendents, which will dictate the number of levels needed.
-    let numLevels = Math.max(...topologicalStacks.values());
+   // let numLevels = Math.max(...topologicalStacks.values());
 
+    let numLevels = 0;
+    for (const stack of topologicalStacks.values()) {
+        numLevels = Math.max(numLevels, stack.length);
+    }
     //Group nodes together based on the number of descendents they have.
     let nodesInLevels = [];
     for (
@@ -70,8 +74,8 @@ export const layoutTree = (graphData) => {
     ) {
         let currentLevel = [];
         for (let node of graphData.nodes) {
-            //console.log("node: ",node," Length: ",topologicalStacks.get(node.id));
-            if (topologicalStacks.get(node.id) === numDescendents) {
+            //console.log("node: ",node," Length: ",topologicalStacks.get(node.id).length);
+            if (topologicalStacks.get(node.id).length === numDescendents) {
                 currentLevel.push(node);
             }
         }
@@ -80,6 +84,8 @@ export const layoutTree = (graphData) => {
 
     let xPositions = new Map();
     let lowestNode = new Map();
+
+
 
     //Populate the xPositions map with each node's xPosition and the lowestNode map with the lowest node in each column.
     for (let level of nodesInLevels) {
@@ -91,11 +97,13 @@ export const layoutTree = (graphData) => {
                 column = null;
             }
             xPositions.set(n.id, column);
-            if (!lowestNode.has(column)) {
+            if (!lowestNode.has(column) && n.anchors !== null) {
                 lowestNode.set(column, n.id);
             }
         }
     }
+
+
 
     //This decides a nodes xPosition based on its neighbours/children.
     for (let level of nodesInLevels) {
@@ -123,6 +131,7 @@ export const layoutTree = (graphData) => {
         }
     }
 
+
     for (let level = 0; level < nodesInLevels.length; level++) {
         for (let n of nodesInLevels[level]) {
             if (xPositions.get(n.id) === null) {
@@ -138,6 +147,7 @@ export const layoutTree = (graphData) => {
             }
         }
     }
+
 
     let nodesInFinalLevels = [];
     nodesInFinalLevels[0] = new Map();
@@ -155,7 +165,7 @@ export const layoutTree = (graphData) => {
                 if (
                     parent !== null &&
                     parentPos === xPositions.get(n.id) &&
-                    lowestNode.get(xPos) === parent.id
+                    lowestNode.get(parentPos) === parent.id
                 ) {
                     //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
                     if (currentLevel === 0) {
@@ -174,17 +184,19 @@ export const layoutTree = (graphData) => {
                     nodesInFinalLevels[currentLevel].set(n.id, n);
                     numNodesProcessed++;
                 }
-            } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
+            }
+            else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
                 if (
-                    topologicalStacks.get(n.id) <
-                    topologicalStacks.get(nodeXPos.get(xPositions.get(n.id)))
+                    topologicalStacks.get(n.id).length <
+                    topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length
                 ) {
                     //Check which of the overlapping nodes have more descendents
                     //Set the node with the higher descendents in the next level, and remove it from this level.
                     let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
                     nodeXPos.set(xPositions.get(n.id), n.id);
                     nodesInLevels[currentLevel + 1].push(
-                        graphData.nodes[currentOccupyingNodeID]
+                        graphData.nodes[graphData.nodes.findIndex(
+                            (node) => node.id === currentOccupyingNodeID)]
                     );
                     nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
                     nodesInFinalLevels[currentLevel].set(n.id, n);
@@ -214,7 +226,7 @@ export const layoutTree = (graphData) => {
         }
     }
 
-    let height = numLevels;
+    let height = nodesInFinalLevelsArray.length;
 
     const totalGraphHeight =
         height * nodeHeight + (height - 1) * interLevelSpacing; //number of levels times the height of each node and the spaces between them
@@ -250,9 +262,11 @@ export const layoutTree = (graphData) => {
     const finalGraphNodes = nodesInFinalLevelsArray.flat().concat(tokens);
 
     const finalGraphEdges = graphData.edges.map((edge, index) => {
+
         const sourceNodeIndex = finalGraphNodes.findIndex(
             (node) => node.id === edge.source
         );
+
         const targetNodeIndex = finalGraphNodes.findIndex(
             (node) => node.id === edge.target
         );
@@ -334,7 +348,7 @@ export const layoutTree = (graphData) => {
 
     const allEdges = finalGraphEdges.concat(tokenEdges);
 
-    return { nodes: finalGraphNodes, links: allEdges };
+    return {nodes: finalGraphNodes, links: allEdges};
 };
 
 function controlPoints(source, target, direction, degree) {
@@ -381,7 +395,7 @@ function controlPoints(source, target, direction, degree) {
         y1 = (source.y + target.y) / 2;
     }
 
-    return { x1, y1 };
+    return {x1, y1};
 }
 
 function edgeRulesSameColumn(
@@ -449,19 +463,37 @@ function edgeRulesSameColumn(
     return controlPoints(source, target, direction, degree);
 }
 
-function edgeRulesSameRow(source, target) {
+function edgeRulesSameRow(
+    edge,
+    source,
+    target,
+    finalGraphNodes,
+    finalGraphEdges
+) {
     let direction = "";
     let degree = 0.25;
 
     if (Math.abs(target.x - source.x) !== intraLevelSpacing + nodeWidth) {
         //On the same level and more than 1 space apart
-        if (source.x < target.x) {
-            direction = "horizontal-right";
-        } else {
-            direction = "horizontal-left";
-        }
 
-        //Check if there is an identical edge, change their curviture
+        let found = false;
+        for (let node of finalGraphNodes) {
+            if (node.y === source.y) {
+                if (
+                    (node.x > source.x && node.x < target.x) ||
+                    (node.x < source.x && node.x > target.x)
+                ) {
+                    //There exists a node in between the target and source node
+                    //console.log(node);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (found) {
+            direction = "horizontal-left";
+            degree = 0.18;
+        }
     }
 
     return controlPoints(source, target, direction, degree);
