@@ -1,4 +1,3 @@
-
 const nodeHeight = 40;
 const nodeWidth = 80;
 const interLevelSpacing = 80;
@@ -19,23 +18,32 @@ const topological = (nodeID, visited, stack, neighbours) => {
 };
 
 export const layoutTree = (graphData) => {
-    let directedNeighbours = new Map();
+    let children = new Map();
+    let parents = new Map();
 
-    //Assign empty neighbour arrays to each node id
+    //Assign empty arrays to the children and parent maps
     for (const node of graphData.nodes) {
-        directedNeighbours.set(node.id, []);
+        children.set(node.id, []);
+        parents.set(node.id, []);
     }
 
     //Fill in directed neighbour node id's for each node in corresponding arrays
     for (const e of graphData.edges) {
-        let temp = directedNeighbours.get(e.source);
+        let temp = children.get(e.source);
         temp.push(e.target);
-        directedNeighbours.set(e.source, temp);
+        children.set(e.source, temp);
+
+        temp = parents.get(e.target);
+        graphData.nodes.findIndex((node) => node.id === e.source);
+        temp.push(
+            graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.source)]
+        );
+        parents.set(e.target, temp);
     }
 
     let topologicalStacks = new Map(); //Will hold each node's descendent nodes
 
-    //Fill the topological stacks map with each node's descendents.
+    //Fill the topological stacks map with the number descendants each node has.
     for (const nodeOuter of graphData.nodes) {
         let stack = [];
         let visited = new Map();
@@ -46,15 +54,12 @@ export const layoutTree = (graphData) => {
 
         topologicalStacks.set(
             nodeOuter.id,
-            topological(nodeOuter.id, visited, stack, directedNeighbours)
+            topological(nodeOuter.id, visited, stack, children).length
         );
     }
 
     //Find the node with the most descendents, which will dictate the number of levels needed.
-    let numLevels = 0;
-    for (const stack of topologicalStacks.values()) {
-        numLevels = Math.max(numLevels, stack.length);
-    }
+    let numLevels = Math.max(...topologicalStacks.values());
 
     //Group nodes together based on the number of descendents they have.
     let nodesInLevels = [];
@@ -65,8 +70,8 @@ export const layoutTree = (graphData) => {
     ) {
         let currentLevel = [];
         for (let node of graphData.nodes) {
-            //console.log("node: ",node," Length: ",topologicalStacks.get(node.id).length);
-            if (topologicalStacks.get(node.id).length === numDescendents) {
+            //console.log("node: ",node," Length: ",topologicalStacks.get(node.id));
+            if (topologicalStacks.get(node.id) === numDescendents) {
                 currentLevel.push(node);
             }
         }
@@ -92,14 +97,14 @@ export const layoutTree = (graphData) => {
         for (let n of level) {
             if (lowestNode.get(xPositions.get(n.id)) !== n.id) {
                 //If the current node in the current level isn't the lowest node in its column
-                if (directedNeighbours.get(n.id).length === 1) {
+                if (children.get(n.id).length === 1) {
                     //If the current node has a single neighbour
-                    xPositions.set(n.id, xPositions.get(directedNeighbours.get(n.id)[0])); //Set the current node's xPosition to its neighbour's
+                    xPositions.set(n.id, xPositions.get(children.get(n.id)[0])); //Set the current node's xPosition to its neighbour's
                 } else {
                     let childrenInSpan = [];
 
                     //Finds the current node's children which are in it's span.
-                    for (let neighbour of directedNeighbours.get(n.id)) {
+                    for (let neighbour of children.get(n.id)) {
                         if (
                             xPositions.get(neighbour) >= n.anchors[0].from &&
                             xPositions.get(neighbour) <= n.anchors[0].end
@@ -138,8 +143,8 @@ export const layoutTree = (graphData) => {
             //If this xPosition is already taken in this level
             if (nodeXPos.has(xPositions.get(n.id))) {
                 if (
-                    topologicalStacks.get(n.id).length <
-                    topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length
+                    topologicalStacks.get(n.id) <
+                    topologicalStacks.get(nodeXPos.get(xPositions.get(n.id)))
                 ) {
                     //Check which of the overlapping nodes have more descendents
                     //Set the node with the higher descendents in the next level, and remove it from this level.
