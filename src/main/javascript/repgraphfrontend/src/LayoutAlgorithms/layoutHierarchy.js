@@ -16,7 +16,7 @@ export const layoutHierarchy = (graphData) => {
         parents.set(node.id, []);
     }
 
-    //Fill in directed neighbour node id's for each node in corresponding arrays
+    //Fill in children node id's and parent node ids for each node.
     for (const e of graphData.edges) {
         let temp = children.get(e.source);
         graphData.nodes.findIndex((node) => node.id === e.target);
@@ -33,7 +33,10 @@ export const layoutHierarchy = (graphData) => {
         parents.set(e.target, temp);
     }
 
-    const nodesWithAnchors = graphData.nodes.map((node, i) => {
+    let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
+
+    //Add anchors to nodes without anchors. Fake anchors are added in order to run the layout algorithm, and are decided using either a node's children or parent node's anchors.
+    const nodesWithAnchorsAdded = graphData.nodes.map((node, i) => {
         if (node.anchors === null) {
             let anchorFrom, anchorEnd;
             if (children.get(node.id).length !== 0) {
@@ -51,6 +54,7 @@ export const layoutHierarchy = (graphData) => {
                 from: anchorFrom,
                 end: anchorEnd
             });
+            nodesWithoutAnchors.push(node.id);
             return {
                 ...node,
                 anchors: anchorArray,
@@ -60,9 +64,8 @@ export const layoutHierarchy = (graphData) => {
             return { ...node, span: true };
         }
     });
-
     //Determine span lengths of each node
-    const graphNodeSpanLengths = nodesWithAnchors
+    const graphNodeSpanLengths = nodesWithAnchorsAdded
         .map((node) => node.anchors[0])
         .map((span) => span.end - span.from);
 
@@ -90,7 +93,7 @@ export const layoutHierarchy = (graphData) => {
             spanIndex++
         ) {
             if (graphNodeSpanLengths[spanIndex] === level) {
-                currentLevel.push(nodesWithAnchors[spanIndex]);
+                currentLevel.push(nodesWithAnchorsAdded[spanIndex]);
             }
         }
         nodesInLevels.push(currentLevel);
@@ -213,9 +216,8 @@ export const layoutHierarchy = (graphData) => {
         type: "node",
         group: "node",
         label: node.label,
+        anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
     }));
-
-    //console.log("nodes", nodes);
 
     const tokens = graphData.tokens.map((token) => ({
         ...token,
