@@ -81,7 +81,7 @@ export default function SentenceList(props) {
 
                 dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: jsonResult}});
                 dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
-                dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: graphData.id}});
+                dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: jsonResult.id}});
                 dispatch({type: "SET_TEST_RESULTS", payload: {testResults: null}});
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
             })

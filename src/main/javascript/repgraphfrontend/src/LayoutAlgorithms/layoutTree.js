@@ -250,10 +250,11 @@ export const layoutTree = (graphData) => {
             id: index,
             source: finalGraphNodes[sourceNodeIndex],
             target: finalGraphNodes[targetNodeIndex],
-            type: "link",
             label: edge.label,
             x1: cp.x1,
-            y1: cp.y1
+            y1: cp.y1,
+            type: "link",
+            group: "link"
         };
     });
 
