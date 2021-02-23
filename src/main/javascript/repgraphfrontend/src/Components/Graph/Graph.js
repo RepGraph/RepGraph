@@ -138,14 +138,14 @@ export const Graph = ({
             hoverColour: "rgba(248, 84, 84, 1)"
         },
         compareStyles: {
-            linkColourDifferent: "rgba(225, 9, 9, 1)",
-            linkColourSame: "rgba(67, 220, 24, 1)",
-            nodeColourDifferent: "rgba(225, 9, 9, 1)",
-            nodeColourSame: "rgba(67, 220, 24, 1)",
-            hoverNodeColourSame: "rgba(125, 237, 94, 1)",
-            hoverNodeColourDifferent: "rgba(248, 84, 84, 1)",
-            hoverLinkColourSame: "rgba(125, 237, 94, 1)",
-            hoverLinkColourDifferent: "rgba(248, 84, 84, 1)"
+            linkColourDissimilar: "rgba(225, 9, 9, 1)",
+            linkColourSimilar: "rgba(67, 220, 24, 1)",
+            nodeColourDissimilar: "rgba(225, 9, 9, 1)",
+            nodeColourSimilar: "rgba(67, 220, 24, 1)",
+            hoverNodeColourSimilar: "rgba(125, 237, 94, 1)",
+            hoverNodeColourDissimilar: "rgba(248, 84, 84, 1)",
+            hoverLinkColourSimilar: "rgba(125, 237, 94, 1)",
+            hoverLinkColourDissimilar: "rgba(248, 84, 84, 1)"
         },
         planarStyles: {
             linkColourCross: "rgba(225, 9, 9, 1)",
@@ -302,7 +302,7 @@ export const Graph = ({
                                 <div
                                     style={{
                                         color:
-                                            tooltipData.group === "node"
+                                            tooltipData.type === "node"
                                                 ? graphStyles.nodeStyles.nodeColour
                                                 : graphStyles.tokenStyles.tokenColour
                                     }}
@@ -327,7 +327,7 @@ export const Graph = ({
                                                 className="extraInfo"
                                                 style={{
                                                     color:
-                                                        tooltipData.group === "node"
+                                                        tooltipData.type === "node"
                                                             ? graphStyles.nodeStyles.nodeColour
                                                             : graphStyles.tokenStyles.tokenColour,
                                                     marginTop: "0.4rem",

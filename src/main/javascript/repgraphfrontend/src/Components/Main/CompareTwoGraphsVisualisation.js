@@ -6,7 +6,9 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {AppContext} from "../../Store/AppContextProvider";
 import {cloneDeep} from "lodash";
-import Graph from "react-graph-vis";
+
+import {Graph} from "../Graph/Graph";
+
 import layoutGraph from "../App";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -27,6 +29,10 @@ import Divider from "@material-ui/core/Divider";
 import {Virtuoso} from "react-virtuoso";
 import {Link, useHistory} from "react-router-dom";
 import TextField from "@material-ui/core/TextField/TextField";
+import {determineAdjacentLinks, layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
+import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
+import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+import {ParentSize} from "@visx/responsive";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,44 +49,53 @@ const useStyles = makeStyles((theme) => ({
     body: {
         height: "100%",
         display: "block"
+    },
+    graphDiv: {
+        height: "100%",
+        //border: "1px solid red",
+        flex: "1",
+        width: "100%"
     }
 }));
 
-//The events object is how you enable the vis.js events - look at vis.js docs
-const events = {
-    select: function (event) {
-        let {nodes, edges} = event;
-        console.log(nodes, edges); //logs the nodes and edges that were selected on the graph to console
-        /*dispatch({
-          type: "SET_SELECT_NODE_EDGE",
-          payload: { selectedNodeAndEdges: { nodes, edges } }
-        });*/
-    }
-};
+// function highlightCompare(standardVisualisation, similarNodes, similarEdges) {
+//     let currentStandardVisualisation = cloneDeep(standardVisualisation);
+//
+//     let newNodes = currentStandardVisualisation.nodes.map((node, index) => ({
+//         ...node,
+//         group: similarNodes.includes(node.id) ? "similarNode" :
+//             node.group === "token" ? "token" :
+//                 node.group === "text" ? "text" : node.group === "top" ? "top" : "differentNode"
+//
+//     }));
+//     let newEdges = currentStandardVisualisation.edges.map((edge, index) => ({
+//         ...edge,
+//         color: edge.group === "tokenEdge" ? "rgba(156, 154, 154, 1)" : similarEdges.includes(edge.id)
+//             ? "rgba(0,153,0,0.7)"
+//             : "rgba(245, 0, 87, 0.7)"
+//     }));
+//
+//     return { ...currentStandardVisualisation, nodes: newNodes, edges: newEdges };
+// }
 
-function highlightCompare(standardVisualisation, similarNodes, similarEdges) {
+const updateCompareGroups = (standardVisualisation, similarNodes, similarEdges) => {
     let currentStandardVisualisation = cloneDeep(standardVisualisation);
 
-    let newNodes = currentStandardVisualisation.nodes.map((node, index) => ({
+    let newNodes = currentStandardVisualisation.nodes.map(node =>({
         ...node,
-        group: similarNodes.includes(node.id) ? "similarNode" :
-            node.group === "token" ? "token" :
-                node.group === "text" ? "text" : node.group === "top" ? "top" : "differentNode"
+        group: similarNodes.includes(node.id) ? "similar" : node.type === "node" ? "dissimilar" : node.group
+    }))
 
-    }));
-    let newEdges = currentStandardVisualisation.edges.map((edge, index) => ({
-        ...edge,
-        color: edge.group === "tokenEdge" ? "rgba(156, 154, 154, 1)" : similarEdges.includes(edge.id)
-            ? "rgba(0,153,0,0.7)"
-            : "rgba(245, 0, 87, 0.7)"
-    }));
+    let newLinks = currentStandardVisualisation.links.map(link =>({
+        ...link,
+        group: similarEdges.includes(link.id) ? "similar" : link.type === "link" ? "dissimilar" : link.group
+    }))
 
-    return { ...currentStandardVisualisation, nodes: newNodes, edges: newEdges };
+    return { ...currentStandardVisualisation, nodes: newNodes, links: newLinks };
 }
 
 function CompareTwoGraphsVisualisation(props) {
     const classes = useStyles();
-    const theme = useTheme();
     const {state, dispatch} = useContext(AppContext);
     const history = useHistory();
 
@@ -96,6 +111,23 @@ function CompareTwoGraphsVisualisation(props) {
     const [open, setOpen] = React.useState(false);
     const [selectSide, setSelectSide] = React.useState(null);
 
+    //Determine graphFormatCode
+    let graphFormatCode = null;
+    switch (state.visualisationFormat) {
+        case "1":
+            graphFormatCode = "hierarchicalCompare";
+            break;
+        case "2":
+            graphFormatCode = "treeCompare";
+            break;
+        case "3":
+            graphFormatCode = "flatCompare";
+            break;
+        default:
+            graphFormatCode = "hierarchicalCompare";
+            break;
+    }
+
     function handleSelectSide(side) {
         //Need to request visualisation from backend and store result
         setSelectSide(side);
@@ -108,7 +140,7 @@ function CompareTwoGraphsVisualisation(props) {
 
     function handleCompareClick(){
 
-        var myHeaders = new Headers();
+        let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
 
         let requestOptions = {
@@ -117,7 +149,7 @@ function CompareTwoGraphsVisualisation(props) {
             redirect: 'follow'
         };
 
-        fetch(state.APIendpoint +"/CompareGraphs?graphID1="+sentence1+"&graphID2="+sentence2, requestOptions)
+        fetch(state.APIendpoint +"/CompareGraphs?graphID1="+sentence1+"&graphID2="+sentence2+"&strict=false&noAbstract=false&noSurface=false", requestOptions)
             .then(response => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -128,8 +160,11 @@ function CompareTwoGraphsVisualisation(props) {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //debugging
 
-                setCompareVis1(highlightCompare(compareVis1, jsonResult.SimilarNodes1, jsonResult.SimilarEdges1))
-                setCompareVis2(highlightCompare(compareVis2, jsonResult.SimilarNodes2, jsonResult.SimilarEdges2))
+                console.log("updateCompareGroups(compareVis1, jsonResult.SimilarNodes1, jsonResult.SimilarEdges1)",updateCompareGroups(compareVis1, jsonResult.SimilarNodes1, jsonResult.SimilarEdges1));
+                console.log("updateCompareGroups(compareVis2, jsonResult.SimilarNodes2, jsonResult.SimilarEdges2)",updateCompareGroups(compareVis2, jsonResult.SimilarNodes2, jsonResult.SimilarEdges2));
+                setCompareVis1(updateCompareGroups(compareVis1, jsonResult.SimilarNodes1, jsonResult.SimilarEdges1));
+                setCompareVis2(updateCompareGroups(compareVis2, jsonResult.SimilarNodes2, jsonResult.SimilarEdges2));
+
             })
             .catch(error => {
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
@@ -151,7 +186,7 @@ function CompareTwoGraphsVisualisation(props) {
 
             console.log("requestSentenceFromBackend: ", sentenceId);
 
-            var myHeaders = new Headers();
+            let myHeaders = new Headers();
             myHeaders.append("X-USER", state.userID);
 
             let requestOptions = {
@@ -160,10 +195,9 @@ function CompareTwoGraphsVisualisation(props) {
                 redirect: 'follow'
             };
 
-            //dispatch({type: "SET_LOADING", payload: {isLoading: true}});
-            //state.APIendpoint+"/DisplayPlanarGraph?graphID=20001001
+            dispatch({type: "SET_LOADING", payload: {isLoading: true}});
 
-            fetch(state.APIendpoint + "/Visualise?graphID=" + sentenceId + "&format="+state.visualisationFormat, requestOptions)
+            fetch(state.APIendpoint + "/GetGraph?graphID=" + sentenceId, requestOptions)
                 .then((response) => {
                     if (!response.ok) {
                         throw "Response not OK";
@@ -173,14 +207,30 @@ function CompareTwoGraphsVisualisation(props) {
                 .then((result) => {
                     const jsonResult = JSON.parse(result);
                     console.log(jsonResult);
-                    //console.log(jsonResult);
-                    //console.log(jsonResult.response);
-                    //const formattedGraph = layoutGraph(jsonResult);
-                    //dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+
+                    dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+
+                    let graphData = null;
+
+                    switch (state.visualisationFormat) {
+                        case "1":
+                            graphData = layoutHierarchy(jsonResult);
+                            break;
+                        case "2":
+                            graphData = layoutTree(jsonResult);
+                            break;
+                        case "3":
+                            graphData = layoutFlat(jsonResult);
+                            break;
+                        default:
+                            graphData = layoutHierarchy(jsonResult);
+                            break;
+                    }
+
                     if (selectSide === 1) {
-                        setCompareVis1(jsonResult)
+                        setCompareVis1(graphData)
                     } else {
-                        setCompareVis2(jsonResult)
+                        setCompareVis2(graphData)
                     }
                 })
                 .catch((error) => {
@@ -325,21 +375,20 @@ function CompareTwoGraphsVisualisation(props) {
                     {
                         compareVis1 === null ? <div>Please select a sentence</div> :
 
-                            <Graph
-                                graph={compareVis1} //The visualisation data for the current graph
-                                options={{
-                                    ...state.visualisationOptions,
-                                    edges: {
-                                        ...state.visualisationOptions.edges,
-                                        color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
-                                    }
-                                }} //options from global state
-                                events={events} //events object from above
-                                style={{width: "100%", height: "100%"}}
-                                getNetwork={(network) => {
-                                    //  if you want access to vis.js network api you can set the state in a parent component using this property
-                                }}
-                            />}
+                            <div className={classes.graphDiv}>
+                                <ParentSize>
+                                    {parent => (
+                                        <Graph
+                                            width={parent.width}
+                                            height={parent.height}
+                                            graph={compareVis1}
+                                            adjacentLinks={determineAdjacentLinks(compareVis1)}
+                                            graphFormatCode={graphFormatCode}
+                                        />
+                                    )}
+                                </ParentSize>
+                            </div>
+                    }
                 </Grid>
             </Grid>
             <Grid container item xs={6} className={classes.body} spacing={1}>
@@ -372,21 +421,20 @@ function CompareTwoGraphsVisualisation(props) {
                     {
                         compareVis2 === null ? <div>Please select a sentence</div> :
 
-                            <Graph
-                                graph={compareVis2} //The visualisation data for the current graph
-                                options={{
-                                    ...state.visualisationOptions,
-                                    edges: {
-                                        ...state.visualisationOptions.edges,
-                                        color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
-                                    }
-                                }} //options from global state
-                                events={events} //events object from above
-                                style={{width: "100%", height: "100%"}}
-                                getNetwork={(network) => {
-                                    //  if you want access to vis.js network api you can set the state in a parent component using this property
-                                }}
-                            />}
+                            <div className={classes.graphDiv}>
+                                <ParentSize>
+                                    {parent => (
+                                        <Graph
+                                            width={parent.width}
+                                            height={parent.height}
+                                            graph={compareVis2}
+                                            adjacentLinks={determineAdjacentLinks(compareVis2)}
+                                            graphFormatCode={graphFormatCode}
+                                        />
+                                    )}
+                                </ParentSize>
+                            </div>
+                    }
                 </Grid>
             </Grid>
             <Grid item>

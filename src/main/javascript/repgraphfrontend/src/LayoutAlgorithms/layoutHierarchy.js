@@ -27,7 +27,7 @@ export const layoutHierarchy = (graphData) => {
             uniqueSpanLengths.push(item);
         }
     }
-    console.log("uniqueSpanLengths", uniqueSpanLengths);
+    //console.log("uniqueSpanLengths", uniqueSpanLengths);
     uniqueSpanLengths.sort((a, b) => a - b); //sort unique spans ascending
 
     //Sort the nodes into each level based on their spans
@@ -77,39 +77,39 @@ export const layoutHierarchy = (graphData) => {
         nodesInLevels[level] = newLevelOfGroups;
     }
 
-    console.log("nodesInLevels", nodesInLevels);
+    //console.log("nodesInLevels", nodesInLevels);
 
     //LevelTopology size mirrors the number of tokens there are
     const levelTopology = new Array(graphData.tokens.length);
     levelTopology.fill(0);
 
-    console.log("levelTopology filled:", levelTopology);
+    //console.log("levelTopology filled:", levelTopology);
 
     const minTokenIndex = Math.min(
         ...graphData.tokens.map((token) => token.index)
     );
 
-    console.log("minTokenIndex", minTokenIndex);
+    //console.log("minTokenIndex", minTokenIndex);
 
     const newNodesInLevels = [];
     for (const level of nodesInLevels) {
         let newLevel = [];
-        console.log("level", level);
+        //console.log("level", level);
         for (const uniqueSpanArr of level) {
-            console.log("uniqueSpanArr", uniqueSpanArr);
+            //console.log("uniqueSpanArr", uniqueSpanArr);
             const newUniqueSpanArr = uniqueSpanArr.map((node, i) => {
-                console.log(
-                    "slice",
-                    "from",
-                    node.anchors[0].from - minTokenIndex,
-                    "to",
-                    node.anchors[0].end - minTokenIndex + 1,
-                    "...",
-                    ...levelTopology.slice(
-                        node.anchors[0].from - minTokenIndex,
-                        node.anchors[0].end - minTokenIndex + 1
-                    )
-                );
+                // console.log(
+                //     "slice",
+                //     "from",
+                //     node.anchors[0].from - minTokenIndex,
+                //     "to",
+                //     node.anchors[0].end - minTokenIndex + 1,
+                //     "...",
+                //     ...levelTopology.slice(
+                //         node.anchors[0].from - minTokenIndex,
+                //         node.anchors[0].end - minTokenIndex + 1
+                //     )
+                // );
 
                 return {
                     ...node,
@@ -142,19 +142,19 @@ export const layoutHierarchy = (graphData) => {
             }
         }
         newNodesInLevels.push(newLevel);
-        console.log("levelTopology:", levelTopology);
+        //console.log("levelTopology:", levelTopology);
     }
 
-    console.log("levelTopology", levelTopology);
+    //console.log("levelTopology", levelTopology);
 
     const levelTopologyMax = Math.max(...levelTopology);
-    console.log("levelTopologyMax", levelTopology);
+    //console.log("levelTopologyMax", levelTopology);
     const nodeSectionHeight =
         levelTopologyMax * nodeHeight + (levelTopologyMax - 1) * interLevelSpacing;
-    console.log("nodeSectionHeight", nodeSectionHeight);
+    //console.log("nodeSectionHeight", nodeSectionHeight);
 
     //console.log("levelTopology max", Math.max(...levelTopology));
-    console.log("newNodesInLevels", newNodesInLevels);
+    //console.log("newNodesInLevels", newNodesInLevels);
 
     const nodes = newNodesInLevels.flat(2).map((node) => ({
         ...node,
@@ -168,7 +168,7 @@ export const layoutHierarchy = (graphData) => {
         span: true
     }));
 
-    console.log("nodes", nodes);
+    //console.log("nodes", nodes);
 
     const tokens = graphData.tokens.map((token) => ({
         ...token,
@@ -179,7 +179,7 @@ export const layoutHierarchy = (graphData) => {
         group: "token"
     }));
 
-    console.log("tokens", tokens);
+    //console.log("tokens", tokens);
 
     //console.log(newNodesInLevels.flat(2));
 
@@ -232,7 +232,8 @@ export const layoutHierarchy = (graphData) => {
             label: edge.label,
             x1: cp.x1,
             y1: cp.y1,
-            type: "link"
+            type: "link",
+            group: "link"
         };
     });
 
@@ -355,6 +356,7 @@ export const layoutHierarchy = (graphData) => {
     //   }
     // }
 
+    console.log("layoutHierarchy return:", { nodes: finalGraphNodes, links: finalGraphEdges });
     return { nodes: finalGraphNodes, links: finalGraphEdges };
 };
 
