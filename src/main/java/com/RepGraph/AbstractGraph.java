@@ -832,9 +832,20 @@ class AbstractGraph {
     public boolean isPlanar() {
 
         ArrayList<Node> ordered = new ArrayList<>();
+        HashMap<String, ArrayList<String>> dummyNodes = new HashMap<>();
         //add the Node objects to a list
         for (Node n : nodes.values()) {
             ordered.add(new Node(n));
+            if (n.getAnchors().size() > 1){
+                dummyNodes.put(n.getId(), new ArrayList<String>());
+                for (int i = 1; i < n.getAnchors().size();i++) {
+                    ArrayList<Anchors> anchs = new ArrayList<>();
+                    anchs.add(n.getAnchors().get(i));
+                    String uuid = UUID.randomUUID().toString();
+                    ordered.add(new Node(uuid, n.getLabel(), anchs));
+                    dummyNodes.get(n.getId()).add(uuid);
+                }
+            }
         }
 
         //order the nodes according to the beginning of their span
@@ -844,7 +855,15 @@ class AbstractGraph {
                 if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
                     return -1;
                 } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
-                    return 0;
+                    if (o1.getAnchors().get(0).getEnd() < o2.getAnchors().get(0).getEnd()){
+                        return -1;
+                    }
+                    else if (o1.getAnchors().get(0).getEnd() == o2.getAnchors().get(0).getEnd()){
+                        return 0;
+                    }
+                    else{
+                        return 1;
+                    }
                 }
                 return 1;
             }
@@ -852,10 +871,14 @@ class AbstractGraph {
 
         HashMap<String, String> nodeToToken = new HashMap<>();
 
-        //Map Node ids to their Token span beginning
-        for (int i = 0; i < ordered.size(); i++) {
-            nodeToToken.put(ordered.get(i).getId(), ordered.get(i).getAnchors().get(0).getFrom() + "");
+        int index = 0;
+        for (int i = 0; i < ordered.size()-1; i++) {
+            nodeToToken.put(ordered.get(i).getId(), index+"");
+            if (ordered.get(i).getAnchors().get(0).getEnd()!=ordered.get(i+1).getAnchors().get(0).getEnd()){
+                index++;
+            }
         }
+        nodeToToken.put(ordered.get(ordered.size()-1).getId(), index+"");
 
         ArrayList<Edge> updated = new ArrayList<>();
 
@@ -869,24 +892,42 @@ class AbstractGraph {
 
             Edge newEdge = new Edge();
 
-            for (int i = 0; i < ordered.size(); i++) {
-                Node n = ordered.get(i);
-                if (n.getId().equals(source)) {
-                    newEdge.setSource(nodeToToken.get(n.getId()));
-                }
-                if (n.getId().equals(target)) {
-                    newEdge.setTarget(nodeToToken.get(n.getId()));
-                }
-            }
+            newEdge.setSource((source));
+            newEdge.setTarget((target));
+
             updated.add(newEdge);
 
+            for (String sourceID : dummyNodes.get(source)){
+                newEdge = new Edge();
+                newEdge.setSource((sourceID));
+                newEdge.setTarget((target));
+                updated.add(newEdge);
+            }
+
+            for (String targetID : dummyNodes.get(target)){
+                newEdge = new Edge();
+                newEdge.setSource((source));
+                newEdge.setTarget((targetID));
+                updated.add(newEdge);
+            }
+
+            for (String sourceID : dummyNodes.get(source)){
+                for (String targetID : dummyNodes.get(target)){
+                    newEdge = new Edge();
+                    newEdge.setSource((sourceID));
+                    newEdge.setTarget((targetID));
+                    updated.add(newEdge);
+                }
+            }
+
         }
+
+
 
         HashMap<String, Node> newNodes = new HashMap<>();
 
         if (this.planarForm == null) {
             for (Node n : ordered) {
-                //n.setId(nodeToToken.get(n.getId()));
                 newNodes.put(n.getId(), n);
             }
 
@@ -898,7 +939,7 @@ class AbstractGraph {
 
             for (Edge other : updated) {
 
-                if (Math.min(Integer.parseInt(e.getSource()), Integer.parseInt(e.getTarget())) < Math.min(Integer.parseInt(other.getSource()), Integer.parseInt(other.getTarget())) && Math.min(Integer.parseInt(other.getSource()), Integer.parseInt(other.getTarget())) < Math.max(Integer.parseInt(e.getSource()), Integer.parseInt(e.getTarget())) && Math.max(Integer.parseInt(e.getSource()), Integer.parseInt(e.getTarget())) < Math.max(Integer.parseInt(other.getSource()), Integer.parseInt(other.getTarget()))) {
+                if (Math.min(Integer.parseInt(nodeToToken.get(e.getSource())), Integer.parseInt(nodeToToken.get(e.getTarget()))) < Math.min(Integer.parseInt(nodeToToken.get(other.getSource())), Integer.parseInt(nodeToToken.get(other.getTarget()))) && Math.min(Integer.parseInt(nodeToToken.get(other.getSource())), Integer.parseInt(nodeToToken.get(other.getTarget()))) < Math.max(Integer.parseInt(nodeToToken.get(e.getSource())), Integer.parseInt(nodeToToken.get(e.getTarget()))) && Math.max(Integer.parseInt(nodeToToken.get(e.getSource())), Integer.parseInt(nodeToToken.get(e.getTarget()))) < Math.max(Integer.parseInt(nodeToToken.get(other.getSource())), Integer.parseInt(nodeToToken.get(other.getTarget())))) {
                     return false;
                 }
 
