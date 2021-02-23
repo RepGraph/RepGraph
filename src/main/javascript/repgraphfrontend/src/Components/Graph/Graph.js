@@ -23,17 +23,25 @@ export const Graph = ({
                 switch (events.select.selectMode) {
                     case "subset":
                         if (state.length !== 0) {
-                            events.select.selectedNodesStateSetter(state);
+                            if (typeof events.select.selectedNodesStateSetter == 'function') {
+                                events.select.selectedNodesStateSetter(state);
+                            }
                             return state;
                         } else {
-                            events.select.selectedNodesStateSetter([action.id]);
+                            if (typeof events.select.selectedNodesStateSetter == 'function') {
+                                events.select.selectedNodesStateSetter([action.id]);
+                            }
                             return [action.id];
                         }
                     case "subgraph":
-                        events.select.selectedNodesStateSetter([...state, action.id]);
+                        if (typeof events.select.selectedNodesStateSetter == 'function') {
+                            events.select.selectedNodesStateSetter([...state, action.id]);
+                        }
                         return [...state, action.id];
                     default:
-                        events.select.selectedNodesStateSetter([...state, action.id]);
+                        if (typeof events.select.selectedNodesStateSetter == 'function') {
+                            events.select.selectedNodesStateSetter([...state, action.id]);
+                        }
                         return [...state, action.id];
                 }
 
@@ -41,17 +49,25 @@ export const Graph = ({
                 switch (events.select.selectMode) {
                     case "subset":
                         if (state.length === 1 && state[0] === action.id) {
-                            events.select.selectedNodesStateSetter([]);
+                            if (typeof events.select.selectedNodesStateSetter == 'function') {
+                                events.select.selectedNodesStateSetter([]);
+                            }
                             return [];
                         } else {
-                            events.select.selectedNodesStateSetter(state);
+                            if (typeof events.select.selectedNodesStateSetter == 'function') {
+                                events.select.selectedNodesStateSetter(state);
+                            }
                             return state;
                         }
                     case "subgraph":
-                        events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        if (typeof events.select.selectedNodesStateSetter == 'function') {
+                            events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        }
                         return state.filter((item) => item !== action.id);
                     default:
-                        events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        if (typeof events.select.selectedNodesStateSetter == 'function') {
+                            events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        }
                         return state.filter((item) => item !== action.id);
                 }
 
@@ -65,25 +81,37 @@ export const Graph = ({
             case "add":
                 switch (events.select.selectMode) {
                     case "subset":
-                        events.select.selectedLinksStateSetter([]);
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter([]);
+                        }
                         return [];
                     case "subgraph":
-                        events.select.selectedLinksStateSetter([...state, action.id]);
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter([...state, action.id]);
+                        }
                         return [...state, action.id];
                     default:
-                        events.select.selectedLinksStateSetter([...state, action.id]);
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter([...state, action.id]);
+                        }
                         return [...state, action.id];
                 }
             case "remove":
                 switch (events.select.selectMode) {
                     case "subset":
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
                         events.select.selectedLinksStateSetter([]);
+                        }
                         return [];
                     case "subgraph":
-                        events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        }
                         return state.filter((item) => item !== action.id);
                     default:
-                        events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        }
                         return state.filter((item) => item !== action.id);
                 }
             default:
@@ -132,6 +160,24 @@ export const Graph = ({
                 selectedColour: "#3de68c"
             }
         },
+        flatStyles: {
+            nodeStyles: {
+                nodeColour: "rgba(0,172,237,1)",
+                hoverColour: "rgba(82, 208, 255,1)",
+                spanColour: "rgba(0,0,0,0.3)",
+                selectedColour: "#3de68c"
+            },
+            linkStyles: {
+                linkColour: "rgba(0,0,0,1)",
+                hoverColour: "rgba(0,0,0,0.5)",
+                selectedColour: "#3de68c"
+            },
+            tokenStyles: {
+                tokenColour: "rgba(255, 220, 106,1)",
+                hoverColour: "rgba(255, 232, 156,1)",
+                selectedColour: "#3de68c"
+            }
+        },
         longestPathStyles: {
             linkColour: "rgba(225, 9, 9, 1)",
             nodeColour: "rgba(225, 9, 9, 1)",
@@ -163,6 +209,9 @@ export const Graph = ({
         case "tree":
             graphStyles = { ...styles.treeStyles };
             break;
+        case "flat":
+            graphStyles = { ...styles.flatStyles };
+            break;
         case "hierarchicalLongestPath":
             graphStyles = {
                 ...styles.hierarchicalStyles,
@@ -175,6 +224,12 @@ export const Graph = ({
                 longestPathStyles: styles.longestPathStyles
             };
             break;
+        case "flatLongestPath":
+            graphStyles = {
+                ...styles.flatStyles,
+                longestPathStyles: styles.longestPathStyles
+            };
+            break;
         case "hierarchicalCompare":
             graphStyles = {
                 ...styles.hierarchicalStyles,
@@ -184,6 +239,12 @@ export const Graph = ({
         case "treeCompare":
             graphStyles = {
                 ...styles.treeStyles,
+                compareStyles: styles.compareStyles
+            };
+            break;
+        case "flatCompare":
+            graphStyles = {
+                ...styles.flatStyles,
                 compareStyles: styles.compareStyles
             };
             break;
