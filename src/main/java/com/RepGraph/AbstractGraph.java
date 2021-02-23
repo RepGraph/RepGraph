@@ -872,12 +872,13 @@ class AbstractGraph {
         HashMap<String, String> nodeToToken = new HashMap<>();
 
         int index = 0;
-        for (int i = 0; i < ordered.size(); i++) {
+        for (int i = 0; i < ordered.size()-1; i++) {
             nodeToToken.put(ordered.get(i).getId(), index+"");
             if (ordered.get(i).getAnchors().get(0).getEnd()!=ordered.get(i+1).getAnchors().get(0).getEnd()){
                 index++;
             }
         }
+        nodeToToken.put(ordered.get(ordered.size()-1).getId(), index+"");
 
         ArrayList<Edge> updated = new ArrayList<>();
 
