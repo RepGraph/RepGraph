@@ -72,12 +72,30 @@ function edgeRulesSameRow(source, target) {
     let direction = "";
     let degree = 0.25;
 
-    if (Math.abs(source.x - target.x) !== intraLevelSpacing + nodeWidth) {
+    if (Math.abs(target.x - source.x) !== intraLevelSpacing + nodeWidth) {
         //On the same level and more than 1 space apart
-        direction = "horizontal-left";
+
+        let found = false;
+        for (let node of finalGraphNodes) {
+            if (node.y === source.y && ((node.x > source.x && node.x < target.x) ||
+                (node.x < source.x && node.x > target.x))) {
+                //There exists a node in between the target and source node
+                //console.log(node);
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+                direction = "horizontal-right";
+                let distance = Math.abs(source.x - target.x)/(intraLevelSpacing+nodeWidth);
+            if (distance > 10){
+                degree = 0.15;
+            }
+        }
+
+
     }
 
-    //Check if there is an identical edge, change their curviture
 
     return controlPoints(source, target, direction, degree);
 }
