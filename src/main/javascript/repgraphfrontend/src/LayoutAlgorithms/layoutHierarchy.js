@@ -835,7 +835,7 @@ function edgeRulesSameRow(
             direction = "horizontal-left";
         }
 
-        //Check if there is an identical edge, change their curviture
+        //Check if there is an identical edge, change their curvature
     }
 
     return controlPoints(source, target, direction, degree);
