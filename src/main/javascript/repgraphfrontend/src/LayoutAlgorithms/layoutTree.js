@@ -201,16 +201,20 @@ export const layoutTree = (graphData) => {
         currentLevel++;
     }
 
-    let height = numLevels;
-
     //convert from array of maps to array of arrays
     let nodesInFinalLevelsArray = [nodesInFinalLevels.length];
-    for (let level = 0; level < nodesInFinalLevels.length; level++) {
-        nodesInFinalLevelsArray[level] = [];
-        for (let n of nodesInFinalLevels[level].values()) {
-            nodesInFinalLevelsArray[level].push(n);
+    let level = 0;
+    for (let i = 0; i < nodesInFinalLevels.length; i++) {
+        if (nodesInFinalLevels[i].size !== 0) { //Removes levels with no nodes to create a more condensed graph.
+            nodesInFinalLevelsArray[level] = [];
+            for (let n of nodesInFinalLevels[i].values()) {
+                nodesInFinalLevelsArray[level].push(n);
+            }
+            level++;
         }
     }
+
+    let height = numLevels;
 
     const totalGraphHeight =
         height * nodeHeight + (height - 1) * interLevelSpacing; //number of levels times the height of each node and the spaces between them
