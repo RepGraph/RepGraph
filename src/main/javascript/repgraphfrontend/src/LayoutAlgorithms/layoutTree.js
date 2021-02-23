@@ -84,7 +84,12 @@ export const layoutTree = (graphData) => {
     //Populate the xPositions map with each node's xPosition and the lowestNode map with the lowest node in each column.
     for (let level of nodesInLevels) {
         for (let n of level) {
-            let column = n.anchors[0].from;
+            let column;
+            if (n.anchors !== null) {
+                column = n.anchors[0].from;
+            } else {
+                column = null;
+            }
             xPositions.set(n.id, column);
             if (!lowestNode.has(column)) {
                 lowestNode.set(column, n.id);
@@ -95,36 +100,40 @@ export const layoutTree = (graphData) => {
     //This decides a nodes xPosition based on its neighbours/children.
     for (let level of nodesInLevels) {
         for (let n of level) {
-            if (lowestNode.get(xPositions.get(n.id)) !== n.id) {
+            if (
+                xPositions.get(n.id) !== null &&
+                lowestNode.get(xPositions.get(n.id)) !== n.id
+            ) {
                 //If the current node in the current level isn't the lowest node in its column
-                if (children.get(n.id).length === 1) {
+                if (children.get(n.id).length === 0) {
+                } else if (children.get(n.id).length === 1) {
                     //If the current node has a single neighbour
                     xPositions.set(n.id, xPositions.get(children.get(n.id)[0])); //Set the current node's xPosition to its neighbour's
                 } else {
-                    let childrenInSpan = [];
 
-                    //Finds the current node's children which are in it's span.
+                    let childrenX = [];
                     for (let neighbour of children.get(n.id)) {
-                        if (
-                            xPositions.get(neighbour) >= n.anchors[0].from &&
-                            xPositions.get(neighbour) <= n.anchors[0].end
-                        ) {
-                            childrenInSpan.push(neighbour);
-                        }
+                        childrenX.push(xPositions.get(neighbour));
                     }
+                    childrenX = childrenX.sort();
+                    let middleChild = childrenX[Math.floor(childrenX.length / 2)];
+                    xPositions.set(n.id, middleChild); //Set the node's x position to its middle child's
+                }
+            }
+        }
+    }
 
-                    if (childrenInSpan.length !== 0) {
-                        //If the current node has no children in it's span, leave its x position as it is.
-                        let leftMostChildPos = xPositions.get(childrenInSpan[0]);
-                        //Find the current node's left most child in it's span.
-                        for (let child of childrenInSpan) {
-                            leftMostChildPos = Math.min(
-                                leftMostChildPos,
-                                xPositions.get(child)
-                            );
-                        }
-                        xPositions.set(n.id, leftMostChildPos); //Set the node's x position to its left most child in it's span.
-                    }
+    for (let level = 0; level < nodesInLevels.length; level++) {
+        for (let n of nodesInLevels[level]) {
+            if (xPositions.get(n.id) === null) {
+                if (children.get(n.id).length !== 0) {
+                    xPositions.set(n.id, xPositions.get(children.get(n.id)[0]));
+                } else if (parents.get(n.id).length !== 0) {
+                    let parentID = parents.get(n.id)[0].id;
+                    let xPos = xPositions.get(parentID);
+                    xPositions.set(n.id, xPos);
+                } else {
+                    // ??
                 }
             }
         }
