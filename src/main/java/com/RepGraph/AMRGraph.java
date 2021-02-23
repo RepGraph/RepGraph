@@ -16,6 +16,7 @@ import java.util.Stack;
 public class AMRGraph extends AbstractGraph {
 
 
+
     /**
      * Default constructor for the Graph class.
      */
@@ -42,8 +43,7 @@ public class AMRGraph extends AbstractGraph {
 
     }
 
-
-    public void alignUtil(String NodeID, HashMap<String, Boolean> visited, int layer, FileWriter writer) throws IOException {
+    public void alignUtil(String NodeID, HashMap<String, Node> nodes, HashMap<String, Boolean> visited, int layer, FileWriter writer) throws IOException {
         // Mark the current node as visited and print it
         visited.put(NodeID, true);
 
@@ -58,7 +58,7 @@ public class AMRGraph extends AbstractGraph {
             String ne = ie.next().getLabel();
             writer.write(" :" + ne + " ( v" + n + " / " + nodes.get(n).getLabel() + " ");
             if (!visited.get(n)) {
-                alignUtil(n, visited, layer, writer);
+                alignUtil(n, nodes, visited, layer, writer);
             } else {
                 writer.write(")");
             }
@@ -77,7 +77,7 @@ public class AMRGraph extends AbstractGraph {
         myWriter.write("#::snt " + this.input + "\n");
         myWriter.write("(v" + this.top + " / " + nodes.get(this.top).getLabel() + " ");
 
-        alignUtil(this.top, visited, 0, myWriter);
+        alignUtil(this.top, this.nodes, visited, 0, myWriter);
 
         myWriter.close();
 
