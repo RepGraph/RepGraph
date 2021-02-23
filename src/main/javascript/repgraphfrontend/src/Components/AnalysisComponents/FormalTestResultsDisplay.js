@@ -22,10 +22,20 @@ import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
 import Popover from "@material-ui/core/Popover";
 import PlanarVisualisation from "../Main/PlanarVisualisation";
+import {ParentSize} from "@visx/responsive";
+import {Graph} from "../Graph/Graph";
+import {determineAdjacentLinks} from "../../LayoutAlgorithms/layoutHierarchy";
+
 
 const useStyles = makeStyles({
     table: {
         minWidth: 650
+    },
+    graphDiv: {
+        height: "100%",
+        //border: "1px solid red",
+        flex: "1",
+        width: "100%"
     }
 });
 
@@ -35,7 +45,6 @@ function createData(test, result) {
 }
 
 export default function FormalTestsResultsDisplay(props) {
-    const theme = useTheme();
     const classes = useStyles();
     const [open, setOpen] = React.useState(false); //Local state of the results dialog
     const [rowClicked, setRowClicked] = React.useState(null); //Local state to store which table row was clicked
@@ -67,8 +76,54 @@ export default function FormalTestsResultsDisplay(props) {
 
     let dialogElement; //variable to store the element to be displayed in the dialog to the user
 
+    // if (rowClicked === "Planar") {
+    //     dialogElement = <PlanarVisualisation planarGraphData={response.PlanarVis}/>;
+    // } else if (rowClicked === "LongestPathDirected") {
+    //     dialogElement = (
+    //         <LongestPathVisualisation
+    //             type={rowClicked}
+    //         />
+    //     );
+    // } else if (rowClicked === "LongestPathUndirected") {
+    //     dialogElement = (
+    //         <LongestPathVisualisation
+    //             type={rowClicked}
+    //         />
+    //     );
+    // }
+
+    //Determine graphFormatCode
+    let graphFormatCode = null;
+    switch (state.visualisationFormat) {
+        case "1":
+            graphFormatCode = "hierarchicalCompare";
+            break;
+        case "2":
+            graphFormatCode = "treeCompare";
+            break;
+        case "3":
+            graphFormatCode = "flatCompare";
+            break;
+        default:
+            graphFormatCode = "hierarchicalCompare";
+            break;
+    }
+
     if (rowClicked === "Planar") {
-        dialogElement = <PlanarVisualisation planarGraphData={response.PlanarVis}/>;
+        //Not finished with planar yet - need to add planar layout algorithm
+        dialogElement = <div className={classes.graphDiv}>
+            <ParentSize>
+                {parent => (
+                    <Graph
+                        width={parent.width}
+                        height={parent.height}
+                        graph={response.PlanarVis}
+                        adjacentLinks={determineAdjacentLinks(response.PlanarVis)}
+                        graphFormatCode={graphFormatCode}
+                    />
+                )}
+            </ParentSize>
+        </div>;
     } else if (rowClicked === "LongestPathDirected") {
         dialogElement = (
             <LongestPathVisualisation
