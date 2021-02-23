@@ -13,6 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import SettingsIcon from '@material-ui/icons/Settings';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
@@ -48,6 +49,8 @@ import SettingsTool from "./Components/AnalysisComponents/SettingsTool";
 import DisplaySubsetTool from "./Components/AnalysisComponents/DisplaySubsetTool";
 import SearchSubgraphPatternTool from "./Components/AnalysisComponents/SearchSubgraphPatternTool";
 import CompareTwoGraphsTool from "./Components/AnalysisComponents/CompareTwoGraphsTool";
+import FormalTestsTool from "./Components/AnalysisComponents/FormalTestsTool";
+import FormalTestResultsDisplay from "./Components/AnalysisComponents/FormalTestResultsDisplay";
 
 const drawerWidth = 240;
 
@@ -143,7 +146,8 @@ export default function MiniDrawer() {
     const [subsetDialogOpen, setSubsetDialogOpen] = React.useState(false); //Local state of subset dialog
     const [subgraphDialogOpen, setSubgraphDialogOpen] = React.useState(false); //Local state of subgraph dialog
     const [compareDialogOpen, setCompareDialogOpen] = React.useState(false); //Local state of compare dialog
-    const [settingsDialogOpen, setSettingsDialogOpen] = React.useState(false); //Local state of compare dialog
+    const [testsDialogOpen, setTestsDialogOpen] = React.useState(false); //Local state of tests dialog
+    const [settingsDialogOpen, setSettingsDialogOpen] = React.useState(false); //Local state of settings dialog
 
 
     const handleDrawerOpen = () => {
@@ -241,6 +245,16 @@ export default function MiniDrawer() {
     //Handle click close compare tool dialog
     const handleCompareToolDialogClose = () => {
         setCompareDialogOpen(false);
+    };
+
+    //Handle click compare tool menu button
+    const handleTestsToolClick = () => {
+        setTestsDialogOpen(true);
+    }
+
+    //Handle click close compare tool dialog
+    const handleTestsToolDialogClose = () => {
+        setTestsDialogOpen(false);
     };
 
     const handleSettingsClick = () => {
@@ -426,6 +440,10 @@ export default function MiniDrawer() {
                     <ListItem button onClick={handleCompareToolClick}>
                         <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
                         <ListItemText primary={"Compare Tool"}/>
+                    </ListItem>
+                    <ListItem button onClick={handleTestsToolClick}>
+                        <ListItemIcon>{<AssessmentIcon/>}</ListItemIcon>
+                        <ListItemText primary={"Tests Tool"}/>
                     </ListItem>
                     {/*{['Subset Tool', 'Subgraph Tool', 'Compare Tool', 'Formal Tests'].map((text, index) => (*/}
                     {/*    <ListItem button key={text}>*/}
@@ -621,6 +639,68 @@ export default function MiniDrawer() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCompareToolDialogClose}>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                fullWidth
+                maxWidth="md"
+                open={testsDialogOpen}
+                onClose={handleTestsToolDialogClose}
+            >
+                <DialogTitle>
+                    Tests Tool
+                </DialogTitle>
+                <DialogContent>
+                    <Grid
+                        className={classes.rootJustWidth}
+                        container
+                        direction="row"
+                        justify="space-between"
+                        alignItems="center"
+                        spacing={2}
+                    >
+                        <Grid item xs={6} className={classes.body}>
+                            <Card className={classes.body} variant="outlined">
+                                <CardContent className={classes.body}>
+                                    <Typography
+                                        className={classes.title}
+                                        color="textPrimary"
+                                        gutterBottom
+                                    >
+                                        About the tool:
+                                        {/*<IconButton aria-label="Display subset information button" color={"secondary"}*/}
+                                        {/*            onClick={() => handleInfoClick("display subset tool")}>*/}
+                                        {/*    <InfoIcon/>*/}
+                                        {/*</IconButton>*/}
+                                    </Typography>
+                                    <Typography variant="body2" color="textPrimary">
+                                        Select a number of graph properties with which to test the
+                                        currently displayed graph.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={6} style={{height: "100%"}}>
+                            <Card className={classes.body} variant="outlined">
+                                <CardContent>
+                                    <FormalTestsTool/>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        {state.testResults !== null &&
+                        <Grid container item xs={12}>
+                            <Card className={classes.body} variant="outlined">
+                                <CardContent>
+                                    <FormalTestResultsDisplay response={state.testResults}/>
+                                </CardContent>
+                            </Card>
+                        </Grid>}
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleTestsToolDialogClose}>
                         Close
                     </Button>
                 </DialogActions>
