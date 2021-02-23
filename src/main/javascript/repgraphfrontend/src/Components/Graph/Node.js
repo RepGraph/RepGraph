@@ -19,7 +19,7 @@ export const Node = ({
         <text
             textAnchor="middle"
             alignmentBaseline="baseline"
-            fill={node.group === "token" ? "black" : "white"}
+            fill={node.type === "token" ? "black" : "white"}
             fontWeight="bold"
             // transform="translate(0,45)"
         >
@@ -56,7 +56,7 @@ export const Node = ({
 
     let fillColor = null;
 
-    switch (node.group) {
+    switch (node.type) {
         case "node":
             if (selected) {
                 fillColor = styles.nodeStyles.selectedColour;
@@ -68,7 +68,22 @@ export const Node = ({
                 node.longestPath === true
             ) {
                 fillColor = styles.longestPathStyles.nodeColour;
-            } else {
+            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"){
+
+                switch (node.group) {
+                    case "similar":
+                        fillColor = styles.compareStyles.nodeColourSimilar;
+                        break;
+                    case "dissimilar":
+                        fillColor = styles.compareStyles.nodeColourDissimilar;
+                        break;
+                    default:
+                        fillColor = styles.nodeStyles.nodeColour;
+                        break;
+                }
+
+            }
+            else {
                 fillColor = styles.nodeStyles.nodeColour;
             }
             break;
@@ -107,7 +122,7 @@ export const Node = ({
     // const outline = <circle r={25} fill={fillColor} opacity={1} />;
 
     let span = null;
-    if (node.group !== "token" && node.span === true) {
+    if (node.type !== "token" && node.span === true) {
         const fromX =
             ((node.anchors[0].from - node.anchors[0].end) / 2) * 130 - bb.width / 2;
 
@@ -178,7 +193,7 @@ export const Node = ({
     ]; //Extra information object keys to be excluded from tooltip
 
     //Remove id property from tree-like token tooltip
-    if (node.group === "token") {
+    if (node.type === "token") {
         notAllowed = notAllowed.concat("id");
     }
 
@@ -197,7 +212,7 @@ export const Node = ({
                     setHighlighted(true);
                     setTooltipData({
                         label: node.label,
-                        group: node.group,
+                        type: node.type,
                         extraInformation: filteredExtraInformation
                     });
                 }}
