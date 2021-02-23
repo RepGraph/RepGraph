@@ -1,6 +1,6 @@
-import React , {useContext} from 'react';
+import React, {useContext} from 'react';
 import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -8,8 +8,11 @@ import List from '@material-ui/core/List';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import SearchIcon from '@material-ui/icons/Search';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import SettingsIcon from '@material-ui/icons/Settings';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
@@ -17,6 +20,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import SelectAllIcon from '@material-ui/icons/SelectAll';
 import {AppContext} from "./Store/AppContextProvider";
 import {Button, Card, CardContent, Chip, Grid} from "@material-ui/core";
 import Fab from "@material-ui/core/Fab";
@@ -38,8 +42,9 @@ import SentenceList from "./Components/Main/SentenceList";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 
-import { ParentSize } from '@visx/responsive';
+import {ParentSize} from '@visx/responsive';
 import InfoIcon from "@material-ui/icons/Info";
+import SettingsTool from "./Components/AnalysisComponents/SettingsTool";
 import DisplaySubsetTool from "./Components/AnalysisComponents/DisplaySubsetTool";
 import SearchSubgraphPatternTool from "./Components/AnalysisComponents/SearchSubgraphPatternTool";
 import CompareTwoGraphsTool from "./Components/AnalysisComponents/CompareTwoGraphsTool";
@@ -66,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
         }),
     },
     menuButton: {
-         marginRight: "1rem"
+        marginRight: "1rem"
     },
     hide: {
         display: 'none',
@@ -138,6 +143,7 @@ export default function MiniDrawer() {
     const [subsetDialogOpen, setSubsetDialogOpen] = React.useState(false); //Local state of subset dialog
     const [subgraphDialogOpen, setSubgraphDialogOpen] = React.useState(false); //Local state of subgraph dialog
     const [compareDialogOpen, setCompareDialogOpen] = React.useState(false); //Local state of compare dialog
+    const [settingsDialogOpen, setSettingsDialogOpen] = React.useState(false); //Local state of compare dialog
 
 
     const handleDrawerOpen = () => {
@@ -171,7 +177,7 @@ export default function MiniDrawer() {
                 myHeaders.append("X-USER", state.userID);
                 let requestOptions = {
                     method: 'GET',
-                    headers : myHeaders,
+                    headers: myHeaders,
                     redirect: 'follow'
                 };
 
@@ -193,7 +199,7 @@ export default function MiniDrawer() {
                         break;
                 }
 
-                console.log("newFormat", newFormat, "graphData",graphData);
+                console.log("newFormat", newFormat, "graphData", graphData);
 
                 dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
@@ -237,6 +243,14 @@ export default function MiniDrawer() {
         setCompareDialogOpen(false);
     };
 
+    const handleSettingsClick = () => {
+        setSettingsDialogOpen(true)
+    }
+
+    const handleSettingsDialogClose = () => {
+        setSettingsDialogOpen(false)
+    }
+
     //Determine graphFormatCode
     let graphFormatCode = null;
     switch (state.visualisationFormat) {
@@ -256,7 +270,7 @@ export default function MiniDrawer() {
 
     return (
         <div className={classes.root}>
-            <CssBaseline />
+            <CssBaseline/>
             <AppBar
                 position="fixed"
                 className={clsx(classes.appBar, {
@@ -273,9 +287,9 @@ export default function MiniDrawer() {
                             [classes.hide]: open,
                         })}
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
-                    <div style={{marginRight:"1rem"}}>
+                    <div style={{marginRight: "1rem"}}>
                         <Typography variant="h6" noWrap>
                             RepGraph
                         </Typography>
@@ -341,10 +355,10 @@ export default function MiniDrawer() {
                                 aria-label="Visualisation formats"
                             >
                                 <ToggleButton value="1" aria-label="Hierarchical">
-                                    <Typography color={ "textPrimary" }>Hierarchical</Typography>
+                                    <Typography color={"textPrimary"}>Hierarchical</Typography>
                                 </ToggleButton>
                                 <ToggleButton value="2" aria-label="Tree-like">
-                                    <Typography color={ "textPrimary"}>Tree-like</Typography>
+                                    <Typography color={"textPrimary"}>Tree-like</Typography>
                                 </ToggleButton>
                                 <ToggleButton value="3" aria-label="Flat">
                                     <Typography color={"textPrimary"}>Flat</Typography>
@@ -396,22 +410,22 @@ export default function MiniDrawer() {
             >
                 <div className={classes.toolbar}>
                     <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                        {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon/>}
                     </IconButton>
                 </div>
-                <Divider />
+                <Divider/>
                 <List>
                     <ListItem button onClick={handleSubsetToolClick}>
-                        <ListItemIcon>{<MailIcon />}</ListItemIcon>
-                        <ListItemText primary={"Subset Tool"} />
+                        <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
+                        <ListItemText primary={"Subset Tool"}/>
                     </ListItem>
                     <ListItem button onClick={handleSubgraphToolClick}>
-                        <ListItemIcon>{<MailIcon />}</ListItemIcon>
-                        <ListItemText primary={"Subgraph Tool"} />
+                        <ListItemIcon>{<SearchIcon/>}</ListItemIcon>
+                        <ListItemText primary={"Subgraph Tool"}/>
                     </ListItem>
                     <ListItem button onClick={handleCompareToolClick}>
-                        <ListItemIcon>{<MailIcon />}</ListItemIcon>
-                        <ListItemText primary={"Compare Tool"} />
+                        <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
+                        <ListItemText primary={"Compare Tool"}/>
                     </ListItem>
                     {/*{['Subset Tool', 'Subgraph Tool', 'Compare Tool', 'Formal Tests'].map((text, index) => (*/}
                     {/*    <ListItem button key={text}>*/}
@@ -420,12 +434,12 @@ export default function MiniDrawer() {
                     {/*    </ListItem>*/}
                     {/*))}*/}
                 </List>
-                <Divider />
+                <Divider/>
                 <List>
                     {['Settings',].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
+                        <ListItem button onClick={handleSettingsClick} key={text}>
+                            <ListItemIcon>{<SettingsIcon/>}</ListItemIcon>
+                            <ListItemText primary={text}/>
                         </ListItem>
                     ))}
                 </List>
@@ -469,7 +483,7 @@ export default function MiniDrawer() {
                     >
                         <Grid item xs={6} className={classes.body}>
                             <Card className={classes.body} variant="outlined">
-                                <CardContent className={classes.body} >
+                                <CardContent className={classes.body}>
                                     <Typography
                                         className={classes.title}
                                         color="textPrimary"
@@ -523,7 +537,7 @@ export default function MiniDrawer() {
                     >
                         <Grid item xs={6} className={classes.body}>
                             <Card className={classes.body} variant="outlined">
-                                <CardContent className={classes.body} >
+                                <CardContent className={classes.body}>
                                     <Typography
                                         className={classes.title}
                                         color="textPrimary"
@@ -577,7 +591,7 @@ export default function MiniDrawer() {
                     >
                         <Grid item xs={6} className={classes.body}>
                             <Card className={classes.body} variant="outlined">
-                                <CardContent className={classes.body} >
+                                <CardContent className={classes.body}>
                                     <Typography
                                         className={classes.title}
                                         color="textPrimary"
@@ -611,15 +625,39 @@ export default function MiniDrawer() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Dialog
+                fullWidth
+                maxWidth="md"
+                open={settingsDialogOpen}
+                onClose={handleSettingsDialogClose}
+            >
+                <DialogTitle>
+                    Settings
+                </DialogTitle>
+                <DialogContent>
+
+
+                    <SettingsTool/>
+
+
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSettingsDialogClose}>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <main className={classes.content}>
-                <div className={classes.toolbar} />
+                <div className={classes.toolbar}/>
                 {state.selectedSentenceID === null ? (
                     state.dataSet === null ?
                         <div className={classes.graphDiv}>
-                            <Card variant="outlined" style={{width:"100%", height:"100%"}}>
-                                <CardContent style={{ height:"100%"}}>
-                                    <div style={{display:"flex",justifyContent: "center",
-                                        alignItems: "center", height:"100%"}}>
+                            <Card variant="outlined" style={{width: "100%", height: "100%"}}>
+                                <CardContent style={{height: "100%"}}>
+                                    <div style={{
+                                        display: "flex", justifyContent: "center",
+                                        alignItems: "center", height: "100%"
+                                    }}>
                                         <Typography variant="h6">
                                             Please
                                             upload a dataset
@@ -631,10 +669,12 @@ export default function MiniDrawer() {
                             </Card>
                         </div> :
                         <div className={classes.graphDiv}>
-                            <Card variant="outlined" style={{width:"100%", height:"100%"}}>
-                                <CardContent style={{ height:"100%"}}>
-                                    <div style={{display:"flex",justifyContent: "center",
-                                        alignItems: "center", height:"100%"}}>
+                            <Card variant="outlined" style={{width: "100%", height: "100%"}}>
+                                <CardContent style={{height: "100%"}}>
+                                    <div style={{
+                                        display: "flex", justifyContent: "center",
+                                        alignItems: "center", height: "100%"
+                                    }}>
                                         <Typography variant="h6">
                                             Please
                                             select a sentence
@@ -644,21 +684,21 @@ export default function MiniDrawer() {
                                 </CardContent>
 
                             </Card></div>
-                ):(
-                        <div className={classes.graphDiv}>
-                            <ParentSize>
-                                {parent => (
-                                    <Graph
-                                        width={parent.width}
-                                        height={parent.height}
-                                        graph={state.selectedSentenceVisualisation}
-                                        adjacentLinks={determineAdjacentLinks(state.selectedSentenceVisualisation)}
-                                        graphFormatCode={graphFormatCode}
-                                    />
-                                )}
-                            </ParentSize>
-                        </div>
-                   )}
+                ) : (
+                    <div className={classes.graphDiv}>
+                        <ParentSize>
+                            {parent => (
+                                <Graph
+                                    width={parent.width}
+                                    height={parent.height}
+                                    graph={state.selectedSentenceVisualisation}
+                                    adjacentLinks={determineAdjacentLinks(state.selectedSentenceVisualisation)}
+                                    graphFormatCode={graphFormatCode}
+                                />
+                            )}
+                        </ParentSize>
+                    </div>
+                )}
             </main>
         </div>
     );
