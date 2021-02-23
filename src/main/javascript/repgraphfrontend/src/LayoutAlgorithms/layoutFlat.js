@@ -30,7 +30,7 @@ export const layoutFlat = (graphData) => {
 
         let cp;
 
-        cp = edgeRulesSameRow(source, target);
+        cp = edgeRulesSameRow(source, target, finalGraphNodes);
 
         return {
             id: index,
@@ -68,7 +68,7 @@ function controlPoints(source, target, direction, degree) {
     return { x1, y1 };
 }
 
-function edgeRulesSameRow(source, target) {
+function edgeRulesSameRow(source, target, finalGraphNodes) {
     let direction = "";
     let degree = 0.25;
 
