@@ -68,7 +68,7 @@ export const Node = ({
                 node.longestPath === true
             ) {
                 fillColor = styles.longestPathStyles.nodeColour;
-            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"){
+            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"|| graphFormatCode === "flatCompare"){
 
                 switch (node.group) {
                     case "similar":

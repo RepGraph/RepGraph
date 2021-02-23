@@ -60,7 +60,7 @@ export const Link = ({
         tooltipOpen
     ) {
         strokeColor = styles.linkStyles.hoverColour;
-    } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"){
+    } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"|| graphFormatCode === "flatCompare"){
 
         switch (link.group) {
             case "similar":
