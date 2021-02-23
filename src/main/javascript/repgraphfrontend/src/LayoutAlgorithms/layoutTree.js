@@ -59,7 +59,7 @@ export const layoutTree = (graphData) => {
     }
 
     //Find the node with the most descendents, which will dictate the number of levels needed.
-   // let numLevels = Math.max(...topologicalStacks.values());
+    // let numLevels = Math.max(...topologicalStacks.values());
 
     let numLevels = 0;
     for (const stack of topologicalStacks.values()) {
@@ -86,7 +86,6 @@ export const layoutTree = (graphData) => {
     let lowestNode = new Map();
 
 
-
     //Populate the xPositions map with each node's xPosition and the lowestNode map with the lowest node in each column.
     for (let level of nodesInLevels) {
         for (let n of level) {
@@ -102,7 +101,6 @@ export const layoutTree = (graphData) => {
             }
         }
     }
-
 
 
     //This decides a nodes xPosition based on its neighbours/children.
@@ -159,33 +157,23 @@ export const layoutTree = (graphData) => {
         let nodeXPos = new Map();
         nodesInFinalLevels[currentLevel + 1] = new Map();
         for (let n of nodesInLevels[currentLevel]) {
-            if (n.anchors === null) {
-                let parent = parents.get(n.id)[0];
-                let parentPos = xPositions.get(parent.id);
-                if (
-                    parent !== null &&
-                    parentPos === xPositions.get(n.id) &&
-                    lowestNode.get(parentPos) === parent.id
-                ) {
-                    //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
-                    if (currentLevel === 0) {
-                        nodesInLevels[currentLevel + 1].push(n);
-                    } else if (!nodesInLevels[currentLevel - 1].includes(parent)) {
-                        nodesInLevels[currentLevel + 1].push(n);
-                    } else {
-                        //Designate this node as the node occupying node this xPosition on this level.
-                        nodeXPos.set(xPositions.get(n.id), n.id);
-                        nodesInFinalLevels[currentLevel].set(n.id, n);
-                        numNodesProcessed++;
-                    }
+            if (n.anchors === null &&
+                parents.get(n.id)[0] !== null &&
+                xPositions.get(parents.get(n.id)[0].id) === xPositions.get(n.id) &&
+                lowestNode.get(xPositions.get(parents.get(n.id)[0].id)) === parents.get(n.id)[0].id
+            ) {
+                //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
+                if (currentLevel === 0) {
+                    nodesInLevels[currentLevel + 1].push(n);
+                } else if (!nodesInLevels[currentLevel - 1].includes(parents.get(n.id)[0])) {
+                    nodesInLevels[currentLevel + 1].push(n);
                 } else {
                     //Designate this node as the node occupying node this xPosition on this level.
                     nodeXPos.set(xPositions.get(n.id), n.id);
                     nodesInFinalLevels[currentLevel].set(n.id, n);
                     numNodesProcessed++;
                 }
-            }
-            else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
+            } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
                 if (
                     topologicalStacks.get(n.id).length <
                     topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length
@@ -492,7 +480,6 @@ function edgeRulesSameRow(
         }
         if (found) {
             direction = "horizontal-left";
-            degree = 0.18;
         }
     }
 
