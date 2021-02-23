@@ -51,8 +51,9 @@ export const Link = ({
         strokeColor = styles.linkStyles.hoverColour;
     } else if (
         (graphFormatCode === "hierarchicalLongestPath" ||
-            graphFormatCode === "treeLongestPath") &&
-        link.longestPath === true
+            graphFormatCode === "treeLongestPath"||
+            graphFormatCode === "flatLongestPath") &&
+        link.group === "longestPath"
     ) {
         strokeColor = styles.longestPathStyles.linkColour;
     } else if (
