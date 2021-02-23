@@ -7,11 +7,31 @@ const tokenLevelSpacing = 140;
 export const layoutHierarchy = (graphData) => {
     console.log(graphData);
 
-    // const nodeHeight = 40;
-    // const nodeWidth = 80;
-    // const interLevelSpacing = 80;
-    // const intraLevelSpacing = 40;
-    // const tokenLevelSpacing = 140;
+    let children = new Map();
+    let parents = new Map();
+
+    //Assign empty neighbour arrays to each node id
+    for (const node of graphData.nodes) {
+        children.set(node.id, []);
+        parents.set(node.id, []);
+    }
+
+    //Fill in directed neighbour node id's for each node in corresponding arrays
+    for (const e of graphData.edges) {
+        let temp = children.get(e.source);
+        graphData.nodes.findIndex((node) => node.id === e.target);
+        temp.push(
+            graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.target)]
+        );
+        children.set(e.source, temp);
+
+        temp = parents.get(e.target);
+        graphData.nodes.findIndex((node) => node.id === e.source);
+        temp.push(
+            graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.source)]
+        );
+        parents.set(e.target, temp);
+    }
 
     //Determine span lengths of each node
     const graphNodeSpanLengths = graphData.nodes
