@@ -149,8 +149,32 @@ export const layoutTree = (graphData) => {
         let nodeXPos = new Map();
         nodesInFinalLevels[currentLevel + 1] = new Map();
         for (let n of nodesInLevels[currentLevel]) {
-            //If this xPosition is already taken in this level
-            if (nodeXPos.has(xPositions.get(n.id))) {
+            if (n.anchors === null) {
+                let parent = parents.get(n.id)[0];
+                let parentPos = xPositions.get(parent.id);
+                if (
+                    parent !== null &&
+                    parentPos === xPositions.get(n.id) &&
+                    lowestNode.get(xPos) === parent.id
+                ) {
+                    //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
+                    if (currentLevel === 0) {
+                        nodesInLevels[currentLevel + 1].push(n);
+                    } else if (!nodesInLevels[currentLevel - 1].includes(parent)) {
+                        nodesInLevels[currentLevel + 1].push(n);
+                    } else {
+                        //Designate this node as the node occupying node this xPosition on this level.
+                        nodeXPos.set(xPositions.get(n.id), n.id);
+                        nodesInFinalLevels[currentLevel].set(n.id, n);
+                        numNodesProcessed++;
+                    }
+                } else {
+                    //Designate this node as the node occupying node this xPosition on this level.
+                    nodeXPos.set(xPositions.get(n.id), n.id);
+                    nodesInFinalLevels[currentLevel].set(n.id, n);
+                    numNodesProcessed++;
+                }
+            } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
                 if (
                     topologicalStacks.get(n.id) <
                     topologicalStacks.get(nodeXPos.get(xPositions.get(n.id)))
