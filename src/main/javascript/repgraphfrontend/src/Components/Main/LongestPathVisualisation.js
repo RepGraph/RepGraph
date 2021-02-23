@@ -11,7 +11,10 @@ import { autoPlay } from "react-swipeable-views-utils";
 
 import { AppContext } from "../../Store/AppContextProvider";
 import { cloneDeep } from "lodash";
-import Graph from "react-graph-vis";
+import {ParentSize} from "@visx/responsive";
+import {determineAdjacentLinks} from "../../LayoutAlgorithms/layoutHierarchy";
+
+import {Graph} from "../Graph/Graph";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -29,17 +32,57 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.default
     },
     body: {
-        height: "70vh",
+        height: "60vh",
         display: "block",
         maxWidth: "100%",
         overflow: "hidden",
         width: "100%"
+    },
+    graphDiv: {
+        height: "100%",
+        //border: "1px solid red",
+        flex: "1",
+        width: "100%"
     }
 }));
+
+// function showLongestPath(standardVisualisation, path) {
+//     let currentStandardVisualisation = cloneDeep(standardVisualisation);
+//     //console.log(currentStandardVisualisation);
+//     let newNodes = currentStandardVisualisation.nodes.map((node, index) => ({
+//         ...node,
+//         label: path.includes(node.id)
+//             ? path.findIndex((nodeID) => nodeID === node.id) + " " + node.label
+//             : node.label,
+//         group: path.includes(node.id) ? "longestPath" : node.group
+//     }));
+//
+//     for (let index = 0; index < path.length - 1; index++) {
+//         for (const [i, e] of currentStandardVisualisation.edges.entries()) {
+//             if (
+//                 (path[index] === e.from && path[index + 1] === e.to) ||
+//                 (path[index] === e.to && path[index + 1] === e.from)
+//             ) {
+//                 currentStandardVisualisation.edges[i] = {
+//                     ...e,
+//                     color: "rgba(0, 0, 0, 1)",
+//                     shadow: true,
+//                     background: {
+//                         enabled: true,
+//                         color: "rgba(245, 0, 87, 0.7)"
+//                     }
+//                 };
+//             }
+//         }
+//     }
+//
+//     return {...currentStandardVisualisation, nodes: newNodes};
+// }
 
 function showLongestPath(standardVisualisation, path) {
     let currentStandardVisualisation = cloneDeep(standardVisualisation);
     //console.log(currentStandardVisualisation);
+
     let newNodes = currentStandardVisualisation.nodes.map((node, index) => ({
         ...node,
         label: path.includes(node.id)
@@ -48,26 +91,14 @@ function showLongestPath(standardVisualisation, path) {
         group: path.includes(node.id) ? "longestPath" : node.group
     }));
 
-    for (let index = 0; index < path.length - 1; index++) {
-        for (const [i, e] of currentStandardVisualisation.edges.entries()) {
-            if (
-                (path[index] === e.from && path[index + 1] === e.to) ||
-                (path[index] === e.to && path[index + 1] === e.from)
-            ) {
-                currentStandardVisualisation.edges[i] = {
-                    ...e,
-                    color: "rgba(0, 0, 0, 1)",
-                    shadow: true,
-                    background: {
-                        enabled: true,
-                        color: "rgba(245, 0, 87, 0.7)"
-                    }
-                };
-            }
-        }
-    }
-
-    return {...currentStandardVisualisation, nodes: newNodes};
+    let newLinks = currentStandardVisualisation.links.map((link) => ({
+        ...link,
+        group:
+            path.includes(link.source.id) && path.includes(link.target.id)
+                ? "longestPath"
+                : link.group
+    }));
+    return {...currentStandardVisualisation, nodes: newNodes, links: newLinks};
 }
 
 function LongestPathVisualisation({type}) {
@@ -78,6 +109,22 @@ function LongestPathVisualisation({type}) {
     //const maxSteps = tutorialSteps.length;
     const maxSteps = state.testResults[type].length;
 
+    //Determine graphFormatCode
+    let graphFormatCode = null;
+    switch (state.visualisationFormat) {
+        case "1":
+            graphFormatCode = "hierarchicalLongestPath";
+            break;
+        case "2":
+            graphFormatCode = "treeLongestPath";
+            break;
+        case "3":
+            graphFormatCode = "flatLongestPath";
+            break;
+        default:
+            graphFormatCode = "hierarchicalLongestPath";
+            break;
+    }
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -91,16 +138,16 @@ function LongestPathVisualisation({type}) {
         setActiveStep(step);
     };
 
-    const events = {
-        select: function (event) {
-            let { nodes, edges } = event;
-            console.log(nodes, edges);
-            dispatch({
-                type: "SET_SELECT_NODE_EDGE",
-                payload: { selectedNodeAndEdges: { nodes, edges } }
-            });
-        }
-    };
+    // const events = {
+    //     select: function (event) {
+    //         let { nodes, edges } = event;
+    //         console.log(nodes, edges);
+    //         dispatch({
+    //             type: "SET_SELECT_NODE_EDGE",
+    //             payload: { selectedNodeAndEdges: { nodes, edges } }
+    //         });
+    //     }
+    // };
 
     return (
         <div className={classes.root}>
@@ -114,30 +161,45 @@ function LongestPathVisualisation({type}) {
                 axis={theme.direction === "rtl" ? "x-reverse" : "x"}
                 index={activeStep}
                 onChangeIndex={handleStepChange}
-                enableMouseEvents
                 autoplay={false}
             >
                 {state.testResults[type].map((path, index) => (
                     <div className={classes.body} key={index}>
                         {Math.abs(activeStep - index) <= 2 ? (
-                            <Graph
-                                graph={showLongestPath(
-                                    state.selectedSentenceVisualisation,
-                                    path
-                                )} //Modified current visualisation with longest path highlighted
-                                options={{
-                                    ...state.visualisationOptions,
-                                    edges: {
-                                        ...state.visualisationOptions.edges,
-                                        color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
-                                    }
-                                }} //Options from global state
-                                events={events}
-                                style={{ width: "100%", height: "100%" }}
-                                getNetwork={(network) => {
-                                    //  if you want access to vis.js network api you can set the state in a parent component using this property
-                                }}
-                            />
+                            // <Graph
+                            //     graph={showLongestPath(
+                            //         state.selectedSentenceVisualisation,
+                            //         path
+                            //     )} //Modified current visualisation with longest path highlighted
+                            //     options={{
+                            //         ...state.visualisationOptions,
+                            //         edges: {
+                            //             ...state.visualisationOptions.edges,
+                            //             color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                            //         }
+                            //     }} //Options from global state
+                            //     events={events}
+                            //     style={{ width: "100%", height: "100%" }}
+                            //     getNetwork={(network) => {
+                            //         //  if you want access to vis.js network api you can set the state in a parent component using this property
+                            //     }}
+                            // />
+                            <div className={classes.graphDiv}>
+                                <ParentSize>
+                                    {parent => (
+                                        <Graph
+                                            width={parent.width}
+                                            height={parent.height}
+                                            graph={showLongestPath(
+                                                        state.selectedSentenceVisualisation,
+                                                        path
+                                                    )}
+                                            adjacentLinks={determineAdjacentLinks(state.selectedSentenceVisualisation)}
+                                            graphFormatCode={graphFormatCode}
+                                        />
+                                    )}
+                                </ParentSize>
+                            </div>
                         ) : null}
                     </div>
                 ))}

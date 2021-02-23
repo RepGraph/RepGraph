@@ -64,11 +64,12 @@ export const Node = ({
                 fillColor = styles.nodeStyles.hoverColour;
             } else if (
                 (graphFormatCode === "hierarchicalLongestPath" ||
-                    graphFormatCode === "treeLongestPath") &&
-                node.longestPath === true
+                    graphFormatCode === "treeLongestPath"||
+                    graphFormatCode === "flatLongestPath") &&
+                node.group === "longestPath"
             ) {
                 fillColor = styles.longestPathStyles.nodeColour;
-            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"){
+            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"|| graphFormatCode === "flatCompare"){
 
                 switch (node.group) {
                     case "similar":
@@ -94,8 +95,9 @@ export const Node = ({
                 fillColor = styles.tokenStyles.hoverColour;
             } else if (
                 (graphFormatCode === "hierarchicalLongestPath" ||
-                    graphFormatCode === "treeLongestPath") &&
-                node.longestPath === true
+                    graphFormatCode === "treeLongestPath"||
+                    graphFormatCode === "flatLongestPath") &&
+                node.group === "longestPath"
             ) {
                 fillColor = styles.longestPathStyles.tokenColour;
             } else {
