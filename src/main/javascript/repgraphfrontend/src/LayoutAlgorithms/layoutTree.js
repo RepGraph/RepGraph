@@ -1,4 +1,3 @@
-
 const nodeHeight = 40;
 const nodeWidth = 80;
 const interLevelSpacing = 80;
@@ -19,23 +18,32 @@ const topological = (nodeID, visited, stack, neighbours) => {
 };
 
 export const layoutTree = (graphData) => {
-    let directedNeighbours = new Map();
+    let children = new Map();
+    let parents = new Map();
 
-    //Assign empty neighbour arrays to each node id
+    //Assign empty arrays to the children and parent maps
     for (const node of graphData.nodes) {
-        directedNeighbours.set(node.id, []);
+        children.set(node.id, []);
+        parents.set(node.id, []);
     }
 
     //Fill in directed neighbour node id's for each node in corresponding arrays
     for (const e of graphData.edges) {
-        let temp = directedNeighbours.get(e.source);
+        let temp = children.get(e.source);
         temp.push(e.target);
-        directedNeighbours.set(e.source, temp);
+        children.set(e.source, temp);
+
+        temp = parents.get(e.target);
+        graphData.nodes.findIndex((node) => node.id === e.source);
+        temp.push(
+            graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.source)]
+        );
+        parents.set(e.target, temp);
     }
 
     let topologicalStacks = new Map(); //Will hold each node's descendent nodes
 
-    //Fill the topological stacks map with each node's descendents.
+    //Fill the topological stacks map with the number descendants each node has.
     for (const nodeOuter of graphData.nodes) {
         let stack = [];
         let visited = new Map();
@@ -46,16 +54,17 @@ export const layoutTree = (graphData) => {
 
         topologicalStacks.set(
             nodeOuter.id,
-            topological(nodeOuter.id, visited, stack, directedNeighbours)
+            topological(nodeOuter.id, visited, stack, children)
         );
     }
 
     //Find the node with the most descendents, which will dictate the number of levels needed.
+    // let numLevels = Math.max(...topologicalStacks.values());
+
     let numLevels = 0;
     for (const stack of topologicalStacks.values()) {
         numLevels = Math.max(numLevels, stack.length);
     }
-
     //Group nodes together based on the number of descendents they have.
     let nodesInLevels = [];
     for (
@@ -76,54 +85,67 @@ export const layoutTree = (graphData) => {
     let xPositions = new Map();
     let lowestNode = new Map();
 
+
     //Populate the xPositions map with each node's xPosition and the lowestNode map with the lowest node in each column.
     for (let level of nodesInLevels) {
         for (let n of level) {
-            let column = n.anchors[0].from;
+            let column;
+            if (n.anchors !== null) {
+                column = n.anchors[0].from;
+            } else {
+                column = null;
+            }
             xPositions.set(n.id, column);
-            if (!lowestNode.has(column)) {
+            if (!lowestNode.has(column) && n.anchors !== null) {
                 lowestNode.set(column, n.id);
             }
         }
     }
 
+
     //This decides a nodes xPosition based on its neighbours/children.
     for (let level of nodesInLevels) {
         for (let n of level) {
-            if (lowestNode.get(xPositions.get(n.id)) !== n.id) {
+            if (
+                xPositions.get(n.id) !== null &&
+                lowestNode.get(xPositions.get(n.id)) !== n.id
+            ) {
                 //If the current node in the current level isn't the lowest node in its column
-                if (directedNeighbours.get(n.id).length === 1) {
+                if (children.get(n.id).length === 0) {
+                } else if (children.get(n.id).length === 1) {
                     //If the current node has a single neighbour
-                    xPositions.set(n.id, xPositions.get(directedNeighbours.get(n.id)[0])); //Set the current node's xPosition to its neighbour's
+                    xPositions.set(n.id, xPositions.get(children.get(n.id)[0])); //Set the current node's xPosition to its neighbour's
                 } else {
-                    let childrenInSpan = [];
 
-                    //Finds the current node's children which are in it's span.
-                    for (let neighbour of directedNeighbours.get(n.id)) {
-                        if (
-                            xPositions.get(neighbour) >= n.anchors[0].from &&
-                            xPositions.get(neighbour) <= n.anchors[0].end
-                        ) {
-                            childrenInSpan.push(neighbour);
-                        }
+                    let childrenX = [];
+                    for (let neighbour of children.get(n.id)) {
+                        childrenX.push(xPositions.get(neighbour));
                     }
-
-                    if (childrenInSpan.length !== 0) {
-                        //If the current node has no children in it's span, leave its x position as it is.
-                        let leftMostChildPos = xPositions.get(childrenInSpan[0]);
-                        //Find the current node's left most child in it's span.
-                        for (let child of childrenInSpan) {
-                            leftMostChildPos = Math.min(
-                                leftMostChildPos,
-                                xPositions.get(child)
-                            );
-                        }
-                        xPositions.set(n.id, leftMostChildPos); //Set the node's x position to its left most child in it's span.
-                    }
+                    childrenX = childrenX.sort();
+                    let middleChild = childrenX[Math.floor(childrenX.length / 2)];
+                    xPositions.set(n.id, middleChild); //Set the node's x position to its middle child's
                 }
             }
         }
     }
+
+
+    for (let level = 0; level < nodesInLevels.length; level++) {
+        for (let n of nodesInLevels[level]) {
+            if (xPositions.get(n.id) === null) {
+                if (children.get(n.id).length !== 0) {
+                    xPositions.set(n.id, xPositions.get(children.get(n.id)[0]));
+                } else if (parents.get(n.id).length !== 0) {
+                    let parentID = parents.get(n.id)[0].id;
+                    let xPos = xPositions.get(parentID);
+                    xPositions.set(n.id, xPos);
+                } else {
+                    // ??
+                }
+            }
+        }
+    }
+
 
     let nodesInFinalLevels = [];
     nodesInFinalLevels[0] = new Map();
@@ -135,8 +157,23 @@ export const layoutTree = (graphData) => {
         let nodeXPos = new Map();
         nodesInFinalLevels[currentLevel + 1] = new Map();
         for (let n of nodesInLevels[currentLevel]) {
-            //If this xPosition is already taken in this level
-            if (nodeXPos.has(xPositions.get(n.id))) {
+            if (n.anchors === null &&
+                parents.get(n.id)[0] !== null &&
+                xPositions.get(parents.get(n.id)[0].id) === xPositions.get(n.id) &&
+                lowestNode.get(xPositions.get(parents.get(n.id)[0].id)) === parents.get(n.id)[0].id
+            ) {
+                //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
+                if (currentLevel === 0) {
+                    nodesInLevels[currentLevel + 1].push(n);
+                } else if (!nodesInLevels[currentLevel - 1].includes(parents.get(n.id)[0])) {
+                    nodesInLevels[currentLevel + 1].push(n);
+                } else {
+                    //Designate this node as the node occupying node this xPosition on this level.
+                    nodeXPos.set(xPositions.get(n.id), n.id);
+                    nodesInFinalLevels[currentLevel].set(n.id, n);
+                    numNodesProcessed++;
+                }
+            } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
                 if (
                     topologicalStacks.get(n.id).length <
                     topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length
@@ -146,7 +183,8 @@ export const layoutTree = (graphData) => {
                     let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
                     nodeXPos.set(xPositions.get(n.id), n.id);
                     nodesInLevels[currentLevel + 1].push(
-                        graphData.nodes[currentOccupyingNodeID]
+                        graphData.nodes[graphData.nodes.findIndex(
+                            (node) => node.id === currentOccupyingNodeID)]
                     );
                     nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
                     nodesInFinalLevels[currentLevel].set(n.id, n);
@@ -163,16 +201,20 @@ export const layoutTree = (graphData) => {
         currentLevel++;
     }
 
-    let height = numLevels;
-
     //convert from array of maps to array of arrays
     let nodesInFinalLevelsArray = [nodesInFinalLevels.length];
-    for (let level = 0; level < nodesInFinalLevels.length; level++) {
-        nodesInFinalLevelsArray[level] = [];
-        for (let n of nodesInFinalLevels[level].values()) {
-            nodesInFinalLevelsArray[level].push(n);
+    let level = 0;
+    for (let i = 0; i < nodesInFinalLevels.length; i++) {
+        if (nodesInFinalLevels[i].size !== 0) { //Removes levels with no nodes to create a more condensed graph.
+            nodesInFinalLevelsArray[level] = [];
+            for (let n of nodesInFinalLevels[i].values()) {
+                nodesInFinalLevelsArray[level].push(n);
+            }
+            level++;
         }
     }
+
+    let height = nodesInFinalLevelsArray.length;
 
     const totalGraphHeight =
         height * nodeHeight + (height - 1) * interLevelSpacing; //number of levels times the height of each node and the spaces between them
@@ -208,9 +250,11 @@ export const layoutTree = (graphData) => {
     const finalGraphNodes = nodesInFinalLevelsArray.flat().concat(tokens);
 
     const finalGraphEdges = graphData.edges.map((edge, index) => {
+
         const sourceNodeIndex = finalGraphNodes.findIndex(
             (node) => node.id === edge.source
         );
+
         const targetNodeIndex = finalGraphNodes.findIndex(
             (node) => node.id === edge.target
         );
@@ -292,7 +336,7 @@ export const layoutTree = (graphData) => {
 
     const allEdges = finalGraphEdges.concat(tokenEdges);
 
-    return { nodes: finalGraphNodes, links: allEdges };
+    return {nodes: finalGraphNodes, links: allEdges};
 };
 
 function controlPoints(source, target, direction, degree) {
@@ -339,7 +383,7 @@ function controlPoints(source, target, direction, degree) {
         y1 = (source.y + target.y) / 2;
     }
 
-    return { x1, y1 };
+    return {x1, y1};
 }
 
 function edgeRulesSameColumn(
@@ -407,19 +451,36 @@ function edgeRulesSameColumn(
     return controlPoints(source, target, direction, degree);
 }
 
-function edgeRulesSameRow(source, target) {
+function edgeRulesSameRow(
+    edge,
+    source,
+    target,
+    finalGraphNodes,
+    finalGraphEdges
+) {
     let direction = "";
     let degree = 0.25;
 
     if (Math.abs(target.x - source.x) !== intraLevelSpacing + nodeWidth) {
         //On the same level and more than 1 space apart
-        if (source.x < target.x) {
-            direction = "horizontal-right";
-        } else {
+
+        let found = false;
+        for (let node of finalGraphNodes) {
+            if (node.y === source.y) {
+                if (
+                    (node.x > source.x && node.x < target.x) ||
+                    (node.x < source.x && node.x > target.x)
+                ) {
+                    //There exists a node in between the target and source node
+                    //console.log(node);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (found) {
             direction = "horizontal-left";
         }
-
-        //Check if there is an identical edge, change their curviture
     }
 
     return controlPoints(source, target, direction, degree);
