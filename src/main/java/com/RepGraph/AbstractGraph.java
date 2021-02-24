@@ -897,26 +897,31 @@ class AbstractGraph {
 
             updated.add(newEdge);
 
-            for (String sourceID : dummyNodes.get(source)){
-                newEdge = new Edge();
-                newEdge.setSource((sourceID));
-                newEdge.setTarget((target));
-                updated.add(newEdge);
-            }
-
-            for (String targetID : dummyNodes.get(target)){
-                newEdge = new Edge();
-                newEdge.setSource((source));
-                newEdge.setTarget((targetID));
-                updated.add(newEdge);
-            }
-
-            for (String sourceID : dummyNodes.get(source)){
-                for (String targetID : dummyNodes.get(target)){
+            if (dummyNodes.containsKey(source)) {
+                for (String sourceID : dummyNodes.get(source)) {
                     newEdge = new Edge();
                     newEdge.setSource((sourceID));
+                    newEdge.setTarget((target));
+                    updated.add(newEdge);
+                }
+            }
+
+            if (dummyNodes.containsKey(target)) {
+                for (String targetID : dummyNodes.get(target)) {
+                    newEdge = new Edge();
+                    newEdge.setSource((source));
                     newEdge.setTarget((targetID));
                     updated.add(newEdge);
+                }
+            }
+            if (dummyNodes.containsKey(source) && dummyNodes.containsKey(target)) {
+                for (String sourceID : dummyNodes.get(source)) {
+                    for (String targetID : dummyNodes.get(target)) {
+                        newEdge = new Edge();
+                        newEdge.setSource((sourceID));
+                        newEdge.setTarget((targetID));
+                        updated.add(newEdge);
+                    }
                 }
             }
 
