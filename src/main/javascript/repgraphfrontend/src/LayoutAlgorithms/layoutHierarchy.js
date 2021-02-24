@@ -4,6 +4,41 @@ const interLevelSpacing = 80;
 const intraLevelSpacing = 50;
 const tokenLevelSpacing = 140;
 
+const childrenAnchors = (nodeID, children, parents) => {
+    if (children.get(nodeID).length === 0) {
+        return Number.MAX_VALUE;
+    } else {
+        let anchors = [];
+        for (let child in children.get(nodeID)) {
+            if (child.anchors === null) {
+                anchors.push(childrenAnchors(child.id, children));
+            } else {
+                anchors.push(child.anchors);
+            }
+        }
+        let leftMost = anchors[0];
+        for (let i = 1; i < anchors.length; i++) {
+            if (leftMost.from > anchors[i].from) {
+                leftMost = anchors[i];
+            }
+        }
+        return leftMost;
+    }
+}
+
+//Given an initial start node, returns a stack of its descendent nodes.
+const topological = (nodeID, visited, stack, neighbours) => {
+    visited.set(nodeID, true);
+
+    for (let i = 0; i < neighbours.get(nodeID).length; i++) {
+        if (visited.get(neighbours.get(nodeID)[i].id) !== true) {
+            topological(neighbours.get(nodeID)[i].id, visited, stack, neighbours);
+        }
+    }
+    stack.push(nodeID);
+    return stack;
+};
+
 export const layoutHierarchy = (graphData) => {
     console.log(graphData);
 
@@ -33,6 +68,23 @@ export const layoutHierarchy = (graphData) => {
         parents.set(e.target, temp);
     }
 
+    let topologicalStacks = new Map(); //Will hold each node's descendent nodes
+
+    //Fill the topological stacks map with the number descendants each node has.
+    for (const nodeOuter of graphData.nodes) {
+        let stack = [];
+        let visited = new Map();
+
+        for (const nodeInner of graphData.nodes) {
+            visited.set(nodeInner.id, false);
+        }
+
+        topologicalStacks.set(
+            nodeOuter.id,
+            topological(nodeOuter.id, visited, stack, children)
+        );
+    }
+
     let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
 
     //Add anchors to nodes without anchors. Fake anchors are added in order to run the layout algorithm, and are decided using either a node's children or parent node's anchors.
@@ -60,8 +112,9 @@ export const layoutHierarchy = (graphData) => {
                 anchors: anchorArray,
                 span: false
             };
+
         } else {
-            return { ...node, span: true };
+            return {...node, span: true};
         }
     });
     //Determine span lengths of each node
@@ -287,8 +340,8 @@ export const layoutHierarchy = (graphData) => {
     });
 
 
-    console.log("layoutHierarchy return:", { nodes: finalGraphNodes, links: finalGraphEdges });
-    return { nodes: finalGraphNodes, links: finalGraphEdges };
+    console.log("layoutHierarchy return:", {nodes: finalGraphNodes, links: finalGraphEdges});
+    return {nodes: finalGraphNodes, links: finalGraphEdges};
 };
 
 function controlPoints(source, target, direction, degree) {
@@ -323,10 +376,11 @@ function controlPoints(source, target, direction, degree) {
         y1 = (source.y + target.y) / 2;
     } else if (direction === "horizontal-left") {
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y + (source.x - target.x) * degree,target.y + tokenLevelSpacing);
+        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y + tokenLevelSpacing);
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
-        y1 =  y1 = Math.min(target.y - (source.x - target.x) * degree,target.y + tokenLevelSpacing);;
+        y1 = y1 = Math.min(target.y - (source.x - target.x) * degree, target.y + tokenLevelSpacing);
+        ;
     } else if (direction === "custom") {
         x1 = degree;
         y1 = source.y + nodeHeight;
@@ -335,7 +389,7 @@ function controlPoints(source, target, direction, degree) {
         y1 = (source.y + target.y) / 2;
     }
 
-    return { x1, y1 };
+    return {x1, y1};
 }
 
 function edgeRulesSameColumn(
@@ -456,7 +510,7 @@ function edgeRulesSameRow(
         }
     }
 
-    if (Math.abs(source.x - target.x)/(intraLevelSpacing+nodeWidth) > 6){
+    if (Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth) > 6) {
         degree = 0.15;
     }
 
