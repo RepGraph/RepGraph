@@ -2,7 +2,7 @@ const nodeHeight = 40;
 const nodeWidth = 80;
 const intraLevelSpacing = 50;
 
-export const layoutFlat = (graphData) => {
+export const layoutFlat = (graphData, planar) => {
     console.log(graphData);
 
     const nodes = graphData.nodes.map((node, index) => ({
@@ -30,7 +30,7 @@ export const layoutFlat = (graphData) => {
 
         let cp;
 
-        cp = edgeRulesSameRow(source, target, finalGraphNodes);
+        cp = edgeRulesSameRow(source, target, finalGraphNodes, planar);
 
         return {
             id: index,
@@ -86,7 +86,17 @@ function edgeRulesSameRow(source, target, finalGraphNodes) {
             }
         }
         if (found) {
-                direction = "horizontal-right";
+                if (planar){
+                    if (source.x < target.x){
+                        direction = "horizontal-left";
+                    }
+                    else{
+                        direction = "horizontal-right";
+                    }
+                }
+                else{
+                    direction = "horizontal-right";
+                }
                 let distance = Math.abs(source.x - target.x)/(intraLevelSpacing+nodeWidth);
             if (distance > 10){
                 degree = 0.15;
