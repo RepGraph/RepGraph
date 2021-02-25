@@ -328,7 +328,8 @@ export default function MiniDrawer() {
                                 {/*     className={classes.fabButton} onClick={handleClickGraphLegend}>*/}
                                 {/*    Show Graph Legend*/}
                                 {/*</Fab>*/}
-                                <Button color="inherit" onClick={handleClickGraphLegend}>Show Graph Legend</Button>
+                                <Button color="primary" variant="contained" disableElevation
+                                        onClick={handleClickGraphLegend}>Show Graph Legend</Button>
                                 <Popover
                                     open={legendOpen}
                                     anchorEl={anchorEl}
@@ -380,6 +381,7 @@ export default function MiniDrawer() {
                                     exclusive
                                     onChange={handleChangeVisualisationFormat}
                                     aria-label="Visualisation formats"
+                                    color="primary"
                                 >
                                     <ToggleButton value="1" aria-label="Hierarchical">
                                         <Typography color={"textPrimary"}>Hierarchical</Typography>
@@ -406,7 +408,7 @@ export default function MiniDrawer() {
                                 {/*    <BuildIcon/>}*/}
                                 {/*</Fab>*/}
 
-                                <Button color="inherit" onClick={() => {
+                                <Button color="primary" variant="contained" disableElevation onClick={() => {
                                     setSentenceOpen(true);
                                 }}
                                         disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
@@ -424,7 +426,7 @@ export default function MiniDrawer() {
                                 {/*    {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?*/}
                                 {/*    <CloudUploadIcon/> : <BuildIcon/>}*/}
                                 {/*</Fab>*/}
-                                <Button color="inherit" onClick={() => {
+                                <Button color="primary" variant="contained" disableElevation onClick={() => {
                                     history.push("/");
                                 }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
                                     <CloudUploadIcon/> : <EjectIcon/>}</Button>
@@ -791,17 +793,20 @@ export default function MiniDrawer() {
                             </Card></div>
                 ) : (
                     <div className={classes.graphDiv}>
-                        <ParentSize>
-                            {parent => (
-                                <Graph
-                                    width={parent.width}
-                                    height={parent.height}
-                                    graph={state.selectedSentenceVisualisation}
-                                    adjacentLinks={determineAdjacentLinks(state.selectedSentenceVisualisation)}
-                                    graphFormatCode={graphFormatCode}
-                                />
-                            )}
-                        </ParentSize>
+                        <Card variant="outlined" style={{width: "100%", height: "100%"}}>
+                                    <ParentSize>
+                                        {parent => (
+                                            <Graph
+                                                width={parent.width}
+                                                height={parent.height}
+                                                graph={state.selectedSentenceVisualisation}
+                                                adjacentLinks={determineAdjacentLinks(state.selectedSentenceVisualisation)}
+                                                graphFormatCode={graphFormatCode}
+                                            />
+                                        )}
+                                    </ParentSize>
+                        </Card>
+
                     </div>
                 )}
             </main>
