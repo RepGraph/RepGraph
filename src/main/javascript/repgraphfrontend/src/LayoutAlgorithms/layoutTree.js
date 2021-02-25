@@ -19,331 +19,346 @@ const topological = (nodeID, visited, stack, neighbours) => {
 
 export const layoutTree = (graphData, graphLayoutSpacing) => {
 
-    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+        const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+        console.log("graphData", graphData);
 
-    let children = new Map();
-    let parents = new Map();
+        let children = new Map();
+        let parents = new Map();
 
-    //Assign empty arrays to the children and parent maps
-    for (const node of graphData.nodes) {
-        children.set(node.id, []);
-        parents.set(node.id, []);
-    }
-
-    //Fill in directed neighbour node id's for each node in corresponding arrays
-    for (const e of graphData.edges) {
-        let temp = children.get(e.source);
-        temp.push(e.target);
-        children.set(e.source, temp);
-
-        temp = parents.get(e.target);
-        graphData.nodes.findIndex((node) => node.id === e.source);
-        temp.push(
-            graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.source)]
-        );
-        parents.set(e.target, temp);
-    }
-
-    let topologicalStacks = new Map(); //Will hold each node's descendent nodes
-
-    //Fill the topological stacks map with the number descendants each node has.
-    for (const nodeOuter of graphData.nodes) {
-        let stack = [];
-        let visited = new Map();
-
-        for (const nodeInner of graphData.nodes) {
-            visited.set(nodeInner.id, false);
+        //Assign empty arrays to the children and parent maps
+        for (const node of graphData.nodes) {
+            children.set(node.id, []);
+            parents.set(node.id, []);
         }
 
-        topologicalStacks.set(
-            nodeOuter.id,
-            topological(nodeOuter.id, visited, stack, children)
-        );
-    }
+        //Fill in directed neighbour node id's for each node in corresponding arrays
+        for (const e of graphData.edges) {
+            let temp = children.get(e.source);
+            temp.push(e.target);
+            children.set(e.source, temp);
 
-    //Find the node with the most descendents, which will dictate the number of levels needed.
-    // let numLevels = Math.max(...topologicalStacks.values());
-
-    let numLevels = 0;
-    for (const stack of topologicalStacks.values()) {
-        numLevels = Math.max(numLevels, stack.length);
-    }
-    //Group nodes together based on the number of descendents they have.
-    let nodesInLevels = [];
-    for (
-        let numDescendents = 1;
-        numDescendents < numLevels + 1;
-        numDescendents++
-    ) {
-        let currentLevel = [];
-        for (let node of graphData.nodes) {
-            //console.log("node: ",node," Length: ",topologicalStacks.get(node.id).length);
-            if (topologicalStacks.get(node.id).length === numDescendents) {
-                currentLevel.push(node);
-            }
+            temp = parents.get(e.target);
+            graphData.nodes.findIndex((node) => node.id === e.source);
+            temp.push(
+                graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.source)]
+            );
+            parents.set(e.target, temp);
         }
-        nodesInLevels.push(currentLevel);
-    }
 
-    let xPositions = new Map();
-    let lowestNode = new Map();
+        let topologicalStacks = new Map(); //Will hold each node's descendent nodes
 
+        //Fill the topological stacks map with the number descendants each node has.
+        for (const nodeOuter of graphData.nodes) {
+            let stack = [];
+            let visited = new Map();
 
-    //Populate the xPositions map with each node's xPosition and the lowestNode map with the lowest node in each column.
-    for (let level of nodesInLevels) {
-        for (let n of level) {
-            let column;
-            if (n.anchors !== null) {
-                column = n.anchors[0].from;
-            } else {
-                column = null;
+            for (const nodeInner of graphData.nodes) {
+                visited.set(nodeInner.id, false);
             }
-            xPositions.set(n.id, column);
-            if (!lowestNode.has(column) && n.anchors !== null) {
-                lowestNode.set(column, n.id);
-            }
+
+            topologicalStacks.set(
+                nodeOuter.id,
+                topological(nodeOuter.id, visited, stack, children)
+            );
         }
-    }
+
+        //Find the node with the most descendents, which will dictate the number of levels needed.
+        // let numLevels = Math.max(...topologicalStacks.values());
+
+        let numLevels = 0;
+        for (const stack of topologicalStacks.values()) {
+            numLevels = Math.max(numLevels, stack.length);
+        }
+        //Group nodes together based on the number of descendents they have.
+        let nodesInLevels = [];
+        for (
+            let numDescendents = 1;
+            numDescendents < numLevels + 1;
+            numDescendents++
+        ) {
+            let currentLevel = [];
+            for (let node of graphData.nodes) {
+                //console.log("node: ",node," Length: ",topologicalStacks.get(node.id).length);
+                if (topologicalStacks.get(node.id).length === numDescendents) {
+                    currentLevel.push(node);
+                }
+            }
+            nodesInLevels.push(currentLevel);
+        }
+
+        let xPositions = new Map();
+        let lowestNode = new Map();
 
 
-    //This decides a nodes xPosition based on its neighbours/children.
-    for (let level of nodesInLevels) {
-        for (let n of level) {
-            if (
-                xPositions.get(n.id) !== null &&
-                lowestNode.get(xPositions.get(n.id)) !== n.id
-            ) {
-                //If the current node in the current level isn't the lowest node in its column
-                if (children.get(n.id).length === 0) {
-                } else if (children.get(n.id).length === 1) {
-                    //If the current node has a single neighbour
-                    xPositions.set(n.id, xPositions.get(children.get(n.id)[0])); //Set the current node's xPosition to its neighbour's
+        //Populate the xPositions map with each node's xPosition and the lowestNode map with the lowest node in each column.
+        for (let level of nodesInLevels) {
+            for (let n of level) {
+                let column;
+                if (n.anchors !== null) {
+                    column = n.anchors[0].from;
                 } else {
+                    column = null;
+                }
+                xPositions.set(n.id, column);
+                if (!lowestNode.has(column) && n.anchors !== null) {
+                    lowestNode.set(column, n.id);
+                }
+            }
+        }
 
-                    let childrenX = [];
-                    for (let neighbour of children.get(n.id)) {
-                        childrenX.push(xPositions.get(neighbour));
+
+        //This decides a nodes xPosition based on its neighbours/children.
+        for (let level of nodesInLevels) {
+            for (let n of level) {
+                if (
+                    xPositions.get(n.id) !== null &&
+                    lowestNode.get(xPositions.get(n.id)) !== n.id
+                ) {
+                    //If the current node in the current level isn't the lowest node in its column
+                    if (children.get(n.id).length === 0) {
+                    } else if (children.get(n.id).length === 1) {
+                        //If the current node has a single neighbour
+                        xPositions.set(n.id, xPositions.get(children.get(n.id)[0])); //Set the current node's xPosition to its neighbour's
+                    } else {
+
+                        let childrenX = [];
+                        for (let neighbour of children.get(n.id)) {
+                            childrenX.push(xPositions.get(neighbour));
+                        }
+                        childrenX = childrenX.sort();
+                        let middleChild = childrenX[Math.floor(childrenX.length / 2)];
+                        xPositions.set(n.id, middleChild); //Set the node's x position to its middle child's
                     }
-                    childrenX = childrenX.sort();
-                    let middleChild = childrenX[Math.floor(childrenX.length / 2)];
-                    xPositions.set(n.id, middleChild); //Set the node's x position to its middle child's
                 }
             }
         }
-    }
 
 
-    for (let level = 0; level < nodesInLevels.length; level++) {
-        for (let n of nodesInLevels[level]) {
-            if (xPositions.get(n.id) === null) {
-                if (children.get(n.id).length !== 0) {
-                    xPositions.set(n.id, xPositions.get(children.get(n.id)[0]));
-                } else if (parents.get(n.id).length !== 0) {
-                    let parentID = parents.get(n.id)[0].id;
-                    let xPos = xPositions.get(parentID);
-                    xPositions.set(n.id, xPos);
-                } else {
-                    // ??
+        for (let level = 0; level < nodesInLevels.length; level++) {
+            for (let n of nodesInLevels[level]) {
+                if (xPositions.get(n.id) === null) {
+                    if (children.get(n.id).length !== 0) {
+                        xPositions.set(n.id, xPositions.get(children.get(n.id)[0]));
+                    } else if (parents.get(n.id).length !== 0) {
+                        let parentID = parents.get(n.id)[0].id;
+                        let xPos = xPositions.get(parentID);
+                        xPositions.set(n.id, xPos);
+                    } else {
+                        // ??
+                    }
                 }
             }
         }
-    }
 
 
-    let nodesInFinalLevels = [];
-    nodesInFinalLevels[0] = new Map();
+        let nodesInFinalLevels = [];
+        nodesInFinalLevels[0] = new Map();
 
-    //Algorithm to resolve overlapping nodes.
-    let numNodesProcessed = 0;
-    let currentLevel = 0;
-    while (numNodesProcessed !== graphData.nodes.length) {
-        let nodeXPos = new Map();
-        nodesInFinalLevels[currentLevel + 1] = new Map();
-        for (let n of nodesInLevels[currentLevel]) {
-            if (n.anchors === null &&
-                parents.get(n.id)[0] !== null &&
-                xPositions.get(parents.get(n.id)[0].id) === xPositions.get(n.id) &&
-                lowestNode.get(xPositions.get(parents.get(n.id)[0].id)) === parents.get(n.id)[0].id
-            ) {
-                //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
-                if (currentLevel === 0) {
-                    nodesInLevels[currentLevel + 1].push(n);
-                } else if (!nodesInLevels[currentLevel - 1].includes(parents.get(n.id)[0])) {
-                    nodesInLevels[currentLevel + 1].push(n);
+        //Algorithm to resolve overlapping nodes.
+        let numNodesProcessed = 0;
+        let currentLevel = 0;
+        while (numNodesProcessed !== graphData.nodes.length) {
+            let nodeXPos = new Map();
+            nodesInFinalLevels[currentLevel + 1] = new Map();
+            if (currentLevel === nodesInLevels.length-1){
+                nodesInLevels[currentLevel+1]=[];
+            }
+            for (let n of nodesInLevels[currentLevel]) {
+                if (n.anchors === null &&
+                    parents.get(n.id)[0] !== null &&
+                    xPositions.get(parents.get(n.id)[0].id) === xPositions.get(n.id) &&
+                    lowestNode.get(xPositions.get(parents.get(n.id)[0].id)) === parents.get(n.id)[0].id
+                ) {
+                    //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
+                    if (currentLevel === 0) {
+                        nodesInLevels[currentLevel + 1].push(n);
+                    } else if (!nodesInLevels[currentLevel - 1].includes(parents.get(n.id)[0])) {
+                        nodesInLevels[currentLevel + 1].push(n);
+                    } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
+                        //Move the current occupying node up, so the anchorless node stays with its parent.
+                        let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
+                        nodeXPos.set(xPositions.get(n.id), n.id);
+                        nodesInLevels[currentLevel + 1].push(
+                            graphData.nodes[graphData.nodes.findIndex(
+                                (node) => node.id === currentOccupyingNodeID)]
+                        );
+                        nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
+                        nodesInFinalLevels[currentLevel].set(n.id, n);
+                    } else {
+                        //Designate this node as the node occupying node this xPosition on this level.
+                        nodeXPos.set(xPositions.get(n.id), n.id);
+                        nodesInFinalLevels[currentLevel].set(n.id, n);
+                        numNodesProcessed++;
+                    }
+                } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
+                    if (
+                        topologicalStacks.get(n.id).length <
+                        topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length
+                    ) {
+                        //Check which of the overlapping nodes have more descendents
+                        //Set the node with the higher descendents in the next level, and remove it from this level.
+                        let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
+                        nodeXPos.set(xPositions.get(n.id), n.id);
+                        nodesInLevels[currentLevel + 1].push(
+                            graphData.nodes[graphData.nodes.findIndex(
+                                (node) => node.id === currentOccupyingNodeID)]
+                        );
+                        nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
+                        nodesInFinalLevels[currentLevel].set(n.id, n);
+                    } else {
+                        nodesInLevels[currentLevel + 1].push(n);
+                    }
                 } else {
                     //Designate this node as the node occupying node this xPosition on this level.
                     nodeXPos.set(xPositions.get(n.id), n.id);
                     nodesInFinalLevels[currentLevel].set(n.id, n);
                     numNodesProcessed++;
                 }
-            } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
-                if (
-                    topologicalStacks.get(n.id).length <
-                    topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length
-                ) {
-                    //Check which of the overlapping nodes have more descendents
-                    //Set the node with the higher descendents in the next level, and remove it from this level.
-                    let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
-                    nodeXPos.set(xPositions.get(n.id), n.id);
-                    nodesInLevels[currentLevel + 1].push(
-                        graphData.nodes[graphData.nodes.findIndex(
-                            (node) => node.id === currentOccupyingNodeID)]
-                    );
-                    nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
-                    nodesInFinalLevels[currentLevel].set(n.id, n);
-                } else {
-                    nodesInLevels[currentLevel + 1].push(n);
+            }
+            currentLevel++;
+        }
+
+        //convert from array of maps to array of arrays
+        let nodesInFinalLevelsArray = [nodesInFinalLevels.length];
+        let level = 0;
+        for (let i = 0; i < nodesInFinalLevels.length; i++) {
+            if (nodesInFinalLevels[i].size !== 0) { //Removes levels with no nodes to create a more condensed graph.
+                nodesInFinalLevelsArray[level] = [];
+                for (let n of nodesInFinalLevels[i].values()) {
+                    nodesInFinalLevelsArray[level].push(n);
                 }
+                level++;
+            }
+        }
+
+        let height = nodesInFinalLevelsArray.length;
+
+        const totalGraphHeight =
+            height * nodeHeight + (height - 1) * interLevelSpacing; //number of levels times the height of each node and the spaces between them
+
+        const tokens = graphData.tokens.map((token) => ({
+            ...token,
+            id: token.index + graphData.nodes.length,
+            x: token.index * (intraLevelSpacing + nodeWidth),
+            y: totalGraphHeight + tokenLevelSpacing,
+            relativeX: token.index,
+            label: token.form,
+            type: "token",
+            group: "token"
+        }));
+
+        for (let level = 0; level < nodesInFinalLevelsArray.length; level++) {
+            nodesInFinalLevelsArray[level] = nodesInFinalLevelsArray[level].map(
+                (node) => ({
+                    ...node,
+                    x: xPositions.get(node.id) * (intraLevelSpacing + nodeWidth),
+                    y: totalGraphHeight - level * (totalGraphHeight / height),
+                    relativeX: xPositions.get(node.id),
+                    relativeY: level,
+                    label: node.label,
+                    type: "node",
+                    nodeLevel: level,
+                    group: "node",
+                    span: false
+                })
+            );
+        }
+
+        const finalGraphNodes = nodesInFinalLevelsArray.flat().concat(tokens);
+
+        const finalGraphEdges = graphData.edges.map((edge, index) => {
+
+            const sourceNodeIndex = finalGraphNodes.findIndex(
+                (node) => node.id === edge.source
+            );
+
+            const targetNodeIndex = finalGraphNodes.findIndex(
+                (node) => node.id === edge.target
+            );
+
+            const source = finalGraphNodes[sourceNodeIndex];
+            const target = finalGraphNodes[targetNodeIndex];
+
+            let cp;
+
+            if (source.y === target.y) {
+                cp = edgeRulesSameRow(
+                    edge,
+                    source,
+                    target,
+                    finalGraphNodes,
+                    graphData.edges,
+                    graphLayoutSpacing
+                );
+            } else if (source.x === target.x) {
+                cp = edgeRulesSameColumn(
+                    edge,
+                    source,
+                    target,
+                    finalGraphNodes,
+                    graphData.edges,
+                    graphLayoutSpacing
+                );
             } else {
-                //Designate this node as the node occupying node this xPosition on this level.
-                nodeXPos.set(xPositions.get(n.id), n.id);
-                nodesInFinalLevels[currentLevel].set(n.id, n);
-                numNodesProcessed++;
+                cp = edgeRulesOther(
+                    edge,
+                    source,
+                    target,
+                    finalGraphNodes,
+                    graphData.edges,
+                    graphLayoutSpacing
+                );
             }
-        }
-        currentLevel++;
-    }
 
-    //convert from array of maps to array of arrays
-    let nodesInFinalLevelsArray = [nodesInFinalLevels.length];
-    let level = 0;
-    for (let i = 0; i < nodesInFinalLevels.length; i++) {
-        if (nodesInFinalLevels[i].size !== 0) { //Removes levels with no nodes to create a more condensed graph.
-            nodesInFinalLevelsArray[level] = [];
-            for (let n of nodesInFinalLevels[i].values()) {
-                nodesInFinalLevelsArray[level].push(n);
-            }
-            level++;
-        }
-    }
+            return {
+                id: index,
+                source: finalGraphNodes[sourceNodeIndex],
+                target: finalGraphNodes[targetNodeIndex],
+                label: edge.label,
+                x1: cp.x1,
+                y1: cp.y1,
+                type: "link",
+                group: "link"
+            };
+        });
 
-    let height = nodesInFinalLevelsArray.length;
-
-    const totalGraphHeight =
-        height * nodeHeight + (height - 1) * interLevelSpacing; //number of levels times the height of each node and the spaces between them
-
-    const tokens = graphData.tokens.map((token) => ({
-        ...token,
-        id: token.index + graphData.nodes.length,
-        x: token.index * (intraLevelSpacing + nodeWidth),
-        y: totalGraphHeight + tokenLevelSpacing,
-        relativeX: token.index,
-        label: token.form,
-        type: "token",
-        group: "token"
-    }));
-
-    for (let level = 0; level < nodesInFinalLevelsArray.length; level++) {
-        nodesInFinalLevelsArray[level] = nodesInFinalLevelsArray[level].map(
-            (node) => ({
-                ...node,
-                x: xPositions.get(node.id) * (intraLevelSpacing + nodeWidth),
-                y: totalGraphHeight - level * (totalGraphHeight / height),
-                relativeX: xPositions.get(node.id),
-                relativeY: level,
-                label: node.label,
-                type: "node",
-                nodeLevel: level,
-                group: "node",
-                span: false
-            })
-        );
-    }
-
-    const finalGraphNodes = nodesInFinalLevelsArray.flat().concat(tokens);
-
-    const finalGraphEdges = graphData.edges.map((edge, index) => {
-
-        const sourceNodeIndex = finalGraphNodes.findIndex(
-            (node) => node.id === edge.source
-        );
-
-        const targetNodeIndex = finalGraphNodes.findIndex(
-            (node) => node.id === edge.target
-        );
-
-        const source = finalGraphNodes[sourceNodeIndex];
-        const target = finalGraphNodes[targetNodeIndex];
-
-        let cp;
-
-        if (source.y === target.y) {
-            cp = edgeRulesSameRow(
-                edge,
-                source,
-                target,
-                finalGraphNodes,
-                graphData.edges,
-                graphLayoutSpacing
-            );
-        } else if (source.x === target.x) {
-            cp = edgeRulesSameColumn(
-                edge,
-                source,
-                target,
-                finalGraphNodes,
-                graphData.edges,
-                graphLayoutSpacing
-            );
-        } else {
-            cp = edgeRulesOther(
-                edge,
-                source,
-                target,
-                finalGraphNodes,
-                graphData.edges,
-                graphLayoutSpacing
-            );
-        }
-
-        return {
-            id: index,
-            source: finalGraphNodes[sourceNodeIndex],
-            target: finalGraphNodes[targetNodeIndex],
-            label: edge.label,
-            x1: cp.x1,
-            y1: cp.y1,
-            type: "link",
-            group: "link"
-        };
-    });
-
-    let tokenEdges = [tokens.size];
-    let i = 0;
-    for (let token of tokens) {
-        if (lowestNode.get(token.relativeX) !== undefined) {
-            let cp = controlPoints(
-                finalGraphNodes[
-                    finalGraphNodes.findIndex(
-                        (node) => node.id === lowestNode.get(token.relativeX)
-                    )
-                    ],
-                token,
-                "",
-                0,graphLayoutSpacing
-            );
-            let temp = {
-                source:
+        let tokenEdges = [tokens.size];
+        let i = 0;
+        for (let token of tokens) {
+            if (lowestNode.get(token.relativeX) !== undefined) {
+                let cp = controlPoints(
                     finalGraphNodes[
                         finalGraphNodes.findIndex(
                             (node) => node.id === lowestNode.get(token.relativeX)
                         )
                         ],
-                target: token,
-                type: "tokenLink",
-                label: "",
-                x1: cp.x1,
-                y1: cp.y1
-            };
-            tokenEdges[i] = temp;
-            i++;
+                    token,
+                    "",
+                    0, graphLayoutSpacing
+                );
+                let temp = {
+                    source:
+                        finalGraphNodes[
+                            finalGraphNodes.findIndex(
+                                (node) => node.id === lowestNode.get(token.relativeX)
+                            )
+                            ],
+                    target: token,
+                    type: "tokenLink",
+                    label: "",
+                    x1: cp.x1,
+                    y1: cp.y1
+                };
+                tokenEdges[i] = temp;
+                i++;
+            }
         }
+
+        const allEdges = finalGraphEdges.concat(tokenEdges);
+
+        return {nodes: finalGraphNodes, links: allEdges};
     }
-
-    const allEdges = finalGraphEdges.concat(tokenEdges);
-
-    return {nodes: finalGraphNodes, links: allEdges};
-};
+;
 
 function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
 
