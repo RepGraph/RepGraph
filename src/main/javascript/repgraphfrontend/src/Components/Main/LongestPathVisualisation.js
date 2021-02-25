@@ -214,6 +214,9 @@ function LongestPathVisualisation({type}) {
                         size="small"
                         onClick={handleNext}
                         disabled={activeStep === maxSteps - 1}
+                        color="primary"
+                        variant="contained"
+                        disableElevation
                     >
                         Next
                         {theme.direction === "rtl" ? (
@@ -224,7 +227,7 @@ function LongestPathVisualisation({type}) {
                     </Button>
                 }
                 backButton={
-                    <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                    <Button size="small" onClick={handleBack} disabled={activeStep === 0} color="primary" variant="contained" disableElevation>
                         {theme.direction === "rtl" ? (
                             <KeyboardArrowRight />
                         ) : (
