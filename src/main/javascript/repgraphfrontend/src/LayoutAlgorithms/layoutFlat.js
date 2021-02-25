@@ -43,11 +43,16 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
                 count += 1
             }
         }
+        if (lastCount === count) {
+            height += interLevelSpacing;
+        } else {
+            height = 0;
+        }
         const lastIndex = finalGraphNodes.length - 1
         finalGraphNodes[lastIndex] = {
             ...finalGraphNodes[lastIndex],
             x: count * (nodeWidth + intraLevelSpacing),
-            y: nodeHeight,
+            y: nodeHeight+height,
             label: finalGraphNodes[lastIndex].label,
             type: "node",
             group: "node",
