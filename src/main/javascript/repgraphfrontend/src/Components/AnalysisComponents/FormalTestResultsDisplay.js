@@ -56,8 +56,12 @@ export default function FormalTestsResultsDisplay(props) {
 
     //Add the rows to the table of results
     for (const [test, result] of Object.entries(response)) {
-        if(test !== "PlanarVis"){
+        if(test !== "Planar"){
             newRows.push(createData(test, result));
+        }
+        //Cant have else for some reason
+        if(test === "Planar"){
+            newRows.push(createData(test, result.planar));
         }
     }
 
@@ -113,7 +117,7 @@ export default function FormalTestsResultsDisplay(props) {
     if (rowClicked === "Planar") {
         //Not finished with planar yet - need to add planar layout algorithm
 
-        const graphData = layoutFlat(response.PlanarVis, true, state.graphLayoutSpacing);
+        const graphData = layoutFlat(response.Planar.planarForm, true, state.graphLayoutSpacing);
 
         dialogElement = <div className={classes.graphDiv}>
             <ParentSize>
