@@ -1,8 +1,8 @@
-const nodeHeight = 40;
-const nodeWidth = 80;
-const interLevelSpacing = 80;
-const intraLevelSpacing = 50;
-const tokenLevelSpacing = 140;
+// const nodeHeight = 40;
+// const nodeWidth = 80;
+// const interLevelSpacing = 80;
+// const intraLevelSpacing = 50;
+// const tokenLevelSpacing = 140;
 
 //Given an initial start node, returns a stack of its descendent nodes.
 const topological = (nodeID, visited, stack, neighbours) => {
@@ -17,7 +17,10 @@ const topological = (nodeID, visited, stack, neighbours) => {
     return stack;
 };
 
-export const layoutTree = (graphData) => {
+export const layoutTree = (graphData, graphLayoutSpacing) => {
+
+    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
     let children = new Map();
     let parents = new Map();
 
@@ -270,7 +273,8 @@ export const layoutTree = (graphData) => {
                 source,
                 target,
                 finalGraphNodes,
-                graphData.edges
+                graphData.edges,
+                graphLayoutSpacing
             );
         } else if (source.x === target.x) {
             cp = edgeRulesSameColumn(
@@ -278,7 +282,8 @@ export const layoutTree = (graphData) => {
                 source,
                 target,
                 finalGraphNodes,
-                graphData.edges
+                graphData.edges,
+                graphLayoutSpacing
             );
         } else {
             cp = edgeRulesOther(
@@ -286,7 +291,8 @@ export const layoutTree = (graphData) => {
                 source,
                 target,
                 finalGraphNodes,
-                graphData.edges
+                graphData.edges,
+                graphLayoutSpacing
             );
         }
 
@@ -314,7 +320,7 @@ export const layoutTree = (graphData) => {
                     ],
                 token,
                 "",
-                0
+                0,graphLayoutSpacing
             );
             let temp = {
                 source:
@@ -339,7 +345,10 @@ export const layoutTree = (graphData) => {
     return {nodes: finalGraphNodes, links: allEdges};
 };
 
-function controlPoints(source, target, direction, degree) {
+function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
+
+    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
     let x1 = 0;
     let y1 = 0;
 
@@ -391,8 +400,11 @@ function edgeRulesSameColumn(
     source,
     target,
     finalGraphNodes,
-    finalGraphEdges
+    finalGraphEdges,
+    graphLayoutSpacing
 ) {
+    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
     let direction = "";
     let degree = 0.2;
 
@@ -448,7 +460,7 @@ function edgeRulesSameColumn(
             }
         }
     }
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
 function edgeRulesSameRow(
@@ -456,8 +468,12 @@ function edgeRulesSameRow(
     source,
     target,
     finalGraphNodes,
-    finalGraphEdges
+    finalGraphEdges,
+    graphLayoutSpacing
 ) {
+
+    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
     let direction = "";
     let degree = 0.25;
 
@@ -483,7 +499,7 @@ function edgeRulesSameRow(
         }
     }
 
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
 function edgeRulesOther(
@@ -491,8 +507,12 @@ function edgeRulesOther(
     source,
     target,
     finalGraphNodes,
-    finalGraphEdges
+    finalGraphEdges,
+    graphLayoutSpacing
 ) {
+
+    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
     let direction = "";
     let degree = 0.2;
 
@@ -536,5 +556,5 @@ function edgeRulesOther(
         }
     }
 
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }

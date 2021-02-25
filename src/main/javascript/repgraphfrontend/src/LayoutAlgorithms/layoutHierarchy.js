@@ -1,10 +1,12 @@
-const nodeHeight = 40;
-const nodeWidth = 80;
-const interLevelSpacing = 80;
-const intraLevelSpacing = 50;
-const tokenLevelSpacing = 140;
 
-export const layoutHierarchy = (graphData) => {
+export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
+
+    const nodeHeight = graphLayoutSpacing.nodeHeight;
+    const nodeWidth = graphLayoutSpacing.nodeWidth;
+    const interLevelSpacing = graphLayoutSpacing.interLevelSpacing;
+    const intraLevelSpacing = graphLayoutSpacing.intraLevelSpacing;
+    const tokenLevelSpacing = graphLayoutSpacing.tokenLevelSpacing;
+
     console.log(graphData);
 
     let children = new Map();
@@ -253,7 +255,8 @@ export const layoutHierarchy = (graphData) => {
                 source,
                 target,
                 finalGraphNodes,
-                graphData.edges
+                graphData.edges,
+                graphLayoutSpacing
             );
         } else if (source.x === target.x) {
             cp = edgeRulesSameColumn(
@@ -261,7 +264,8 @@ export const layoutHierarchy = (graphData) => {
                 source,
                 target,
                 finalGraphNodes,
-                graphData.edges
+                graphData.edges,
+                graphLayoutSpacing
             );
         } else {
             cp = edgeRulesOther(
@@ -270,7 +274,8 @@ export const layoutHierarchy = (graphData) => {
                 target,
                 finalGraphNodes,
                 graphData.edges,
-                levelTopology
+                levelTopology,
+                graphLayoutSpacing
             );
         }
 
@@ -291,7 +296,14 @@ export const layoutHierarchy = (graphData) => {
     return { nodes: finalGraphNodes, links: finalGraphEdges };
 };
 
-function controlPoints(source, target, direction, degree) {
+function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
+
+    const nodeHeight = graphLayoutSpacing.nodeHeight;
+    const nodeWidth = graphLayoutSpacing.nodeWidth;
+    const interLevelSpacing = graphLayoutSpacing.interLevelSpacing;
+    const intraLevelSpacing = graphLayoutSpacing.intraLevelSpacing;
+    const tokenLevelSpacing = graphLayoutSpacing.tokenLevelSpacing;
+
     let x1 = 0;
     let y1 = 0;
 
@@ -343,8 +355,16 @@ function edgeRulesSameColumn(
     source,
     target,
     finalGraphNodes,
-    finalGraphEdges
+    finalGraphEdges,
+    graphLayoutSpacing
 ) {
+
+    const nodeHeight = graphLayoutSpacing.nodeHeight;
+    const nodeWidth = graphLayoutSpacing.nodeWidth;
+    const interLevelSpacing = graphLayoutSpacing.interLevelSpacing;
+    const intraLevelSpacing = graphLayoutSpacing.intraLevelSpacing;
+    const tokenLevelSpacing = graphLayoutSpacing.tokenLevelSpacing;
+
     let direction = "";
     let degree = 0.2;
 
@@ -417,7 +437,7 @@ function edgeRulesSameColumn(
             }
         }
     }
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
 function edgeRulesSameRow(
@@ -425,8 +445,15 @@ function edgeRulesSameRow(
     source,
     target,
     finalGraphNodes,
-    finalGraphEdges
+    finalGraphEdges,
+    graphLayoutSpacing
 ) {
+    const nodeHeight = graphLayoutSpacing.nodeHeight;
+    const nodeWidth = graphLayoutSpacing.nodeWidth;
+    const interLevelSpacing = graphLayoutSpacing.interLevelSpacing;
+    const intraLevelSpacing = graphLayoutSpacing.intraLevelSpacing;
+    const tokenLevelSpacing = graphLayoutSpacing.tokenLevelSpacing;
+
     let direction = "";
     let degree = 0.25;
 
@@ -460,7 +487,7 @@ function edgeRulesSameRow(
         degree = 0.15;
     }
 
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
 function edgeRulesOther(
@@ -469,8 +496,15 @@ function edgeRulesOther(
     target,
     finalGraphNodes,
     finalGraphEdges,
-    levelTopology
+    levelTopology,
+    graphLayoutSpacing
 ) {
+    const nodeHeight = graphLayoutSpacing.nodeHeight;
+    const nodeWidth = graphLayoutSpacing.nodeWidth;
+    const interLevelSpacing = graphLayoutSpacing.interLevelSpacing;
+    const intraLevelSpacing = graphLayoutSpacing.intraLevelSpacing;
+    const tokenLevelSpacing = graphLayoutSpacing.tokenLevelSpacing;
+
     let direction = "";
     let degree = 0.2;
 
@@ -500,7 +534,7 @@ function edgeRulesOther(
     if (xProtrusion >= 0.5 && yProtrusion >= 0.5) {
         direction = "custom";
         degree = target.x;
-        return controlPoints(source, target, direction, degree);
+        return controlPoints(source, target, direction, degree, graphLayoutSpacing);
     }
     // let maxColInRange = 0;
 
@@ -566,7 +600,7 @@ function edgeRulesOther(
         }
     }
 
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
 //Can ultimately have this information placed within the returned graph data
