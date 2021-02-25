@@ -806,7 +806,7 @@ export default function MiniDrawer() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSubsetDialogClose}>
+                    <Button onClick={handleSubsetDialogClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
@@ -859,7 +859,7 @@ export default function MiniDrawer() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSubgraphDialogClose}>
+                    <Button onClick={handleSubgraphDialogClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
@@ -913,7 +913,7 @@ export default function MiniDrawer() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCompareToolDialogClose}>
+                    <Button onClick={handleCompareToolDialogClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
@@ -975,7 +975,7 @@ export default function MiniDrawer() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleTestsToolDialogClose}>
+                    <Button onClick={handleTestsToolDialogClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
@@ -997,7 +997,7 @@ export default function MiniDrawer() {
 
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSettingsDialogClose}>
+                    <Button onClick={handleSettingsDialogClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
