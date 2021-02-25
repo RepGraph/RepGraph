@@ -20,12 +20,14 @@ const childrenAnchors = (node, children, visited) => {
     } else {
 
         let anchors = [];
-
-        for (let child in children.get(node.id)) {
+        console.log("children", children.get(node.id));
+        for (let child of children.get(node.id)) {
             if (child.anchors === null) {
 
-                anchors.push(childrenAnchors(child.id, children));
+                anchors.push(childrenAnchors(child, children));
             } else {
+
+                console.log("child", child);
                 anchors.push({from: child.anchors[0].from, end: child.anchors[0].end});
             }
         }
@@ -53,31 +55,27 @@ const topologicalSort = (node, children, visited, stack) => {
     stack.push((node));
 }
 
-const getPaths = (nodes, children) => {
+const getPath = (nodes, children) => {
 
     let stack = []
 
     let visited = {};
 
-    let searches = {}
+    for (let i of nodes.map(node => node.id)) {
+        visited[i] = false;
+    }
     for (let n of nodes) {
-        for (let i of nodes.map(node => node.id)) {
-            visited[i] = false;
-        }
 
         if (!visited[n.id]) {
             topologicalSort(n, children, visited, stack);
         }
 
-        let order = []
-        while (stack.length !== 0) {
-            order.push(stack.pop());
-        }
-        searches[n.id] = (order);
-
     }
-
-    return searches;
+    let order = [];
+    while (stack.length !== 0) {
+        order.push(stack.pop());
+    }
+    return order;
 }
 
 
@@ -111,14 +109,11 @@ export const layoutHierarchy = (graphData) => {
         }
 
         let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
-        let stack = [];
-        let visited = new Map();
 
-        for (const node of graphData.nodes) {
-            visited.set(node.id, false);
-        }
-
-        let topological = topologicalSort(graphData.nodes[graphData.nodes.findIndex((node) => node.id === graphData.tops)], children, visited, stack);
+        let topological = getPath(graphData.nodes, children);
+        ;
+        // let topological = topologicalSort(graphData.nodes[graphData.nodes.findIndex((node) => node.id === graphData.tops)], children, visited, stack);
+        // console.log("topological", topological);
         let nodesWithAnchorsAdded = [];
         for (let node of topological) {
 
@@ -127,9 +122,9 @@ export const layoutHierarchy = (graphData) => {
                 let vis = {};
                 nodesWithoutAnchors.push(node.id);
                 let anch = [];
-                anch.push(childrenAnchors(node,children,vis));
+                anch.push(childrenAnchors(node, children, vis));
                 if (anch[0].from === Number.MAX_VALUE) {
-                    for (let parent of parents.get(node.id)){
+                    for (let parent of parents.get(node.id)) {
                         if (parent.anchors !== null) {
                             if (parent.anchors[0].from < anch[0].from) {
                                 anch[0] = parent.anchors[0];
@@ -145,68 +140,7 @@ export const layoutHierarchy = (graphData) => {
 
         }
 
-//Algorithm
-        /*
-        let paths = getPaths(graphData.nodes, children)
-        let order = paths[graphData.tops]
-        let visited = {}
 
-        for (let id of order) {
-
-            let currNode = graphData.nodes[graphData.nodes.findIndex((node) => node.id === id)]
-            if (currNode.anchors === null) {
-                for (const orderElement of order) {
-                    visited[orderElement]=false;
-                }
-                let from = childrenAnchors(currNode, children,visited)
-                if (from === Number.MAX_VALUE) {
-                    for (let parent of parents.get(currNode.id)) {
-                        if (parent.anchors !== null) {
-                            if (parent.anchors[0].from < from) {
-                                from = parent.anchors[0].from;
-                            }
-                        }
-                    }
-                }
-                let anch = []
-                anch.push({"from": from, "end": from})
-                currNode.anchors = anch
-            }
-
-        }
-        */
-
-//Add anchors to nodes without anchors. Fake anchors are added in order to run the layout algorithm, and are decided using either a node's children or parent node's anchors.
-// const nodesWithAnchorsAdded = graphData.nodes.map((node, i) => {
-//     if (node.anchors === null) {
-//         // let anchorFrom, anchorEnd;
-//         // if (children.get(node.id).length !== 0) {
-//         //     anchorFrom = children.get(node.id)[0].anchors[0].from;
-//         //     anchorEnd = children.get(node.id)[0].anchors[0].end;
-//         // } else if (parents.get(node.id).length !== 0) {
-//         //     anchorFrom = parents.get(node.id)[0].anchors[0].from;
-//         //     anchorEnd = parents.get(node.id)[0].anchors[0].end;
-//         // } else {
-//         //     // ??
-//         // }
-//         // let anchorArray = [];
-//         // //let anchorValue = anchorFrom + (anchorFrom - anchorEnd) / 2;
-//         // anchorArray.push({
-//         //     from: anchorFrom,
-//         //     end: anchorEnd
-//         // });
-//
-//         nodesWithoutAnchors.push(node.id);
-//         return {
-//             ...node,
-//             anchors: anchorArray,
-//             span: false
-//         };
-//
-//     } else {
-//         return {...node, span: true};
-//     }
-// });
 //Determine span lengths of each node
         const graphNodeSpanLengths = nodesWithAnchorsAdded
             .map((node) => node.anchors[0])

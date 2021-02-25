@@ -66,16 +66,16 @@ export default function SentenceList(props) {
 
                 switch (state.visualisationFormat) {
                     case "1":
-                        graphData = layoutHierarchy(jsonResult);
+                        graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
                         break;
                     case "2":
-                        graphData = layoutTree(jsonResult);
+                        graphData = layoutTree(jsonResult,state.graphLayoutSpacing);
                         break;
                     case "3":
-                        graphData = layoutFlat(jsonResult);
+                        graphData = layoutFlat(jsonResult, false, state.graphLayoutSpacing);
                         break;
                     default:
-                        graphData = layoutHierarchy(jsonResult);
+                        graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
                         break;
                 }
 

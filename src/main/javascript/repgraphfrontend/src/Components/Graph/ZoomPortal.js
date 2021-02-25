@@ -39,11 +39,11 @@ const ZoomPortal = (props) => {
                         height={height}
                         style={{
                             cursor: zoom.isDragging ? "grabbing" : "grab",
-                            border: "8px solid #dedede",
-                            borderRadius: "8px"
+                            // border: "8px solid #dedede",
+                            // borderRadius: "8px"
                         }}
-                        rx={8}
-                        ry={8}
+                        // rx={8}
+                        // ry={8}
                     >
                         <rect width={width} height={height} fill={backgroundColour} />
                         <rect

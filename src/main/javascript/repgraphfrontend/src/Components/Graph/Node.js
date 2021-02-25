@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useContext} from "react";
 import { useState } from "react";
 import { Group } from "@visx/visx";
+import {AppContext} from "../../Store/AppContextProvider";
 
 export const Node = ({
                          node,
@@ -14,6 +15,7 @@ export const Node = ({
                          events
                      }) => {
     const [highlighted, setHighlighted] = useState(false);
+    const {state, dispatch} = useContext(AppContext); //Provide access to global state
 
     let label = (
         <text
@@ -34,8 +36,8 @@ export const Node = ({
     let bb = {
         x: 0,
         y: 0,
-        width: 80,
-        height: 40
+        width: state.graphLayoutSpacing.nodeWidth,
+        height: state.graphLayoutSpacing.nodeHeight
     };
 
     const margin = 5;
@@ -64,11 +66,12 @@ export const Node = ({
                 fillColor = styles.nodeStyles.hoverColour;
             } else if (
                 (graphFormatCode === "hierarchicalLongestPath" ||
-                    graphFormatCode === "treeLongestPath") &&
-                node.longestPath === true
+                    graphFormatCode === "treeLongestPath"||
+                    graphFormatCode === "flatLongestPath") &&
+                node.group === "longestPath"
             ) {
                 fillColor = styles.longestPathStyles.nodeColour;
-            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"){
+            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"|| graphFormatCode === "flatCompare"){
 
                 switch (node.group) {
                     case "similar":
@@ -94,8 +97,9 @@ export const Node = ({
                 fillColor = styles.tokenStyles.hoverColour;
             } else if (
                 (graphFormatCode === "hierarchicalLongestPath" ||
-                    graphFormatCode === "treeLongestPath") &&
-                node.longestPath === true
+                    graphFormatCode === "treeLongestPath"||
+                    graphFormatCode === "flatLongestPath") &&
+                node.group === "longestPath"
             ) {
                 fillColor = styles.longestPathStyles.tokenColour;
             } else {

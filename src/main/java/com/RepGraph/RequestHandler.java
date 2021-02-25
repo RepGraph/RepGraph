@@ -32,8 +32,10 @@ public class RequestHandler {
      */
     @GetMapping(value = "/")
     @ResponseBody
-    public String Home(@RequestHeader(USER_HEADER) String id) {
-        return id;
+    public void Home(@RequestHeader(USER_HEADER) String userID,@RequestParam String graphID) throws IOException, InterruptedException {
+
+        AMRGraph a  = (AMRGraph) RepModel.get(userID).getGraph(graphID);
+        a.alignNodes();
     }
 
     /**

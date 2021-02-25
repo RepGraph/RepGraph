@@ -1,9 +1,11 @@
-const nodeHeight = 40;
-const nodeWidth = 80;
-const intraLevelSpacing = 50;
+// const nodeHeight = 40;
+// const nodeWidth = 80;
+// const intraLevelSpacing = 50;
 
-export const layoutFlat = (graphData) => {
+export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
     console.log(graphData);
+
+    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
     const nodes = graphData.nodes.map((node, index) => ({
         ...node,
@@ -30,7 +32,7 @@ export const layoutFlat = (graphData) => {
 
         let cp;
 
-        cp = edgeRulesSameRow(source, target, finalGraphNodes);
+        cp = edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSpacing);
 
         return {
             id: index,
@@ -47,7 +49,9 @@ export const layoutFlat = (graphData) => {
     return { nodes: finalGraphNodes, links: finalGraphEdges };
 };
 
-function controlPoints(source, target, direction, degree) {
+function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
+    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
     let x1 = 0;
     let y1 = 0;
 
@@ -68,7 +72,10 @@ function controlPoints(source, target, direction, degree) {
     return { x1, y1 };
 }
 
-function edgeRulesSameRow(source, target, finalGraphNodes) {
+function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSpacing) {
+
+    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
     let direction = "";
     let degree = 0.25;
 
@@ -86,7 +93,17 @@ function edgeRulesSameRow(source, target, finalGraphNodes) {
             }
         }
         if (found) {
-                direction = "horizontal-right";
+                if (planar){
+                    if (source.x < target.x){
+                        direction = "horizontal-left";
+                    }
+                    else{
+                        direction = "horizontal-right";
+                    }
+                }
+                else{
+                    direction = "horizontal-right";
+                }
                 let distance = Math.abs(source.x - target.x)/(intraLevelSpacing+nodeWidth);
             if (distance > 10){
                 degree = 0.15;
@@ -97,5 +114,5 @@ function edgeRulesSameRow(source, target, finalGraphNodes) {
     }
 
 
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }

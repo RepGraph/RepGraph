@@ -1,6 +1,6 @@
-import React , {useContext} from 'react';
+import React, {useContext} from 'react';
 import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -8,8 +8,12 @@ import List from '@material-ui/core/List';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import SearchIcon from '@material-ui/icons/Search';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import SettingsIcon from '@material-ui/icons/Settings';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
@@ -17,6 +21,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import SelectAllIcon from '@material-ui/icons/SelectAll';
 import {AppContext} from "./Store/AppContextProvider";
 import {Button, Card, CardContent, Chip, Grid} from "@material-ui/core";
 import Fab from "@material-ui/core/Fab";
@@ -26,6 +31,8 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import BuildIcon from "@material-ui/icons/Build";
+import EjectIcon from '@material-ui/icons/Eject';
+import EditIcon from '@material-ui/icons/Edit';
 import {determineAdjacentLinks, layoutHierarchy} from "./LayoutAlgorithms/layoutHierarchy";
 import {layoutTree} from "./LayoutAlgorithms/layoutTree";
 import {layoutFlat} from "./LayoutAlgorithms/layoutFlat";
@@ -38,13 +45,24 @@ import SentenceList from "./Components/Main/SentenceList";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 
-import { ParentSize } from '@visx/responsive';
+import {ParentSize} from '@visx/responsive';
 import InfoIcon from "@material-ui/icons/Info";
+import SettingsTool from "./Components/AnalysisComponents/SettingsTool";
 import DisplaySubsetTool from "./Components/AnalysisComponents/DisplaySubsetTool";
 import SearchSubgraphPatternTool from "./Components/AnalysisComponents/SearchSubgraphPatternTool";
 import CompareTwoGraphsTool from "./Components/AnalysisComponents/CompareTwoGraphsTool";
+import FormalTestsTool from "./Components/AnalysisComponents/FormalTestsTool";
+import FormalTestResultsDisplay from "./Components/AnalysisComponents/FormalTestResultsDisplay";
 
-const drawerWidth = 240;
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
+import Box from "@material-ui/core/Box";
+import {mdiArrowExpandHorizontal, mdiDatabaseCog} from '@mdi/js';
+import Icon from "@mdi/react";
+
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -66,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
         }),
     },
     menuButton: {
-         marginRight: "1rem"
+        marginRight: "1rem"
     },
     hide: {
         display: 'none',
@@ -121,8 +139,17 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const width = "100%";
-const height = "100%";
+function useWidth() {
+    const theme = useTheme();
+    const keys = [...theme.breakpoints.keys].reverse();
+    return (
+        keys.reduce((output, key) => {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            const matches = useMediaQuery(theme.breakpoints.up(key));
+            return !output && matches ? key : output;
+        }, null) || 'xs'
+    );
+}
 
 export default function MiniDrawer() {
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
@@ -138,6 +165,12 @@ export default function MiniDrawer() {
     const [subsetDialogOpen, setSubsetDialogOpen] = React.useState(false); //Local state of subset dialog
     const [subgraphDialogOpen, setSubgraphDialogOpen] = React.useState(false); //Local state of subgraph dialog
     const [compareDialogOpen, setCompareDialogOpen] = React.useState(false); //Local state of compare dialog
+    const [testsDialogOpen, setTestsDialogOpen] = React.useState(false); //Local state of tests dialog
+    const [settingsDialogOpen, setSettingsDialogOpen] = React.useState(false); //Local state of settings dialog
+    const [showSettings, setShowSettings] = React.useState(false); //Local state of settings visibility
+
+    //const matches = useMediaQuery('(min-width:1000px)');
+    // const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
 
     const handleDrawerOpen = () => {
@@ -146,6 +179,7 @@ export default function MiniDrawer() {
 
     const handleDrawerClose = () => {
         setOpen(false);
+        setShowSettings(false);
     };
 
     const legendOpen = Boolean(anchorEl); //State of graph legend
@@ -171,7 +205,7 @@ export default function MiniDrawer() {
                 myHeaders.append("X-USER", state.userID);
                 let requestOptions = {
                     method: 'GET',
-                    headers : myHeaders,
+                    headers: myHeaders,
                     redirect: 'follow'
                 };
 
@@ -180,20 +214,20 @@ export default function MiniDrawer() {
                 let graphData = null;
                 switch (newFormat) {
                     case "1":
-                        graphData = layoutHierarchy(state.selectedSentenceGraphData);
+                        graphData = layoutHierarchy(state.selectedSentenceGraphData, state.graphLayoutSpacing);
                         break;
                     case "2":
-                        graphData = layoutTree(state.selectedSentenceGraphData);
+                        graphData = layoutTree(state.selectedSentenceGraphData, state.graphLayoutSpacing);
                         break;
                     case "3":
-                        graphData = layoutFlat(state.selectedSentenceGraphData);
+                        graphData = layoutFlat(state.selectedSentenceGraphData, false, state.graphLayoutSpacing);
                         break;
                     default:
-                        graphData = layoutHierarchy(state.selectedSentenceGraphData);
+                        graphData = layoutHierarchy(state.selectedSentenceGraphData, state.graphLayoutSpacing);
                         break;
                 }
 
-                console.log("newFormat", newFormat, "graphData",graphData);
+                console.log("newFormat", newFormat, "graphData", graphData);
 
                 dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
@@ -237,6 +271,26 @@ export default function MiniDrawer() {
         setCompareDialogOpen(false);
     };
 
+    //Handle click compare tool menu button
+    const handleTestsToolClick = () => {
+        setTestsDialogOpen(true);
+    }
+
+    //Handle click close compare tool dialog
+    const handleTestsToolDialogClose = () => {
+        setTestsDialogOpen(false);
+    };
+
+    const handleSettingsClick = () => {
+        //setSettingsDialogOpen(true)
+        setShowSettings(!showSettings);
+        setOpen(true);
+    }
+
+    const handleSettingsDialogClose = () => {
+        setSettingsDialogOpen(false)
+    }
+
     //Determine graphFormatCode
     let graphFormatCode = null;
     switch (state.visualisationFormat) {
@@ -254,39 +308,216 @@ export default function MiniDrawer() {
             break;
     }
 
-    return (
-        <div className={classes.root}>
-            <CssBaseline />
-            <AppBar
-                position="fixed"
-                className={clsx(classes.appBar, {
-                    [classes.appBarShift]: open,
-                })}
-            >
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        className={clsx(classes.menuButton, {
-                            [classes.hide]: open,
-                        })}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <div style={{marginRight:"1rem"}}>
-                        <Typography variant="h6" noWrap>
-                            RepGraph
-                        </Typography>
-                    </div>
+    const currentScreenWidth = useWidth();
 
-                    <Grid className={classes.menuButton}>
+    let toolBarComponent = null;
+
+    switch (currentScreenWidth) {
+        case 'xs':
+        case 'sm':
+        case 'md':
+            toolBarComponent = <Toolbar>
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={handleDrawerOpen}
+                    edge="start"
+                    className={clsx(classes.menuButton, {
+                        [classes.hide]: open,
+                    })}
+                >
+                    <MenuIcon/>
+                </IconButton>
+                <div style={{marginRight: "1rem"}}>
+                    <Typography variant="h6" noWrap>
+                        RepGraph
+                    </Typography>
+                </div>
+
+                <Grid
+                    container
+                    direction="row"
+                    justify="space-evenly"
+                    alignItems="center"
+                >
+                    <Grid item className={classes.menuButton}>
+                        <PopupState variant="popover" popupId="demo-popup-popover">
+                            {(popupState) => (
+                                <div>
+                                    <Button variant="contained" color="primary" disableElevation startIcon={<Icon path={mdiDatabaseCog} size={1}/>} endIcon={<ExpandMoreIcon/>}{...bindTrigger(popupState)}>
+                                        Data Settings
+                                    </Button>
+                                    <Popover
+                                        {...bindPopover(popupState)}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }}
+                                    >
+                                        <Card variant="outlined" style={{}}>
+                                            <CardContent style={{}}>
+                                                <Grid
+                                                    container
+                                                    direction="column"
+                                                    justify="center"
+                                                    alignItems="center"
+                                                    style={{}}
+                                                    spacing={2}
+                                                >
+                                                    <Grid item><div>
+                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                                        {/*     className={classes.fabButton} onClick={handleClickGraphLegend}>*/}
+                                                        {/*    Show Graph Legend*/}
+                                                        {/*</Fab>*/}
+                                                        <Button color="primary" variant="contained" disableElevation
+                                                                onClick={handleClickGraphLegend}>Show Graph Legend</Button>
+                                                        <Popover
+                                                            open={legendOpen}
+                                                            anchorEl={anchorEl}
+                                                            onClose={handleCloseGraphLegend}
+                                                            anchorOrigin={{
+                                                                vertical: 'bottom',
+                                                                horizontal: 'center',
+                                                            }}
+                                                            transformOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'center',
+                                                            }}
+                                                        >
+                                                            <Card>
+                                                                <CardContent>
+                                                                    <Grid container spacing={1}>
+                                                                        <Grid item>
+                                                                            <Chip label="AbstractNode" style={{
+                                                                                color: "white",
+                                                                                fontWeight: "bold",
+                                                                                backgroundColor: state.visualisationOptions.groups.node.color
+                                                                            }}/>
+                                                                        </Grid>
+                                                                        <Grid item>
+                                                                            <Chip label="SurfaceNode" style={{
+                                                                                color: "white",
+                                                                                fontWeight: "bold",
+                                                                                backgroundColor: state.visualisationOptions.groups.surfaceNode.color
+                                                                            }}/>
+                                                                        </Grid>
+                                                                        <Grid item>
+                                                                            <Chip label="Token" style={{
+                                                                                color: "white",
+                                                                                fontWeight: "bold",
+                                                                                backgroundColor: state.visualisationOptions.groups.token.color
+                                                                            }}/>
+                                                                        </Grid>
+                                                                    </Grid>
+                                                                </CardContent>
+                                                            </Card>
+                                                        </Popover>
+                                                    </div></Grid>
+                                                    <Grid item><Tooltip arrow
+                                                                        title={"Select visualisation format"}>
+                                                        <ToggleButtonGroup
+                                                            value={state.visualisationFormat}
+                                                            exclusive
+                                                            onChange={handleChangeVisualisationFormat}
+                                                            aria-label="Visualisation formats"
+                                                            color="primary"
+                                                        >
+                                                            <ToggleButton value="1" aria-label="Hierarchical">
+                                                                <Typography color={"textPrimary"}>Hierarchical</Typography>
+                                                            </ToggleButton>
+                                                            <ToggleButton value="2" aria-label="Tree-like">
+                                                                <Typography color={"textPrimary"}>Tree-like</Typography>
+                                                            </ToggleButton>
+                                                            <ToggleButton value="3" aria-label="Flat">
+                                                                <Typography color={"textPrimary"}>Flat</Typography>
+                                                            </ToggleButton>
+                                                        </ToggleButtonGroup>
+
+                                                    </Tooltip></Grid>
+                                                    <Grid item><Tooltip arrow
+                                                                        title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
+                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                                        {/*     className={classes.fabButton} onClick={() => {*/}
+                                                        {/*    setSentenceOpen(true);*/}
+                                                        {/*}} disabled={state.dataSet === null}>*/}
+                                                        {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
+                                                        {/*    <AddCircleOutlineIcon/> :*/}
+                                                        {/*    <BuildIcon/>}*/}
+                                                        {/*</Fab>*/}
+
+                                                        <Button color="primary" variant="contained" disableElevation onClick={() => {
+                                                            setSentenceOpen(true);
+                                                        }}
+                                                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                                            <AddCircleOutlineIcon/> :
+                                                            <EditIcon/>}</Button>
+                                                    </Tooltip></Grid>
+                                                    <Grid item><Tooltip arrow
+                                                                        title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
+                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                                        {/*     className={classes.fabButton} onClick={() => {*/}
+                                                        {/*    history.push("/");*/}
+                                                        {/*}}>*/}
+                                                        {/*    {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?*/}
+                                                        {/*    <CloudUploadIcon/> : <BuildIcon/>}*/}
+                                                        {/*</Fab>*/}
+                                                        <Button color="primary" variant="contained" disableElevation onClick={() => {
+                                                            history.push("/");
+                                                        }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
+                                                            <CloudUploadIcon/> : <EjectIcon/>}</Button>
+                                                    </Tooltip></Grid>
+                                                </Grid>
+                                            </CardContent>
+
+                                        </Card>
+
+                                    </Popover>
+                                </div>
+                            )}
+                        </PopupState>
+                    </Grid>
+                </Grid>
+            </Toolbar>;
+            break;
+        case 'lg':
+        case 'xl':
+        default:
+            toolBarComponent = <Toolbar>
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={handleDrawerOpen}
+                    edge="start"
+                    className={clsx(classes.menuButton, {
+                        [classes.hide]: open,
+                    })}
+                >
+                    <MenuIcon/>
+                </IconButton>
+                <div style={{marginRight: "1rem"}}>
+                    <Typography variant="h6" noWrap>
+                        RepGraph
+                    </Typography>
+                </div>
+
+                <Grid
+                    container
+                    direction="row"
+                    justify="space-evenly"
+                    alignItems="center"
+                >
+                    <Grid item className={classes.menuButton}>
                         <div>
-                            <Fab color="primary" aria-label="add" variant="extended"
-                                 className={classes.fabButton} onClick={handleClickGraphLegend}>
-                                Show Graph Legend
-                            </Fab>
+                            {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                            {/*     className={classes.fabButton} onClick={handleClickGraphLegend}>*/}
+                            {/*    Show Graph Legend*/}
+                            {/*</Fab>*/}
+                            <Button color="primary" variant="contained" disableElevation
+                                    onClick={handleClickGraphLegend}>Show Graph Legend</Button>
                             <Popover
                                 open={legendOpen}
                                 anchorEl={anchorEl}
@@ -330,8 +561,7 @@ export default function MiniDrawer() {
                             </Popover>
                         </div>
                     </Grid>
-
-                    <Grid className={classes.menuButton}>
+                    <Grid item className={classes.menuButton}>
                         <Tooltip arrow
                                  title={"Select visualisation format"}>
                             <ToggleButtonGroup
@@ -339,12 +569,13 @@ export default function MiniDrawer() {
                                 exclusive
                                 onChange={handleChangeVisualisationFormat}
                                 aria-label="Visualisation formats"
+                                color="primary"
                             >
                                 <ToggleButton value="1" aria-label="Hierarchical">
-                                    <Typography color={ "textPrimary" }>Hierarchical</Typography>
+                                    <Typography color={"textPrimary"}>Hierarchical</Typography>
                                 </ToggleButton>
                                 <ToggleButton value="2" aria-label="Tree-like">
-                                    <Typography color={ "textPrimary"}>Tree-like</Typography>
+                                    <Typography color={"textPrimary"}>Tree-like</Typography>
                                 </ToggleButton>
                                 <ToggleButton value="3" aria-label="Flat">
                                     <Typography color={"textPrimary"}>Flat</Typography>
@@ -353,33 +584,111 @@ export default function MiniDrawer() {
 
                         </Tooltip>
                     </Grid>
-
-                    <Grid>
+                    <Grid item className={classes.menuButton}>
                         <Tooltip arrow
                                  title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
-                            <Fab color="primary" aria-label="add" variant="extended"
-                                 className={classes.fabButton} onClick={() => {
+                            {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                            {/*     className={classes.fabButton} onClick={() => {*/}
+                            {/*    setSentenceOpen(true);*/}
+                            {/*}} disabled={state.dataSet === null}>*/}
+                            {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
+                            {/*    <AddCircleOutlineIcon/> :*/}
+                            {/*    <BuildIcon/>}*/}
+                            {/*</Fab>*/}
+
+                            <Button color="primary" variant="contained" disableElevation onClick={() => {
                                 setSentenceOpen(true);
-                            }} disabled={state.dataSet === null}>
-                                {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                            }}
+                                    disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
                                 <AddCircleOutlineIcon/> :
-                                <BuildIcon/>}
-                            </Fab>
+                                <EditIcon/>}</Button>
                         </Tooltip>
                     </Grid>
-                    <Grid className={classes.menuButton}>
+                    <Grid item className={classes.menuButton}>
                         <Tooltip arrow
                                  title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
-                            <Fab color="primary" aria-label="add" variant="extended"
-                                 className={classes.fabButton} onClick={() => {
+                            {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                            {/*     className={classes.fabButton} onClick={() => {*/}
+                            {/*    history.push("/");*/}
+                            {/*}}>*/}
+                            {/*    {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?*/}
+                            {/*    <CloudUploadIcon/> : <BuildIcon/>}*/}
+                            {/*</Fab>*/}
+                            <Button color="primary" variant="contained" disableElevation onClick={() => {
                                 history.push("/");
-                            }}>
-                                {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
-                                <CloudUploadIcon/> : <BuildIcon/>}
-                            </Fab>
+                            }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
+                                <CloudUploadIcon/> : <EjectIcon/>}</Button>
                         </Tooltip>
                     </Grid>
-                </Toolbar>
+                </Grid>
+            </Toolbar>;
+    }
+
+
+
+    // const toolbarList = <List>
+    //     <ListItem>
+    //         <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
+    //         <Button color="primary" variant="contained" disableElevation noWrap
+    //                 onClick={handleClickGraphLegend}>Show Graph Legend</Button>
+    //             <Popover
+    //                 open={legendOpen}
+    //                 anchorEl={anchorEl}
+    //                 onClose={handleCloseGraphLegend}
+    //                 anchorOrigin={{
+    //                     vertical: 'bottom',
+    //                     horizontal: 'center',
+    //                 }}
+    //                 transformOrigin={{
+    //                     vertical: 'top',
+    //                     horizontal: 'center',
+    //                 }}
+    //             >
+    //                 <Card>
+    //                     <CardContent>
+    //                         <Grid container spacing={1}>
+    //                             <Grid item>
+    //                                 <Chip label="AbstractNode" style={{
+    //                                     color: "white",
+    //                                     fontWeight: "bold",
+    //                                     backgroundColor: state.visualisationOptions.groups.node.color
+    //                                 }}/>
+    //                             </Grid>
+    //                             <Grid item>
+    //                                 <Chip label="SurfaceNode" style={{
+    //                                     color: "white",
+    //                                     fontWeight: "bold",
+    //                                     backgroundColor: state.visualisationOptions.groups.surfaceNode.color
+    //                                 }}/>
+    //                             </Grid>
+    //                             <Grid item>
+    //                                 <Chip label="Token" style={{
+    //                                     color: "white",
+    //                                     fontWeight: "bold",
+    //                                     backgroundColor: state.visualisationOptions.groups.token.color
+    //                                 }}/>
+    //                             </Grid>
+    //                         </Grid>
+    //                     </CardContent>
+    //                 </Card>
+    //             </Popover>
+    //     </ListItem>
+    // </List>;
+
+    console.log(currentScreenWidth);
+
+    return (
+        <div className={classes.root}>
+            <CssBaseline/>
+            <AppBar
+                position="fixed"
+                className={clsx(classes.appBar, {
+                    [classes.appBarShift]: open,
+                })}
+
+                color="secondary"
+            >
+                {toolBarComponent}
             </AppBar>
             <Drawer
                 variant="permanent"
@@ -396,39 +705,38 @@ export default function MiniDrawer() {
             >
                 <div className={classes.toolbar}>
                     <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                        {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon/>}
                     </IconButton>
                 </div>
-                <Divider />
                 <List>
                     <ListItem button onClick={handleSubsetToolClick}>
-                        <ListItemIcon>{<MailIcon />}</ListItemIcon>
-                        <ListItemText primary={"Subset Tool"} />
+                        <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
+                        <ListItemText primary={"Subset Tool"}/>
                     </ListItem>
                     <ListItem button onClick={handleSubgraphToolClick}>
-                        <ListItemIcon>{<MailIcon />}</ListItemIcon>
-                        <ListItemText primary={"Subgraph Tool"} />
+                        <ListItemIcon>{<SearchIcon/>}</ListItemIcon>
+                        <ListItemText primary={"Subgraph Tool"}/>
                     </ListItem>
                     <ListItem button onClick={handleCompareToolClick}>
-                        <ListItemIcon>{<MailIcon />}</ListItemIcon>
-                        <ListItemText primary={"Compare Tool"} />
+                        <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
+                        <ListItemText primary={"Compare Tool"}/>
                     </ListItem>
-                    {/*{['Subset Tool', 'Subgraph Tool', 'Compare Tool', 'Formal Tests'].map((text, index) => (*/}
-                    {/*    <ListItem button key={text}>*/}
-                    {/*        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>*/}
-                    {/*        <ListItemText primary={text} />*/}
-                    {/*    </ListItem>*/}
-                    {/*))}*/}
+                    <ListItem button onClick={handleTestsToolClick}>
+                        <ListItemIcon>{<AssessmentIcon/>}</ListItemIcon>
+                        <ListItemText primary={"Tests Tool"}/>
+                    </ListItem>
+
                 </List>
-                <Divider />
+                <Divider/>
                 <List>
                     {['Settings',].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
+                        <ListItem button onClick={handleSettingsClick} key={text}>
+                            <ListItemIcon>{<SettingsIcon/>}</ListItemIcon>
+                            <ListItemText primary={text}/>
                         </ListItem>
                     ))}
                 </List>
+                {showSettings && <SettingsTool/>}
             </Drawer>
             <Dialog
                 fullWidth
@@ -469,7 +777,7 @@ export default function MiniDrawer() {
                     >
                         <Grid item xs={6} className={classes.body}>
                             <Card className={classes.body} variant="outlined">
-                                <CardContent className={classes.body} >
+                                <CardContent className={classes.body}>
                                     <Typography
                                         className={classes.title}
                                         color="textPrimary"
@@ -498,7 +806,7 @@ export default function MiniDrawer() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSubsetDialogClose}>
+                    <Button onClick={handleSubsetDialogClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
@@ -523,10 +831,9 @@ export default function MiniDrawer() {
                     >
                         <Grid item xs={6} className={classes.body}>
                             <Card className={classes.body} variant="outlined">
-                                <CardContent className={classes.body} >
+                                <CardContent className={classes.body}>
                                     <Typography
                                         className={classes.title}
-                                        color="textPrimary"
                                         gutterBottom
                                     >
                                         About the tool:
@@ -535,7 +842,7 @@ export default function MiniDrawer() {
                                         {/*    <InfoIcon/>*/}
                                         {/*</IconButton>*/}
                                     </Typography>
-                                    <Typography variant="body2" color="textPrimary">
+                                    <Typography variant="body2">
                                         Search for a sub-graph pattern using the nodes and labels of the current
                                         graph.
                                     </Typography>
@@ -552,7 +859,7 @@ export default function MiniDrawer() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSubgraphDialogClose}>
+                    <Button onClick={handleSubgraphDialogClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
@@ -577,7 +884,7 @@ export default function MiniDrawer() {
                     >
                         <Grid item xs={6} className={classes.body}>
                             <Card className={classes.body} variant="outlined">
-                                <CardContent className={classes.body} >
+                                <CardContent className={classes.body}>
                                     <Typography
                                         className={classes.title}
                                         color="textPrimary"
@@ -606,20 +913,106 @@ export default function MiniDrawer() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCompareToolDialogClose}>
+                    <Button onClick={handleCompareToolDialogClose} variant="contained" color="primary" disableElevation>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                fullWidth
+                maxWidth="md"
+                open={testsDialogOpen}
+                onClose={handleTestsToolDialogClose}
+            >
+                <DialogTitle>
+                    Tests Tool
+                </DialogTitle>
+                <DialogContent>
+                    <Grid
+                        className={classes.rootJustWidth}
+                        container
+                        direction="row"
+                        justify="space-between"
+                        alignItems="center"
+                        spacing={2}
+                    >
+                        <Grid item xs={6} className={classes.body}>
+                            <Card className={classes.body} variant="outlined">
+                                <CardContent className={classes.body}>
+                                    <Typography
+                                        className={classes.title}
+                                        color="textPrimary"
+                                        gutterBottom
+                                    >
+                                        About the tool:
+                                        {/*<IconButton aria-label="Display subset information button" color={"secondary"}*/}
+                                        {/*            onClick={() => handleInfoClick("display subset tool")}>*/}
+                                        {/*    <InfoIcon/>*/}
+                                        {/*</IconButton>*/}
+                                    </Typography>
+                                    <Typography variant="body2" color="textPrimary">
+                                        Select a number of graph properties with which to test the
+                                        currently displayed graph.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={6} style={{height: "100%"}}>
+                            <Card className={classes.body} variant="outlined">
+                                <CardContent>
+                                    <FormalTestsTool/>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        {state.testResults !== null &&
+                        <Grid container item xs={12}>
+                            <Card className={classes.body} variant="outlined">
+                                <CardContent>
+                                    <FormalTestResultsDisplay response={state.testResults}/>
+                                </CardContent>
+                            </Card>
+                        </Grid>}
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleTestsToolDialogClose} variant="contained" color="primary" disableElevation>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                fullWidth
+                maxWidth="md"
+                open={settingsDialogOpen}
+                onClose={handleSettingsDialogClose}
+            >
+                <DialogTitle>
+                    Settings
+                </DialogTitle>
+                <DialogContent>
+
+
+                    <SettingsTool/>
+
+
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSettingsDialogClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
             </Dialog>
             <main className={classes.content}>
-                <div className={classes.toolbar} />
+                <div className={classes.toolbar}/>
                 {state.selectedSentenceID === null ? (
                     state.dataSet === null ?
                         <div className={classes.graphDiv}>
-                            <Card variant="outlined" style={{width:"100%", height:"100%"}}>
-                                <CardContent style={{ height:"100%"}}>
-                                    <div style={{display:"flex",justifyContent: "center",
-                                        alignItems: "center", height:"100%"}}>
+                            <Card variant="outlined" style={{width: "100%", height: "100%"}}>
+                                <CardContent style={{height: "100%"}}>
+                                    <div style={{
+                                        display: "flex", justifyContent: "center",
+                                        alignItems: "center", height: "100%"
+                                    }}>
                                         <Typography variant="h6">
                                             Please
                                             upload a dataset
@@ -631,10 +1024,12 @@ export default function MiniDrawer() {
                             </Card>
                         </div> :
                         <div className={classes.graphDiv}>
-                            <Card variant="outlined" style={{width:"100%", height:"100%"}}>
-                                <CardContent style={{ height:"100%"}}>
-                                    <div style={{display:"flex",justifyContent: "center",
-                                        alignItems: "center", height:"100%"}}>
+                            <Card variant="outlined" style={{width: "100%", height: "100%"}}>
+                                <CardContent style={{height: "100%"}}>
+                                    <div style={{
+                                        display: "flex", justifyContent: "center",
+                                        alignItems: "center", height: "100%"
+                                    }}>
                                         <Typography variant="h6">
                                             Please
                                             select a sentence
@@ -644,8 +1039,9 @@ export default function MiniDrawer() {
                                 </CardContent>
 
                             </Card></div>
-                ):(
-                        <div className={classes.graphDiv}>
+                ) : (
+                    <div className={classes.graphDiv}>
+                        <Card variant="outlined" style={{width: "100%", height: "100%"}}>
                             <ParentSize>
                                 {parent => (
                                     <Graph
@@ -657,8 +1053,10 @@ export default function MiniDrawer() {
                                     />
                                 )}
                             </ParentSize>
-                        </div>
-                   )}
+                        </Card>
+
+                    </div>
+                )}
             </main>
         </div>
     );

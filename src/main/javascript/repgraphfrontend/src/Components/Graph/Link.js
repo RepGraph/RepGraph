@@ -51,8 +51,9 @@ export const Link = ({
         strokeColor = styles.linkStyles.hoverColour;
     } else if (
         (graphFormatCode === "hierarchicalLongestPath" ||
-            graphFormatCode === "treeLongestPath") &&
-        link.longestPath === true
+            graphFormatCode === "treeLongestPath"||
+            graphFormatCode === "flatLongestPath") &&
+        link.group === "longestPath"
     ) {
         strokeColor = styles.longestPathStyles.linkColour;
     } else if (
@@ -60,7 +61,7 @@ export const Link = ({
         tooltipOpen
     ) {
         strokeColor = styles.linkStyles.hoverColour;
-    } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"){
+    } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"|| graphFormatCode === "flatCompare"){
 
         switch (link.group) {
             case "similar":

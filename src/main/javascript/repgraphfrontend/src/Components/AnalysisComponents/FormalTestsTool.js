@@ -41,7 +41,7 @@ function FormalTestsTool(props) {
 
     //Handle request to perform formal tests
     function handleFormalTests() {
-        var myHeaders = new Headers();
+        let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
         let requestOptions = {
             method: 'GET',
@@ -107,7 +107,8 @@ function FormalTestsTool(props) {
                     <Button
                         disabled={state.selectedSentenceID === null}
                         variant="contained"
-                        color="secondary"
+                        color="primary"
+                        disableElevation
                         endIcon={<ArrowForwardIcon/>}
                         onClick={() => {
                             console.log(tests); //Debugging

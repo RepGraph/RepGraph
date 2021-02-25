@@ -1,6 +1,92 @@
 import React, {useReducer} from "react";
-
+import {dmrsData} from "../store";
 export const AppContext = React.createContext();
+
+export const defaultGraphStyles = {
+    backgroundColour: "#efefef",
+    hierarchicalStyles: {
+        nodeStyles: {
+            nodeColour: "rgba(0,172,237,1)",
+            hoverColour: "rgba(82, 208, 255,1)",
+            spanColour: "rgba(0,0,0,0.3)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        },
+        linkStyles: {
+            linkColour: "rgba(120,120,120,1)",
+            hoverColour: "rgba(0,0,0,1)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        },
+        tokenStyles: {
+            tokenColour: "rgba(255, 220, 106,1)",
+            hoverColour: "rgba(255, 232, 156,1)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        }
+    },
+    treeStyles: {
+        nodeStyles: {
+            nodeColour: "rgba(0,172,237,1)",
+            hoverColour: "rgba(82, 208, 255,1)",
+            spanColour: "rgba(0,0,0,0.3)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        },
+        linkStyles: {
+            linkColour: "rgba(120,120,120,1)",
+            hoverColour: "rgba(0,0,0,1)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        },
+        tokenStyles: {
+            tokenColour: "rgba(255, 220, 106,1)",
+            hoverColour: "rgba(255, 232, 156,1)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        }
+    },
+    flatStyles: {
+        nodeStyles: {
+            nodeColour: "rgba(0,172,237,1)",
+            hoverColour: "rgba(82, 208, 255,1)",
+            spanColour: "rgba(0,0,0,0.3)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        },
+        linkStyles: {
+            linkColour: "rgba(120,120,120,1)",
+            hoverColour: "rgba(0,0,0,1)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        },
+        tokenStyles: {
+            tokenColour: "rgba(255, 220, 106,1)",
+            hoverColour: "rgba(255, 232, 156,1)",
+            selectedColour: "rgba(61, 230, 140, 1)"
+        }
+    },
+    longestPathStyles: {
+        linkColour: "rgba(225, 9, 9, 1)",
+        nodeColour: "rgba(225, 9, 9, 1)",
+        hoverColour: "rgba(248, 84, 84, 1)"
+    },
+    compareStyles: {
+        linkColourDissimilar: "rgba(225, 9, 9, 1)",
+        linkColourSimilar: "rgba(67, 220, 24, 1)",
+        nodeColourDissimilar: "rgba(225, 9, 9, 1)",
+        nodeColourSimilar: "rgba(67, 220, 24, 1)",
+        hoverNodeColourSimilar: "rgba(125, 237, 94, 1)",
+        hoverNodeColourDissimilar: "rgba(248, 84, 84, 1)",
+        hoverLinkColourSimilar: "rgba(125, 237, 94, 1)",
+        hoverLinkColourDissimilar: "rgba(248, 84, 84, 1)"
+    },
+    planarStyles: {
+        linkColourCross: "rgba(225, 9, 9, 1)",
+        hoverColour: "rgba(248, 84, 84, 1)"
+        //still to do
+    }
+};
+
+export const defaultGraphLayoutSpacing = {
+    nodeHeight: 40,
+    nodeWidth: 80,
+    interLevelSpacing: 80,
+    intraLevelSpacing: 50,
+    tokenLevelSpacing: 140
+};
 
 const visualisationOptions = {
     physics: {
@@ -161,8 +247,8 @@ const visualisationOptions = {
 
 
 const initialState = {
-    dataSet: null,
-    dataSetFileName: null,
+    dataSet: dmrsData,
+    dataSetFileName: "dmrsData",
     dataSetResponse: null,
     parserResponse: null,
     selectedSentenceID: null,
@@ -176,7 +262,10 @@ const initialState = {
     visualisationFormat: "1",
     visualisationOptions: visualisationOptions,
     darkMode: false,
-    framework : "1"
+    framework : "1",
+    userID: 1,
+    graphStyles: defaultGraphStyles,
+    graphLayoutSpacing: defaultGraphLayoutSpacing
 };
 
 const reducer = (state, action) => {
@@ -213,7 +302,10 @@ const reducer = (state, action) => {
             return {...state, framework: action.payload.framework};
         case "SET_USER_ID":
             return {...state, userID: action.payload.userID};
-
+        case "SET_GRAPH_STYLES":
+            return {...state, graphStyles: action.payload.graphStyles};
+        case "SET_GRAPH_LAYOUT_SPACING":
+            return {...state, graphLayoutSpacing: action.payload.graphLayoutSpacing};
         default:
             break;
     }

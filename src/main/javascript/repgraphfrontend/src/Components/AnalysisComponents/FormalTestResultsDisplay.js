@@ -22,10 +22,21 @@ import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
 import Popover from "@material-ui/core/Popover";
 import PlanarVisualisation from "../Main/PlanarVisualisation";
+import {ParentSize} from "@visx/responsive";
+import {Graph} from "../Graph/Graph";
+import {determineAdjacentLinks} from "../../LayoutAlgorithms/layoutHierarchy";
+import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+
 
 const useStyles = makeStyles({
     table: {
         minWidth: 650
+    },
+    graphDiv: {
+        height: "60vh",
+        //border: "1px solid red",
+        flex: "1",
+        width: "100%"
     }
 });
 
@@ -35,7 +46,6 @@ function createData(test, result) {
 }
 
 export default function FormalTestsResultsDisplay(props) {
-    const theme = useTheme();
     const classes = useStyles();
     const [open, setOpen] = React.useState(false); //Local state of the results dialog
     const [rowClicked, setRowClicked] = React.useState(null); //Local state to store which table row was clicked
@@ -67,8 +77,57 @@ export default function FormalTestsResultsDisplay(props) {
 
     let dialogElement; //variable to store the element to be displayed in the dialog to the user
 
+    // if (rowClicked === "Planar") {
+    //     dialogElement = <PlanarVisualisation planarGraphData={response.PlanarVis}/>;
+    // } else if (rowClicked === "LongestPathDirected") {
+    //     dialogElement = (
+    //         <LongestPathVisualisation
+    //             type={rowClicked}
+    //         />
+    //     );
+    // } else if (rowClicked === "LongestPathUndirected") {
+    //     dialogElement = (
+    //         <LongestPathVisualisation
+    //             type={rowClicked}
+    //         />
+    //     );
+    // }
+
+    //Determine graphFormatCode
+    let graphFormatCode = null;
+    switch (state.visualisationFormat) {
+        case "1":
+            graphFormatCode = "hierarchicalCompare";
+            break;
+        case "2":
+            graphFormatCode = "treeCompare";
+            break;
+        case "3":
+            graphFormatCode = "flatCompare";
+            break;
+        default:
+            graphFormatCode = "hierarchicalCompare";
+            break;
+    }
+
     if (rowClicked === "Planar") {
-        dialogElement = <PlanarVisualisation planarGraphData={response.PlanarVis}/>;
+        //Not finished with planar yet - need to add planar layout algorithm
+
+        const graphData = layoutFlat(response.PlanarVis, true, state.graphLayoutSpacing);
+
+        dialogElement = <div className={classes.graphDiv}>
+            <ParentSize>
+                {parent => (
+                    <Graph
+                        width={parent.width}
+                        height={parent.height}
+                        graph={graphData}
+                        adjacentLinks={determineAdjacentLinks(graphData)}
+                        graphFormatCode={graphFormatCode}
+                    />
+                )}
+            </ParentSize>
+        </div>;
     } else if (rowClicked === "LongestPathDirected") {
         dialogElement = (
             <LongestPathVisualisation
@@ -137,7 +196,7 @@ export default function FormalTestsResultsDisplay(props) {
                             <TableCell>
                                 {
                                     row.test !== "Connected" && (
-                                    <Button variant="contained" color="secondary" onClick={(event) => handleClickOpen(event, row.test)} disabled={row.result === "Cycle Detected" ? true : false}>
+                                    <Button color="primary" variant="contained" disableElevation onClick={(event) => handleClickOpen(event, row.test)} disabled={row.result === "Cycle Detected" ? true : false}>
                                         Visualise
                                     </Button>
                                 )}
@@ -155,7 +214,7 @@ export default function FormalTestsResultsDisplay(props) {
             >
                 <DialogTitle id="longest-path-visualisation-title">
                     {rowClicked} Visualisation
-                    <IconButton aria-label="Display subset information button" onClick={handleInfoClick}>
+                    <IconButton onClick={handleInfoClick}>
                     <InfoIcon />
                     </IconButton>
                 </DialogTitle>
@@ -163,7 +222,7 @@ export default function FormalTestsResultsDisplay(props) {
                     {dialogElement}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color={"secondary"}>
+                    <Button onClick={handleClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>

@@ -1,10 +1,11 @@
-import React, { useState, useRef, useCallback, useReducer } from "react";
+import React, {useState, useRef, useCallback, useReducer, useContext} from "react";
 
 import ZoomPortal from "./ZoomPortal";
 import { Node } from "./Node";
 import { Link } from "./Link";
 
 import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
+import {AppContext} from "../../Store/AppContextProvider";
 
 export const Graph = ({
                           graph,
@@ -16,6 +17,7 @@ export const Graph = ({
                       }) => {
     const { nodes, links } = graph;
     const [tooltipData, setTooltipData] = useState({ extraInformation: {} });
+    const {state, dispatch} = useContext(AppContext); //Provide access to global state
 
     const reducerNodes = (state, action) => {
         switch (action.type) {
@@ -23,17 +25,25 @@ export const Graph = ({
                 switch (events.select.selectMode) {
                     case "subset":
                         if (state.length !== 0) {
-                            events.select.selectedNodesStateSetter(state);
+                            if (typeof events.select.selectedNodesStateSetter == 'function') {
+                                events.select.selectedNodesStateSetter(state);
+                            }
                             return state;
                         } else {
-                            events.select.selectedNodesStateSetter([action.id]);
+                            if (typeof events.select.selectedNodesStateSetter == 'function') {
+                                events.select.selectedNodesStateSetter([action.id]);
+                            }
                             return [action.id];
                         }
                     case "subgraph":
-                        events.select.selectedNodesStateSetter([...state, action.id]);
+                        if (typeof events.select.selectedNodesStateSetter == 'function') {
+                            events.select.selectedNodesStateSetter([...state, action.id]);
+                        }
                         return [...state, action.id];
                     default:
-                        events.select.selectedNodesStateSetter([...state, action.id]);
+                        if (typeof events.select.selectedNodesStateSetter == 'function') {
+                            events.select.selectedNodesStateSetter([...state, action.id]);
+                        }
                         return [...state, action.id];
                 }
 
@@ -41,17 +51,25 @@ export const Graph = ({
                 switch (events.select.selectMode) {
                     case "subset":
                         if (state.length === 1 && state[0] === action.id) {
-                            events.select.selectedNodesStateSetter([]);
+                            if (typeof events.select.selectedNodesStateSetter == 'function') {
+                                events.select.selectedNodesStateSetter([]);
+                            }
                             return [];
                         } else {
-                            events.select.selectedNodesStateSetter(state);
+                            if (typeof events.select.selectedNodesStateSetter == 'function') {
+                                events.select.selectedNodesStateSetter(state);
+                            }
                             return state;
                         }
                     case "subgraph":
-                        events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        if (typeof events.select.selectedNodesStateSetter == 'function') {
+                            events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        }
                         return state.filter((item) => item !== action.id);
                     default:
-                        events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        if (typeof events.select.selectedNodesStateSetter == 'function') {
+                            events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
+                        }
                         return state.filter((item) => item !== action.id);
                 }
 
@@ -65,25 +83,37 @@ export const Graph = ({
             case "add":
                 switch (events.select.selectMode) {
                     case "subset":
-                        events.select.selectedLinksStateSetter([]);
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter([]);
+                        }
                         return [];
                     case "subgraph":
-                        events.select.selectedLinksStateSetter([...state, action.id]);
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter([...state, action.id]);
+                        }
                         return [...state, action.id];
                     default:
-                        events.select.selectedLinksStateSetter([...state, action.id]);
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter([...state, action.id]);
+                        }
                         return [...state, action.id];
                 }
             case "remove":
                 switch (events.select.selectMode) {
                     case "subset":
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
                         events.select.selectedLinksStateSetter([]);
+                        }
                         return [];
                     case "subgraph":
-                        events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        }
                         return state.filter((item) => item !== action.id);
                     default:
-                        events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        if (typeof events.select.selectedLinksStateSetter == 'function') {
+                            events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
+                        }
                         return state.filter((item) => item !== action.id);
                 }
             default:
@@ -94,65 +124,85 @@ export const Graph = ({
     const [selectedNodes, dispatchSelectedNodes] = useReducer(reducerNodes, []);
     const [selectedLinks, dispatchSelectedLinks] = useReducer(reducerLinks, []);
 
-    const styles = {
-        backgroundColour: "#efefef",
-        hierarchicalStyles: {
-            nodeStyles: {
-                nodeColour: "rgba(0,172,237,1)",
-                hoverColour: "rgba(82, 208, 255,1)",
-                spanColour: "rgba(0,0,0,0.3)",
-                selectedColour: "#3de68c"
-            },
-            linkStyles: {
-                linkColour: "rgba(0,0,0,1)",
-                hoverColour: "rgba(0,0,0,0.5)",
-                selectedColour: "#3de68c"
-            },
-            tokenStyles: {
-                tokenColour: "rgba(255, 220, 106,1)",
-                hoverColour: "rgba(255, 232, 156,1)",
-                selectedColour: "#3de68c"
-            }
-        },
-        treeStyles: {
-            nodeStyles: {
-                nodeColour: "rgba(0,172,237,1)",
-                hoverColour: "rgba(82, 208, 255,1)",
-                spanColour: "rgba(0,0,0,0.3)",
-                selectedColour: "#3de68c"
-            },
-            linkStyles: {
-                linkColour: "rgba(0,0,0,1)",
-                hoverColour: "rgba(0,0,0,0.5)",
-                selectedColour: "#3de68c"
-            },
-            tokenStyles: {
-                tokenColour: "rgba(255, 220, 106,1)",
-                hoverColour: "rgba(255, 232, 156,1)",
-                selectedColour: "#3de68c"
-            }
-        },
-        longestPathStyles: {
-            linkColour: "rgba(225, 9, 9, 1)",
-            nodeColour: "rgba(225, 9, 9, 1)",
-            hoverColour: "rgba(248, 84, 84, 1)"
-        },
-        compareStyles: {
-            linkColourDissimilar: "rgba(225, 9, 9, 1)",
-            linkColourSimilar: "rgba(67, 220, 24, 1)",
-            nodeColourDissimilar: "rgba(225, 9, 9, 1)",
-            nodeColourSimilar: "rgba(67, 220, 24, 1)",
-            hoverNodeColourSimilar: "rgba(125, 237, 94, 1)",
-            hoverNodeColourDissimilar: "rgba(248, 84, 84, 1)",
-            hoverLinkColourSimilar: "rgba(125, 237, 94, 1)",
-            hoverLinkColourDissimilar: "rgba(248, 84, 84, 1)"
-        },
-        planarStyles: {
-            linkColourCross: "rgba(225, 9, 9, 1)",
-            hoverColour: "rgba(248, 84, 84, 1)"
-            //still to do
-        }
-    };
+    // const styles = {
+    //     backgroundColour: "#efefef",
+    //     hierarchicalStyles: {
+    //         nodeStyles: {
+    //             nodeColour: "rgba(0,172,237,1)",
+    //             hoverColour: "rgba(82, 208, 255,1)",
+    //             spanColour: "rgba(0,0,0,0.3)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         },
+    //         linkStyles: {
+    //             linkColour: "rgba(0,0,0,1)",
+    //             hoverColour: "rgba(0,0,0,0.5)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         },
+    //         tokenStyles: {
+    //             tokenColour: "rgba(255, 220, 106,1)",
+    //             hoverColour: "rgba(255, 232, 156,1)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         }
+    //     },
+    //     treeStyles: {
+    //         nodeStyles: {
+    //             nodeColour: "rgba(0,172,237,1)",
+    //             hoverColour: "rgba(82, 208, 255,1)",
+    //             spanColour: "rgba(0,0,0,0.3)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         },
+    //         linkStyles: {
+    //             linkColour: "rgba(0,0,0,1)",
+    //             hoverColour: "rgba(0,0,0,0.5)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         },
+    //         tokenStyles: {
+    //             tokenColour: "rgba(255, 220, 106,1)",
+    //             hoverColour: "rgba(255, 232, 156,1)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         }
+    //     },
+    //     flatStyles: {
+    //         nodeStyles: {
+    //             nodeColour: "rgba(0,172,237,1)",
+    //             hoverColour: "rgba(82, 208, 255,1)",
+    //             spanColour: "rgba(0,0,0,0.3)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         },
+    //         linkStyles: {
+    //             linkColour: "rgba(0,0,0,1)",
+    //             hoverColour: "rgba(0,0,0,0.5)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         },
+    //         tokenStyles: {
+    //             tokenColour: "rgba(255, 220, 106,1)",
+    //             hoverColour: "rgba(255, 232, 156,1)",
+    //             selectedColour: "rgba(61, 230, 140, 1)"
+    //         }
+    //     },
+    //     longestPathStyles: {
+    //         linkColour: "rgba(225, 9, 9, 1)",
+    //         nodeColour: "rgba(225, 9, 9, 1)",
+    //         hoverColour: "rgba(248, 84, 84, 1)"
+    //     },
+    //     compareStyles: {
+    //         linkColourDissimilar: "rgba(225, 9, 9, 1)",
+    //         linkColourSimilar: "rgba(67, 220, 24, 1)",
+    //         nodeColourDissimilar: "rgba(225, 9, 9, 1)",
+    //         nodeColourSimilar: "rgba(67, 220, 24, 1)",
+    //         hoverNodeColourSimilar: "rgba(125, 237, 94, 1)",
+    //         hoverNodeColourDissimilar: "rgba(248, 84, 84, 1)",
+    //         hoverLinkColourSimilar: "rgba(125, 237, 94, 1)",
+    //         hoverLinkColourDissimilar: "rgba(248, 84, 84, 1)"
+    //     },
+    //     planarStyles: {
+    //         linkColourCross: "rgba(225, 9, 9, 1)",
+    //         hoverColour: "rgba(248, 84, 84, 1)"
+    //         //still to do
+    //     }
+    // };
+
+    const styles = state.graphStyles;
 
     let graphStyles = null;
 
@@ -162,6 +212,9 @@ export const Graph = ({
             break;
         case "tree":
             graphStyles = { ...styles.treeStyles };
+            break;
+        case "flat":
+            graphStyles = { ...styles.flatStyles };
             break;
         case "hierarchicalLongestPath":
             graphStyles = {
@@ -175,6 +228,12 @@ export const Graph = ({
                 longestPathStyles: styles.longestPathStyles
             };
             break;
+        case "flatLongestPath":
+            graphStyles = {
+                ...styles.flatStyles,
+                longestPathStyles: styles.longestPathStyles
+            };
+            break;
         case "hierarchicalCompare":
             graphStyles = {
                 ...styles.hierarchicalStyles,
@@ -184,6 +243,12 @@ export const Graph = ({
         case "treeCompare":
             graphStyles = {
                 ...styles.treeStyles,
+                compareStyles: styles.compareStyles
+            };
+            break;
+        case "flatCompare":
+            graphStyles = {
+                ...styles.flatStyles,
                 compareStyles: styles.compareStyles
             };
             break;

@@ -214,16 +214,16 @@ function CompareTwoGraphsVisualisation(props) {
 
                     switch (state.visualisationFormat) {
                         case "1":
-                            graphData = layoutHierarchy(jsonResult);
+                            graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
                             break;
                         case "2":
-                            graphData = layoutTree(jsonResult);
+                            graphData = layoutTree(jsonResult, state.graphLayoutSpacing);
                             break;
                         case "3":
-                            graphData = layoutFlat(jsonResult);
+                            graphData = layoutFlat(jsonResult,false, state.graphLayoutSpacing);
                             break;
                         default:
-                            graphData = layoutHierarchy(jsonResult);
+                            graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
                             break;
                     }
 
@@ -340,7 +340,7 @@ function CompareTwoGraphsVisualisation(props) {
                     <SelectSentenceList/>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
@@ -438,7 +438,7 @@ function CompareTwoGraphsVisualisation(props) {
                 </Grid>
             </Grid>
             <Grid item>
-                <Button variant="contained" color="primary" disabled={compareVis1 === null || compareVis2 === null} onClick={handleCompareClick}>
+                <Button variant="contained" color="primary" disableElevation disabled={compareVis1 === null || compareVis2 === null} onClick={handleCompareClick}>
                     Compare
                 </Button>
             </Grid>
