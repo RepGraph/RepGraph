@@ -4,16 +4,17 @@ const interLevelSpacing = 80;
 const intraLevelSpacing = 50;
 const tokenLevelSpacing = 140;
 
-const childrenAnchors = (node, children,visited) => {
+const childrenAnchors = (node, children, visited) => {
 
-    if (visited[node] && node.anchors === null){
+    if (visited[node] && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
-    }else if(visited[node] && node.anchors!==null){
+    } else if (visited[node] && node.anchors !== null) {
         return {from: node.anchors[0].from, end: node.anchors[0].end};
     }
-    visited[node]=true;
+    visited[node] = true;
     if (children.get(node.id).length === 0 && node.anchors === null) {
-        return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};;
+        return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
+        ;
     } else if (node.anchors !== null) {
         return {from: node.anchors[0].from, end: node.anchors[0].end};
     } else {
@@ -38,18 +39,18 @@ const childrenAnchors = (node, children,visited) => {
     }
 }
 
-const topologicalSort = (nodeID, children, visited, stack) => {
+const topologicalSort = (node, children, visited, stack) => {
 
-    visited[nodeID] = true;
+    visited[node.id] = true;
 
-    for (let child of children.get(nodeID)) {
+    for (let child of children.get(node.id)) {
 
         if (!visited[child.id]) {
-            topologicalSort(child.id, children, visited, stack);
+            topologicalSort(child, children, visited, stack);
         }
     }
 
-    stack.push((nodeID));
+    stack.push((node));
 }
 
 const getPaths = (nodes, children) => {
@@ -65,7 +66,7 @@ const getPaths = (nodes, children) => {
         }
 
         if (!visited[n.id]) {
-            topologicalSort(n.id, children, visited, stack);
+            topologicalSort(n, children, visited, stack);
         }
 
         let order = []
@@ -81,322 +82,358 @@ const getPaths = (nodes, children) => {
 
 
 export const layoutHierarchy = (graphData) => {
-    console.log(graphData);
+        console.log(graphData);
 
-    let children = new Map();
-    let parents = new Map();
+        let children = new Map();
+        let parents = new Map();
 
-    //Assign empty neighbour arrays to each node id
-    for (const node of graphData.nodes) {
-        children.set(node.id, []);
-        parents.set(node.id, []);
-    }
-
-    //Fill in children node id's and parent node ids for each node.
-    for (const e of graphData.edges) {
-        let temp = children.get(e.source);
-        graphData.nodes.findIndex((node) => node.id === e.target);
-        temp.push(
-            graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.target)]
-        );
-        children.set(e.source, temp);
-
-        temp = parents.get(e.target);
-        graphData.nodes.findIndex((node) => node.id === e.source);
-        temp.push(
-            graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.source)]
-        );
-        parents.set(e.target, temp);
-    }
-
-    let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
-
-    //Add anchors to nodes without anchors. Fake anchors are added in order to run the layout algorithm, and are decided using either a node's children or parent node's anchors.
-    const nodesWithAnchorsAdded = graphData.nodes.map((node, i) => {
-        if (node.anchors === null) {
-            // let anchorFrom, anchorEnd;
-            // if (children.get(node.id).length !== 0) {
-            //     anchorFrom = children.get(node.id)[0].anchors[0].from;
-            //     anchorEnd = children.get(node.id)[0].anchors[0].end;
-            // } else if (parents.get(node.id).length !== 0) {
-            //     anchorFrom = parents.get(node.id)[0].anchors[0].from;
-            //     anchorEnd = parents.get(node.id)[0].anchors[0].end;
-            // } else {
-            //     // ??
-            // }
-            // let anchorArray = [];
-            // //let anchorValue = anchorFrom + (anchorFrom - anchorEnd) / 2;
-            // anchorArray.push({
-            //     from: anchorFrom,
-            //     end: anchorEnd
-            // });
-            nodesWithoutAnchors.push(node.id);
-            return {
-                ...node,
-                anchors: anchorArray,
-                span: false
-            };
-
-        } else {
-            return {...node, span: true};
+        //Assign empty neighbour arrays to each node id
+        for (const node of graphData.nodes) {
+            children.set(node.id, []);
+            parents.set(node.id, []);
         }
-    });
-    //Determine span lengths of each node
-    const graphNodeSpanLengths = nodesWithAnchorsAdded
-        .map((node) => node.anchors[0])
-        .map((span) => span.end - span.from);
 
-    //Determine unique span lengths of all the node spans
-    let uniqueSpanLengths = [];
-    const map = new Map();
-    for (const item of graphNodeSpanLengths) {
-        if (!map.has(item)) {
-            map.set(item, true); // set any value to Map
-            uniqueSpanLengths.push(item);
-        }
-    }
-    //console.log("uniqueSpanLengths", uniqueSpanLengths);
-    uniqueSpanLengths.sort((a, b) => a - b); //sort unique spans ascending
-
-    //Sort the nodes into each level based on their spans
-    let nodesInLevels = [];
-
-    for (const level of uniqueSpanLengths) {
-        let currentLevel = [];
-
-        for (
-            let spanIndex = 0;
-            spanIndex < graphNodeSpanLengths.length;
-            spanIndex++
-        ) {
-            if (graphNodeSpanLengths[spanIndex] === level) {
-                currentLevel.push(nodesWithAnchorsAdded[spanIndex]);
-            }
-        }
-        nodesInLevels.push(currentLevel);
-    }
-
-    //Find the nodes in each level with the same span and group them together
-    //Find the unique spans in each level
-    let uniqueSpansInLevels = [];
-    for (let level of nodesInLevels) {
-        let uniqueSpans = []; //Stores the "stringified" objects
-        const spanMap = new Map();
-        for (const node of level) {
-            if (!spanMap.has(JSON.stringify(node.anchors))) {
-                spanMap.set(JSON.stringify(node.anchors), true); // set any value to Map
-                uniqueSpans.push(JSON.stringify(node.anchors));
-            }
-        }
-        uniqueSpansInLevels.push(uniqueSpans);
-        //console.log("uniqueSpans", uniqueSpans);
-    }
-
-    //Iterate through the unique spans in each level and group the same ones together
-    for (let level = 0; level < nodesInLevels.length; level++) {
-        let newLevelOfGroups = [];
-        for (let uniqueSpan of uniqueSpansInLevels[level]) {
-            //find the nodes in the level that have the same span and group them together
-            let nodesWithCurrentSpan = nodesInLevels[level].filter(
-                (node) => JSON.stringify(node.anchors) === uniqueSpan
+        //Fill in children node id's and parent node ids for each node.
+        for (const e of graphData.edges) {
+            let temp = children.get(e.source);
+            graphData.nodes.findIndex((node) => node.id === e.target);
+            temp.push(
+                graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.target)]
             );
-            newLevelOfGroups.push(nodesWithCurrentSpan);
-        }
-        nodesInLevels[level] = newLevelOfGroups;
-    }
+            children.set(e.source, temp);
 
-    //console.log("nodesInLevels", nodesInLevels);
-
-    //LevelTopology size mirrors the number of tokens there are
-    const levelTopology = new Array(graphData.tokens.length);
-    levelTopology.fill(0);
-
-    //console.log("levelTopology filled:", levelTopology);
-
-    const minTokenIndex = Math.min(
-        ...graphData.tokens.map((token) => token.index)
-    );
-
-    //console.log("minTokenIndex", minTokenIndex);
-
-    const newNodesInLevels = [];
-    for (const level of nodesInLevels) {
-        let newLevel = [];
-        //console.log("level", level);
-        for (const uniqueSpanArr of level) {
-            //console.log("uniqueSpanArr", uniqueSpanArr);
-            const newUniqueSpanArr = uniqueSpanArr.map((node, i) => {
-                // console.log(
-                //     "slice",
-                //     "from",
-                //     node.anchors[0].from - minTokenIndex,
-                //     "to",
-                //     node.anchors[0].end - minTokenIndex + 1,
-                //     "...",
-                //     ...levelTopology.slice(
-                //         node.anchors[0].from - minTokenIndex,
-                //         node.anchors[0].end - minTokenIndex + 1
-                //     )
-                // );
-
-                return {
-                    ...node,
-                    x: node.anchors[0].from - minTokenIndex,
-                    y:
-                        Math.max(
-                            ...levelTopology.slice(
-                                node.anchors[0].from - minTokenIndex,
-                                node.anchors[0].end - minTokenIndex + 1
-                            )
-                        ) + i,
-                    relativeX: node.anchors[0].from - minTokenIndex,
-                    relativeY:
-                        Math.max(
-                            ...levelTopology.slice(
-                                node.anchors[0].from - minTokenIndex,
-                                node.anchors[0].end - minTokenIndex + 1
-                            )
-                        ) + i
-                };
-            });
-            newLevel.push(newUniqueSpanArr);
-
-            for (
-                let index = uniqueSpanArr[0].anchors[0].from - minTokenIndex;
-                index < uniqueSpanArr[0].anchors[0].end - minTokenIndex + 1;
-                index++
-            ) {
-                levelTopology[index] += uniqueSpanArr.length;
-            }
-        }
-        newNodesInLevels.push(newLevel);
-        //console.log("levelTopology:", levelTopology);
-    }
-
-    //console.log("levelTopology", levelTopology);
-
-    const levelTopologyMax = Math.max(...levelTopology);
-    //console.log("levelTopologyMax", levelTopology);
-    const nodeSectionHeight =
-        levelTopologyMax * nodeHeight + (levelTopologyMax - 1) * interLevelSpacing;
-    //console.log("nodeSectionHeight", nodeSectionHeight);
-
-    //console.log("levelTopology max", Math.max(...levelTopology));
-    //console.log("newNodesInLevels", newNodesInLevels);
-
-    const nodes = newNodesInLevels.flat(2).map((node) => ({
-        ...node,
-        x:
-            (node.x + (node.anchors[0].end - node.anchors[0].from) / 2) *
-            (nodeWidth + intraLevelSpacing),
-        y: (levelTopologyMax - node.y - 1) * (nodeHeight + interLevelSpacing),
-        type: "node",
-        group: "node",
-        label: node.label,
-        anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
-    }));
-
-    const tokens = graphData.tokens.map((token) => ({
-        ...token,
-        x: (token.index - minTokenIndex) * (nodeWidth + intraLevelSpacing),
-        y: nodeSectionHeight + tokenLevelSpacing,
-        label: token.form,
-        type: "token",
-        group: "token"
-    }));
-
-    //console.log("tokens", tokens);
-
-    //console.log(newNodesInLevels.flat(2));
-
-    const finalGraphNodes = nodes.concat(tokens);
-
-    const finalGraphEdges = graphData.edges.map((edge, index) => {
-        const sourceNodeIndex = finalGraphNodes.findIndex(
-            (node) => node.id === edge.source
-        );
-        const targetNodeIndex = finalGraphNodes.findIndex(
-            (node) => node.id === edge.target
-        );
-
-        const source = finalGraphNodes[sourceNodeIndex];
-        const target = finalGraphNodes[targetNodeIndex];
-
-        let cp;
-
-        if (source.y === target.y) {
-            cp = edgeRulesSameRow(
-                edge,
-                source,
-                target,
-                finalGraphNodes,
-                graphData.edges
+            temp = parents.get(e.target);
+            graphData.nodes.findIndex((node) => node.id === e.source);
+            temp.push(
+                graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.source)]
             );
-        } else if (source.x === target.x) {
-            cp = edgeRulesSameColumn(
-                edge,
-                source,
-                target,
-                finalGraphNodes,
-                graphData.edges
-            );
-        } else {
-            cp = edgeRulesOther(
-                edge,
-                source,
-                target,
-                finalGraphNodes,
-                graphData.edges,
-                levelTopology
-            );
+            parents.set(e.target, temp);
         }
 
-        return {
-            id: index,
-            source: finalGraphNodes[sourceNodeIndex],
-            target: finalGraphNodes[targetNodeIndex],
-            label: edge.label,
-            x1: cp.x1,
-            y1: cp.y1,
-            type: "link",
-            group: "link"
-        };
-    });
+        let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
+        let stack = [];
+        let visited = new Map();
 
-    //Algorithm
-    /*
-    let paths = getPaths(graphData.nodes, children)
-    let order = paths[graphData.tops]
-    let visited = {}
+        for (const node of graphData.nodes) {
+            visited.set(node.id, false);
+        }
 
-    for (let id of order) {
+        let topological = topologicalSort(graphData.nodes[graphData.nodes.findIndex((node) => node.id === graphData.tops)], children, visited, stack);
+        let nodesWithAnchorsAdded = [];
+        for (let node of topological) {
 
-        let currNode = graphData.nodes[graphData.nodes.findIndex((node) => node.id === id)]
-        if (currNode.anchors === null) {
-            for (const orderElement of order) {
-                visited[orderElement]=false;
-            }
-            let from = childrenAnchors(currNode, children,visited)
-            if (from === Number.MAX_VALUE) {
-                for (let parent of parents.get(currNode.id)) {
-                    if (parent.anchors !== null) {
-                        if (parent.anchors[0].from < from) {
-                            from = parent.anchors[0].from;
+            if (node.anchors === null) {
+
+                let vis = {};
+                nodesWithoutAnchors.push(node.id);
+                let anch = [];
+                anch.push(childrenAnchors(node,children,vis));
+                if (anch[0].from === Number.MAX_VALUE) {
+                    for (let parent of parents.get(node.id)){
+                        if (parent.anchors !== null) {
+                            if (parent.anchors[0].from < anch[0].from) {
+                                anch[0] = parent.anchors[0];
+                            }
                         }
                     }
                 }
+                nodesWithAnchorsAdded.push({...node, anchors: anch, span: false});
+
+            } else {
+                nodesWithAnchorsAdded.push({...node, span: true});
             }
-            let anch = []
-            anch.push({"from": from, "end": from})
-            currNode.anchors = anch
+
         }
 
-    }
-*/
+//Algorithm
+        /*
+        let paths = getPaths(graphData.nodes, children)
+        let order = paths[graphData.tops]
+        let visited = {}
 
-    console.log("layoutHierarchy return:", {nodes: finalGraphNodes, links: finalGraphEdges});
-    return {nodes: finalGraphNodes, links: finalGraphEdges};
-};
+        for (let id of order) {
+
+            let currNode = graphData.nodes[graphData.nodes.findIndex((node) => node.id === id)]
+            if (currNode.anchors === null) {
+                for (const orderElement of order) {
+                    visited[orderElement]=false;
+                }
+                let from = childrenAnchors(currNode, children,visited)
+                if (from === Number.MAX_VALUE) {
+                    for (let parent of parents.get(currNode.id)) {
+                        if (parent.anchors !== null) {
+                            if (parent.anchors[0].from < from) {
+                                from = parent.anchors[0].from;
+                            }
+                        }
+                    }
+                }
+                let anch = []
+                anch.push({"from": from, "end": from})
+                currNode.anchors = anch
+            }
+
+        }
+        */
+
+//Add anchors to nodes without anchors. Fake anchors are added in order to run the layout algorithm, and are decided using either a node's children or parent node's anchors.
+// const nodesWithAnchorsAdded = graphData.nodes.map((node, i) => {
+//     if (node.anchors === null) {
+//         // let anchorFrom, anchorEnd;
+//         // if (children.get(node.id).length !== 0) {
+//         //     anchorFrom = children.get(node.id)[0].anchors[0].from;
+//         //     anchorEnd = children.get(node.id)[0].anchors[0].end;
+//         // } else if (parents.get(node.id).length !== 0) {
+//         //     anchorFrom = parents.get(node.id)[0].anchors[0].from;
+//         //     anchorEnd = parents.get(node.id)[0].anchors[0].end;
+//         // } else {
+//         //     // ??
+//         // }
+//         // let anchorArray = [];
+//         // //let anchorValue = anchorFrom + (anchorFrom - anchorEnd) / 2;
+//         // anchorArray.push({
+//         //     from: anchorFrom,
+//         //     end: anchorEnd
+//         // });
+//
+//         nodesWithoutAnchors.push(node.id);
+//         return {
+//             ...node,
+//             anchors: anchorArray,
+//             span: false
+//         };
+//
+//     } else {
+//         return {...node, span: true};
+//     }
+// });
+//Determine span lengths of each node
+        const graphNodeSpanLengths = nodesWithAnchorsAdded
+            .map((node) => node.anchors[0])
+            .map((span) => span.end - span.from);
+
+//Determine unique span lengths of all the node spans
+        let uniqueSpanLengths = [];
+        const map = new Map();
+        for (const item of graphNodeSpanLengths) {
+            if (!map.has(item)) {
+                map.set(item, true); // set any value to Map
+                uniqueSpanLengths.push(item);
+            }
+        }
+//console.log("uniqueSpanLengths", uniqueSpanLengths);
+        uniqueSpanLengths.sort((a, b) => a - b); //sort unique spans ascending
+
+//Sort the nodes into each level based on their spans
+        let nodesInLevels = [];
+
+        for (const level of uniqueSpanLengths) {
+            let currentLevel = [];
+
+            for (
+                let spanIndex = 0;
+                spanIndex < graphNodeSpanLengths.length;
+                spanIndex++
+            ) {
+                if (graphNodeSpanLengths[spanIndex] === level) {
+                    currentLevel.push(nodesWithAnchorsAdded[spanIndex]);
+                }
+            }
+            nodesInLevels.push(currentLevel);
+        }
+
+//Find the nodes in each level with the same span and group them together
+//Find the unique spans in each level
+        let uniqueSpansInLevels = [];
+        for (let level of nodesInLevels) {
+            let uniqueSpans = []; //Stores the "stringified" objects
+            const spanMap = new Map();
+            for (const node of level) {
+                if (!spanMap.has(JSON.stringify(node.anchors))) {
+                    spanMap.set(JSON.stringify(node.anchors), true); // set any value to Map
+                    uniqueSpans.push(JSON.stringify(node.anchors));
+                }
+            }
+            uniqueSpansInLevels.push(uniqueSpans);
+            //console.log("uniqueSpans", uniqueSpans);
+        }
+
+//Iterate through the unique spans in each level and group the same ones together
+        for (let level = 0; level < nodesInLevels.length; level++) {
+            let newLevelOfGroups = [];
+            for (let uniqueSpan of uniqueSpansInLevels[level]) {
+                //find the nodes in the level that have the same span and group them together
+                let nodesWithCurrentSpan = nodesInLevels[level].filter(
+                    (node) => JSON.stringify(node.anchors) === uniqueSpan
+                );
+                newLevelOfGroups.push(nodesWithCurrentSpan);
+            }
+            nodesInLevels[level] = newLevelOfGroups;
+        }
+
+//console.log("nodesInLevels", nodesInLevels);
+
+//LevelTopology size mirrors the number of tokens there are
+        const levelTopology = new Array(graphData.tokens.length);
+        levelTopology.fill(0);
+
+//console.log("levelTopology filled:", levelTopology);
+
+        const minTokenIndex = Math.min(
+            ...graphData.tokens.map((token) => token.index)
+        );
+
+//console.log("minTokenIndex", minTokenIndex);
+
+        const newNodesInLevels = [];
+        for (const level of nodesInLevels) {
+            let newLevel = [];
+            //console.log("level", level);
+            for (const uniqueSpanArr of level) {
+                //console.log("uniqueSpanArr", uniqueSpanArr);
+                const newUniqueSpanArr = uniqueSpanArr.map((node, i) => {
+                    // console.log(
+                    //     "slice",
+                    //     "from",
+                    //     node.anchors[0].from - minTokenIndex,
+                    //     "to",
+                    //     node.anchors[0].end - minTokenIndex + 1,
+                    //     "...",
+                    //     ...levelTopology.slice(
+                    //         node.anchors[0].from - minTokenIndex,
+                    //         node.anchors[0].end - minTokenIndex + 1
+                    //     )
+                    // );
+
+                    return {
+                        ...node,
+                        x: node.anchors[0].from - minTokenIndex,
+                        y:
+                            Math.max(
+                                ...levelTopology.slice(
+                                    node.anchors[0].from - minTokenIndex,
+                                    node.anchors[0].end - minTokenIndex + 1
+                                )
+                            ) + i,
+                        relativeX: node.anchors[0].from - minTokenIndex,
+                        relativeY:
+                            Math.max(
+                                ...levelTopology.slice(
+                                    node.anchors[0].from - minTokenIndex,
+                                    node.anchors[0].end - minTokenIndex + 1
+                                )
+                            ) + i
+                    };
+                });
+                newLevel.push(newUniqueSpanArr);
+
+                for (
+                    let index = uniqueSpanArr[0].anchors[0].from - minTokenIndex;
+                    index < uniqueSpanArr[0].anchors[0].end - minTokenIndex + 1;
+                    index++
+                ) {
+                    levelTopology[index] += uniqueSpanArr.length;
+                }
+            }
+            newNodesInLevels.push(newLevel);
+            //console.log("levelTopology:", levelTopology);
+        }
+
+//console.log("levelTopology", levelTopology);
+
+        const levelTopologyMax = Math.max(...levelTopology);
+//console.log("levelTopologyMax", levelTopology);
+        const nodeSectionHeight =
+            levelTopologyMax * nodeHeight + (levelTopologyMax - 1) * interLevelSpacing;
+//console.log("nodeSectionHeight", nodeSectionHeight);
+
+//console.log("levelTopology max", Math.max(...levelTopology));
+//console.log("newNodesInLevels", newNodesInLevels);
+
+        const nodes = newNodesInLevels.flat(2).map((node) => ({
+            ...node,
+            x:
+                (node.x + (node.anchors[0].end - node.anchors[0].from) / 2) *
+                (nodeWidth + intraLevelSpacing),
+            y: (levelTopologyMax - node.y - 1) * (nodeHeight + interLevelSpacing),
+            type: "node",
+            group: "node",
+            label: node.label,
+            anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
+        }));
+
+        const tokens = graphData.tokens.map((token) => ({
+            ...token,
+            x: (token.index - minTokenIndex) * (nodeWidth + intraLevelSpacing),
+            y: nodeSectionHeight + tokenLevelSpacing,
+            label: token.form,
+            type: "token",
+            group: "token"
+        }));
+
+//console.log("tokens", tokens);
+
+//console.log(newNodesInLevels.flat(2));
+
+        const finalGraphNodes = nodes.concat(tokens);
+
+        const finalGraphEdges = graphData.edges.map((edge, index) => {
+            const sourceNodeIndex = finalGraphNodes.findIndex(
+                (node) => node.id === edge.source
+            );
+            const targetNodeIndex = finalGraphNodes.findIndex(
+                (node) => node.id === edge.target
+            );
+
+            const source = finalGraphNodes[sourceNodeIndex];
+            const target = finalGraphNodes[targetNodeIndex];
+
+            let cp;
+
+            if (source.y === target.y) {
+                cp = edgeRulesSameRow(
+                    edge,
+                    source,
+                    target,
+                    finalGraphNodes,
+                    graphData.edges
+                );
+            } else if (source.x === target.x) {
+                cp = edgeRulesSameColumn(
+                    edge,
+                    source,
+                    target,
+                    finalGraphNodes,
+                    graphData.edges
+                );
+            } else {
+                cp = edgeRulesOther(
+                    edge,
+                    source,
+                    target,
+                    finalGraphNodes,
+                    graphData.edges,
+                    levelTopology
+                );
+            }
+
+            return {
+                id: index,
+                source: finalGraphNodes[sourceNodeIndex],
+                target: finalGraphNodes[targetNodeIndex],
+                label: edge.label,
+                x1: cp.x1,
+                y1: cp.y1,
+                type: "link",
+                group: "link"
+            };
+        });
+
+
+        console.log("layoutHierarchy return:", {nodes: finalGraphNodes, links: finalGraphEdges});
+        return {nodes: finalGraphNodes, links: finalGraphEdges};
+    }
+;
 
 function controlPoints(source, target, direction, degree) {
     let x1 = 0;
