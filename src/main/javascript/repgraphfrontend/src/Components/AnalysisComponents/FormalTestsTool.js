@@ -107,7 +107,8 @@ function FormalTestsTool(props) {
                     <Button
                         disabled={state.selectedSentenceID === null}
                         variant="contained"
-                        color="secondary"
+                        color="primary"
+                        disableElevation
                         endIcon={<ArrowForwardIcon/>}
                         onClick={() => {
                             console.log(tests); //Debugging

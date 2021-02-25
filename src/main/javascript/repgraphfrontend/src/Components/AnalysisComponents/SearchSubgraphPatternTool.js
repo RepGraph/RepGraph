@@ -314,14 +314,13 @@ function SearchSubgraphPatternTool(props) {
             <Card variant="outlined" style={{marginBottom: "10px"}}>
                 <CardContent>
                     <Grid item style={{width: "100%"}}>
-                        <Typography color={"textPrimary"}>Search for a set of node labels:</Typography>
+                        <Typography >Search for a set of node labels:</Typography>
                         <Autocomplete
                             style={{width: "100%"}}
                             disabled={state.selectedSentenceID === null}
                             multiple
                             disableCloseOnSelect
                             freeSolo
-                            color={"textPrimary"}
                             onChange={(event, values) => setNodeSet(values)}
                             id="tags-standard"
                             options={getLabels(state.selectedSentenceVisualisation)}
@@ -338,7 +337,6 @@ function SearchSubgraphPatternTool(props) {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    color={"textPrimary"}
                                     variant="standard"
                                     label="Select Node Labels or Enter Your Own"
                                 />
@@ -348,7 +346,8 @@ function SearchSubgraphPatternTool(props) {
                     <Grid item style={{width: "100%"}}>
                         <Button
                             variant="contained"
-                            color={"secondary"}
+                            color="primary"
+                            disableElevation
                             onClick={handleSearchForNodeSet}
                             style={{marginBottom: 10, marginTop: 10}}
                             disabled={nodeSet === null || nodeSet.length === 0}
@@ -403,13 +402,13 @@ function SearchSubgraphPatternTool(props) {
                                                         }}
                                                     >
                                                         <Typography
-                                                            color={"textPrimary"}>{nodeSetResultSearch[index].input}</Typography>
+                                                            >{nodeSetResultSearch[index].input}</Typography>
                                                     </ListItem>
                                                 );
                                             }}
                                             footer={() => (
                                                 <div style={{padding: "1rem", textAlign: "center"}}>
-                                                    <Typography color={"textPrimary"}>-- end of dataset --</Typography>
+                                                    <Typography >-- end of dataset --</Typography>
                                                 </div>
                                             )}
                                         />}
@@ -421,7 +420,7 @@ function SearchSubgraphPatternTool(props) {
                                     <CardContent style={{width: "100%", height: "100%"}}>
                                         {subgraphResponse === null ?
 
-                                            <Typography color={"textPrimary"}>Select
+                                            <Typography >Select
                                                 a sentence from the results above.</Typography>
 
                                             :
@@ -456,13 +455,14 @@ function SearchSubgraphPatternTool(props) {
             <Card variant="outlined">
                 <CardContent>
                     <Grid item style={{width: "100%"}}>
-                        <Typography color={"textPrimary"}>
+                        <Typography >
                             Or visually select a sub-graph pattern on the currently displayed
                             graph:
                         </Typography>
                         <Button
                             variant="contained"
-                            color={"secondary"}
+                            color="primary"
+                            disableElevation
                             endIcon={<LocationSearchingIcon/>}
                             onClick={handleClickSelectSubgraph}
                             style={{marginBottom: 10, marginTop: 10}}
@@ -549,13 +549,13 @@ function SearchSubgraphPatternTool(props) {
                                                             }}
                                                         >
                                                             <Typography
-                                                                color={"textPrimary"}>{subgraphResultSearch[index].input}</Typography>
+                                                                >{subgraphResultSearch[index].input}</Typography>
                                                         </ListItem>
                                                     );
                                                 }}
                                                 footer={() => (
                                                     <div style={{padding: "1rem", textAlign: "center"}}>
-                                                        <Typography color={"textPrimary"}> -- end of dataset
+                                                        <Typography > -- end of dataset
                                                             -- </Typography>
                                                     </div>
                                                 )}
@@ -568,7 +568,7 @@ function SearchSubgraphPatternTool(props) {
                                         <CardContent style={{width: "100%", height: "100%"}}>
                                             {subgraphResponse=== null ?
 
-                                                <Typography color={"textPrimary"}>Select
+                                                <Typography >Select
                                                     a sentence from the results above.</Typography>
 
                                                 :

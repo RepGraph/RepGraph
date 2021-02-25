@@ -44,7 +44,7 @@ function CompareTwoGraphsTool(props){
             className={classes.root}
         >
                 <Button
-                    variant="contained" color="secondary" onClick={handleClickOpen}
+                    variant="contained" color="primary" disableElevation onClick={handleClickOpen}
                     endIcon={<LocationSearchingIcon/>}
                     disabled={state.dataSet === null}
                 >
