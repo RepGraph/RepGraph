@@ -25,6 +25,7 @@ import PlanarVisualisation from "../Main/PlanarVisualisation";
 import {ParentSize} from "@visx/responsive";
 import {Graph} from "../Graph/Graph";
 import {determineAdjacentLinks} from "../../LayoutAlgorithms/layoutHierarchy";
+import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
 
 
 const useStyles = makeStyles({
@@ -32,7 +33,7 @@ const useStyles = makeStyles({
         minWidth: 650
     },
     graphDiv: {
-        height: "100%",
+        height: "60vh",
         //border: "1px solid red",
         flex: "1",
         width: "100%"
@@ -111,14 +112,17 @@ export default function FormalTestsResultsDisplay(props) {
 
     if (rowClicked === "Planar") {
         //Not finished with planar yet - need to add planar layout algorithm
+
+        const graphData = layoutFlat(response.PlanarVis, true, state.graphLayoutSpacing);
+
         dialogElement = <div className={classes.graphDiv}>
             <ParentSize>
                 {parent => (
                     <Graph
                         width={parent.width}
                         height={parent.height}
-                        graph={response.PlanarVis}
-                        adjacentLinks={determineAdjacentLinks(response.PlanarVis)}
+                        graph={graphData}
+                        adjacentLinks={determineAdjacentLinks(graphData)}
                         graphFormatCode={graphFormatCode}
                     />
                 )}
