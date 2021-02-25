@@ -12,8 +12,8 @@ export const defaultGraphStyles = {
             selectedColour: "rgba(61, 230, 140, 1)"
         },
         linkStyles: {
-            linkColour: "rgba(0,0,0,1)",
-            hoverColour: "rgba(0,0,0,0.5)",
+            linkColour: "rgba(120,120,120,1)",
+            hoverColour: "rgba(0,0,0,1)",
             selectedColour: "rgba(61, 230, 140, 1)"
         },
         tokenStyles: {
@@ -30,8 +30,8 @@ export const defaultGraphStyles = {
             selectedColour: "rgba(61, 230, 140, 1)"
         },
         linkStyles: {
-            linkColour: "rgba(0,0,0,1)",
-            hoverColour: "rgba(0,0,0,0.5)",
+            linkColour: "rgba(120,120,120,1)",
+            hoverColour: "rgba(0,0,0,1)",
             selectedColour: "rgba(61, 230, 140, 1)"
         },
         tokenStyles: {
@@ -48,8 +48,8 @@ export const defaultGraphStyles = {
             selectedColour: "rgba(61, 230, 140, 1)"
         },
         linkStyles: {
-            linkColour: "rgba(0,0,0,1)",
-            hoverColour: "rgba(0,0,0,0.5)",
+            linkColour: "rgba(120,120,120,1)",
+            hoverColour: "rgba(0,0,0,1)",
             selectedColour: "rgba(61, 230, 140, 1)"
         },
         tokenStyles: {
