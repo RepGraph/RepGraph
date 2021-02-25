@@ -224,7 +224,6 @@ const NumberInput = (props) => {
             value={values[name]}
             onChange={onChange}
             name={name}
-            type="number"
             InputProps={{
                 inputComponent: NumberFormatSpacingInput
             }}
@@ -367,24 +366,28 @@ export default function SettingsTool() {
             }
         });
 
-        let graphData = null;
+        if(state.selectedSentenceID) {
 
-        switch (state.visualisationFormat) {
-            case "1":
-                graphData = layoutHierarchy(state.selectedSentenceGraphData, valuesGraphSpacing);
-                break;
-            case "2":
-                graphData = layoutTree(state.selectedSentenceGraphData);
-                break;
-            case "3":
-                graphData = layoutFlat(state.selectedSentenceGraphData);
-                break;
-            default:
-                graphData = layoutHierarchy(state.selectedSentenceGraphData, valuesGraphSpacing);
-                break;
+            let graphData = null;
+
+            switch (state.visualisationFormat) {
+                case "1":
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, valuesGraphSpacing);
+                    break;
+                case "2":
+                    graphData = layoutTree(state.selectedSentenceGraphData, valuesGraphSpacing);
+                    break;
+                case "3":
+                    graphData = layoutFlat(state.selectedSentenceGraphData, false, valuesGraphSpacing);
+                    break;
+                default:
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, valuesGraphSpacing);
+                    break;
+            }
+
+            dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
+
         }
-
-        dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
     }
 
     // dispatch({type: "SET_GRAPH_STYLES",
@@ -418,24 +421,26 @@ export default function SettingsTool() {
             }
         });
 
-        let graphData = null;
+        if(state.selectedSentenceID){
+            let graphData = null;
 
-        switch (state.visualisationFormat) {
-            case "1":
-                graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
-                break;
-            case "2":
-                graphData = layoutTree(state.selectedSentenceGraphData,defaultGraphLayoutSpacing);
-                break;
-            case "3":
-                graphData = layoutFlat(state.selectedSentenceGraphData,false,defaultGraphLayoutSpacing);
-                break;
-            default:
-                graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
-                break;
+            switch (state.visualisationFormat) {
+                case "1":
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
+                    break;
+                case "2":
+                    graphData = layoutTree(state.selectedSentenceGraphData,defaultGraphLayoutSpacing);
+                    break;
+                case "3":
+                    graphData = layoutFlat(state.selectedSentenceGraphData,false,defaultGraphLayoutSpacing);
+                    break;
+                default:
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
+                    break;
+            }
+
+            dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
         }
-
-        dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
     }
 
     return (
