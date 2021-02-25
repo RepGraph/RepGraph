@@ -200,7 +200,7 @@ export default function FormalTestsResultsDisplay(props) {
                             <TableCell>
                                 {
                                     row.test !== "Connected" && (
-                                    <Button variant="contained" color="secondary" onClick={(event) => handleClickOpen(event, row.test)} disabled={row.result === "Cycle Detected" ? true : false}>
+                                    <Button color="primary" variant="contained" disableElevation onClick={(event) => handleClickOpen(event, row.test)} disabled={row.result === "Cycle Detected" ? true : false}>
                                         Visualise
                                     </Button>
                                 )}
@@ -218,7 +218,7 @@ export default function FormalTestsResultsDisplay(props) {
             >
                 <DialogTitle id="longest-path-visualisation-title">
                     {rowClicked} Visualisation
-                    <IconButton aria-label="Display subset information button" onClick={handleInfoClick}>
+                    <IconButton onClick={handleInfoClick}>
                     <InfoIcon />
                     </IconButton>
                 </DialogTitle>
@@ -226,7 +226,7 @@ export default function FormalTestsResultsDisplay(props) {
                     {dialogElement}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color={"secondary"}>
+                    <Button onClick={handleClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>

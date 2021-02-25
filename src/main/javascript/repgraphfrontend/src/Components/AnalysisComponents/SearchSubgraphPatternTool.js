@@ -446,7 +446,7 @@ function SearchSubgraphPatternTool(props) {
                         </Grid>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleCloseNodeSet} color={"secondary"} autoFocus>
+                        <Button onClick={handleCloseNodeSet} variant="contained" color="primary" disableElevation autoFocus>
                             Close
                         </Button>
                     </DialogActions>
@@ -499,7 +499,7 @@ function SearchSubgraphPatternTool(props) {
                             </div>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={searchForSelectedSubgraph} color="primary" autoFocus
+                            <Button onClick={searchForSelectedSubgraph} variant="contained" color="primary" disableElevation autoFocus
                                     disabled={selectedNodes === null || selectedLinks === null || selectedNodes.length === 0 || selectedLinks.length === 0}>
                                 Display
                             </Button>
@@ -592,7 +592,7 @@ function SearchSubgraphPatternTool(props) {
                             </Grid>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setOpenSubgraphResultsDialog(false)} color="secondary" autoFocus>
+                            <Button onClick={() => setOpenSubgraphResultsDialog(false)} variant="contained" color="primary" disableElevation autoFocus>
                                 Close
                             </Button>
                         </DialogActions>

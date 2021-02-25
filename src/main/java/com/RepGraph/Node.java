@@ -38,7 +38,7 @@ public class Node {
     @JsonProperty("values")
     private ArrayList<String> values;
 
-    @JsonIgnore
+    @JsonProperty("surface")
     private boolean surface;
 
     @JsonIgnore

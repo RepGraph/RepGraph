@@ -64,7 +64,7 @@ function CompareTwoGraphsTool(props){
                             <CompareTwoGraphsVisualisation />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose} color="secondary" autoFocus >
+                        <Button onClick={handleClose} variant="contained" color="primary" disableElevation autoFocus >
                             Close
                         </Button>
                     </DialogActions>

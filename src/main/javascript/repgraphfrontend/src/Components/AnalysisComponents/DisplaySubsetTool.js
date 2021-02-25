@@ -203,12 +203,10 @@ function DisplaySubsetTool(props) {
                                 )}
                             </ParentSize>
                         </div>
-
-
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDisplaySubset} color="secondary" disableElevation autoFocus disabled={selectedNodes === null || selectedNodes.length === 0}>
+                    <Button onClick={handleDisplaySubset} variant="contained" color="primary" disableElevation autoFocus disabled={selectedNodes === null || selectedNodes.length === 0}>
                         Display
                     </Button>
                 </DialogActions>
@@ -242,7 +240,7 @@ function DisplaySubsetTool(props) {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleResultClose} color="secondary" disableElevation autoFocus>
+                    <Button onClick={handleResultClose} color="primary" variant="contained" disableElevation autoFocus>
                         close
                     </Button>
                 </DialogActions>
