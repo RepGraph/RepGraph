@@ -4,24 +4,33 @@ const interLevelSpacing = 80;
 const intraLevelSpacing = 50;
 const tokenLevelSpacing = 140;
 
-const childrenAnchors = (node, children, parents) => {
+const childrenAnchors = (node, children,visited) => {
+
+    if (visited[node] && node.anchors === null){
+        return Number.MAX_VALUE;
+    }else if(visited[node] && node.anchors!==null){
+        return node.anchors[0].from;
+    }
+    visited[node]=true;
     if (children.get(node.id).length === 0 && node.anchors === null) {
         return Number.MAX_VALUE;
+    } else if (node.anchors !== null) {
+        return node.anchors[0].from
     } else {
-        if (children.get(node.id).length === 0) {
-            return node.anchors[0].from
-        }
+
         let anchors = [];
+
         for (let child in children.get(node.id)) {
             if (child.anchors === null) {
+
                 anchors.push(childrenAnchors(child.id, children));
             } else {
-                anchors.push(child.anchors);
+                anchors.push(child.anchors[0].from);
             }
         }
         let leftMost = anchors[0];
         for (let i = 1; i < anchors.length; i++) {
-            if (leftMost.from > anchors[i].from) {
+            if (leftMost > anchors[i]) {
                 leftMost = anchors[i];
             }
         }
@@ -44,29 +53,28 @@ const topological = (nodeID, visited, stack, neighbours) => {
 
 const topologicalSort = (nodeID, children, visited, stack) => {
 
-    visited[nodeID]= true;
+    visited[nodeID] = true;
 
-    for (let child in children.get(nodeID)) {
+    for (let child of children.get(nodeID)) {
 
-        if (!visited[child.id])
-            topologicalSort(child.id, visited, stack);
+        if (!visited[child.id]) {
+            topologicalSort(child.id, children, visited, stack);
+        }
     }
 
     stack.push((nodeID));
 }
 
-const getPaths = (nodes,children) => {
+const getPaths = (nodes, children) => {
 
     let stack = []
 
     let visited = {};
 
-    let searches = []
-    for (let n of nodes)
-    {
-        for (let i of nodes.map(node => node.id))
-        {
-            visited[i]= false;
+    let searches = {}
+    for (let n of nodes) {
+        for (let i of nodes.map(node => node.id)) {
+            visited[i] = false;
         }
 
         if (!visited[n.id]) {
@@ -74,10 +82,10 @@ const getPaths = (nodes,children) => {
         }
 
         let order = []
-        while (stack.length!==0) {
+        while (stack.length !== 0) {
             order.push(stack.pop());
         }
-        searches.push(order);
+        searches[n.id] = (order);
 
     }
 
@@ -385,7 +393,37 @@ export const layoutHierarchy = (graphData) => {
         };
     });
 
-    console.log(getPaths(graphData.nodes,children))
+    //Algorithm
+    /*
+    let paths = getPaths(graphData.nodes, children)
+    let order = paths[graphData.tops]
+    let visited = {}
+
+    for (let id of order) {
+
+        let currNode = graphData.nodes[graphData.nodes.findIndex((node) => node.id === id)]
+        if (currNode.anchors === null) {
+            for (const orderElement of order) {
+                visited[orderElement]=false;
+            }
+            let from = childrenAnchors(currNode, children,visited)
+            if (from === Number.MAX_VALUE) {
+                for (let parent of parents.get(currNode.id)) {
+                    if (parent.anchors !== null) {
+                        if (parent.anchors[0].from < from) {
+                            from = parent.anchors[0].from;
+                        }
+                    }
+                }
+            }
+            let anch = []
+            anch.push({"from": from, "end": from})
+            currNode.anchors = anch
+        }
+
+    }
+*/
+
     console.log("layoutHierarchy return:", {nodes: finalGraphNodes, links: finalGraphEdges});
     return {nodes: finalGraphNodes, links: finalGraphEdges};
 };
