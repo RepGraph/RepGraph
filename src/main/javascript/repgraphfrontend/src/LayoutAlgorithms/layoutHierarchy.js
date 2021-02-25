@@ -4,12 +4,15 @@ const interLevelSpacing = 80;
 const intraLevelSpacing = 50;
 const tokenLevelSpacing = 140;
 
-const childrenAnchors = (nodeID, children, parents) => {
-    if (children.get(nodeID).length === 0) {
+const childrenAnchors = (node, children, parents) => {
+    if (children.get(node.id).length === 0 && node.anchors === null) {
         return Number.MAX_VALUE;
     } else {
+        if (children.get(node.id).length === 0) {
+            return node.anchors[0].from
+        }
         let anchors = [];
-        for (let child in children.get(nodeID)) {
+        for (let child in children.get(node.id)) {
             if (child.anchors === null) {
                 anchors.push(childrenAnchors(child.id, children));
             } else {
@@ -38,6 +41,49 @@ const topological = (nodeID, visited, stack, neighbours) => {
     stack.push(nodeID);
     return stack;
 };
+
+const topologicalSort = (nodeID, children, visited, stack) => {
+
+    visited[nodeID]= true;
+
+    for (let child in children.get(nodeID)) {
+
+        if (!visited[child.id])
+            topologicalSort(child.id, visited, stack);
+    }
+
+    stack.push((nodeID));
+}
+
+const getPaths = (nodes,children) => {
+
+    let stack = []
+
+    let visited = {};
+
+    let searches = []
+    for (let n of nodes)
+    {
+        for (let i of nodes.map(node => node.id))
+        {
+            visited[i]= false;
+        }
+
+        if (!visited[n.id]) {
+            topologicalSort(n.id, children, visited, stack);
+        }
+
+        let order = []
+        while (stack.length!==0) {
+            order.push(stack.pop());
+        }
+        searches.push(order);
+
+    }
+
+    return searches;
+}
+
 
 export const layoutHierarchy = (graphData) => {
     console.log(graphData);
@@ -339,7 +385,7 @@ export const layoutHierarchy = (graphData) => {
         };
     });
 
-
+    console.log(getPaths(graphData.nodes,children))
     console.log("layoutHierarchy return:", {nodes: finalGraphNodes, links: finalGraphEdges});
     return {nodes: finalGraphNodes, links: finalGraphEdges};
 };
