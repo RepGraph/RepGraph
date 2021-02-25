@@ -52,7 +52,7 @@ import CompareTwoGraphsTool from "./Components/AnalysisComponents/CompareTwoGrap
 import FormalTestsTool from "./Components/AnalysisComponents/FormalTestsTool";
 import FormalTestResultsDisplay from "./Components/AnalysisComponents/FormalTestResultsDisplay";
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -148,7 +148,7 @@ export default function MiniDrawer() {
     const [compareDialogOpen, setCompareDialogOpen] = React.useState(false); //Local state of compare dialog
     const [testsDialogOpen, setTestsDialogOpen] = React.useState(false); //Local state of tests dialog
     const [settingsDialogOpen, setSettingsDialogOpen] = React.useState(false); //Local state of settings dialog
-
+    const [showSettings, setShowSettings] = React.useState(false); //Local state of settings visibility
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -190,16 +190,16 @@ export default function MiniDrawer() {
                 let graphData = null;
                 switch (newFormat) {
                     case "1":
-                        graphData = layoutHierarchy(state.selectedSentenceGraphData);
+                        graphData = layoutHierarchy(state.selectedSentenceGraphData, state.graphLayoutSpacing);
                         break;
                     case "2":
-                        graphData = layoutTree(state.selectedSentenceGraphData);
+                        graphData = layoutTree(state.selectedSentenceGraphData, state.graphLayoutSpacing);
                         break;
                     case "3":
-                        graphData = layoutFlat(state.selectedSentenceGraphData);
+                        graphData = layoutFlat(state.selectedSentenceGraphData, false, state.graphLayoutSpacing);
                         break;
                     default:
-                        graphData = layoutHierarchy(state.selectedSentenceGraphData);
+                        graphData = layoutHierarchy(state.selectedSentenceGraphData, state.graphLayoutSpacing);
                         break;
                 }
 
@@ -258,7 +258,9 @@ export default function MiniDrawer() {
     };
 
     const handleSettingsClick = () => {
-        setSettingsDialogOpen(true)
+        //setSettingsDialogOpen(true)
+        setShowSettings(!showSettings);
+        setOpen(true);
     }
 
     const handleSettingsDialogClose = () => {
@@ -461,6 +463,7 @@ export default function MiniDrawer() {
                         </ListItem>
                     ))}
                 </List>
+                {showSettings && <SettingsTool/>}
             </Drawer>
             <Dialog
                 fullWidth
