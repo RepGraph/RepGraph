@@ -5,13 +5,13 @@ const intraLevelSpacing = 50;
 const tokenLevelSpacing = 140;
 
 const childrenAnchors = (node, children, visited) => {
-
-    if (visited[node] && node.anchors === null) {
+    console.log(visited)
+    if (visited[node.id] && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
-    } else if (visited[node] && node.anchors !== null) {
+    } else if (visited[node.id] && node.anchors !== null) {
         return {from: node.anchors[0].from, end: node.anchors[0].end};
     }
-    visited[node] = true;
+    visited[node.id] = true;
     if (children.get(node.id).length === 0 && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
         ;
@@ -24,7 +24,7 @@ const childrenAnchors = (node, children, visited) => {
         for (let child of children.get(node.id)) {
             if (child.anchors === null) {
 
-                anchors.push(childrenAnchors(child, children));
+                anchors.push(childrenAnchors(child, children,visited));
             } else {
 
                 console.log("child", child);
@@ -111,20 +111,24 @@ export const layoutHierarchy = (graphData) => {
         let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
 
         let topological = getPath(graphData.nodes, children);
-        ;
+
+        console.log("topological",topological)
         // let topological = topologicalSort(graphData.nodes[graphData.nodes.findIndex((node) => node.id === graphData.tops)], children, visited, stack);
         // console.log("topological", topological);
         let nodesWithAnchorsAdded = [];
         for (let node of topological) {
 
             if (node.anchors === null) {
-
-                let vis = {};
+                let vis = {}
+                for (let i of graphData.nodes.map(node => node.id)) {
+                    vis[i] = false;
+                }
                 nodesWithoutAnchors.push(node.id);
                 let anch = [];
                 anch.push(childrenAnchors(node, children, vis));
                 if (anch[0].from === Number.MAX_VALUE) {
                     for (let parent of parents.get(node.id)) {
+                        console.log("parent",parent)
                         if (parent.anchors !== null) {
                             if (parent.anchors[0].from < anch[0].from) {
                                 anch[0] = parent.anchors[0];
@@ -132,9 +136,11 @@ export const layoutHierarchy = (graphData) => {
                         }
                     }
                 }
+
                 nodesWithAnchorsAdded.push({...node, anchors: anch, span: false});
 
             } else {
+                node = {...node, span: true}
                 nodesWithAnchorsAdded.push({...node, span: true});
             }
 
@@ -293,7 +299,7 @@ export const layoutHierarchy = (graphData) => {
             type: "node",
             group: "node",
             label: node.label,
-            anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
+            //anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
         }));
 
         const tokens = graphData.tokens.map((token) => ({
