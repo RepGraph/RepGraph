@@ -74,8 +74,6 @@ function SearchSubgraphPatternTool(props) {
     const [selectedNodes, setSelectedNodes] = React.useState(null); //Store local state for currently selected node ids
     const [selectedLinks, setSelectedLinks] = React.useState(null); //Store local state for currently selected link ids
 
-
-
     let graphFormatCode = null;
     switch (state.visualisationFormat) {
         case "1":
@@ -203,7 +201,7 @@ function SearchSubgraphPatternTool(props) {
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
 
         //Search the backend for matches
-        fetch(state.APIendpoint + "/SearchSubgraphPattern?graphID=" + state.selectedSentenceID + "&NodeId=" + selectedNodes.join(",") + "&EdgeIndices=" + selectedLinks.join(","), requestOptions)
+        fetch(state.APIendpoint + "/SearchSubgraphPattern?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNodes.join(",") + "&EdgeIndices=" + selectedLinks.join(","), requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -280,16 +278,16 @@ function SearchSubgraphPatternTool(props) {
 
                 switch (state.visualisationFormat) {
                     case "1":
-                        graphData = layoutHierarchy(jsonResult);
+                        graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
                         break;
                     case "2":
-                        graphData = layoutTree(jsonResult);
+                        graphData = layoutTree(jsonResult, state.graphLayoutSpacing);
                         break;
                     case "3":
-                        graphData = layoutFlat(jsonResult);
+                        graphData = layoutFlat(jsonResult,false, state.graphLayoutSpacing);
                         break;
                     default:
-                        graphData = layoutHierarchy(jsonResult);
+                        graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
                         break;
                 }
 
