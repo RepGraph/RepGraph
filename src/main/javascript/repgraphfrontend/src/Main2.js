@@ -31,6 +31,8 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import BuildIcon from "@material-ui/icons/Build";
+import EjectIcon from '@material-ui/icons/Eject';
+import EditIcon from '@material-ui/icons/Edit';
 import {determineAdjacentLinks, layoutHierarchy} from "./LayoutAlgorithms/layoutHierarchy";
 import {layoutTree} from "./LayoutAlgorithms/layoutTree";
 import {layoutFlat} from "./LayoutAlgorithms/layoutFlat";
@@ -156,6 +158,7 @@ export default function MiniDrawer() {
 
     const handleDrawerClose = () => {
         setOpen(false);
+        setShowSettings(false);
     };
 
     const legendOpen = Boolean(anchorEl); //State of graph legend
@@ -292,6 +295,8 @@ export default function MiniDrawer() {
                 className={clsx(classes.appBar, {
                     [classes.appBarShift]: open,
                 })}
+
+                color="secondary"
             >
                 <Toolbar>
                     <IconButton
@@ -311,103 +316,120 @@ export default function MiniDrawer() {
                         </Typography>
                     </div>
 
-                    <Grid className={classes.menuButton}>
-                        <div>
-                            <Fab color="primary" aria-label="add" variant="extended"
-                                 className={classes.fabButton} onClick={handleClickGraphLegend}>
-                                Show Graph Legend
-                            </Fab>
-                            <Popover
-                                open={legendOpen}
-                                anchorEl={anchorEl}
-                                onClose={handleCloseGraphLegend}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'center',
+                    <Grid
+                        container
+                        direction="row"
+                        justify="space-evenly"
+                        alignItems="center"
+                    >
+                        <Grid item className={classes.menuButton}>
+                            <div>
+                                {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                {/*     className={classes.fabButton} onClick={handleClickGraphLegend}>*/}
+                                {/*    Show Graph Legend*/}
+                                {/*</Fab>*/}
+                                <Button color="inherit" onClick={handleClickGraphLegend}>Show Graph Legend</Button>
+                                <Popover
+                                    open={legendOpen}
+                                    anchorEl={anchorEl}
+                                    onClose={handleCloseGraphLegend}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'center',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'center',
+                                    }}
+                                >
+                                    <Card>
+                                        <CardContent>
+                                            <Grid container spacing={1}>
+                                                <Grid item>
+                                                    <Chip label="AbstractNode" style={{
+                                                        color: "white",
+                                                        fontWeight: "bold",
+                                                        backgroundColor: state.visualisationOptions.groups.node.color
+                                                    }}/>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Chip label="SurfaceNode" style={{
+                                                        color: "white",
+                                                        fontWeight: "bold",
+                                                        backgroundColor: state.visualisationOptions.groups.surfaceNode.color
+                                                    }}/>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Chip label="Token" style={{
+                                                        color: "white",
+                                                        fontWeight: "bold",
+                                                        backgroundColor: state.visualisationOptions.groups.token.color
+                                                    }}/>
+                                                </Grid>
+                                            </Grid>
+                                        </CardContent>
+                                    </Card>
+                                </Popover>
+                            </div>
+                        </Grid>
+                        <Grid item className={classes.menuButton}>
+                            <Tooltip arrow
+                                     title={"Select visualisation format"}>
+                                <ToggleButtonGroup
+                                    value={state.visualisationFormat}
+                                    exclusive
+                                    onChange={handleChangeVisualisationFormat}
+                                    aria-label="Visualisation formats"
+                                >
+                                    <ToggleButton value="1" aria-label="Hierarchical">
+                                        <Typography color={"textPrimary"}>Hierarchical</Typography>
+                                    </ToggleButton>
+                                    <ToggleButton value="2" aria-label="Tree-like">
+                                        <Typography color={"textPrimary"}>Tree-like</Typography>
+                                    </ToggleButton>
+                                    <ToggleButton value="3" aria-label="Flat">
+                                        <Typography color={"textPrimary"}>Flat</Typography>
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+
+                            </Tooltip>
+                        </Grid>
+                        <Grid item className={classes.menuButton}>
+                            <Tooltip arrow
+                                     title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
+                                {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                {/*     className={classes.fabButton} onClick={() => {*/}
+                                {/*    setSentenceOpen(true);*/}
+                                {/*}} disabled={state.dataSet === null}>*/}
+                                {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
+                                {/*    <AddCircleOutlineIcon/> :*/}
+                                {/*    <BuildIcon/>}*/}
+                                {/*</Fab>*/}
+
+                                <Button color="inherit" onClick={() => {
+                                    setSentenceOpen(true);
                                 }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'center',
-                                }}
-                            >
-                                <Card>
-                                    <CardContent>
-                                        <Grid container spacing={1}>
-                                            <Grid item>
-                                                <Chip label="AbstractNode" style={{
-                                                    color: "white",
-                                                    fontWeight: "bold",
-                                                    backgroundColor: state.visualisationOptions.groups.node.color
-                                                }}/>
-                                            </Grid>
-                                            <Grid item>
-                                                <Chip label="SurfaceNode" style={{
-                                                    color: "white",
-                                                    fontWeight: "bold",
-                                                    backgroundColor: state.visualisationOptions.groups.surfaceNode.color
-                                                }}/>
-                                            </Grid>
-                                            <Grid item>
-                                                <Chip label="Token" style={{
-                                                    color: "white",
-                                                    fontWeight: "bold",
-                                                    backgroundColor: state.visualisationOptions.groups.token.color
-                                                }}/>
-                                            </Grid>
-                                        </Grid>
-                                    </CardContent>
-                                </Card>
-                            </Popover>
-                        </div>
-                    </Grid>
-
-                    <Grid className={classes.menuButton}>
-                        <Tooltip arrow
-                                 title={"Select visualisation format"}>
-                            <ToggleButtonGroup
-                                value={state.visualisationFormat}
-                                exclusive
-                                onChange={handleChangeVisualisationFormat}
-                                aria-label="Visualisation formats"
-                            >
-                                <ToggleButton value="1" aria-label="Hierarchical">
-                                    <Typography color={"textPrimary"}>Hierarchical</Typography>
-                                </ToggleButton>
-                                <ToggleButton value="2" aria-label="Tree-like">
-                                    <Typography color={"textPrimary"}>Tree-like</Typography>
-                                </ToggleButton>
-                                <ToggleButton value="3" aria-label="Flat">
-                                    <Typography color={"textPrimary"}>Flat</Typography>
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-
-                        </Tooltip>
-                    </Grid>
-
-                    <Grid>
-                        <Tooltip arrow
-                                 title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
-                            <Fab color="primary" aria-label="add" variant="extended"
-                                 className={classes.fabButton} onClick={() => {
-                                setSentenceOpen(true);
-                            }} disabled={state.dataSet === null}>
-                                {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
-                                <AddCircleOutlineIcon/> :
-                                <BuildIcon/>}
-                            </Fab>
-                        </Tooltip>
-                    </Grid>
-                    <Grid className={classes.menuButton}>
-                        <Tooltip arrow
-                                 title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
-                            <Fab color="primary" aria-label="add" variant="extended"
-                                 className={classes.fabButton} onClick={() => {
-                                history.push("/");
-                            }}>
-                                {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
-                                <CloudUploadIcon/> : <BuildIcon/>}
-                            </Fab>
-                        </Tooltip>
+                                        disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                    <AddCircleOutlineIcon/> :
+                                    <EditIcon/>}</Button>
+                            </Tooltip>
+                        </Grid>
+                        <Grid item className={classes.menuButton}>
+                            <Tooltip arrow
+                                     title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
+                                {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                {/*     className={classes.fabButton} onClick={() => {*/}
+                                {/*    history.push("/");*/}
+                                {/*}}>*/}
+                                {/*    {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?*/}
+                                {/*    <CloudUploadIcon/> : <BuildIcon/>}*/}
+                                {/*</Fab>*/}
+                                <Button color="inherit" onClick={() => {
+                                    history.push("/");
+                                }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
+                                    <CloudUploadIcon/> : <EjectIcon/>}</Button>
+                            </Tooltip>
+                        </Grid>
                     </Grid>
                 </Toolbar>
             </AppBar>
