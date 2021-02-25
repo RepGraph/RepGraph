@@ -44,7 +44,7 @@ public class AMRGraph extends AbstractGraph {
 
         populateTokens();
 
-        fillInSpans(this.nodes);
+
 
     }
 
@@ -162,7 +162,7 @@ public class AMRGraph extends AbstractGraph {
     }
 
     private void topologicalSort(String nodeID, HashMap<String, Node> nodes, HashMap<String, Boolean> visited,
-                             Stack<String> stack) {
+                                 Stack<String> stack) {
 
         visited.put(nodeID, true);
         Iterator<Node> it = nodes.get(nodeID).getDirectedNeighbours().iterator();
@@ -183,67 +183,27 @@ public class AMRGraph extends AbstractGraph {
 
         HashMap<String, Boolean> visited = new HashMap<>();
 
-        for (String i : nodes.keySet()) {
-            visited.put(i, false);
-        }
-
-        for (Node n : nodes.values()) {
-            if (!visited.get(n.getId()))
-                topologicalSort(n.getId(), nodes, visited, stack);
-
-        }
-
-        ArrayList<String> order = new ArrayList<>();
-        while (stack.empty() == false) {
-            order.add(stack.pop());
-        }
-
         ArrayList<ArrayList<String>> searches = new ArrayList<>();
-        for (String id : order) {
-            searches.add(getDFSOrder(id, nodes));
+        for (Node n : nodes.values()) {
+            for (String i : nodes.keySet()) {
+                visited.put(i, false);
+            }
+            if (!visited.get(n.getId())) {
+                topologicalSort(n.getId(), nodes, visited, stack);
+            }
+
+            ArrayList<String> order = new ArrayList<>();
+            while (!stack.empty()) {
+                order.add(stack.pop());
+            }
+            searches.add(order);
+
         }
 
         return searches;
     }
 
 
-    private  ArrayList<String> getDFSOrder(String node, HashMap<String, Node> nodes) {
-        ArrayList<String> order = new ArrayList<>();
-
-        HashMap<String, Boolean> visited = new HashMap<>();
-        for (String i : nodes.keySet()) {
-            visited.put(i, false);
-        }
-
-        Stack<String> stack = new Stack<>();
-
-
-        stack.push(node);
-
-        while (stack.empty() == false) {
-
-            node = stack.peek();
-            stack.pop();
-
-
-            if (visited.get(node) == false) {
-                order.add(node);
-                visited.put(node, true);
-            }
-
-
-            Iterator<Node> itr = nodes.get(node).getDirectedNeighbours().iterator();
-
-            while (itr.hasNext()) {
-                String v = itr.next().getId();
-                if (!visited.get(v)) {
-                    stack.push(v);
-                }
-            }
-
-        }
-        return order;
-    }
 
 
 }
