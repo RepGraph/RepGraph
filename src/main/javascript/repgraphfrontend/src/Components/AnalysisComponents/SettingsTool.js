@@ -318,6 +318,26 @@ export default function SettingsTool() {
             [event.target.name]: event.target.value
         });
 
+        dispatch({type: "SET_GRAPH_STYLES",
+            payload: {
+                graphStyles: {
+                    ...state.graphStyles,
+                    hierarchicalStyles: {...state.graphStyles.hierarchicalStyles, nodeStyles: {
+                            ...valuesNodes,
+                            [event.target.name]: event.target.value
+                        }},
+                    treeStyles: {...state.graphStyles.treeStyles, nodeStyles: {
+                            ...valuesNodes,
+                            [event.target.name]: event.target.value
+                        }},
+                    flatStyles: {...state.graphStyles.flatStyles, nodeStyles: {
+                            ...valuesNodes,
+                            [event.target.name]: event.target.value
+                        }}
+                }
+            }
+        });
+
         handleUpdateStyles();
     };
 
@@ -327,6 +347,25 @@ export default function SettingsTool() {
             [event.target.name]: event.target.value
         });
 
+        dispatch({type: "SET_GRAPH_STYLES",
+            payload: {
+                graphStyles: {
+                    ...state.graphStyles,
+                    hierarchicalStyles: {...state.graphStyles.hierarchicalStyles, tokenStyles:{
+                            ...valuesTokens,
+                            [event.target.name]: event.target.value
+                        }},
+                    treeStyles: {...state.graphStyles.treeStyles, tokenStyles:{
+                            ...valuesTokens,
+                            [event.target.name]: event.target.value
+                        }},
+                    flatStyles: {...state.graphStyles.flatStyles, tokenStyles:{
+                            ...valuesTokens,
+                            [event.target.name]: event.target.value
+                        }}
+                }
+            }
+        });
         handleUpdateStyles();
     };
 
@@ -336,6 +375,25 @@ export default function SettingsTool() {
             [event.target.name]: event.target.value
         });
 
+        dispatch({type: "SET_GRAPH_STYLES",
+            payload: {
+                graphStyles: {
+                    ...state.graphStyles,
+                    hierarchicalStyles: {...state.graphStyles.hierarchicalStyles, linkStyles: {
+                            ...valuesLinks,
+                            [event.target.name]: event.target.value
+                        }},
+                    treeStyles: {...state.graphStyles.treeStyles, linkStyles: {
+                            ...valuesLinks,
+                            [event.target.name]: event.target.value
+                        }},
+                    flatStyles: {...state.graphStyles.flatStyles, linkStyles: {
+                            ...valuesLinks,
+                            [event.target.name]: event.target.value
+                        }}
+                }
+            }
+        });
         handleUpdateStyles();
     };
 
@@ -345,26 +403,18 @@ export default function SettingsTool() {
             [event.target.name]: parseInt(event.target.value)
         });
 
+        dispatch({type: "SET_GRAPH_LAYOUT_SPACING",
+            payload: {
+                graphLayoutSpacing: {
+                    ...valuesGraphSpacing,
+                    [event.target.name]: parseInt(event.target.value)
+                }
+            }
+        });
         handleUpdateStyles();
     };
 
     const handleUpdateStyles = () => {
-        dispatch({type: "SET_GRAPH_STYLES",
-            payload: {
-                graphStyles: {
-                    ...state.graphStyles,
-                    hierarchicalStyles: {...state.graphStyles.hierarchicalStyles, nodeStyles: valuesNodes, linkStyles: valuesLinks, tokenStyles:valuesTokens},
-                    treeStyles: {...state.graphStyles.treeStyles, nodeStyles: valuesNodes, linkStyles: valuesLinks, tokenStyles:valuesTokens},
-                    flatStyles: {...state.graphStyles.flatStyles, nodeStyles: valuesNodes, linkStyles: valuesLinks, tokenStyles:valuesTokens}
-                }
-            }
-        });
-
-        dispatch({type: "SET_GRAPH_LAYOUT_SPACING",
-            payload: {
-                graphLayoutSpacing: valuesGraphSpacing
-            }
-        });
 
         if(state.selectedSentenceID) {
 
@@ -386,7 +436,6 @@ export default function SettingsTool() {
             }
 
             dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
-
         }
     }
 
