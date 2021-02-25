@@ -7,15 +7,15 @@ const tokenLevelSpacing = 140;
 const childrenAnchors = (node, children,visited) => {
 
     if (visited[node] && node.anchors === null){
-        return Number.MAX_VALUE;
+        return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
     }else if(visited[node] && node.anchors!==null){
-        return node.anchors[0].from;
+        return {from: node.anchors[0].from, end: node.anchors[0].end};
     }
     visited[node]=true;
     if (children.get(node.id).length === 0 && node.anchors === null) {
-        return Number.MAX_VALUE;
+        return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};;
     } else if (node.anchors !== null) {
-        return node.anchors[0].from
+        return {from: node.anchors[0].from, end: node.anchors[0].end};
     } else {
 
         let anchors = [];
@@ -25,31 +25,18 @@ const childrenAnchors = (node, children,visited) => {
 
                 anchors.push(childrenAnchors(child.id, children));
             } else {
-                anchors.push(child.anchors[0].from);
+                anchors.push({from: child.anchors[0].from, end: child.anchors[0].end});
             }
         }
         let leftMost = anchors[0];
         for (let i = 1; i < anchors.length; i++) {
-            if (leftMost > anchors[i]) {
+            if (leftMost.from > anchors[i].from) {
                 leftMost = anchors[i];
             }
         }
         return leftMost;
     }
 }
-
-//Given an initial start node, returns a stack of its descendent nodes.
-const topological = (nodeID, visited, stack, neighbours) => {
-    visited.set(nodeID, true);
-
-    for (let i = 0; i < neighbours.get(nodeID).length; i++) {
-        if (visited.get(neighbours.get(nodeID)[i].id) !== true) {
-            topological(neighbours.get(nodeID)[i].id, visited, stack, neighbours);
-        }
-    }
-    stack.push(nodeID);
-    return stack;
-};
 
 const topologicalSort = (nodeID, children, visited, stack) => {
 
@@ -122,44 +109,27 @@ export const layoutHierarchy = (graphData) => {
         parents.set(e.target, temp);
     }
 
-    let topologicalStacks = new Map(); //Will hold each node's descendent nodes
-
-    //Fill the topological stacks map with the number descendants each node has.
-    for (const nodeOuter of graphData.nodes) {
-        let stack = [];
-        let visited = new Map();
-
-        for (const nodeInner of graphData.nodes) {
-            visited.set(nodeInner.id, false);
-        }
-
-        topologicalStacks.set(
-            nodeOuter.id,
-            topological(nodeOuter.id, visited, stack, children)
-        );
-    }
-
     let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
 
     //Add anchors to nodes without anchors. Fake anchors are added in order to run the layout algorithm, and are decided using either a node's children or parent node's anchors.
     const nodesWithAnchorsAdded = graphData.nodes.map((node, i) => {
         if (node.anchors === null) {
-            let anchorFrom, anchorEnd;
-            if (children.get(node.id).length !== 0) {
-                anchorFrom = children.get(node.id)[0].anchors[0].from;
-                anchorEnd = children.get(node.id)[0].anchors[0].end;
-            } else if (parents.get(node.id).length !== 0) {
-                anchorFrom = parents.get(node.id)[0].anchors[0].from;
-                anchorEnd = parents.get(node.id)[0].anchors[0].end;
-            } else {
-                // ??
-            }
-            let anchorArray = [];
-            //let anchorValue = anchorFrom + (anchorFrom - anchorEnd) / 2;
-            anchorArray.push({
-                from: anchorFrom,
-                end: anchorEnd
-            });
+            // let anchorFrom, anchorEnd;
+            // if (children.get(node.id).length !== 0) {
+            //     anchorFrom = children.get(node.id)[0].anchors[0].from;
+            //     anchorEnd = children.get(node.id)[0].anchors[0].end;
+            // } else if (parents.get(node.id).length !== 0) {
+            //     anchorFrom = parents.get(node.id)[0].anchors[0].from;
+            //     anchorEnd = parents.get(node.id)[0].anchors[0].end;
+            // } else {
+            //     // ??
+            // }
+            // let anchorArray = [];
+            // //let anchorValue = anchorFrom + (anchorFrom - anchorEnd) / 2;
+            // anchorArray.push({
+            //     from: anchorFrom,
+            //     end: anchorEnd
+            // });
             nodesWithoutAnchors.push(node.id);
             return {
                 ...node,
