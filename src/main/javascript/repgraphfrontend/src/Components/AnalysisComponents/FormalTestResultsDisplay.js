@@ -222,7 +222,7 @@ export default function FormalTestsResultsDisplay(props) {
                     {dialogElement}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color={"secondary"}>
+                    <Button onClick={handleClose} variant="contained" color="primary" disableElevation>
                         Close
                     </Button>
                 </DialogActions>
