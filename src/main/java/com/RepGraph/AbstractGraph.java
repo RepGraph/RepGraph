@@ -1004,7 +1004,7 @@ class AbstractGraph {
 
 
         returnInfo.put("planar", planar);
-        //returnInfo.put("edges", crossingEdges);
+
         return returnInfo;
     }
 
