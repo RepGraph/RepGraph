@@ -2,6 +2,8 @@
 // const nodeWidth = 80;
 // const intraLevelSpacing = 50;
 
+import {forEach} from "react-bootstrap/ElementChildren";
+
 export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
     console.log(graphData);
 
@@ -16,10 +18,50 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
         group: "node",
         span: false
     }));
+    let finalGraphNodes = nodes;
+    if (planar) {
+        let count = 0;
+        let lastCount = -1;
+        let height = 0;
+        for (let i = 0; i < finalGraphNodes.length - 1; i++) {
+            if (lastCount === count) {
+                height += interLevelSpacing;
+            } else {
+                height = 0;
+            }
+            finalGraphNodes[i] = {
+                ...finalGraphNodes[i],
+                x: count * (nodeWidth + intraLevelSpacing),
+                y: nodeHeight + height,
+                label: finalGraphNodes[i].label,
+                type: "node",
+                group: "node",
+                span: false
+            }
+            lastCount = count;
+            if (!(finalGraphNodes[i].anchors[0].from === finalGraphNodes[i + 1].anchors[0].from && finalGraphNodes[i].anchors[0].end === finalGraphNodes[i + 1].anchors[0].end)) {
+                count += 1
+            }
+        }
+        if (lastCount === count) {
+            height += interLevelSpacing;
+        } else {
+            height = 0;
+        }
+        const lastIndex = finalGraphNodes.length - 1
+        finalGraphNodes[lastIndex] = {
+            ...finalGraphNodes[lastIndex],
+            x: count * (nodeWidth + intraLevelSpacing),
+            y: nodeHeight+height,
+            label: finalGraphNodes[lastIndex].label,
+            type: "node",
+            group: "node",
+            span: false
+        }
 
-    const finalGraphNodes = nodes;
+    }
 
-    const finalGraphEdges = graphData.edges.map((edge, index) => {
+    let finalGraphEdges = graphData.edges.map((edge, index) => {
         const sourceNodeIndex = finalGraphNodes.findIndex(
             (node) => node.id === edge.source
         );
@@ -44,9 +86,15 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
             type: "link",
             group: "link"
         };
-    });
+    })
 
-    return { nodes: finalGraphNodes, links: finalGraphEdges };
+    if (planar){
+    for (const indexElement of graphData.crossingEdges) {
+        finalGraphEdges[indexElement] = {...finalGraphEdges[indexElement],group:"linkColourCross"}
+    }}
+
+
+    return {nodes: finalGraphNodes, links: finalGraphEdges};
 };
 
 function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
@@ -69,7 +117,7 @@ function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
         y1 = (source.y + target.y) / 2;
     }
 
-    return { x1, y1 };
+    return {x1, y1};
 }
 
 function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSpacing) {
@@ -93,19 +141,17 @@ function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSp
             }
         }
         if (found) {
-                if (planar){
-                    if (source.x < target.x){
-                        direction = "horizontal-left";
-                    }
-                    else{
-                        direction = "horizontal-right";
-                    }
-                }
-                else{
+            if (planar) {
+                if (source.x < target.x) {
+                    direction = "horizontal-left";
+                } else {
                     direction = "horizontal-right";
                 }
-                let distance = Math.abs(source.x - target.x)/(intraLevelSpacing+nodeWidth);
-            if (distance > 10){
+            } else {
+                direction = "horizontal-right";
+            }
+            let distance = Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth);
+            if (distance > 10) {
                 degree = 0.15;
             }
         }
