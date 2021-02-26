@@ -86,19 +86,12 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
             type: "link",
             group: "link"
         };
-    });
-    console.log(graphData.crossingEdges)
-    finalGraphEdges.map((edge, index) => {
-        if (graphData.crossingEdges.includes(index)) {
-            return {
-                ...edge,
-                group: "linkColourCross"
-            }
-        } else {
-            return edge;
-        }
     })
-    console.log(finalGraphEdges)
+
+    for (const indexElement of graphData.crossingEdges) {
+        finalGraphEdges[indexElement] = {...finalGraphEdges[indexElement],group:"linkColourCross"}
+    }
+
 
     return {nodes: finalGraphNodes, links: finalGraphEdges};
 };

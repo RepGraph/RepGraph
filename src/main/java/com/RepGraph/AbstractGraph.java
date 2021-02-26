@@ -888,14 +888,19 @@ class AbstractGraph {
             newEdge.setSource(nodeToToken.get(source));
             newEdge.setTarget(nodeToToken.get(target));
 
-            updated.add(newEdge);
+            if (!nodeToToken.get(source).equals(nodeToToken.get(target))) {
+                updated.add(newEdge);
+            }
+
 
             if (dummyNodes.containsKey(source)) {
                 for (String sourceID : dummyNodes.get(source)) {
                     newEdge = new Edge();
                     newEdge.setSource(nodeToToken.get(sourceID));
                     newEdge.setTarget(nodeToToken.get(target));
-                    updated.add(newEdge);
+                    if (!nodeToToken.get(sourceID).equals(nodeToToken.get(target))) {
+                        updated.add(newEdge);
+                    }
                 }
             }
 
@@ -904,7 +909,9 @@ class AbstractGraph {
                     newEdge = new Edge();
                     newEdge.setSource(nodeToToken.get(source));
                     newEdge.setTarget(nodeToToken.get(targetID));
-                    updated.add(newEdge);
+                    if (!nodeToToken.get(source).equals(nodeToToken.get(targetID))) {
+                        updated.add(newEdge);
+                    }
                 }
             }
             if (dummyNodes.containsKey(source) && dummyNodes.containsKey(target)) {
@@ -913,14 +920,14 @@ class AbstractGraph {
                         newEdge = new Edge();
                         newEdge.setSource(nodeToToken.get(sourceID));
                         newEdge.setTarget(nodeToToken.get(targetID));
-                        updated.add(newEdge);
+                        if (!nodeToToken.get(sourceID).equals(nodeToToken.get(targetID))) {
+                            updated.add(newEdge);
+                        }
                     }
                 }
             }
 
         }
-
-
 
 
         ArrayList<Integer> crossingEdges = new ArrayList<>();
@@ -929,18 +936,24 @@ class AbstractGraph {
 
             for (int j = 0; j < updated.size(); j++) {
                 Edge other = updated.get(j);
-                if (Math.min(Integer.parseInt(nodeToToken.get(e.getSource())), Integer.parseInt(nodeToToken.get(e.getTarget()))) < Math.min(Integer.parseInt(nodeToToken.get(other.getSource())), Integer.parseInt(nodeToToken.get(other.getTarget()))) && Math.min(Integer.parseInt(nodeToToken.get(other.getSource())), Integer.parseInt(nodeToToken.get(other.getTarget()))) < Math.max(Integer.parseInt(nodeToToken.get(e.getSource())), Integer.parseInt(nodeToToken.get(e.getTarget()))) && Math.max(Integer.parseInt(nodeToToken.get(e.getSource())), Integer.parseInt(nodeToToken.get(e.getTarget()))) < Math.max(Integer.parseInt(nodeToToken.get(other.getSource())), Integer.parseInt(nodeToToken.get(other.getTarget())))) {
-                    crossingEdges.add(i);
-                    crossingEdges.add(j);
+                if (Math.min(Integer.parseInt((e.getSource())), Integer.parseInt((e.getTarget()))) < Math.min(Integer.parseInt((other.getSource())), Integer.parseInt((other.getTarget()))) && Math.min(Integer.parseInt((other.getSource())), Integer.parseInt((other.getTarget()))) < Math.max(Integer.parseInt((e.getSource())), Integer.parseInt((e.getTarget()))) && Math.max(Integer.parseInt((e.getSource())), Integer.parseInt((e.getTarget()))) < Math.max(Integer.parseInt((other.getSource())), Integer.parseInt((other.getTarget())))) {
+                    if (!crossingEdges.contains(i)) {
+                        crossingEdges.add(i);
+                    }
+                    if (!crossingEdges.contains(j)) {
+                        crossingEdges.add(j);
+                    }
+
                 }
 
             }
         }
+        // MIN 9
 
         for (int i = 0; i < ordered.size() - 1; i++) {
             if (!(ordered.get(i).getAnchors().get(0).getFrom() == ordered.get(i + 1).getAnchors().get(0).getFrom() && ordered.get(i).getAnchors().get(0).getEnd() == ordered.get(i + 1).getAnchors().get(0).getEnd())) {
                 ordered.get(i).setId(nodeToToken.get(ordered.get(i).getId()));
-            }else{
+            } else {
 
             }
         }
@@ -953,35 +966,35 @@ class AbstractGraph {
 
             if (lastCount == count) {
                 UUID uuid = UUID.randomUUID();
-                ordered.get(i).setId(uuid+"");
+                ordered.get(i).setId(uuid + "");
             } else {
-                ordered.get(i).setId(count+"");
+                ordered.get(i).setId(count + "");
             }
 
             lastCount = count;
-            if (!(ordered.get(i).getAnchors().get(0).getFrom() == ordered.get(i + 1).getAnchors().get(0).getFrom() && ordered.get(i).getAnchors().get(0).getEnd() == ordered.get(i + 1).getAnchors().get(0).getEnd() )) {
+            if (!(ordered.get(i).getAnchors().get(0).getFrom() == ordered.get(i + 1).getAnchors().get(0).getFrom() && ordered.get(i).getAnchors().get(0).getEnd() == ordered.get(i + 1).getAnchors().get(0).getEnd())) {
                 count += 1;
             }
 
         }
         if (lastCount == count) {
             UUID uuid = UUID.randomUUID();
-            ordered.get(ordered.size()-1).setId(uuid+"");
+            ordered.get(ordered.size() - 1).setId(uuid + "");
         } else {
-            ordered.get(ordered.size()-1).setId(count+"");
+            ordered.get(ordered.size() - 1).setId(count + "");
         }
 
         HashMap<String, Object> returnInfo = new HashMap<>();
 
-        HashMap<String,Object> planarVisualisation = new HashMap<>();
-        planarVisualisation.put("id",this.getId());
-        planarVisualisation.put("source",this.getSource());
-        planarVisualisation.put("input",this.input);
-        planarVisualisation.put("nodes",ordered);
+        HashMap<String, Object> planarVisualisation = new HashMap<>();
+        planarVisualisation.put("id", this.getId());
+        planarVisualisation.put("source", this.getSource());
+        planarVisualisation.put("input", this.input);
+        planarVisualisation.put("nodes", ordered);
         planarVisualisation.put("edges", updated);
-        planarVisualisation.put("tokens",this.tokens);
-        planarVisualisation.put("tops",this.top);
-        planarVisualisation.put("crossingEdges",crossingEdges);
+        planarVisualisation.put("tokens", this.tokens);
+        planarVisualisation.put("tops", this.top);
+        planarVisualisation.put("crossingEdges", crossingEdges);
         returnInfo.put("planarForm", planarVisualisation);
 
         boolean planar = false;
@@ -991,10 +1004,9 @@ class AbstractGraph {
 
 
         returnInfo.put("planar", planar);
-        returnInfo.put("edges", crossingEdges);
+        //returnInfo.put("edges", crossingEdges);
         return returnInfo;
     }
-
 
 
     @Override
