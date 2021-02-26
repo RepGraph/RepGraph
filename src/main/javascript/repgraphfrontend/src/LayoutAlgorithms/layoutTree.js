@@ -5,60 +5,130 @@
 // const tokenLevelSpacing = 140;
 
 //Given an initial start node, returns a stack of its descendent nodes.
-const topological = (nodeID, visited, stack, neighbours) => {
-    visited.set(nodeID, true);
+const childrenAnchors = (node, children, visited, graphClone) => {
+    if (visited[node.id] && node.anchors === null) {
+        return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
+    } else if (visited[node.id] && node.anchors !== null) {
+        return {from: node.anchors[0].from, end: node.anchors[0].end};
+    }
+    visited[node.id] = true;
+    if (children.get(node.id).length === 0 && node.anchors === null) {
+        return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
+        ;
+    } else if (node.anchors !== null) {
+        return {from: node.anchors[0].from, end: node.anchors[0].end};
+    } else {
 
-    for (let i = 0; i < neighbours.get(nodeID).length; i++) {
-        if (visited.get(neighbours.get(nodeID)[i]) !== true) {
-            topological(neighbours.get(nodeID)[i], visited, stack, neighbours);
+        let anchors = [];
+        for (let childID of children.get(node.id)) {
+            if (graphClone.nodes.get(childID).anchors === null) {
+
+                anchors.push(childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone));
+            } else {
+
+                anchors.push({
+                    from: graphClone.nodes.get(childID).anchors[0].from,
+                    end: graphClone.nodes.get(childID).anchors[0].end
+                });
+            }
+        }
+        let leftMost = anchors[0];
+        for (let i = 1; i < anchors.length; i++) {
+            if (leftMost.from > anchors[i].from) {
+                leftMost = anchors[i];
+            }
+        }
+        return leftMost;
+    }
+}
+
+const topologicalSort = (node, children, visited, stack, graphClone) => {
+
+    visited[node.id] = true;
+
+    for (let child of children.get(node.id)) {
+
+        if (!visited[child]) {
+            topologicalSort(graphClone.nodes.get(child), children, visited, stack, graphClone);
         }
     }
-    stack.push(nodeID);
+
+    stack.push((node));
     return stack;
-};
+}
+
+const getPath = (graphClone, children) => {
+
+    let stack = []
+
+    let visited = {};
+
+    for (let node of graphClone.nodes.values()) {
+        visited[node.id] = false;
+    }
+
+    for (let n of graphClone.nodes.values()) {
+
+        if (!visited[n.id]) {
+            topologicalSort(n, children, visited, stack, graphClone);
+        }
+
+    }
+    let order = [];
+    while (stack.length !== 0) {
+        order.push(stack.pop());
+    }
+    return order;
+}
 
 export const layoutTree = (graphData, graphLayoutSpacing) => {
 
         const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
-        console.log("graphData", graphData);
+
+        const lodash = require('lodash');
+        let graphClone = lodash.cloneDeep(graphData);
+        console.log("graphClone", graphClone);
+
+        let nodeMap = new Map();
+        for (let node of graphClone.nodes) {
+            nodeMap.set(node.id, node);
+        }
+        graphClone.nodes = nodeMap;
 
         let children = new Map();
         let parents = new Map();
 
-        //Assign empty arrays to the children and parent maps
-        for (const node of graphData.nodes) {
-            children.set(node.id, []);
-            parents.set(node.id, []);
+        //Assign empty neighbour arrays to each node id
+        for (const nodeID of graphClone.nodes.keys()) {
+            children.set(nodeID, []);
+            parents.set(nodeID, []);
         }
 
-        //Fill in directed neighbour node id's for each node in corresponding arrays
-        for (const e of graphData.edges) {
+        //Fill in children node id's and parent node ids for each node.
+        for (const e of graphClone.edges) {
             let temp = children.get(e.source);
             temp.push(e.target);
             children.set(e.source, temp);
 
             temp = parents.get(e.target);
-            graphData.nodes.findIndex((node) => node.id === e.source);
-            temp.push(
-                graphData.nodes[graphData.nodes.findIndex((node) => node.id === e.source)]
-            );
+            temp.push(e.source);
             parents.set(e.target, temp);
         }
 
         let topologicalStacks = new Map(); //Will hold each node's descendent nodes
 
         //Fill the topological stacks map with the number descendants each node has.
-        for (const nodeOuter of graphData.nodes) {
+        for (const nodeOuter of graphClone.nodes.values()) {
             let stack = [];
-            let visited = new Map();
+            let visited = {};
 
-            for (const nodeInner of graphData.nodes) {
-                visited.set(nodeInner.id, false);
+            for (const nodeID of graphClone.nodes.keys()) {
+                visited[nodeID.id] = false;
             }
 
             topologicalStacks.set(
                 nodeOuter.id,
-                topological(nodeOuter.id, visited, stack, children)
+                topologicalSort(nodeOuter,children, visited, stack, graphClone)
             );
         }
 
@@ -77,7 +147,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
             numDescendents++
         ) {
             let currentLevel = [];
-            for (let node of graphData.nodes) {
+            for (let node of graphClone.nodes.values()) {
                 //console.log("node: ",node," Length: ",topologicalStacks.get(node.id).length);
                 if (topologicalStacks.get(node.id).length === numDescendents) {
                     currentLevel.push(node);
@@ -140,7 +210,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                     if (children.get(n.id).length !== 0) {
                         xPositions.set(n.id, xPositions.get(children.get(n.id)[0]));
                     } else if (parents.get(n.id).length !== 0) {
-                        let parentID = parents.get(n.id)[0].id;
+                        let parentID = parents.get(n.id)[0];
                         let xPos = xPositions.get(parentID);
                         xPositions.set(n.id, xPos);
                     } else {
@@ -157,11 +227,11 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         //Algorithm to resolve overlapping nodes.
         let numNodesProcessed = 0;
         let currentLevel = 0;
-        while (numNodesProcessed !== graphData.nodes.length) {
+        while (numNodesProcessed !== graphClone.nodes.size) {
             let nodeXPos = new Map();
             nodesInFinalLevels[currentLevel + 1] = new Map();
-            if (currentLevel === nodesInLevels.length-1){
-                nodesInLevels[currentLevel+1]=[];
+            if (currentLevel === nodesInLevels.length - 1) {
+                nodesInLevels[currentLevel + 1] = [];
             }
             for (let n of nodesInLevels[currentLevel]) {
                 if (n.anchors === null &&
@@ -178,10 +248,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                         //Move the current occupying node up, so the anchorless node stays with its parent.
                         let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
                         nodeXPos.set(xPositions.get(n.id), n.id);
-                        nodesInLevels[currentLevel + 1].push(
-                            graphData.nodes[graphData.nodes.findIndex(
-                                (node) => node.id === currentOccupyingNodeID)]
-                        );
+                        nodesInLevels[currentLevel + 1].push(graphClone.nodes.get(currentOccupyingNodeID));
                         nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
                         nodesInFinalLevels[currentLevel].set(n.id, n);
                     } else {
@@ -199,10 +266,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                         //Set the node with the higher descendents in the next level, and remove it from this level.
                         let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
                         nodeXPos.set(xPositions.get(n.id), n.id);
-                        nodesInLevels[currentLevel + 1].push(
-                            graphData.nodes[graphData.nodes.findIndex(
-                                (node) => node.id === currentOccupyingNodeID)]
-                        );
+                        nodesInLevels[currentLevel + 1].push(graphClone.nodes.get(currentOccupyingNodeID));
                         nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
                         nodesInFinalLevels[currentLevel].set(n.id, n);
                     } else {
@@ -236,9 +300,9 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         const totalGraphHeight =
             height * nodeHeight + (height - 1) * interLevelSpacing; //number of levels times the height of each node and the spaces between them
 
-        const tokens = graphData.tokens.map((token) => ({
+        const tokens = graphClone.tokens.map((token) => ({
             ...token,
-            id: token.index + graphData.nodes.length,
+            id: token.index + graphClone.nodes.length,
             x: token.index * (intraLevelSpacing + nodeWidth),
             y: totalGraphHeight + tokenLevelSpacing,
             relativeX: token.index,
@@ -266,7 +330,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
 
         const finalGraphNodes = nodesInFinalLevelsArray.flat().concat(tokens);
 
-        const finalGraphEdges = graphData.edges.map((edge, index) => {
+        const finalGraphEdges = graphClone.edges.map((edge, index) => {
 
             const sourceNodeIndex = finalGraphNodes.findIndex(
                 (node) => node.id === edge.source
@@ -287,7 +351,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                     source,
                     target,
                     finalGraphNodes,
-                    graphData.edges,
+                    graphClone.edges,
                     graphLayoutSpacing
                 );
             } else if (source.x === target.x) {
@@ -296,7 +360,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                     source,
                     target,
                     finalGraphNodes,
-                    graphData.edges,
+                    graphClone.edges,
                     graphLayoutSpacing
                 );
             } else {
@@ -305,7 +369,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                     source,
                     target,
                     finalGraphNodes,
-                    graphData.edges,
+                    graphClone.edges,
                     graphLayoutSpacing
                 );
             }
