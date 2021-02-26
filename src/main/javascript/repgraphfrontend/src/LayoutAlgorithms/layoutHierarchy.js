@@ -115,10 +115,9 @@ export const layoutHierarchy = (graphData) => {
 
         let topological = getPath(graphClone, children);
 
-        console.log("topological", topological)
+       // console.log("topological", topological)
         // let topological = topologicalSort(graphClone.nodes[graphClone.nodes.findIndex((node) => node.id === graphClone.tops)], children, visited, stack);
         // console.log("topological", topological);
-        let nodesWithAnchorsAdded = [];
         for (let node of topological) {
 
             if (node.anchors === null) {
@@ -302,7 +301,7 @@ export const layoutHierarchy = (graphData) => {
             type: "node",
             group: "node",
             label: node.label,
-            //anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
+            anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
         }));
 
         const tokens = graphClone.tokens.map((token) => ({

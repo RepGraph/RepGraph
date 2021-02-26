@@ -128,12 +128,38 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
 
             topologicalStacks.set(
                 nodeOuter.id,
-                topologicalSort(nodeOuter,children, visited, stack, graphClone)
+                topologicalSort(nodeOuter, children, visited, stack, graphClone)
             );
         }
+        let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
+        let topological = getPath(graphClone, children);
 
-        //Find the node with the most descendents, which will dictate the number of levels needed.
-        // let numLevels = Math.max(...topologicalStacks.values());
+        for (let node of topological) {
+
+            if (node.anchors === null) {
+                let vis = {};
+                for (let node of graphClone.nodes.values()) {
+                    vis[node.id] = false;
+                }
+                nodesWithoutAnchors.push(node.id);
+                let anch = [];
+                anch.push(childrenAnchors(node, children, vis, graphClone));
+                if (anch[0].from === Number.MAX_VALUE) {
+                    for (let parentID of parents.get(node.id)) {
+                        console.log("parentID", parentID)
+                        if (graphClone.nodes.get(parentID).anchors !== null) {
+                            if (graphClone.nodes.get(parentID).anchors[0].from < anch[0].from) {
+                                anch[0] = graphClone.nodes.get(parentID).anchors[0];
+                            }
+                        }
+                    }
+                }
+
+                graphClone.nodes.set(node.id, {...node, anchors: anch});
+
+            }
+
+        }
 
         let numLevels = 0;
         for (const stack of topologicalStacks.values()) {
@@ -236,8 +262,8 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
             for (let n of nodesInLevels[currentLevel]) {
                 if (n.anchors === null &&
                     parents.get(n.id)[0] !== null &&
-                    xPositions.get(parents.get(n.id)[0].id) === xPositions.get(n.id) &&
-                    lowestNode.get(xPositions.get(parents.get(n.id)[0].id)) === parents.get(n.id)[0].id
+                    xPositions.get(parents.get(n.id)[0]) === xPositions.get(n.id) &&
+                    lowestNode.get(xPositions.get(parents.get(n.id)[0])) === parents.get(n.id)[0]
                 ) {
                     //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
                     if (currentLevel === 0) {
