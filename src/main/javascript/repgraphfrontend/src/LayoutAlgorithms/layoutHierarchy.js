@@ -4,7 +4,7 @@ const interLevelSpacing = 80;
 const intraLevelSpacing = 50;
 const tokenLevelSpacing = 140;
 
-const childrenAnchors = (node, children, visited, graphData) => {
+const childrenAnchors = (node, children, visited, graphClone) => {
     if (visited[node.id] && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
     } else if (visited[node.id] && node.anchors !== null) {
@@ -20,14 +20,14 @@ const childrenAnchors = (node, children, visited, graphData) => {
 
         let anchors = [];
         for (let childID of children.get(node.id)) {
-            if (graphData.nodes.get(childID).anchors === null) {
+            if (graphClone.nodes.get(childID).anchors === null) {
 
-                anchors.push(childrenAnchors(graphData.nodes.get(childID), children, visited, graphData));
+                anchors.push(childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone));
             } else {
 
                 anchors.push({
-                    from: graphData.nodes.get(childID).anchors[0].from,
-                    end: graphData.nodes.get(childID).anchors[0].end
+                    from: graphClone.nodes.get(childID).anchors[0].from,
+                    end: graphClone.nodes.get(childID).anchors[0].end
                 });
             }
         }
@@ -41,33 +41,34 @@ const childrenAnchors = (node, children, visited, graphData) => {
     }
 }
 
-const topologicalSort = (node, children, visited, stack, graphData) => {
+const topologicalSort = (node, children, visited, stack, graphClone) => {
 
     visited[node.id] = true;
 
     for (let child of children.get(node.id)) {
 
         if (!visited[child]) {
-            topologicalSort(graphData.nodes.get(child), children, visited, stack, graphData);
+            topologicalSort(graphClone.nodes.get(child), children, visited, stack, graphClone);
         }
     }
 
     stack.push((node));
 }
 
-const getPath = (graphData, children) => {
+const getPath = (graphClone, children) => {
 
     let stack = []
 
     let visited = {};
 
-    for (let i = 0; i < graphData.nodes.size; i++) {
-        visited[i] = false;
+    for (let node of graphClone.nodes.values()){
+        visited[node.id] = false;
     }
-    for (let n of graphData.nodes.values()) {
+
+    for (let n of graphClone.nodes.values()) {
 
         if (!visited[n.id]) {
-            topologicalSort(n, children, visited, stack, graphData);
+            topologicalSort(n, children, visited, stack, graphClone);
         }
 
     }
@@ -79,25 +80,28 @@ const getPath = (graphData, children) => {
 }
 
 export const layoutHierarchy = (graphData) => {
+    
+        const lodash = require('lodash');
+        let graphClone = lodash.cloneDeep(graphData);
+        console.log("graphClone", graphClone);
 
         let nodeMap = new Map();
-        for (let node of graphData.nodes) {
+        for (let node of graphClone.nodes) {
             nodeMap.set(node.id, node);
         }
-        graphData.nodes = nodeMap;
+        graphClone.nodes = nodeMap;
 
-        console.log("graphData", graphData);
         let children = new Map();
         let parents = new Map();
 
         //Assign empty neighbour arrays to each node id
-        for (const nodeID of graphData.nodes.keys()) {
+        for (const nodeID of graphClone.nodes.keys()) {
             children.set(nodeID, []);
             parents.set(nodeID, []);
         }
 
         //Fill in children node id's and parent node ids for each node.
-        for (const e of graphData.edges) {
+        for (const e of graphClone.edges) {
             let temp = children.get(e.source);
             temp.push(e.target);
             children.set(e.source, temp);
@@ -109,44 +113,44 @@ export const layoutHierarchy = (graphData) => {
 
         let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
 
-        let topological = getPath(graphData, children);
+        let topological = getPath(graphClone, children);
 
         console.log("topological", topological)
-        // let topological = topologicalSort(graphData.nodes[graphData.nodes.findIndex((node) => node.id === graphData.tops)], children, visited, stack);
+        // let topological = topologicalSort(graphClone.nodes[graphClone.nodes.findIndex((node) => node.id === graphClone.tops)], children, visited, stack);
         // console.log("topological", topological);
         let nodesWithAnchorsAdded = [];
         for (let node of topological) {
 
             if (node.anchors === null) {
                 let vis = {};
-                for (let i = 0; i < graphData.nodes.size; i++) {
-                    vis[i] = false;
+                for (let node of graphClone.nodes.values()){
+                    vis[node.id] = false;
                 }
                 nodesWithoutAnchors.push(node.id);
                 let anch = [];
-                anch.push(childrenAnchors(node, children, vis,graphData));
+                anch.push(childrenAnchors(node, children, vis,graphClone));
                 if (anch[0].from === Number.MAX_VALUE) {
                     for (let parentID of parents.get(node.id)) {
                         console.log("parentID", parentID)
-                        if (graphData.nodes.get(parentID).anchors !== null) {
-                            if (graphData.nodes.get(parentID).anchors[0].from < anch[0].from) {
-                                anch[0] = graphData.nodes.get(parentID).anchors[0];
+                        if (graphClone.nodes.get(parentID).anchors !== null) {
+                            if (graphClone.nodes.get(parentID).anchors[0].from < anch[0].from) {
+                                anch[0] = graphClone.nodes.get(parentID).anchors[0];
                             }
                         }
                     }
                 }
 
-                graphData.nodes.set(node.id, {...node, anchors: anch, span: false});
+                graphClone.nodes.set(node.id, {...node, anchors: anch, span: false});
 
             } else {
-                graphData.nodes.set(node.id, {...node, span: true});
+                graphClone.nodes.set(node.id, {...node, span: true});
             }
 
         }
 
 
 //Determine span lengths of each node
-        const graphNodeSpanLengths = Array.from(graphData.nodes.values())
+        const graphNodeSpanLengths = Array.from(graphClone.nodes.values())
             .map((node) => node.anchors[0])
             .map((span) => span.end - span.from);
 
@@ -164,7 +168,7 @@ export const layoutHierarchy = (graphData) => {
 
 //Sort the nodes into each level based on their spans
         let nodesInLevels = [];
-        let nodeArray = Array.from(graphData.nodes.values());
+        let nodeArray = Array.from(graphClone.nodes.values());
 
         for (const level of uniqueSpanLengths) {
             let currentLevel = [];
@@ -213,13 +217,13 @@ export const layoutHierarchy = (graphData) => {
 //console.log("nodesInLevels", nodesInLevels);
 
 //LevelTopology size mirrors the number of tokens there are
-        const levelTopology = new Array(graphData.tokens.length);
+        const levelTopology = new Array(graphClone.tokens.length);
         levelTopology.fill(0);
 
 //console.log("levelTopology filled:", levelTopology);
 
         const minTokenIndex = Math.min(
-            ...graphData.tokens.map((token) => token.index)
+            ...graphClone.tokens.map((token) => token.index)
         );
 
 //console.log("minTokenIndex", minTokenIndex);
@@ -301,7 +305,7 @@ export const layoutHierarchy = (graphData) => {
             //anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
         }));
 
-        const tokens = graphData.tokens.map((token) => ({
+        const tokens = graphClone.tokens.map((token) => ({
             ...token,
             x: (token.index - minTokenIndex) * (nodeWidth + intraLevelSpacing),
             y: nodeSectionHeight + tokenLevelSpacing,
@@ -316,7 +320,7 @@ export const layoutHierarchy = (graphData) => {
 
         const finalGraphNodes = nodes.concat(tokens);
 
-        const finalGraphEdges = graphData.edges.map((edge, index) => {
+        const finalGraphEdges = graphClone.edges.map((edge, index) => {
             const sourceNodeIndex = finalGraphNodes.findIndex(
                 (node) => node.id === edge.source
             );
@@ -335,7 +339,7 @@ export const layoutHierarchy = (graphData) => {
                     source,
                     target,
                     finalGraphNodes,
-                    graphData.edges
+                    graphClone.edges
                 );
             } else if (source.x === target.x) {
                 cp = edgeRulesSameColumn(
@@ -343,7 +347,7 @@ export const layoutHierarchy = (graphData) => {
                     source,
                     target,
                     finalGraphNodes,
-                    graphData.edges
+                    graphClone.edges
                 );
             } else {
                 cp = edgeRulesOther(
@@ -351,7 +355,7 @@ export const layoutHierarchy = (graphData) => {
                     source,
                     target,
                     finalGraphNodes,
-                    graphData.edges,
+                    graphClone.edges,
                     levelTopology
                 );
             }
@@ -654,14 +658,14 @@ function edgeRulesOther(
 }
 
 //Can ultimately have this information placed within the returned graph data
-export const determineAdjacentLinks = (graphData) => {
+export const determineAdjacentLinks = (graphClone) => {
     let adjacentLinkMap = new Map();
 
-    for (const node of graphData.nodes) {
+    for (const node of graphClone.nodes) {
         adjacentLinkMap.set(node.id, []);
     }
 
-    for (const link of graphData.links) {
+    for (const link of graphClone.links) {
         if (link.type === "link") {
             adjacentLinkMap.set(
                 link.source.id,
