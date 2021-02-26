@@ -88,9 +88,10 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
         };
     })
 
+    if (planar){
     for (const indexElement of graphData.crossingEdges) {
         finalGraphEdges[indexElement] = {...finalGraphEdges[indexElement],group:"linkColourCross"}
-    }
+    }}
 
 
     return {nodes: finalGraphNodes, links: finalGraphEdges};
