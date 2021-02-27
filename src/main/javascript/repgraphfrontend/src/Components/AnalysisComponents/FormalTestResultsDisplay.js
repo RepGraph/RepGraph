@@ -26,6 +26,7 @@ import {ParentSize} from "@visx/responsive";
 import {Graph} from "../Graph/Graph";
 import {determineAdjacentLinks} from "../../LayoutAlgorithms/layoutHierarchy";
 import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+import {useHistory} from "react-router-dom";
 
 
 const useStyles = makeStyles({
@@ -51,16 +52,29 @@ export default function FormalTestsResultsDisplay(props) {
     const [rowClicked, setRowClicked] = React.useState(null); //Local state to store which table row was clicked
     const { state, dispatch } = React.useContext(AppContext); //Provide access to global state
     const response = state.testResults; //Get the test results from the global state
+    const history = useHistory(); //Provide access to router history
 
     let newRows = [];
 
-    //Add the rows to the table of results
-    for (const [test, result] of Object.entries(response)) {
-        if(test !== "Planar"){
-            newRows.push(createData(test, result));
-        } else{
-            newRows.push(createData(test, result.planar));
+    console.log("response", response);
+
+    //Add the rows to the table of results - in consistent order
+    try {
+        if(response.hasOwnProperty("Planar")){
+            newRows.push(createData("Planar", response.Planar.planar));
         }
+        if(response.hasOwnProperty("LongestPathDirected")){
+            newRows.push(createData("Longest Directed Path", response.LongestPathDirected));
+        }
+        if(response.hasOwnProperty("LongestPathUndirected")){
+            newRows.push(createData("Longest Undirected Path", response.LongestPathUndirected));
+        }
+        if(response.hasOwnProperty("Connected")){
+            newRows.push(createData("Connected", response.Connected));
+        }
+    }catch (e) {
+        console.log(e); //Log the error to the console
+        history.push("/404"); //Take the user to the error page
     }
 
     //Handle click on table row
@@ -78,22 +92,6 @@ export default function FormalTestsResultsDisplay(props) {
     };
 
     let dialogElement; //variable to store the element to be displayed in the dialog to the user
-
-    // if (rowClicked === "Planar") {
-    //     dialogElement = <PlanarVisualisation planarGraphData={response.PlanarVis}/>;
-    // } else if (rowClicked === "LongestPathDirected") {
-    //     dialogElement = (
-    //         <LongestPathVisualisation
-    //             type={rowClicked}
-    //         />
-    //     );
-    // } else if (rowClicked === "LongestPathUndirected") {
-    //     dialogElement = (
-    //         <LongestPathVisualisation
-    //             type={rowClicked}
-    //         />
-    //     );
-    // }
 
     //Determine graphFormatCode
     let graphFormatCode = null;
