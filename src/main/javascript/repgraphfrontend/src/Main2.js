@@ -315,7 +315,6 @@ export default function MiniDrawer() {
     switch (currentScreenWidth) {
         case 'xs':
         case 'sm':
-        case 'md':
             toolBarComponent = <Toolbar>
                 <IconButton
                     color="inherit"
@@ -391,25 +390,26 @@ export default function MiniDrawer() {
                                                             <Card>
                                                                 <CardContent>
                                                                     <Grid container spacing={1}>
+                                                                        <div>This needs to be fixed still</div>
                                                                         <Grid item>
                                                                             <Chip label="AbstractNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.visualisationOptions.groups.node.color
+                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="SurfaceNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.visualisationOptions.groups.surfaceNode.color
+                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="Token" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.visualisationOptions.groups.token.color
+                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                     </Grid>
@@ -418,7 +418,39 @@ export default function MiniDrawer() {
                                                         </Popover>
                                                     </div></Grid>
                                                     <Grid item><Tooltip arrow
-                                                                        title={"Select visualisation format"}>
+                                                                        title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
+                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                                        {/*     className={classes.fabButton} onClick={() => {*/}
+                                                        {/*    history.push("/");*/}
+                                                        {/*}}>*/}
+                                                        {/*    {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?*/}
+                                                        {/*    <CloudUploadIcon/> : <BuildIcon/>}*/}
+                                                        {/*</Fab>*/}
+                                                        <Button color="primary" variant="contained" disableElevation onClick={() => {
+                                                            history.push("/");
+                                                        }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
+                                                            <CloudUploadIcon/> : <EjectIcon/>}</Button>
+                                                    </Tooltip></Grid>
+                                                    <Grid item><Tooltip arrow
+                                                                                                       title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
+                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                                        {/*     className={classes.fabButton} onClick={() => {*/}
+                                                        {/*    setSentenceOpen(true);*/}
+                                                        {/*}} disabled={state.dataSet === null}>*/}
+                                                        {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
+                                                        {/*    <AddCircleOutlineIcon/> :*/}
+                                                        {/*    <BuildIcon/>}*/}
+                                                        {/*</Fab>*/}
+
+                                                        <Button color="primary" variant="contained" disableElevation onClick={() => {
+                                                            setSentenceOpen(true);
+                                                        }}
+                                                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                                            <AddCircleOutlineIcon/> :
+                                                            <EditIcon/>}</Button>
+                                                    </Tooltip></Grid>
+                                                    <Grid item><Tooltip arrow
+                                                                                                       title={"Select visualisation format"}>
                                                         <ToggleButtonGroup
                                                             value={state.visualisationFormat}
                                                             exclusive
@@ -438,24 +470,161 @@ export default function MiniDrawer() {
                                                         </ToggleButtonGroup>
 
                                                     </Tooltip></Grid>
-                                                    <Grid item><Tooltip arrow
-                                                                        title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
-                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                                                        {/*     className={classes.fabButton} onClick={() => {*/}
-                                                        {/*    setSentenceOpen(true);*/}
-                                                        {/*}} disabled={state.dataSet === null}>*/}
-                                                        {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
-                                                        {/*    <AddCircleOutlineIcon/> :*/}
-                                                        {/*    <BuildIcon/>}*/}
-                                                        {/*</Fab>*/}
+                                                </Grid>
+                                            </CardContent>
 
-                                                        <Button color="primary" variant="contained" disableElevation onClick={() => {
-                                                            setSentenceOpen(true);
-                                                        }}
-                                                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
-                                                            <AddCircleOutlineIcon/> :
-                                                            <EditIcon/>}</Button>
-                                                    </Tooltip></Grid>
+                                        </Card>
+
+                                    </Popover>
+                                </div>
+                            )}
+                        </PopupState>
+                    </Grid>
+                </Grid>
+            </Toolbar>;
+            break;
+        case 'md':
+            toolBarComponent = <Toolbar>
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={handleDrawerOpen}
+                    edge="start"
+                    className={clsx(classes.menuButton, {
+                        [classes.hide]: open,
+                    })}
+                >
+                    <MenuIcon/>
+                </IconButton>
+                <div style={{marginRight: "1rem"}}>
+                    <Typography variant="h6" noWrap>
+                        RepGraph
+                    </Typography>
+                </div>
+
+                <Grid
+                    container
+                    direction="row"
+                    justify="space-evenly"
+                    alignItems="center"
+                >
+                    <Grid item className={classes.menuButton}><Tooltip arrow
+                                        title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
+                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                        {/*     className={classes.fabButton} onClick={() => {*/}
+                        {/*    setSentenceOpen(true);*/}
+                        {/*}} disabled={state.dataSet === null}>*/}
+                        {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
+                        {/*    <AddCircleOutlineIcon/> :*/}
+                        {/*    <BuildIcon/>}*/}
+                        {/*</Fab>*/}
+
+                        <Button color="primary" variant="contained" disableElevation onClick={() => {
+                            setSentenceOpen(true);
+                        }}
+                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                            <AddCircleOutlineIcon/> :
+                            <EditIcon/>}</Button>
+                    </Tooltip></Grid>
+                    <Grid item className={classes.menuButton}><Tooltip arrow
+                                        title={"Select visualisation format"}>
+                        <ToggleButtonGroup
+                            value={state.visualisationFormat}
+                            exclusive
+                            onChange={handleChangeVisualisationFormat}
+                            aria-label="Visualisation formats"
+                            color="primary"
+                        >
+                            <ToggleButton value="1" aria-label="Hierarchical">
+                                <Typography color={"textPrimary"}>Hierarchical</Typography>
+                            </ToggleButton>
+                            <ToggleButton value="2" aria-label="Tree-like">
+                                <Typography color={"textPrimary"}>Tree-like</Typography>
+                            </ToggleButton>
+                            <ToggleButton value="3" aria-label="Flat">
+                                <Typography color={"textPrimary"}>Flat</Typography>
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+
+                    </Tooltip></Grid>
+                    <Grid item className={classes.menuButton}>
+                        <PopupState variant="popover" popupId="demo-popup-popover">
+                            {(popupState) => (
+                                <div>
+                                    <Button variant="contained" color="primary" disableElevation startIcon={<Icon path={mdiDatabaseCog} size={1}/>} endIcon={<ExpandMoreIcon/>}{...bindTrigger(popupState)}>
+                                        Data Settings
+                                    </Button>
+                                    <Popover
+                                        {...bindPopover(popupState)}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }}
+                                    >
+                                        <Card variant="outlined" style={{}}>
+                                            <CardContent style={{}}>
+                                                <Grid
+                                                    container
+                                                    direction="column"
+                                                    justify="center"
+                                                    alignItems="center"
+                                                    style={{}}
+                                                    spacing={2}
+                                                >
+                                                    <Grid item><div>
+                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
+                                                        {/*     className={classes.fabButton} onClick={handleClickGraphLegend}>*/}
+                                                        {/*    Show Graph Legend*/}
+                                                        {/*</Fab>*/}
+                                                        <Button color="primary" variant="contained" disableElevation
+                                                                onClick={handleClickGraphLegend}>Show Graph Legend</Button>
+                                                        <Popover
+                                                            open={legendOpen}
+                                                            anchorEl={anchorEl}
+                                                            onClose={handleCloseGraphLegend}
+                                                            anchorOrigin={{
+                                                                vertical: 'bottom',
+                                                                horizontal: 'center',
+                                                            }}
+                                                            transformOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'center',
+                                                            }}
+                                                        >
+                                                            <Card>
+                                                                <CardContent>
+                                                                    <Grid container spacing={1}>
+                                                                        <div>This needs to be fixed still</div>
+                                                                        <Grid item>
+                                                                            <Chip label="AbstractNode" style={{
+                                                                                color: "white",
+                                                                                fontWeight: "bold",
+                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                            }}/>
+                                                                        </Grid>
+                                                                        <Grid item>
+                                                                            <Chip label="SurfaceNode" style={{
+                                                                                color: "white",
+                                                                                fontWeight: "bold",
+                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                            }}/>
+                                                                        </Grid>
+                                                                        <Grid item>
+                                                                            <Chip label="Token" style={{
+                                                                                color: "white",
+                                                                                fontWeight: "bold",
+                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                            }}/>
+                                                                        </Grid>
+                                                                    </Grid>
+                                                                </CardContent>
+                                                            </Card>
+                                                        </Popover>
+                                                    </div></Grid>
                                                     <Grid item><Tooltip arrow
                                                                         title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
                                                         {/*<Fab color="primary" aria-label="add" variant="extended"*/}
@@ -534,25 +703,26 @@ export default function MiniDrawer() {
                                 <Card>
                                     <CardContent>
                                         <Grid container spacing={1}>
+                                            <div>This needs to be fixed still</div>
                                             <Grid item>
                                                 <Chip label="AbstractNode" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.visualisationOptions.groups.node.color
+                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
                                                 }}/>
                                             </Grid>
                                             <Grid item>
                                                 <Chip label="SurfaceNode" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.visualisationOptions.groups.surfaceNode.color
+                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
                                                 }}/>
                                             </Grid>
                                             <Grid item>
                                                 <Chip label="Token" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.visualisationOptions.groups.token.color
+                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
                                                 }}/>
                                             </Grid>
                                         </Grid>

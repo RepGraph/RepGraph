@@ -1,72 +1,3 @@
-// import React, {useState}from 'react';
-// import PropTypes from 'prop-types';
-// import {withStyles} from '@material-ui/core/styles';
-// import List from '@material-ui/core/List';
-// import ListItem from '@material-ui/core/ListItem';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
-// import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-// import ListItemText from '@material-ui/core/ListItemText';
-// import ListSubheader from '@material-ui/core/ListSubheader';
-// import Switch from '@material-ui/core/Switch';
-// import WifiIcon from '@material-ui/icons/Wifi';
-// import BluetoothIcon from '@material-ui/icons/Bluetooth';
-// import PaletteIcon from '@material-ui/icons/Palette';
-// import {PresentToAll} from "@material-ui/icons";
-// import {Slider, TextField} from "@material-ui/core";
-// import Grid from "@material-ui/core/Grid";
-// import LinearScaleIcon from '@material-ui/icons/LinearScale';
-// import FormatLineSpacingIcon from '@material-ui/icons/FormatLineSpacing';
-//
-// import { HexColorPicker } from "react-colorful";
-//
-// function SettingsTool(props) {
-//
-//     const [color, setColor] = useState("#aabbcc");
-//
-//     return (<List subheader={<ListSubheader>Settings</ListSubheader>}>
-//             <ListItem>
-//                 <ListItemIcon>
-//                     <PaletteIcon/>
-//                 </ListItemIcon>
-//                 <ListItemText primary="Abstract Node Colour"/>
-//                 <ListItemSecondaryAction>
-//                     <HexColorPicker color={color} onChange={setColor} />
-//                 </ListItemSecondaryAction>
-//             </ListItem>
-//             <ListItem>
-//                 <ListItemIcon>
-//                     <PaletteIcon/>
-//                 </ListItemIcon>
-//                 <ListItemText primary="Surface Node Colour"/>
-//                 <ListItemSecondaryAction>
-//
-//                 </ListItemSecondaryAction>
-//             </ListItem>
-//             <ListItem>
-//                 <ListItemIcon>
-//                     <LinearScaleIcon/>
-//                 </ListItemIcon>
-//                 <ListItemText primary="Intralevel Node Spacing"/>
-//                 <ListItemSecondaryAction>
-//                     <TextField />
-//                 </ListItemSecondaryAction>
-//             </ListItem>
-//             <ListItem>
-//                 <ListItemIcon>
-//                     <FormatLineSpacingIcon/>
-//                 </ListItemIcon>
-//                 <ListItemText primary="Interlevel Node Spacing"/>
-//                 <ListItemSecondaryAction>
-//                     <TextField />
-//                 </ListItemSecondaryAction>
-//             </ListItem>
-//
-//         </List>
-//     );
-// }
-//
-// export default SettingsTool;
-
 import React, {useContext, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -93,7 +24,6 @@ import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
 
 import NumberFormat from "react-number-format";
 
@@ -253,7 +183,10 @@ const NumberInput = (props) => {
             onChange={onChange}
             name={name}
             InputProps={{
-                inputComponent: NumberFormatSpacingInput
+                inputComponent: NumberFormatSpacingInput,
+                inputProps: {
+                                min: 0
+                            }
             }}
         />
     );
@@ -285,8 +218,6 @@ const RgbaInput = (props) => {
 
 const MaskedColourPicker = (props) => {
     const {name, values, onChange} = props;
-
-    //console.log(props);
 
     const handleChange = (value) => {
         onChange({target: {name, value}});
@@ -373,7 +304,7 @@ export default function SettingsTool() {
             }
         });
 
-        handleUpdateStyles();
+        handleUpdateStyles(valuesGraphSpacing);
     };
 
     const handleChangeTokens = (event) => {
@@ -408,7 +339,7 @@ export default function SettingsTool() {
                 }
             }
         });
-        handleUpdateStyles();
+        handleUpdateStyles(valuesGraphSpacing);
     };
 
     const handleChangeLinks = (event) => {
@@ -443,28 +374,37 @@ export default function SettingsTool() {
                 }
             }
         });
-        handleUpdateStyles();
+        handleUpdateStyles(valuesGraphSpacing);
     };
 
     const handleChangeGraphSpacing = (event) => {
+
+        const parsedValue = parseInt(event.target.value);
+        const newValue = isNaN(parsedValue) ? 0 : parsedValue;
+
         setValuesGraphSpacing({
             ...valuesGraphSpacing,
-            [event.target.name]: parseInt(event.target.value)
+            [event.target.name]: newValue
         });
+
 
         dispatch({
             type: "SET_GRAPH_LAYOUT_SPACING",
             payload: {
                 graphLayoutSpacing: {
                     ...valuesGraphSpacing,
-                    [event.target.name]: parseInt(event.target.value)
+                    [event.target.name]: newValue
                 }
             }
         });
-        handleUpdateStyles();
+
+        handleUpdateStyles({
+            ...valuesGraphSpacing,
+            [event.target.name]: newValue
+        });
     };
 
-    const handleUpdateStyles = () => {
+    const handleUpdateStyles = (newSpacing) => {
 
         if (state.selectedSentenceID) {
 
@@ -472,35 +412,22 @@ export default function SettingsTool() {
 
             switch (state.visualisationFormat) {
                 case "1":
-                    graphData = layoutHierarchy(state.selectedSentenceGraphData, valuesGraphSpacing);
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing);
                     break;
                 case "2":
-                    graphData = layoutTree(state.selectedSentenceGraphData, valuesGraphSpacing);
+                    graphData = layoutTree(state.selectedSentenceGraphData, newSpacing);
                     break;
                 case "3":
-                    graphData = layoutFlat(state.selectedSentenceGraphData, false, valuesGraphSpacing);
+                    graphData = layoutFlat(state.selectedSentenceGraphData, false, newSpacing);
                     break;
                 default:
-                    graphData = layoutHierarchy(state.selectedSentenceGraphData, valuesGraphSpacing);
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing);
                     break;
             }
 
             dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
         }
     }
-
-    // dispatch({type: "SET_GRAPH_STYLES",
-    //     payload: {
-    //         graphStyles: {
-    //             ...state.graphStyles,
-    //             hierarchicalStyles: {nodeStyles: valuesNodes, ...state.graphStyles.hierarchicalStyles},
-    //             treeStyles: {nodeStyles: valuesNodes, ...state.graphStyles.treeStyles},
-    //             flatStyles: {nodeStyles: valuesNodes, ...state.graphStyles.flatStyles}
-    //         }
-    //     }
-    // }); //Update the node styles
-
-    //console.log(valuesNodes,valuesLinks,valuesTokens,valuesGraphSpacing);
 
     const handleResetDefaultStyles = () => {
         setValuesNodes(defaultGraphStyles.hierarchicalStyles.nodeStyles);
