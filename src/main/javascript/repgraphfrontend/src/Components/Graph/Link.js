@@ -1,11 +1,10 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {Group} from "@visx/visx";
 import uuid from "react-uuid";
+import {AppContext} from "../../Store/AppContextProvider";
 
 export const Link = ({
                          link,
-                         dispatchSelectedLinks,
-                         selectedLinks,
                          styles,
                          graphFormatCode,
                          tooltipData,
@@ -14,38 +13,33 @@ export const Link = ({
                          events
                      }) => {
     const [highlighted, setHighlighted] = useState(false);
-
-    const selected = selectedLinks.includes(link.id);
+    const {state, dispatch} = useContext(AppContext); //Provide access to global state
 
     const handleOnClick = (event) => {
 
-        if (events && events.hasOwnProperty('select')) {
-            if (!selected) {
-                dispatchSelectedLinks({type: "add", id: link.id});
-            } else {
-                dispatchSelectedLinks({type: "remove", id: link.id});
+        if(events && events.hasOwnProperty('select')){
+
+            if(events.select === "subset"){
+                //nothing to do?
+            }else if(events.select === "subgraph"){
+
+                try {
+                    const newLinks = state.selectedSentenceVisualisation.links.map(oldLink => ({
+                        ...oldLink,
+                        selected: oldLink.type === "link" ? (oldLink.id === link.id ? true: oldLink.selected) : false
+                    }));
+
+                    dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation , links: newLinks} }});
+                }catch (e) {
+                    console.log(e);
+                }
             }
         }
     };
 
-    // const strokeColor = highlighted
-    //   ? styles.linkStyles.hoverColour
-    //   : selected
-    //   ? styles.linkStyles.selectedColour
-    //   : styles.linkStyles.linkColour;
-
-    // const strokeColor =
-    //   highlighted ||
-    //   (adjacentLinks?.get(tooltipData.extraInformation.id)?.includes(link.id) &&
-    //     tooltipOpen)
-    //     ? styles.linkStyles.hoverColour
-    //     : selected
-    //     ? styles.linkStyles.selectedColour
-    //     : styles.linkStyles.linkColour;
-
     let strokeColor = null;
 
-    if (selected) {
+    if (link.selected && events && events.hasOwnProperty("select")) {
         strokeColor = styles.linkStyles.selectedColour;
     } else if (highlighted) {
         strokeColor = styles.linkStyles.hoverColour;
