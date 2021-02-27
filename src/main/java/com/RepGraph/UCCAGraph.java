@@ -41,7 +41,7 @@ public class UCCAGraph extends AbstractGraph {
                 }
                 n.setLabel(label);
             } else {
-                n.setLabel("#" + n.getId());
+                n.setLabel("");
             }
         }
         populateTokens();
