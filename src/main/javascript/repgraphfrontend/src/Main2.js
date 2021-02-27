@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import clsx from 'clsx';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -61,6 +61,9 @@ import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import Box from "@material-ui/core/Box";
 import {mdiArrowExpandHorizontal, mdiDatabaseCog} from '@mdi/js';
 import Icon from "@mdi/react";
+
+import MinimalFeedback from 'minimal-feedback'
+import 'minimal-feedback/dist/index.css' // don't forget to import css
 
 const drawerWidth = 300;
 
@@ -155,19 +158,21 @@ export default function MiniDrawer() {
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
     const classes = useStyles();
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
-    const [anchorEl, setAnchorEl] = React.useState(null); //Anchor state for popover graph legend
+    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null); //Anchor state for popover graph legend
 
     const history = useHistory(); //Provide access to router history
-    const [sentenceOpen, setSentenceOpen] = React.useState(false); //Local state of select sentence dialog
-    const [dataSetResponseOpen, setDataSetResponseOpen] = React.useState(true); //Local state for upload dataset alert
+    const [sentenceOpen, setSentenceOpen] = useState(false); //Local state of select sentence dialog
+    const [dataSetResponseOpen, setDataSetResponseOpen] = useState(true); //Local state for upload dataset alert
 
-    const [subsetDialogOpen, setSubsetDialogOpen] = React.useState(false); //Local state of subset dialog
-    const [subgraphDialogOpen, setSubgraphDialogOpen] = React.useState(false); //Local state of subgraph dialog
-    const [compareDialogOpen, setCompareDialogOpen] = React.useState(false); //Local state of compare dialog
-    const [testsDialogOpen, setTestsDialogOpen] = React.useState(false); //Local state of tests dialog
-    const [settingsDialogOpen, setSettingsDialogOpen] = React.useState(false); //Local state of settings dialog
-    const [showSettings, setShowSettings] = React.useState(false); //Local state of settings visibility
+    const [subsetDialogOpen, setSubsetDialogOpen] = useState(false); //Local state of subset dialog
+    const [subgraphDialogOpen, setSubgraphDialogOpen] = useState(false); //Local state of subgraph dialog
+    const [compareDialogOpen, setCompareDialogOpen] = useState(false); //Local state of compare dialog
+    const [testsDialogOpen, setTestsDialogOpen] = useState(false); //Local state of tests dialog
+    const [settingsDialogOpen, setSettingsDialogOpen] = useState(false); //Local state of settings dialog
+    const [showSettings, setShowSettings] = useState(false); //Local state of settings visibility
+
+    const [feedbackText, setFeedbackText] = useState({ feedback: '' })
 
     //const matches = useMediaQuery('(min-width:1000px)');
     // const matches = useMediaQuery(theme.breakpoints.up('sm'));
@@ -849,6 +854,11 @@ export default function MiniDrawer() {
 
     return (
         <div className={classes.root}>
+                <MinimalFeedback
+                    save={() => {}}
+                    value={feedbackText}
+                    onChange={(e) => { setFeedbackText(e); console.log(e);}}
+                />
             <CssBaseline/>
             <AppBar
                 position="fixed"
