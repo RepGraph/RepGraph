@@ -191,7 +191,6 @@ export default function FormalTestsResultsDisplay(props) {
                         <TableRow
                             hover
                             key={row.test}
-
                         >
                             <TableCell component="th" scope="row">
                                 {row.test}

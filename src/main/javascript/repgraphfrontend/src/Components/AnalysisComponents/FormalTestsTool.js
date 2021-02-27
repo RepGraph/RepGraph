@@ -29,9 +29,9 @@ function FormalTestsTool(props) {
     //Local state for checkboxes of which tests to perform
     const [tests, setTests] = React.useState({
         planar: false,
+        connected: false,
         longestPathDirected: false,
-        longestPathUndirected: false,
-        connected: false
+        longestPathUndirected: false
     });
 
     //Handle change to checkboxes for formal tests
@@ -52,7 +52,7 @@ function FormalTestsTool(props) {
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation
 
         //Fetch formal test results from backend
-        fetch(state.APIendpoint + "/TestGraph?graphID=" + state.selectedSentenceID + "&planar=" + tests.planar + "&longestPathDirected=" + tests.longestPathDirected + "&longestPathUndirected=" + tests.longestPathUndirected + "&connected=" + tests.connected, requestOptions)
+        fetch(state.APIendpoint + "/TestGraph?graphID=" + state.selectedSentenceID + "&planar=" + tests.planar  + "&connected=" + tests.connected + "&longestPathDirected=" + tests.longestPathDirected + "&longestPathUndirected=" + tests.longestPathUndirected, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -61,7 +61,7 @@ function FormalTestsTool(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //Debugging
+                console.log("jsonResult",jsonResult); //Debugging
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
                 dispatch({type: "SET_TEST_RESULTS", payload: {testResults: jsonResult}}); //Store the test results in global state
             })
@@ -89,6 +89,11 @@ function FormalTestsTool(props) {
                         label={<Typography color={"textPrimary"}> Graph Planar?</Typography>}
                     />
                     <FormControlLabel
+                        control={<Checkbox checked={tests.connected} onChange={handleChange} color="secondary"
+                                           name="connected"/>}
+                        label={<Typography color={"textPrimary"}> Graph Connected?</Typography>}
+                    />
+                    <FormControlLabel
                         control={<Checkbox checked={tests.longestPathDirected} onChange={handleChange} color="secondary"
                                            name="longestPathDirected"/>}
 
@@ -98,11 +103,6 @@ function FormalTestsTool(props) {
                         control={<Checkbox checked={tests.longestPathUndirected} onChange={handleChange}
                                            color="secondary" name="longestPathUndirected"/>}
                         label={<Typography color={"textPrimary"}> Find The Longest Undirected Path</Typography>}
-                    />
-                    <FormControlLabel
-                        control={<Checkbox checked={tests.connected} onChange={handleChange} color="secondary"
-                                           name="connected"/>}
-                        label={<Typography color={"textPrimary"}> Graph Connected?</Typography>}
                     />
                     <Button
                         disabled={state.selectedSentenceID === null}
