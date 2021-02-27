@@ -58,9 +58,7 @@ export default function FormalTestsResultsDisplay(props) {
     for (const [test, result] of Object.entries(response)) {
         if(test !== "Planar"){
             newRows.push(createData(test, result));
-        }
-        //Cant have else for some reason
-        if(test === "Planar"){
+        } else{
             newRows.push(createData(test, result.planar));
         }
     }
@@ -127,7 +125,7 @@ export default function FormalTestsResultsDisplay(props) {
                         height={parent.height}
                         graph={graphData}
                         adjacentLinks={determineAdjacentLinks(graphData)}
-                        graphFormatCode={graphFormatCode}
+                        graphFormatCode={"planar"}
                     />
                 )}
             </ParentSize>
@@ -146,39 +144,39 @@ export default function FormalTestsResultsDisplay(props) {
         );
     }
 
-    const [anchorEl, setAnchorEl] = React.useState(null); //Anchor for information popper component
+    // const [anchorEl, setAnchorEl] = React.useState(null); //Anchor for information popper component
 
     //Handle information button click
-    const handleInfoClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // const handleInfoClick = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    // };
 
     //Handle information popper close
-    const handlePopperClose = () => {
-        setAnchorEl(null);
-    };
+    // const handlePopperClose = () => {
+    //     setAnchorEl(null);
+    // };
 
-    const popperOpen = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
+    // const popperOpen = Boolean(anchorEl);
+    // const id = open ? 'simple-popover' : undefined;
 
     return (
         <TableContainer component={Paper}>
-            <Popover
-                id={id}
-                open={popperOpen}
-                anchorEl={anchorEl}
-                onClose={handlePopperClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
-            >
-                <Typography>Some info about the longest paths.</Typography>
-            </Popover>
+            {/*<Popover*/}
+            {/*    id={id}*/}
+            {/*    open={popperOpen}*/}
+            {/*    anchorEl={anchorEl}*/}
+            {/*    onClose={handlePopperClose}*/}
+            {/*    anchorOrigin={{*/}
+            {/*        vertical: 'bottom',*/}
+            {/*        horizontal: 'center',*/}
+            {/*    }}*/}
+            {/*    transformOrigin={{*/}
+            {/*        vertical: 'top',*/}
+            {/*        horizontal: 'center',*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <Typography>Some info about the longest paths.</Typography>*/}
+            {/*</Popover>*/}
             <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                     <TableRow>
@@ -218,9 +216,9 @@ export default function FormalTestsResultsDisplay(props) {
             >
                 <DialogTitle id="longest-path-visualisation-title">
                     {rowClicked} Visualisation
-                    <IconButton onClick={handleInfoClick}>
-                    <InfoIcon />
-                    </IconButton>
+                    {/*<IconButton onClick={handleInfoClick}>*/}
+                    {/*<InfoIcon />*/}
+                    {/*</IconButton>*/}
                 </DialogTitle>
                 <DialogContent>
                     {dialogElement}
