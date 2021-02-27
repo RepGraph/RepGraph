@@ -55,15 +55,23 @@ export default function FormalTestsResultsDisplay(props) {
     let newRows = [];
 
     //Add the rows to the table of results
-    for (const [test, result] of Object.entries(response)) {
-        if(test !== "Planar"){
-            newRows.push(createData(test, result));
-        }
-        //Cant have else for some reason
-        if(test === "Planar"){
-            newRows.push(createData(test, result.planar));
-        }
-    }
+    console.log("response",Object.entries(response));
+
+    newRows.push(createData("Planar",response.Planar.planar));
+    newRows.push(createData("Connected",response.Connected));
+    newRows.push(createData("LongestPathDirected",response.LongestPathDirected));
+    newRows.push(createData("LongestPathUndirected",response.LongestPathUndirected));
+    // for (const [test, result] of Object.entries(response)) {
+    //     console.log("test",test);
+    //     console.log("result",result);
+    //     if(test !== "Planar"){
+    //         newRows.push(createData(test, result));
+    //     }
+    //     //Cant have else for some reason
+    //     if(test === "Planar"){
+    //         newRows.push(createData(test, result.planar));
+    //     }
+    // }
 
     //Handle click on table row
     const handleClickOpen = (event, test) => {
