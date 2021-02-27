@@ -52,7 +52,7 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
         finalGraphNodes[lastIndex] = {
             ...finalGraphNodes[lastIndex],
             x: count * (nodeWidth + intraLevelSpacing),
-            y: nodeHeight+height,
+            y: nodeHeight + height,
             label: finalGraphNodes[lastIndex].label,
             type: "node",
             group: "node",
@@ -88,11 +88,23 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
         };
     })
 
-    if (planar){
-    for (const indexElement of graphData.crossingEdges) {
-        finalGraphEdges[indexElement] = {...finalGraphEdges[indexElement],group:"linkColourCross"}
-    }}
+    if (planar) {
+        // for (const indexElement of graphData.crossingEdges) {
+        //     finalGraphEdges[indexElement] = {...finalGraphEdges[indexElement], group: "linkColourCross"}
+        // }
+        try {
+            finalGraphEdges = finalGraphEdges.map((link) => ({
+                ...link,
+                group:
+                    graphData.crossingEdges.includes(link.id)
+                        ? "linkColourCross"
+                        : link.group
+            }));
+        }catch (e) {
+            console.log(e);
+        }
 
+    }
 
     return {nodes: finalGraphNodes, links: finalGraphEdges};
 };
