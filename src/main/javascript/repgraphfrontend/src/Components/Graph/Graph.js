@@ -124,84 +124,6 @@ export const Graph = ({
     const [selectedNodes, dispatchSelectedNodes] = useReducer(reducerNodes, []);
     const [selectedLinks, dispatchSelectedLinks] = useReducer(reducerLinks, []);
 
-    // const styles = {
-    //     backgroundColour: "#efefef",
-    //     hierarchicalStyles: {
-    //         nodeStyles: {
-    //             nodeColour: "rgba(0,172,237,1)",
-    //             hoverColour: "rgba(82, 208, 255,1)",
-    //             spanColour: "rgba(0,0,0,0.3)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         },
-    //         linkStyles: {
-    //             linkColour: "rgba(0,0,0,1)",
-    //             hoverColour: "rgba(0,0,0,0.5)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         },
-    //         tokenStyles: {
-    //             tokenColour: "rgba(255, 220, 106,1)",
-    //             hoverColour: "rgba(255, 232, 156,1)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         }
-    //     },
-    //     treeStyles: {
-    //         nodeStyles: {
-    //             nodeColour: "rgba(0,172,237,1)",
-    //             hoverColour: "rgba(82, 208, 255,1)",
-    //             spanColour: "rgba(0,0,0,0.3)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         },
-    //         linkStyles: {
-    //             linkColour: "rgba(0,0,0,1)",
-    //             hoverColour: "rgba(0,0,0,0.5)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         },
-    //         tokenStyles: {
-    //             tokenColour: "rgba(255, 220, 106,1)",
-    //             hoverColour: "rgba(255, 232, 156,1)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         }
-    //     },
-    //     flatStyles: {
-    //         nodeStyles: {
-    //             nodeColour: "rgba(0,172,237,1)",
-    //             hoverColour: "rgba(82, 208, 255,1)",
-    //             spanColour: "rgba(0,0,0,0.3)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         },
-    //         linkStyles: {
-    //             linkColour: "rgba(0,0,0,1)",
-    //             hoverColour: "rgba(0,0,0,0.5)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         },
-    //         tokenStyles: {
-    //             tokenColour: "rgba(255, 220, 106,1)",
-    //             hoverColour: "rgba(255, 232, 156,1)",
-    //             selectedColour: "rgba(61, 230, 140, 1)"
-    //         }
-    //     },
-    //     longestPathStyles: {
-    //         linkColour: "rgba(225, 9, 9, 1)",
-    //         nodeColour: "rgba(225, 9, 9, 1)",
-    //         hoverColour: "rgba(248, 84, 84, 1)"
-    //     },
-    //     compareStyles: {
-    //         linkColourDissimilar: "rgba(225, 9, 9, 1)",
-    //         linkColourSimilar: "rgba(67, 220, 24, 1)",
-    //         nodeColourDissimilar: "rgba(225, 9, 9, 1)",
-    //         nodeColourSimilar: "rgba(67, 220, 24, 1)",
-    //         hoverNodeColourSimilar: "rgba(125, 237, 94, 1)",
-    //         hoverNodeColourDissimilar: "rgba(248, 84, 84, 1)",
-    //         hoverLinkColourSimilar: "rgba(125, 237, 94, 1)",
-    //         hoverLinkColourDissimilar: "rgba(248, 84, 84, 1)"
-    //     },
-    //     planarStyles: {
-    //         linkColourCross: "rgba(225, 9, 9, 1)",
-    //         hoverColour: "rgba(248, 84, 84, 1)"
-    //         //still to do
-    //     }
-    // };
-
     const styles = state.graphStyles;
 
     let graphStyles = null;
@@ -215,6 +137,9 @@ export const Graph = ({
             break;
         case "flat":
             graphStyles = { ...styles.flatStyles };
+            break;
+        case "planar":
+            graphStyles = { ...styles.flatStyles, planarStyles: styles.planarStyles };
             break;
         case "hierarchicalLongestPath":
             graphStyles = {
