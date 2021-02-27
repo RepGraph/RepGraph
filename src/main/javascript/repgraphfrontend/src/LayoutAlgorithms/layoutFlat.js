@@ -163,7 +163,7 @@ function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSp
                 direction = "horizontal-right";
             }
             let distance = Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth);
-            if (distance > 10) {
+            if (distance > 10 && !planar) {
                 degree = 0.15;
             }
         }

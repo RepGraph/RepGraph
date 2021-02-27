@@ -21,7 +21,7 @@ export const Node = ({
         <text
             textAnchor="middle"
             alignmentBaseline="baseline"
-            fill={node.type === "token" ? "black" : "white"}
+            fill={node.type === "token" ? styles.tokenStyles.labelColour : styles.nodeStyles.labelColour}
             fontWeight="bold"
             // transform="translate(0,45)"
         >

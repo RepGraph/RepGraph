@@ -32,7 +32,7 @@ import FormatLineSpacingIcon from "@material-ui/icons/FormatLineSpacing";
 import VerticalAlignBottomIcon from "@material-ui/icons/VerticalAlignBottom";
 import {mdiArrowExpandHorizontal, mdiArrowExpandVertical} from "@mdi/js";
 import Icon from "@mdi/react";
-import {AppContext, defaultGraphStyles,defaultGraphLayoutSpacing} from "../../Store/AppContextProvider";
+import {AppContext, defaultGraphStyles, defaultGraphLayoutSpacing} from "../../Store/AppContextProvider";
 import {useHistory} from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import {layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
@@ -49,6 +49,34 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: theme.typography.fontWeightRegular
     }
 }));
+
+const styleCodes = {
+    nodeStyles: {
+        nodeColour: "Node Colour",
+        hoverColour: "Hover Colour",
+        spanColour: "Span Colour",
+        selectedColour: "Selected Colour",
+        labelColour: "Label Colour"
+    },
+    linkStyles: {
+        linkColour: "Link Colour",
+        hoverColour: "Hover Colour",
+        selectedColour: "Selected Colour",
+    },
+    tokenStyles: {
+        tokenColour: "Token Colour",
+        hoverColour: "Hover Colour",
+        selectedColour: "Selected Colour",
+        labelColour: "Label Colour",
+    },
+    spacings: {
+        nodeHeight: "Node Height",
+        nodeWidth: "Node Width",
+        interLevelSpacing: "Inter-level Spacing",
+        intraLevelSpacing: "Intra-level Spacing",
+        tokenLevelSpacing: "Token Level Spacing"
+    }
+}
 
 const hexRegEx = /[a-fA-F0-9]/;
 
@@ -249,22 +277,29 @@ export default function SettingsTool() {
             [event.target.name]: event.target.value
         });
 
-        dispatch({type: "SET_GRAPH_STYLES",
+        dispatch({
+            type: "SET_GRAPH_STYLES",
             payload: {
                 graphStyles: {
                     ...state.graphStyles,
-                    hierarchicalStyles: {...state.graphStyles.hierarchicalStyles, nodeStyles: {
+                    hierarchicalStyles: {
+                        ...state.graphStyles.hierarchicalStyles, nodeStyles: {
                             ...valuesNodes,
                             [event.target.name]: event.target.value
-                        }},
-                    treeStyles: {...state.graphStyles.treeStyles, nodeStyles: {
+                        }
+                    },
+                    treeStyles: {
+                        ...state.graphStyles.treeStyles, nodeStyles: {
                             ...valuesNodes,
                             [event.target.name]: event.target.value
-                        }},
-                    flatStyles: {...state.graphStyles.flatStyles, nodeStyles: {
+                        }
+                    },
+                    flatStyles: {
+                        ...state.graphStyles.flatStyles, nodeStyles: {
                             ...valuesNodes,
                             [event.target.name]: event.target.value
-                        }}
+                        }
+                    }
                 }
             }
         });
@@ -278,22 +313,29 @@ export default function SettingsTool() {
             [event.target.name]: event.target.value
         });
 
-        dispatch({type: "SET_GRAPH_STYLES",
+        dispatch({
+            type: "SET_GRAPH_STYLES",
             payload: {
                 graphStyles: {
                     ...state.graphStyles,
-                    hierarchicalStyles: {...state.graphStyles.hierarchicalStyles, tokenStyles:{
+                    hierarchicalStyles: {
+                        ...state.graphStyles.hierarchicalStyles, tokenStyles: {
                             ...valuesTokens,
                             [event.target.name]: event.target.value
-                        }},
-                    treeStyles: {...state.graphStyles.treeStyles, tokenStyles:{
+                        }
+                    },
+                    treeStyles: {
+                        ...state.graphStyles.treeStyles, tokenStyles: {
                             ...valuesTokens,
                             [event.target.name]: event.target.value
-                        }},
-                    flatStyles: {...state.graphStyles.flatStyles, tokenStyles:{
+                        }
+                    },
+                    flatStyles: {
+                        ...state.graphStyles.flatStyles, tokenStyles: {
                             ...valuesTokens,
                             [event.target.name]: event.target.value
-                        }}
+                        }
+                    }
                 }
             }
         });
@@ -306,22 +348,29 @@ export default function SettingsTool() {
             [event.target.name]: event.target.value
         });
 
-        dispatch({type: "SET_GRAPH_STYLES",
+        dispatch({
+            type: "SET_GRAPH_STYLES",
             payload: {
                 graphStyles: {
                     ...state.graphStyles,
-                    hierarchicalStyles: {...state.graphStyles.hierarchicalStyles, linkStyles: {
+                    hierarchicalStyles: {
+                        ...state.graphStyles.hierarchicalStyles, linkStyles: {
                             ...valuesLinks,
                             [event.target.name]: event.target.value
-                        }},
-                    treeStyles: {...state.graphStyles.treeStyles, linkStyles: {
+                        }
+                    },
+                    treeStyles: {
+                        ...state.graphStyles.treeStyles, linkStyles: {
                             ...valuesLinks,
                             [event.target.name]: event.target.value
-                        }},
-                    flatStyles: {...state.graphStyles.flatStyles, linkStyles: {
+                        }
+                    },
+                    flatStyles: {
+                        ...state.graphStyles.flatStyles, linkStyles: {
                             ...valuesLinks,
                             [event.target.name]: event.target.value
-                        }}
+                        }
+                    }
                 }
             }
         });
@@ -338,9 +387,9 @@ export default function SettingsTool() {
             [event.target.name]: newValue
         });
 
-        console.log(newValue);
 
-        dispatch({type: "SET_GRAPH_LAYOUT_SPACING",
+        dispatch({
+            type: "SET_GRAPH_LAYOUT_SPACING",
             payload: {
                 graphLayoutSpacing: {
                     ...valuesGraphSpacing,
@@ -357,7 +406,7 @@ export default function SettingsTool() {
 
     const handleUpdateStyles = (newSpacing) => {
 
-        if(state.selectedSentenceID) {
+        if (state.selectedSentenceID) {
 
             let graphData = null;
 
@@ -386,19 +435,21 @@ export default function SettingsTool() {
         setValuesTokens(defaultGraphStyles.hierarchicalStyles.tokenStyles);
         setValuesGraphSpacing(defaultGraphLayoutSpacing);
 
-        dispatch({type: "SET_GRAPH_STYLES",
+        dispatch({
+            type: "SET_GRAPH_STYLES",
             payload: {
                 graphStyles: defaultGraphStyles
             }
         });
 
-        dispatch({type: "SET_GRAPH_LAYOUT_SPACING",
+        dispatch({
+            type: "SET_GRAPH_LAYOUT_SPACING",
             payload: {
                 graphLayoutSpacing: defaultGraphLayoutSpacing
             }
         });
 
-        if(state.selectedSentenceID){
+        if (state.selectedSentenceID) {
             let graphData = null;
 
             switch (state.visualisationFormat) {
@@ -406,10 +457,10 @@ export default function SettingsTool() {
                     graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
                     break;
                 case "2":
-                    graphData = layoutTree(state.selectedSentenceGraphData,defaultGraphLayoutSpacing);
+                    graphData = layoutTree(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
                     break;
                 case "3":
-                    graphData = layoutFlat(state.selectedSentenceGraphData,false,defaultGraphLayoutSpacing);
+                    graphData = layoutFlat(state.selectedSentenceGraphData, false, defaultGraphLayoutSpacing);
                     break;
                 default:
                     graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
@@ -427,10 +478,10 @@ export default function SettingsTool() {
                 direction="column"
                 justify="center"
                 alignItems="center"
-                style={{width:"100%"}}
+                style={{width: "100%"}}
             >
 
-                <Grid item style={{width:"100%"}}>
+                <Grid item style={{width: "100%"}}>
                     <Accordion>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon/>}
@@ -457,7 +508,7 @@ export default function SettingsTool() {
                                                 </ListItemIcon>
                                             </Grid>
                                             <Grid item>
-                                                <Typography>{key}</Typography>
+                                                <Typography>{styleCodes.nodeStyles[key]}</Typography>
                                             </Grid>
                                             <Grid item>
                                                 <MaskedColourPicker
@@ -498,7 +549,7 @@ export default function SettingsTool() {
                                                 </ListItemIcon>
                                             </Grid>
                                             <Grid item>
-                                                <Typography>{key}</Typography>
+                                                <Typography>{styleCodes.tokenStyles[key]}</Typography>
                                             </Grid>
                                             <Grid item>
                                                 <MaskedColourPicker
@@ -539,7 +590,7 @@ export default function SettingsTool() {
                                                 </ListItemIcon>
                                             </Grid>
                                             <Grid item>
-                                                <Typography>{key}</Typography>
+                                                <Typography>{styleCodes.linkStyles[key]}</Typography>
                                             </Grid>
                                             <Grid item>
                                                 <MaskedColourPicker
@@ -587,7 +638,7 @@ export default function SettingsTool() {
                                                     <ListItemIcon>{graphSpacingIcons[key]}</ListItemIcon>
                                                 </Grid>
                                                 <Grid item>
-                                                    <Typography>{key}</Typography>
+                                                    <Typography>{styleCodes.spacings[key]}</Typography>
                                                 </Grid>
                                             </Grid>
                                             <Grid item>
