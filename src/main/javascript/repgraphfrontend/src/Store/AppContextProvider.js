@@ -29,7 +29,8 @@ export const defaultGraphStyles = {
             nodeColour: "rgba(0,172,237,1)",
             hoverColour: "rgba(82, 208, 255,1)",
             spanColour: "rgba(0,0,0,0.3)",
-            selectedColour: "rgba(61, 230, 140, 1)"
+            selectedColour: "rgba(61, 230, 140, 1)",
+            labelColour: "rgba(255,255,255,1)"
         },
         linkStyles: {
             linkColour: "rgba(120,120,120,1)",
@@ -39,7 +40,8 @@ export const defaultGraphStyles = {
         tokenStyles: {
             tokenColour: "rgba(255, 220, 106,1)",
             hoverColour: "rgba(255, 232, 156,1)",
-            selectedColour: "rgba(61, 230, 140, 1)"
+            selectedColour: "rgba(61, 230, 140, 1)",
+            labelColour: "rgba(0,0,0,1)"
         }
     },
     flatStyles: {
@@ -47,7 +49,8 @@ export const defaultGraphStyles = {
             nodeColour: "rgba(0,172,237,1)",
             hoverColour: "rgba(82, 208, 255,1)",
             spanColour: "rgba(0,0,0,0.3)",
-            selectedColour: "rgba(61, 230, 140, 1)"
+            selectedColour: "rgba(61, 230, 140, 1)",
+            labelColour: "rgba(255,255,255,1)"
         },
         linkStyles: {
             linkColour: "rgba(120,120,120,1)",
@@ -57,7 +60,8 @@ export const defaultGraphStyles = {
         tokenStyles: {
             tokenColour: "rgba(255, 220, 106,1)",
             hoverColour: "rgba(255, 232, 156,1)",
-            selectedColour: "rgba(61, 230, 140, 1)"
+            selectedColour: "rgba(61, 230, 140, 1)",
+            labelColour: "rgba(0,0,0,1)"
         }
     },
     longestPathStyles: {

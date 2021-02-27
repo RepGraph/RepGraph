@@ -19,111 +19,6 @@ export const Graph = ({
     const [tooltipData, setTooltipData] = useState({ extraInformation: {} });
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
 
-    const reducerNodes = (state, action) => {
-        switch (action.type) {
-            case "add":
-                switch (events.select.selectMode) {
-                    case "subset":
-                        if (state.length !== 0) {
-                            if (typeof events.select.selectedNodesStateSetter == 'function') {
-                                events.select.selectedNodesStateSetter(state);
-                            }
-                            return state;
-                        } else {
-                            if (typeof events.select.selectedNodesStateSetter == 'function') {
-                                events.select.selectedNodesStateSetter([action.id]);
-                            }
-                            return [action.id];
-                        }
-                    case "subgraph":
-                        if (typeof events.select.selectedNodesStateSetter == 'function') {
-                            events.select.selectedNodesStateSetter([...state, action.id]);
-                        }
-                        return [...state, action.id];
-                    default:
-                        if (typeof events.select.selectedNodesStateSetter == 'function') {
-                            events.select.selectedNodesStateSetter([...state, action.id]);
-                        }
-                        return [...state, action.id];
-                }
-
-            case "remove":
-                switch (events.select.selectMode) {
-                    case "subset":
-                        if (state.length === 1 && state[0] === action.id) {
-                            if (typeof events.select.selectedNodesStateSetter == 'function') {
-                                events.select.selectedNodesStateSetter([]);
-                            }
-                            return [];
-                        } else {
-                            if (typeof events.select.selectedNodesStateSetter == 'function') {
-                                events.select.selectedNodesStateSetter(state);
-                            }
-                            return state;
-                        }
-                    case "subgraph":
-                        if (typeof events.select.selectedNodesStateSetter == 'function') {
-                            events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
-                        }
-                        return state.filter((item) => item !== action.id);
-                    default:
-                        if (typeof events.select.selectedNodesStateSetter == 'function') {
-                            events.select.selectedNodesStateSetter(state.filter((item) => item !== action.id));
-                        }
-                        return state.filter((item) => item !== action.id);
-                }
-
-            default:
-                throw new Error();
-        }
-    };
-
-    const reducerLinks = (state, action) => {
-        switch (action.type) {
-            case "add":
-                switch (events.select.selectMode) {
-                    case "subset":
-                        if (typeof events.select.selectedLinksStateSetter == 'function') {
-                            events.select.selectedLinksStateSetter([]);
-                        }
-                        return [];
-                    case "subgraph":
-                        if (typeof events.select.selectedLinksStateSetter == 'function') {
-                            events.select.selectedLinksStateSetter([...state, action.id]);
-                        }
-                        return [...state, action.id];
-                    default:
-                        if (typeof events.select.selectedLinksStateSetter == 'function') {
-                            events.select.selectedLinksStateSetter([...state, action.id]);
-                        }
-                        return [...state, action.id];
-                }
-            case "remove":
-                switch (events.select.selectMode) {
-                    case "subset":
-                        if (typeof events.select.selectedLinksStateSetter == 'function') {
-                        events.select.selectedLinksStateSetter([]);
-                        }
-                        return [];
-                    case "subgraph":
-                        if (typeof events.select.selectedLinksStateSetter == 'function') {
-                            events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
-                        }
-                        return state.filter((item) => item !== action.id);
-                    default:
-                        if (typeof events.select.selectedLinksStateSetter == 'function') {
-                            events.select.selectedLinksStateSetter(state.filter((item) => item !== action.id));
-                        }
-                        return state.filter((item) => item !== action.id);
-                }
-            default:
-                throw new Error();
-        }
-    };
-
-    const [selectedNodes, dispatchSelectedNodes] = useReducer(reducerNodes, []);
-    const [selectedLinks, dispatchSelectedLinks] = useReducer(reducerLinks, []);
-
     const styles = state.graphStyles;
 
     let graphStyles = null;
@@ -182,7 +77,6 @@ export const Graph = ({
             break;
     }
 
-    //console.log("graphStyles", graphStyles);
 
     const {
         tooltipLeft,
@@ -237,8 +131,6 @@ export const Graph = ({
                     <Link
                         key={`link-${i}`}
                         link={link}
-                        dispatchSelectedLinks={dispatchSelectedLinks}
-                        selectedLinks={selectedLinks}
                         styles={graphStyles}
                         graphFormatCode={graphFormatCode}
                         tooltipData={tooltipData}
@@ -254,8 +146,6 @@ export const Graph = ({
                         handleMouseOver={handleMouseOver}
                         hideTooltip={hideTooltip}
                         setTooltipData={setTooltipData}
-                        dispatchSelectedNodes={dispatchSelectedNodes}
-                        selectedNodes={selectedNodes}
                         styles={graphStyles}
                         graphFormatCode={graphFormatCode}
                         events={events}

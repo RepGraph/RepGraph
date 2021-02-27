@@ -244,7 +244,8 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
             relativeX: token.index,
             label: token.form,
             type: "token",
-            group: "token"
+            group: "token",
+            selected: false
         }));
 
         for (let level = 0; level < nodesInFinalLevelsArray.length; level++) {
@@ -259,7 +260,8 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                     type: "node",
                     nodeLevel: level,
                     group: "node",
-                    span: false
+                    span: false,
+                    selected: false
                 })
             );
         }
@@ -318,7 +320,8 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                 x1: cp.x1,
                 y1: cp.y1,
                 type: "link",
-                group: "link"
+                group: "link",
+                selected: false
             };
         });
 

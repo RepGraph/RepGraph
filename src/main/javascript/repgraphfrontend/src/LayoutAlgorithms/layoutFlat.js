@@ -56,7 +56,8 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
             label: finalGraphNodes[lastIndex].label,
             type: "node",
             group: "node",
-            span: false
+            span: false,
+            selected: false
         }
 
     }
@@ -84,7 +85,8 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
             x1: cp.x1,
             y1: cp.y1,
             type: "link",
-            group: "link"
+            group: "link",
+            selected: false
         };
     })
 

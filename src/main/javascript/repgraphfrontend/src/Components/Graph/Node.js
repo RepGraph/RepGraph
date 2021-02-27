@@ -8,8 +8,6 @@ export const Node = ({
                          handleMouseOver,
                          hideTooltip,
                          setTooltipData,
-                         dispatchSelectedNodes,
-                         selectedNodes,
                          styles,
                          graphFormatCode,
                          events
@@ -44,23 +42,11 @@ export const Node = ({
     bb.x -= bb.width / 2;
     bb.y -= bb.height / 2 + margin;
 
-    // const fillColor = highlighted
-    //   ? node.group === "node"
-    //     ? styles.nodeStyles.hoverColour
-    //     : styles.tokenStyles.hoverColour
-    //   : selected
-    //   ? styles.nodeStyles.selectedColour
-    //   : node.group === "token"
-    //   ? styles.tokenStyles.tokenColour
-    //   : styles.nodeStyles.nodeColour;
-
-    const selected = selectedNodes.includes(node.id);
-
     let fillColor = null;
 
     switch (node.type) {
         case "node":
-            if (selected) {
+            if (node.selected && events && events.hasOwnProperty("select")) {
                 fillColor = styles.nodeStyles.selectedColour;
             } else if (highlighted) {
                 fillColor = styles.nodeStyles.hoverColour;
@@ -91,7 +77,7 @@ export const Node = ({
             }
             break;
         case "token":
-            if (selected) {
+            if (node.selected && events && events.hasOwnProperty("select")) {
                 fillColor = styles.tokenStyles.selectedColour;
             } else if (highlighted) {
                 fillColor = styles.tokenStyles.hoverColour;
@@ -154,34 +140,38 @@ export const Node = ({
     const handleOnClick = (event) => {
 
         if(events && events.hasOwnProperty('select')){
-            if (!selected) {
-                dispatchSelectedNodes({ type: "add", id: node.id });
-            } else {
-                dispatchSelectedNodes({ type: "remove", id: node.id });
+
+            if(events.select === "subset" && node.type === "node"){
+
+                try {
+
+                    const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
+                        ...oldNode,
+                        selected: oldNode.type === "node" ? (oldNode.id === node.id ? true: false) : false
+                    }));
+
+                    dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation , nodes: newNodes} }});
+
+                }catch (e) {
+                    console.log(e);
+                }
+
+            }else if(events.select === "subgraph" && node.type === "node"){
+
+                try {
+
+                const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
+                    ...oldNode,
+                    selected: oldNode.type === "node" ? (oldNode.id === node.id ? true: oldNode.selected) : false
+                }));
+
+                dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation , nodes: newNodes} }});
+                }catch (e) {
+                    console.log(e);
+                }
             }
+
         }
-
-
-
-
-        // if (selectMode === "displaySubset") {
-        //     if (!selected && (node.group === "node") && (selectedNodes.length === 0)) {
-        //         console.log(node.id);
-        //         dispatchSelectedNodes({ type: "add", id: node.id });
-        //         setSelected(true);
-        //     } else if (selected && (node.group === "node") && selectedNodes.includes(node.id)){
-        //         dispatchSelectedNodes({ type: "remove", id: node.id });
-        //         setSelected(false);
-        //     }
-        // }else{
-        //     if (!selected) {
-        //         dispatchSelectedNodes({ type: "add", id: node.id });
-        //         setSelected(true);
-        //     } else {
-        //         dispatchSelectedNodes({ type: "remove", id: node.id });
-        //         setSelected(false);
-        //     }
-        // }
     };
 
     let notAllowed = [
