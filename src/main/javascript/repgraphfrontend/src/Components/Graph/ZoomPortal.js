@@ -1,7 +1,11 @@
-import React, { useState } from "react";
-import { Zoom } from "@visx/zoom";
-import { RectClipPath } from "@visx/clip-path";
-import { localPoint } from "@visx/event";
+import React, {useContext, useState} from "react";
+import {Zoom} from "@visx/zoom";
+import {RectClipPath} from "@visx/clip-path";
+import {localPoint} from "@visx/event";
+import {layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
+import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
+import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+import {AppContext, defaultGraphLayoutSpacing} from "../../Store/AppContextProvider";
 
 const initialTransform = {
     scaleX: 1.25,
@@ -13,10 +17,76 @@ const initialTransform = {
 };
 
 const ZoomPortal = (props) => {
-    const { width, height, backgroundColour } = props;
+    const {width, height, backgroundColour} = props;
+    const {state, dispatch} = useContext(AppContext);
+    const [valuesGraphSpacing, setValuesGraphSpacing] = useState(state.graphLayoutSpacing);
+
+
+    const handleChangeGraphSpacing = (event) => {
+
+        let intraValue,interValue;
+        console.log("event", event);
+        if (event.target.name === "decrease") {
+            intraValue = valuesGraphSpacing.intraLevelSpacing - 20;
+            interValue = valuesGraphSpacing.interLevelSpacing - 10;
+        }
+        else{
+            intraValue = valuesGraphSpacing.intraLevelSpacing + 20;
+            interValue = valuesGraphSpacing.interLevelSpacing + 10;
+        }
+
+        setValuesGraphSpacing({
+            ...valuesGraphSpacing,
+            ["intraLevelSpacing"]: intraValue,
+            ["interLevelSpacing"]: interValue,
+        });
+
+
+        dispatch({
+            type: "SET_GRAPH_LAYOUT_SPACING",
+            payload: {
+                graphLayoutSpacing: {
+                    ...valuesGraphSpacing,
+                    ["intraLevelSpacing"]: intraValue,
+                    ["interLevelSpacing"]: interValue,
+                }
+            }
+        });
+
+        handleUpdateStyles({
+            ...valuesGraphSpacing,
+            ["intraLevelSpacing"]: intraValue,
+            ["interLevelSpacing"]: interValue,
+        });
+    };
+
+    const handleUpdateStyles = (newSpacing) => {
+
+        if (state.selectedSentenceID) {
+
+            let graphData = null;
+
+            switch (state.visualisationFormat) {
+                case "1":
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing);
+                    break;
+                case "2":
+                    graphData = layoutTree(state.selectedSentenceGraphData, newSpacing);
+                    break;
+                case "3":
+                    graphData = layoutFlat(state.selectedSentenceGraphData, false, newSpacing);
+                    break;
+                default:
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing);
+                    break;
+            }
+
+            dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
+        }
+    }
 
     return (
-        <div style={{ display: "flex", flexGrow: 1, border: "0px solid green" }}>
+        <div style={{display: "flex", flexGrow: 1, border: "0px solid green"}}>
             <Zoom
                 width={width}
                 height={height}
@@ -34,40 +104,83 @@ const ZoomPortal = (props) => {
                 }}
             >
                 {(zoom) => (
-                    <svg
-                        width={width}
-                        height={height}
-                        style={{
-                            cursor: zoom.isDragging ? "grabbing" : "grab",
-                            // border: "8px solid #dedede",
-                            // borderRadius: "8px"
-                        }}
-                        // rx={8}
-                        // ry={8}
-                    >
-                        <rect width={width} height={height} fill={backgroundColour} />
-                        <rect
+                    <div className="relative">
+                        <svg
                             width={width}
                             height={height}
-                            fill={backgroundColour}
-                            onTouchStart={zoom.dragStart}
-                            onTouchMove={zoom.dragMove}
-                            onTouchEnd={zoom.dragEnd}
-                            onMouseDown={zoom.dragStart}
-                            onMouseMove={zoom.dragMove}
-                            onMouseUp={zoom.dragEnd}
-                            onMouseLeave={() => {
-                                if (zoom.isDragging) zoom.dragEnd();
+                            style={{
+                                cursor: zoom.isDragging ? "grabbing" : "grab",
                             }}
-                            onDoubleClick={(event) => {
-                                const point = localPoint(event) || { x: 0, y: 0 };
-                                zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
-                            }}
-                        />
-                        <g transform={zoom.toString()}>{props.children}</g>
-                    </svg>
+                        >
+                            <rect width={width} height={height} fill={backgroundColour}/>
+                            <rect
+                                width={width}
+                                height={height}
+                                fill={backgroundColour}
+                                onTouchStart={zoom.dragStart}
+                                onTouchMove={zoom.dragMove}
+                                onTouchEnd={zoom.dragEnd}
+                                onMouseDown={zoom.dragStart}
+                                onMouseMove={zoom.dragMove}
+                                onMouseUp={zoom.dragEnd}
+                                onMouseLeave={() => {
+                                    if (zoom.isDragging) zoom.dragEnd();
+                                }}
+                                onDoubleClick={(event) => {
+                                    zoom.center();
+                                    zoom.reset();
+                                }}
+                            />
+                            <g transform={zoom.toString()}>{props.children}</g>
+                        </svg>
+                        <div className="controls">
+                            <button
+                                type="button"
+                                className="btn"
+                                name="increase"
+                                onClick={handleChangeGraphSpacing}
+                            >
+                                Increase Spacing
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-bottom"
+                                name="decrease"
+                                onClick={handleChangeGraphSpacing}
+                            >
+                               Decrease Spacing
+                            </button>
+                        </div>
+                    </div>
                 )}
             </Zoom>
+            <style jsx>{`
+        .btn {
+          margin-top: 10px;
+          text-align: center;
+          border: none;
+          background: #cfcfcf;
+          color: #000000;
+          padding-top: 10px;
+          padding-bottom: 10px;
+          width: 75px;
+          font-size: 15px;
+        }
+        .btn-bottom {
+          margin-bottom: 1rem;
+        }
+        .controls {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+        } 
+        .relative {
+          position: relative;
+        }
+      `}</style>
         </div>
     );
 };
