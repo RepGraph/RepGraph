@@ -75,7 +75,16 @@ export const Link = ({
                 break;
         }
 
-    }else {
+    } else if (graphFormatCode === "planar"){
+        switch (link.group) {
+            case "linkColourCross":
+                strokeColor = styles.planarStyles.linkColourCross;
+                break;
+            default:
+                strokeColor = styles.linkStyles.linkColour;
+                break;
+        }
+    } else {
         strokeColor = styles.linkStyles.linkColour;
     }
 
