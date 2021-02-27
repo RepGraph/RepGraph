@@ -1,7 +1,11 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {Zoom} from "@visx/zoom";
 import {RectClipPath} from "@visx/clip-path";
 import {localPoint} from "@visx/event";
+import {layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
+import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
+import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+import {AppContext, defaultGraphLayoutSpacing} from "../../Store/AppContextProvider";
 
 const initialTransform = {
     scaleX: 1.25,
@@ -14,6 +18,72 @@ const initialTransform = {
 
 const ZoomPortal = (props) => {
     const {width, height, backgroundColour} = props;
+    const {state, dispatch} = useContext(AppContext);
+    const [valuesGraphSpacing, setValuesGraphSpacing] = useState(state.graphLayoutSpacing);
+
+
+    const handleChangeGraphSpacing = (event) => {
+
+        let intraValue,interValue;
+        console.log("event", event);
+        if (event.target.name === "decrease") {
+            intraValue = valuesGraphSpacing.intraLevelSpacing - 20;
+            interValue = valuesGraphSpacing.interLevelSpacing - 10;
+        }
+        else{
+            intraValue = valuesGraphSpacing.intraLevelSpacing + 20;
+            interValue = valuesGraphSpacing.interLevelSpacing + 10;
+        }
+
+        setValuesGraphSpacing({
+            ...valuesGraphSpacing,
+            ["intraLevelSpacing"]: intraValue,
+            ["interLevelSpacing"]: interValue,
+        });
+
+
+        dispatch({
+            type: "SET_GRAPH_LAYOUT_SPACING",
+            payload: {
+                graphLayoutSpacing: {
+                    ...valuesGraphSpacing,
+                    ["intraLevelSpacing"]: intraValue,
+                    ["interLevelSpacing"]: interValue,
+                }
+            }
+        });
+
+        handleUpdateStyles({
+            ...valuesGraphSpacing,
+            ["intraLevelSpacing"]: intraValue,
+            ["interLevelSpacing"]: interValue,
+        });
+    };
+
+    const handleUpdateStyles = (newSpacing) => {
+
+        if (state.selectedSentenceID) {
+
+            let graphData = null;
+
+            switch (state.visualisationFormat) {
+                case "1":
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing);
+                    break;
+                case "2":
+                    graphData = layoutTree(state.selectedSentenceGraphData, newSpacing);
+                    break;
+                case "3":
+                    graphData = layoutFlat(state.selectedSentenceGraphData, false, newSpacing);
+                    break;
+                default:
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing);
+                    break;
+            }
+
+            dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
+        }
+    }
 
     return (
         <div style={{display: "flex", flexGrow: 1, border: "0px solid green"}}>
@@ -57,7 +127,8 @@ const ZoomPortal = (props) => {
                                     if (zoom.isDragging) zoom.dragEnd();
                                 }}
                                 onDoubleClick={(event) => {
-                                    zoom.center()
+                                    zoom.center();
+                                    zoom.reset();
                                 }}
                             />
                             <g transform={zoom.toString()}>{props.children}</g>
@@ -66,14 +137,16 @@ const ZoomPortal = (props) => {
                             <button
                                 type="button"
                                 className="btn"
-                                onClick={() => zoom.scale({scaleX: 1.2, scaleY: 1.2})}
+                                name="increase"
+                                onClick={handleChangeGraphSpacing}
                             >
                                 Increase Spacing
                             </button>
                             <button
                                 type="button"
                                 className="btn btn-bottom"
-                                onClick={() => zoom.scale({scaleX: 0.8, scaleY: 0.8})}
+                                name="decrease"
+                                onClick={handleChangeGraphSpacing}
                             >
                                Decrease Spacing
                             </button>
