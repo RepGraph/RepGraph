@@ -830,14 +830,15 @@ class AbstractGraph {
         HashMap<String, ArrayList<String>> dummyNodes = new HashMap<>();
         //add the Node objects to a list
         for (Node n : nodes.values()) {
-            ordered.add(new Node(n));
+            if(n.getAnchors()!=null){
+            ordered.add(new Node(n));}else{continue;}
             if (n.getAnchors().size() > 1) {
                 dummyNodes.put(n.getId(), new ArrayList<String>());
                 for (int i = 1; i < n.getAnchors().size(); i++) {
                     ArrayList<Anchors> anchs = new ArrayList<>();
                     anchs.add(n.getAnchors().get(i));
                     String uuid = UUID.randomUUID().toString();
-                    ordered.add(new Node(uuid, n.getLabel(), anchs));
+                    ordered.add(new Node(uuid, n.getLabel() +" "+ (i+1), anchs));
                     dummyNodes.get(n.getId()).add(uuid);
                 }
             }
@@ -882,51 +883,51 @@ class AbstractGraph {
 
             source = e.getSource();
             target = e.getTarget();
+            if (nodeToToken.containsKey(source) && nodeToToken.containsKey(target)) {
+                Edge newEdge = new Edge();
 
-            Edge newEdge = new Edge();
+                newEdge.setSource(nodeToToken.get(source));
+                newEdge.setTarget(nodeToToken.get(target));
 
-            newEdge.setSource(nodeToToken.get(source));
-            newEdge.setTarget(nodeToToken.get(target));
-
-            if (!nodeToToken.get(source).equals(nodeToToken.get(target))) {
-                updated.add(newEdge);
-            }
-
-
-            if (dummyNodes.containsKey(source)) {
-                for (String sourceID : dummyNodes.get(source)) {
-                    newEdge = new Edge();
-                    newEdge.setSource(nodeToToken.get(sourceID));
-                    newEdge.setTarget(nodeToToken.get(target));
-                    if (!nodeToToken.get(sourceID).equals(nodeToToken.get(target))) {
-                        updated.add(newEdge);
-                    }
+                if (!nodeToToken.get(source).equals(nodeToToken.get(target))) {
+                    updated.add(newEdge);
                 }
-            }
 
-            if (dummyNodes.containsKey(target)) {
-                for (String targetID : dummyNodes.get(target)) {
-                    newEdge = new Edge();
-                    newEdge.setSource(nodeToToken.get(source));
-                    newEdge.setTarget(nodeToToken.get(targetID));
-                    if (!nodeToToken.get(source).equals(nodeToToken.get(targetID))) {
-                        updated.add(newEdge);
-                    }
-                }
-            }
-            if (dummyNodes.containsKey(source) && dummyNodes.containsKey(target)) {
-                for (String sourceID : dummyNodes.get(source)) {
-                    for (String targetID : dummyNodes.get(target)) {
+
+                if (dummyNodes.containsKey(source)) {
+                    for (String sourceID : dummyNodes.get(source)) {
                         newEdge = new Edge();
                         newEdge.setSource(nodeToToken.get(sourceID));
-                        newEdge.setTarget(nodeToToken.get(targetID));
-                        if (!nodeToToken.get(sourceID).equals(nodeToToken.get(targetID))) {
+                        newEdge.setTarget(nodeToToken.get(target));
+                        if (!nodeToToken.get(sourceID).equals(nodeToToken.get(target))) {
                             updated.add(newEdge);
                         }
                     }
                 }
-            }
 
+                if (dummyNodes.containsKey(target)) {
+                    for (String targetID : dummyNodes.get(target)) {
+                        newEdge = new Edge();
+                        newEdge.setSource(nodeToToken.get(source));
+                        newEdge.setTarget(nodeToToken.get(targetID));
+                        if (!nodeToToken.get(source).equals(nodeToToken.get(targetID))) {
+                            updated.add(newEdge);
+                        }
+                    }
+                }
+                if (dummyNodes.containsKey(source) && dummyNodes.containsKey(target)) {
+                    for (String sourceID : dummyNodes.get(source)) {
+                        for (String targetID : dummyNodes.get(target)) {
+                            newEdge = new Edge();
+                            newEdge.setSource(nodeToToken.get(sourceID));
+                            newEdge.setTarget(nodeToToken.get(targetID));
+                            if (!nodeToToken.get(sourceID).equals(nodeToToken.get(targetID))) {
+                                updated.add(newEdge);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 
