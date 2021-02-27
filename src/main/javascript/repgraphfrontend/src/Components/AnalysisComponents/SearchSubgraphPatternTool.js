@@ -71,9 +71,6 @@ function SearchSubgraphPatternTool(props) {
 
     const [alertOpen, setAlertOpen] = React.useState(false); //Local state for error alert
 
-    const [selectedNodes, setSelectedNodes] = React.useState(null); //Store local state for currently selected node ids
-    const [selectedLinks, setSelectedLinks] = React.useState(null); //Store local state for currently selected link ids
-
     let graphFormatCode = null;
     switch (state.visualisationFormat) {
         case "1":
@@ -90,6 +87,21 @@ function SearchSubgraphPatternTool(props) {
             break;
     }
 
+    //Reset selected property of nodes and links in global state
+    const resetSelected = () => {
+        const resetNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
+            ...oldNode,
+            selected: false
+        }));
+
+        const resetLinks = state.selectedSentenceVisualisation.links.map(oldLink => ({
+            ...oldLink,
+            selected: false
+        }));
+
+        dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation , nodes: resetNodes, links: resetLinks} }});
+    };
+
     //Handle click open for search sub-graph pattern dialog
     const handleClickSelectSubgraph = () => {
         setOpenSelectSubgraphDialog(true);
@@ -98,6 +110,7 @@ function SearchSubgraphPatternTool(props) {
     //Handle close for search sub-graph pattern dialog
     const handleCloseSelectSubgraphDialog = () => {
         setOpenSelectSubgraphDialog(false);
+        resetSelected();
     };
 
     //Handle close for error alert
@@ -143,7 +156,7 @@ function SearchSubgraphPatternTool(props) {
 
     //Handle search for node set from backend
     function handleSearchForNodeSet() {
-        console.log(nodeSet.join(","));
+        //console.log(nodeSet.join(","));
         let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
 
@@ -164,7 +177,7 @@ function SearchSubgraphPatternTool(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //Debugging
+                //console.log(jsonResult); //Debugging
 
                 setNodeSetResult(jsonResult.data);
                 setNodeSetResultSearch(jsonResult.data)//Store the node set results
@@ -188,6 +201,27 @@ function SearchSubgraphPatternTool(props) {
 
     }
 
+    const getSelectedNodesAndLinks = () => {
+        let selectedNodeIDs = [];
+        let selectedLinkIDs = [];
+
+        if(state.selectedSentenceID){
+            state.selectedSentenceVisualisation.nodes.forEach(node => {
+                if(node.selected && node.type === "node"){
+                    selectedNodeIDs.push(node.id);
+                }
+            });
+
+            state.selectedSentenceVisualisation.links.forEach(link => {
+                if(link.selected && link.type === "link"){
+                    selectedLinkIDs.push(link.id);
+                }
+            });
+        }
+
+        return {selectedNodeIDs,selectedLinkIDs};
+    }
+
     function searchForSelectedSubgraph() {
         let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
@@ -200,8 +234,10 @@ function SearchSubgraphPatternTool(props) {
 
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
 
+        const selectedNodesAndLinks = getSelectedNodesAndLinks();
+
         //Search the backend for matches
-        fetch(state.APIendpoint + "/SearchSubgraphPattern?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNodes.join(",") + "&EdgeIndices=" + selectedLinks.join(","), requestOptions)
+        fetch(state.APIendpoint + "/SearchSubgraphPattern?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNodesAndLinks.selectedNodeIDs.join(",") + "&EdgeIndices=" + selectedNodesAndLinks.selectedLinkIDs.join(","), requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -252,7 +288,7 @@ function SearchSubgraphPatternTool(props) {
 
     //Handle when user selects one of the sentences returned in the results from the backend
     function handleClickSentenceResult(sentenceId) {
-        console.log(sentenceId); //Debugging
+        //console.log(sentenceId); //Debugging
         let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
         let requestOptions = {
@@ -272,7 +308,7 @@ function SearchSubgraphPatternTool(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //Debugging
+                //console.log(jsonResult); //Debugging
 
                 let graphData = null;
 
@@ -302,11 +338,23 @@ function SearchSubgraphPatternTool(props) {
     }
 
     const events = {
-        select: {
-            selectMode: "subgraph",
-            selectedNodesStateSetter: setSelectedNodes,
-            selectedLinksStateSetter: setSelectedLinks,
+        select: "subgraph"
+    }
+
+    const canSearchForSubgraph = () => {
+
+        let disabled = false;
+
+
+        const selectedNodesAndLinks = getSelectedNodesAndLinks();
+
+
+        if(selectedNodesAndLinks.selectedNodeIDs.length === 0 || selectedNodesAndLinks.selectedLinkIDs.length === 0){
+            disabled = true;
         }
+
+        return disabled;
+
     }
 
     return (
@@ -500,7 +548,7 @@ function SearchSubgraphPatternTool(props) {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={searchForSelectedSubgraph} variant="contained" color="primary" disableElevation autoFocus
-                                    disabled={selectedNodes === null || selectedLinks === null || selectedNodes.length === 0 || selectedLinks.length === 0}>
+                                    disabled={canSearchForSubgraph()}>
                                 Display
                             </Button>
                         </DialogActions>

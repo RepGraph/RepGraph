@@ -47,7 +47,6 @@ function DisplaySubsetTool(props) {
 
     const [open, setOpen] = React.useState(false); //Store local state for whether dialog is open or not
     const [resultOpen, setResultOpen] = React.useState(false); //Store local state for whether result dialog is open or not
-    const [selectedNodes, setSelectedNodes] = React.useState(null); //Store local state for currently selected node ids
 
     //Determine graphFormatCode
     let graphFormatCode = null;
@@ -70,9 +69,25 @@ function DisplaySubsetTool(props) {
     const handleClickOpen = () => {
         setOpen(true);
     };
+
+    //Reset selected property of nodes in global state
+    const resetSelectedNode = () => {
+        const resetNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
+            ...oldNode,
+            selected: false
+        }));
+        dispatch({
+            type: "SET_SENTENCE_VISUALISATION",
+            payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation, nodes: resetNodes}}
+        });
+    };
+
     //Handle close for first dialog to select subset
     const handleClose = () => {
         setOpen(false);
+
+        //Reset selected node
+        resetSelectedNode();
     };
 
     //handle close for second dialog to display subset result
@@ -96,14 +111,14 @@ function DisplaySubsetTool(props) {
         myHeaders.append("X-USER", state.userID);
         let requestOptions = {
             method: 'GET',
-            headers : myHeaders,
+            headers: myHeaders,
             redirect: 'follow'
         };
 
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation
 
         //Request subset from backend
-        fetch(state.APIendpoint + "/GetSubset?graphID=" + state.selectedSentenceID + "&NodeID=" + selectedNodes[0] + "&SubsetType=" + subsetType, requestOptions)
+        fetch(state.APIendpoint + "/GetSubset?graphID=" + state.selectedSentenceID + "&NodeID=" + getSelectedNodeID() + "&SubsetType=" + subsetType, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -111,8 +126,8 @@ function DisplaySubsetTool(props) {
                 return response.text();
             })
             .then((result) => {
-                console.log(result);//debugging
-                console.log(JSON.parse(result));//debugging
+                //console.log(result);//debugging
+                //console.log(JSON.parse(result));//debugging
                 const jsonResult = JSON.parse(result); //Parse response into JSON
 
                 let graphData = null;
@@ -125,14 +140,14 @@ function DisplaySubsetTool(props) {
                         graphData = layoutTree(jsonResult, state.graphLayoutSpacing);
                         break;
                     case "3":
-                        graphData = layoutFlat(jsonResult,false, state.graphLayoutSpacing);
+                        graphData = layoutFlat(jsonResult, false, state.graphLayoutSpacing);
                         break;
                     default:
                         graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
                         break;
                 }
 
-                setSelectedNodes(null);
+                resetSelectedNode();
                 setSubsetResponse(graphData); //Store the response in local state
                 setResultOpen(true); //Show the result in dialog
 
@@ -147,17 +162,36 @@ function DisplaySubsetTool(props) {
     }
 
     const events = {
-        select: {
-            selectMode: "subset",
-            selectedNodesStateSetter: setSelectedNodes,
+        select: "subset"
+    }
+
+    function getSelectedNodeLabel() {
+
+        let selectedNode = null;
+
+        if (state.selectedSentenceID) {
+            selectedNode = state.selectedSentenceVisualisation.nodes.find(node => node.selected === true);
+        }
+
+        if (selectedNode) { //User has selected a node
+            return selectedNode.label;
+        } else { //User has not selected a node
+            return "No node selected";
         }
     }
 
-    function getSelectedNodeLabel(){
-        if(selectedNodes !== null && selectedNodes.length === 1){ //User has selected a node
-            return state.selectedSentenceGraphData.nodes.find(node => node.id === selectedNodes[0]).label;
-        }else{ //User has not selected a node
-            return "No node selected";
+    const getSelectedNodeID = () => {
+
+        let selectedNode = null;
+
+        if (state.selectedSentenceID) {
+            selectedNode = state.selectedSentenceVisualisation.nodes.find(node => node.selected === true);
+        }
+
+        if (selectedNode) {
+            return selectedNode.id;
+        } else {
+            return null;
         }
     }
 
@@ -165,7 +199,8 @@ function DisplaySubsetTool(props) {
         <CardContent>
             <FormLabel><Typography color={"textPrimary"}>Select Type of Subset</Typography></FormLabel>
             <RadioGroup aria-label="subset-type" name="subset" value={subsetType} onChange={handleChange}>
-                <FormControlLabel value="adjacent" control={<Radio />} label={<Typography color={"textPrimary"}> Display Adjacent Nodes</Typography>}/>
+                <FormControlLabel value="adjacent" control={<Radio/>}
+                                  label={<Typography color={"textPrimary"}> Display Adjacent Nodes</Typography>}/>
                 <FormControlLabel value="descendent" control={<Radio color="secondary"/>}
                                   label={<Typography color={"textPrimary"}> Display Descendent Nodes</Typography>}/>
             </RadioGroup>
@@ -184,7 +219,8 @@ function DisplaySubsetTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Select a node on the graph:"}<Chip label={`Selected Node: ${getSelectedNodeLabel()}`}/></DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Select a node on the graph:"}<Chip
+                    label={`Selected Node: ${getSelectedNodeLabel()}`}/></DialogTitle>
                 <DialogContent style={{height: "80vh"}}>
                     {state.selectedSentenceID === null ? (
                         <div>Select a sentence first.</div>
@@ -206,7 +242,8 @@ function DisplaySubsetTool(props) {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDisplaySubset} variant="contained" color="primary" disableElevation autoFocus disabled={selectedNodes === null || selectedNodes.length === 0}>
+                    <Button onClick={handleDisplaySubset} variant="contained" color="primary" disableElevation autoFocus
+                            disabled={getSelectedNodeID() === null ? true : false}>
                         Display
                     </Button>
                 </DialogActions>
