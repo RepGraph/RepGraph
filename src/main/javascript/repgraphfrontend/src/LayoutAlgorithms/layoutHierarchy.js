@@ -218,7 +218,8 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
         type: "node",
         group: "node",
         label: node.label,
-        anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
+        anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors, //Remove fake anchors assigned to anchorless nodes
+        selected: false
     }));
 
     const tokens = graphData.tokens.map((token) => ({
@@ -227,7 +228,8 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
         y: nodeSectionHeight + tokenLevelSpacing,
         label: token.form,
         type: "token",
-        group: "token"
+        group: "token",
+        selected: false
     }));
 
     //console.log("tokens", tokens);
@@ -287,10 +289,10 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
             x1: cp.x1,
             y1: cp.y1,
             type: "link",
-            group: "link"
+            group: "link",
+            selected: false
         };
     });
-
 
     console.log("layoutHierarchy return:", { nodes: finalGraphNodes, links: finalGraphEdges });
     return { nodes: finalGraphNodes, links: finalGraphEdges };
