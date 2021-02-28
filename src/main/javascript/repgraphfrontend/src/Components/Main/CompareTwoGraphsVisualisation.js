@@ -363,7 +363,6 @@ function CompareTwoGraphsVisualisation(props) {
                                 //Show the dialog to select a sentence
                                 handleSelectSide(1);
                             }}
-                            color="inherit"
                             label={sentence1 === null ? "No Sentence Selected" : sentence1}
                             icon={
                                 sentence1 === null ? <AddCircleOutlineIcon/> : <BuildIcon/>
@@ -409,7 +408,6 @@ function CompareTwoGraphsVisualisation(props) {
                                 //Show the dialog to select a sentence
                                 handleSelectSide(2);
                             }}
-                            color="inherit"
                             label={sentence2 === null ? "No Sentence Selected" : sentence2}
                             icon={
                                 sentence2 === null ? <AddCircleOutlineIcon/> : <BuildIcon/>
