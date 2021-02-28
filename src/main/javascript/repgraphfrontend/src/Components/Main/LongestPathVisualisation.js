@@ -153,8 +153,7 @@ function LongestPathVisualisation({type}) {
         <div className={classes.root}>
             <Paper square elevation={0} className={classes.header}>
                 <Typography>
-                    {"The path is (in terms of Node IDs): " +
-                    JSON.stringify(state.testResults[type][activeStep]).replaceAll(","," -> ").replaceAll(/\[|\"|\]/g,"")}
+                    {"The path is (in terms of Node IDs): " + state.testResults[type][activeStep].join(" -> ")}
                 </Typography>
             </Paper>
             <AutoPlaySwipeableViews
