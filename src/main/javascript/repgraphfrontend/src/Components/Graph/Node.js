@@ -183,7 +183,9 @@ export const Node = ({
         "relativeX",
         "relativeY",
         "nodeLevel",
-        "span"
+        "span",
+        "surface",
+        "selected"
     ]; //Extra information object keys to be excluded from tooltip
 
     //Remove id property from tree-like token tooltip
@@ -191,10 +193,10 @@ export const Node = ({
         notAllowed = notAllowed.concat("id");
     }
 
-    const filteredExtraInformation = Object.keys(node)
-        .filter((key) => !notAllowed.includes(key))
-        .reduce((obj, key) => {
-            obj[key] = node[key];
+    const filteredExtraInformation = Object.entries(node)
+        .filter(([key, value]) => !notAllowed.includes(key) && value !== null)
+        .reduce((obj, [key, value]) => {
+            obj[key] = value;
             return obj;
         }, {});
 

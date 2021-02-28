@@ -33,7 +33,8 @@ export default function HomePage(props) {
     }
 
     function handleUpload() {
-        let userID = uuid()
+        //let userID = uuid();
+        let userID = 1;
         dispatch({type: "SET_USER_ID", payload: {userID: userID}}); //Show loading animation while awaiting response
 
         console.log(userID); //Debugging
@@ -41,7 +42,7 @@ export default function HomePage(props) {
             let formData = new FormData();
             formData.append("data", fileObjects[0]);
 
-            var myHeaders = new Headers();
+            let myHeaders = new Headers();
             myHeaders.append("X-USER", userID);
 
             let requestOptions = {
@@ -70,10 +71,14 @@ export default function HomePage(props) {
                     console.log(jsonResult); //Debugging
                     console.log(jsonResult.response); //Debugging
 
-
                     dispatch({type: "SET_DATASET", payload: {dataSet: jsonResult.data}}); //Store the data-set (ids and inputs stored in backend)
                     dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: fileObjects[0].name}}); //store name of data-set uploaded
                     dispatch({type: "SET_DATASET_RESPONSE", payload: {dataSetResponse: jsonResult.response}}); //store response from back-end
+
+                    dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: null}});
+                    dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: null}});
+                    dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: null}});
+
                     dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
                     history.push("/main"); //Take user to the main page
 

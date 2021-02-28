@@ -65,6 +65,8 @@ import Icon from "@mdi/react";
 import MinimalFeedback from 'minimal-feedback'
 import 'minimal-feedback/dist/index.css' // don't forget to import css
 
+import { Octokit } from "@octokit/core";
+
 const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
@@ -852,14 +854,52 @@ export default function MiniDrawer() {
 
     console.log(currentScreenWidth);
 
+    async function handleSaveFeedback(){
+
+        let labels = null;
+
+        switch (feedbackText.type){
+            case "issue":
+                labels = ['bug'];
+                break;
+            case "idea":
+                labels = ['enhancement'];
+                break;
+            case "anything":
+                labels = ['question'];
+                break;
+            default:
+                labels = [];
+        }
+
+        const octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_FEEDBACK_APIKEY });
+
+        try {
+            const response = await octokit.request('POST /repos/{owner}/{repo}/issues', {
+                owner: 'RepGraph',
+                repo: 'RepGraph',
+                title: `Feedback: ${feedbackText.type}`,
+                body: feedbackText.feedback,
+                "labels": labels
+            });
+        }catch (e) {
+            console.log(e);
+            history.push("/404");
+        }
+    }
+
+
+
     return (
         <div className={classes.root}>
+            <CssBaseline/>
+            <Box zIndex="modal">
                 <MinimalFeedback
-                    save={() => {}}
+                    save={handleSaveFeedback}
                     value={feedbackText}
                     onChange={(e) => { setFeedbackText(e); console.log(e);}}
                 />
-            <CssBaseline/>
+            </Box>
             <AppBar
                 position="fixed"
                 className={clsx(classes.appBar, {
