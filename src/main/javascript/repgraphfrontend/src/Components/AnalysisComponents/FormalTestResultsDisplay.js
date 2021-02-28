@@ -61,10 +61,12 @@ export default function FormalTestsResultsDisplay(props) {
     //Add the rows to the table of results - in consistent order
     try {
         if (response.hasOwnProperty("Planar")) {
-            newRows.push(createData("Planar", response.Planar.planar));
+            let res = response.Planar.planar ? "True" : "False";
+            newRows.push(createData("Planar", res));
         }
         if (response.hasOwnProperty("Connected")) {
-            newRows.push(createData("Connected", response.Connected));
+            let res = response.Connected ? "True" : "False";
+            newRows.push(createData("Connected", res));
         }
         if (response.hasOwnProperty("LongestPathDirected")) {
             let res;
@@ -212,7 +214,7 @@ export default function FormalTestsResultsDisplay(props) {
                             <TableCell component="th" scope="row">
                                 {row.test}
                             </TableCell>
-                            <TableCell align="right">{JSON.stringify(row.result)}</TableCell>
+                            <TableCell align="right">{JSON.stringify(row.result).replaceAll('"',"")}</TableCell>
                             <TableCell>
                                 {
                                     row.test !== "Connected" && (
