@@ -854,12 +854,14 @@ export default function MiniDrawer() {
 
     return (
         <div className={classes.root}>
+            <CssBaseline/>
+            <Box zIndex="modal">
                 <MinimalFeedback
                     save={() => {}}
                     value={feedbackText}
                     onChange={(e) => { setFeedbackText(e); console.log(e);}}
                 />
-            <CssBaseline/>
+            </Box>
             <AppBar
                 position="fixed"
                 className={clsx(classes.appBar, {
