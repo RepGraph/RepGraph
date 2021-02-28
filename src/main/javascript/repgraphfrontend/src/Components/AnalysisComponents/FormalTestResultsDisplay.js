@@ -128,16 +128,16 @@ export default function FormalTestsResultsDisplay(props) {
                 )}
             </ParentSize>
         </div>;
-    } else if (rowClicked === "LongestPathDirected") {
+    } else if (rowClicked === "Longest Directed Path") {
         dialogElement = (
             <LongestPathVisualisation
-                type={rowClicked}
+                type={"LongestPathDirected"}
             />
         );
-    } else if (rowClicked === "LongestPathUndirected") {
+    } else if (rowClicked === "Longest Undirected Path") {
         dialogElement = (
             <LongestPathVisualisation
-                type={rowClicked}
+                type={"LongestPathUndirected"}
             />
         );
     }
