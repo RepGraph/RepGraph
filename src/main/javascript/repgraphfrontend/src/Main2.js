@@ -179,7 +179,6 @@ export default function MiniDrawer() {
     //const matches = useMediaQuery('(min-width:1000px)');
     // const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
-
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -801,8 +800,6 @@ export default function MiniDrawer() {
             </Toolbar>;
     }
 
-
-
     // const toolbarList = <List>
     //     <ListItem>
     //         <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
@@ -852,8 +849,6 @@ export default function MiniDrawer() {
     //     </ListItem>
     // </List>;
 
-    console.log(currentScreenWidth);
-
     async function handleSaveFeedback(){
 
         let labels = null;
@@ -897,7 +892,7 @@ export default function MiniDrawer() {
                 <MinimalFeedback
                     save={handleSaveFeedback}
                     value={feedbackText}
-                    onChange={(e) => { setFeedbackText(e); console.log(e);}}
+                    onChange={(e) => { setFeedbackText(e)}}
                 />
             </Box>
             <AppBar
