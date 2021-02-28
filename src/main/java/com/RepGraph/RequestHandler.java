@@ -17,6 +17,7 @@ import java.util.*;
  * the front-end and back-end. The class makes use of the Spring Framework to handle all the GET and POST request mappings.
  * It also handles automatic serialisation and deserialization of JSON to Java objects and vice versa.
  */
+
 @CrossOrigin
 @SpringBootApplication
 @RestController
@@ -32,10 +33,8 @@ public class RequestHandler {
      */
     @GetMapping(value = "/")
     @ResponseBody
-    public void Home(@RequestHeader(USER_HEADER) String userID,@RequestParam String graphID) throws IOException, InterruptedException {
+    public void Home(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
 
-        AMRGraph a  = (AMRGraph) RepModel.get(userID).getGraph(graphID);
-        a.alignNodes();
     }
 
     /**
@@ -159,7 +158,7 @@ public class RequestHandler {
      */
     @PostMapping("/UploadSingle")
     @ResponseBody
-    public HashMap<String, String> UploadDataSingle(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestBody EDSGraph data) {
+    public HashMap<String, String> UploadDataSingle(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestBody AbstractGraph data) {
         switch (framework){
             case "1":
                 this.RepModel.put(userID,new DMRSModel());
@@ -326,6 +325,7 @@ public class RequestHandler {
         });
         return list;
     }
+
 
 
     /**

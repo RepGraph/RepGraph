@@ -225,6 +225,9 @@ class AbstractGraph {
 
         for (Node n : nodelist) {
             this.nodes.put(n.getId(), n);
+            if (this.nodes.get(n.getId()).getLabel().startsWith("_")){
+                this.nodes.get(n.getId()).setSurface(true);
+            }
         }
         populateTokens();
     }
