@@ -5,7 +5,6 @@ import {AppContext} from "../../Store/AppContextProvider";
 
 export const Link = ({
                          link,
-                         styles,
                          graphFormatCode,
                          tooltipData,
                          adjacentLinks,
@@ -14,6 +13,8 @@ export const Link = ({
                      }) => {
     const [highlighted, setHighlighted] = useState(false);
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
+
+    const styles = state.graphStyles; //Use AppContext styles
 
     const handleOnClick = (event) => {
 

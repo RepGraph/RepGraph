@@ -402,21 +402,21 @@ export default function MiniDrawer() {
                                                                             <Chip label="AbstractNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="SurfaceNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="Token" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.tokenStyles.tokenColour
                                                                             }}/>
                                                                         </Grid>
                                                                     </Grid>
@@ -610,21 +610,21 @@ export default function MiniDrawer() {
                                                                             <Chip label="AbstractNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="SurfaceNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="Token" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.tokenStyles.tokenColour
                                                                             }}/>
                                                                         </Grid>
                                                                     </Grid>
@@ -715,21 +715,21 @@ export default function MiniDrawer() {
                                                 <Chip label="AbstractNode" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                    backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
                                                 }}/>
                                             </Grid>
                                             <Grid item>
                                                 <Chip label="SurfaceNode" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                    backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
                                                 }}/>
                                             </Grid>
                                             <Grid item>
                                                 <Chip label="Token" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                    backgroundColor: state.graphStyles.tokenStyles.tokenColour
                                                 }}/>
                                             </Grid>
                                         </Grid>
