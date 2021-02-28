@@ -167,7 +167,7 @@ class AbstractGraph {
 
     public ArrayList<Token> extractTokensFromNodes() {
         ArrayList<Token> tokenlist = new ArrayList<>();
-        ArrayList<String> list = new ArrayList<>();
+
         int index =0;
 
         PTBTokenizer<CoreLabel> ptbt = PTBTokenizer.newPTBTokenizer(new StringReader(this.input),false,true);
