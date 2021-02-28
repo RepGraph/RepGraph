@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -9,16 +8,12 @@ import {cloneDeep} from "lodash";
 
 import {Graph} from "../Graph/Graph";
 
-import layoutGraph from "../App";
-
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import BuildIcon from "@material-ui/icons/Build";
 
 import {Chip} from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -60,37 +55,17 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// function highlightCompare(standardVisualisation, similarNodes, similarEdges) {
-//     let currentStandardVisualisation = cloneDeep(standardVisualisation);
-//
-//     let newNodes = currentStandardVisualisation.nodes.map((node, index) => ({
-//         ...node,
-//         group: similarNodes.includes(node.id) ? "similarNode" :
-//             node.group === "token" ? "token" :
-//                 node.group === "text" ? "text" : node.group === "top" ? "top" : "differentNode"
-//
-//     }));
-//     let newEdges = currentStandardVisualisation.edges.map((edge, index) => ({
-//         ...edge,
-//         color: edge.group === "tokenEdge" ? "rgba(156, 154, 154, 1)" : similarEdges.includes(edge.id)
-//             ? "rgba(0,153,0,0.7)"
-//             : "rgba(245, 0, 87, 0.7)"
-//     }));
-//
-//     return { ...currentStandardVisualisation, nodes: newNodes, edges: newEdges };
-// }
-
 const updateCompareGroups = (standardVisualisation, similarNodes, similarEdges) => {
     let currentStandardVisualisation = cloneDeep(standardVisualisation);
 
     let newNodes = currentStandardVisualisation.nodes.map(node =>({
         ...node,
-        group: similarNodes.includes(node.id) ? "similar" : node.type === "node" ? "dissimilar" : node.group
+        group: similarNodes.includes(node.id) && node.type === "node" ? "similar" : node.type === "node" ? "dissimilar" : node.group
     }))
 
     let newLinks = currentStandardVisualisation.links.map(link =>({
         ...link,
-        group: similarEdges.includes(link.id) ? "similar" : link.type === "link" ? "dissimilar" : link.group
+        group: similarEdges.includes(link.id) && link.type === "link" ? "similar" : link.type === "link" ? "dissimilar" : link.group
     }))
 
     return { ...currentStandardVisualisation, nodes: newNodes, links: newLinks };
@@ -101,19 +76,16 @@ function CompareTwoGraphsVisualisation(props) {
     const {state, dispatch} = useContext(AppContext);
     const history = useHistory();
 
-    const [compareVis1, setCompareVis1] = React.useState(
-        null
-    );
-    const [compareVis2, setCompareVis2] = React.useState(
-        null
-    );
+    const [sentence1, setSentence1] = React.useState(null); //Sentence 1 ID
+    const [sentence1GraphData, setSentence1GraphData] = React.useState(null); //Sentence 1 Graph Data response
+    const [sentence2, setSentence2] = React.useState(null); //Sentence 2 ID
+    const [sentence2GraphData, setSentence2GraphData] = React.useState(null); //Sentence 2 Graph Data response
 
-    const [sentence1, setSentence1] = React.useState(null);
-    const [sentence2, setSentence2] = React.useState(null);
-    const [open, setOpen] = React.useState(false);
-    const [selectSide, setSelectSide] = React.useState(null);
+    const [open, setOpen] = React.useState(false); //Select sentence dialog open
+    const [selectSide, setSelectSide] = React.useState(null); //Current side selection
 
-    const [showCompare, setShowCompare] = useState(false);
+    const [compareResponse, setCompareResponse] = useState(null); //Compare response result
+    const [showCompare, setShowCompare] = useState(false); //Boolean to determine whether the comparison results can be shown
 
     //Determine graphFormatCode
     let graphFormatCode = null;
@@ -164,12 +136,9 @@ function CompareTwoGraphsVisualisation(props) {
                 const jsonResult = JSON.parse(result);
                 console.log(jsonResult); //debugging
 
-                console.log("updateCompareGroups(compareVis1, jsonResult.SimilarNodes1, jsonResult.SimilarEdges1)",updateCompareGroups(compareVis1, jsonResult.SimilarNodes1, jsonResult.SimilarEdges1));
-                console.log("updateCompareGroups(compareVis2, jsonResult.SimilarNodes2, jsonResult.SimilarEdges2)",updateCompareGroups(compareVis2, jsonResult.SimilarNodes2, jsonResult.SimilarEdges2));
-                setCompareVis1(updateCompareGroups(compareVis1, jsonResult.SimilarNodes1, jsonResult.SimilarEdges1));
-                setCompareVis2(updateCompareGroups(compareVis2, jsonResult.SimilarNodes2, jsonResult.SimilarEdges2));
-
+                setCompareResponse(jsonResult);
                 setShowCompare(true);
+
             })
             .catch(error => {
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
@@ -179,13 +148,54 @@ function CompareTwoGraphsVisualisation(props) {
 
     }
 
+    function getGraph(spacing, selectSide){
+        if (selectSide === 1) {
+            let graphData = null;
+
+            switch (state.visualisationFormat) {
+                case "1":
+                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing);
+                    break;
+                case "2":
+                    graphData = showCompare ? updateCompareGroups(layoutTree(sentence1GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutTree(sentence1GraphData, state.graphLayoutSpacing);
+                    break;
+                case "3":
+                    graphData = showCompare ? updateCompareGroups(layoutFlat(sentence1GraphData,false, state.graphLayoutSpacing), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutFlat(sentence1GraphData,false, state.graphLayoutSpacing);
+                    break;
+                default:
+                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing);
+                    break;
+            }
+
+            return graphData
+        }else{
+            let graphData = null;
+
+            switch (state.visualisationFormat) {
+                case "1":
+                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing);
+                    break;
+                case "2":
+                    graphData = showCompare ? updateCompareGroups(layoutTree(sentence2GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutTree(sentence2GraphData, state.graphLayoutSpacing);
+                    break;
+                case "3":
+                    graphData = showCompare ? updateCompareGroups(layoutFlat(sentence2GraphData,false, state.graphLayoutSpacing), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutFlat(sentence2GraphData,false, state.graphLayoutSpacing);
+                    break;
+                default:
+                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing);
+                    break;
+            }
+
+            return graphData
+        }
+    }
+
     //Component to let user select sentence from list of sentences uploaded in data-set
     function SelectSentenceList() {
         const {state, dispatch} = useContext(AppContext);
         const [currentLength, setCurrentLength] = React.useState(state.dataSet.length);
         const [currentDataSet, setCurrentDataSet] = React.useState(state.dataSet);
         const history = useHistory();
-
 
         function requestSentenceFromBackend(sentenceId){
 
@@ -215,27 +225,10 @@ function CompareTwoGraphsVisualisation(props) {
 
                     dispatch({type: "SET_LOADING", payload: {isLoading: false}});
 
-                    let graphData = null;
-
-                    switch (state.visualisationFormat) {
-                        case "1":
-                            graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
-                            break;
-                        case "2":
-                            graphData = layoutTree(jsonResult, state.graphLayoutSpacing);
-                            break;
-                        case "3":
-                            graphData = layoutFlat(jsonResult,false, state.graphLayoutSpacing);
-                            break;
-                        default:
-                            graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
-                            break;
-                    }
-
                     if (selectSide === 1) {
-                        setCompareVis1(graphData)
+                        setSentence1GraphData(jsonResult);
                     } else {
-                        setCompareVis2(graphData)
+                        setSentence2GraphData(jsonResult);
                     }
 
                 })
@@ -379,7 +372,7 @@ function CompareTwoGraphsVisualisation(props) {
                 </Grid>
                 <Grid item style={{width: "100%", height: "50vh"}}>
                     {
-                        compareVis1 === null ? <div>Please select a sentence</div> :
+                        sentence1GraphData === null ? <div>Please select a sentence</div> :
 
                             <div className={classes.graphDiv}>
                                 <ParentSize>
@@ -387,8 +380,8 @@ function CompareTwoGraphsVisualisation(props) {
                                         <Graph
                                             width={parent.width}
                                             height={parent.height}
-                                            graph={compareVis1}
-                                            adjacentLinks={determineAdjacentLinks(compareVis1)}
+                                            graph={getGraph(state.graphLayoutSpacing,1)}
+                                            adjacentLinks={determineAdjacentLinks(getGraph(state.graphLayoutSpacing,1))}
                                             graphFormatCode={graphFormatCode}
                                         />
                                     )}
@@ -424,7 +417,7 @@ function CompareTwoGraphsVisualisation(props) {
                 </Grid>
                 <Grid item style={{width: "100%", height: "50vh"}}>
                     {
-                        compareVis2 === null ? <div>Please select a sentence</div> :
+                        sentence2GraphData === null ? <div>Please select a sentence</div> :
 
                             <div className={classes.graphDiv}>
                                 <ParentSize>
@@ -432,8 +425,8 @@ function CompareTwoGraphsVisualisation(props) {
                                         <Graph
                                             width={parent.width}
                                             height={parent.height}
-                                            graph={compareVis2}
-                                            adjacentLinks={determineAdjacentLinks(compareVis2)}
+                                            graph={getGraph(state.graphLayoutSpacing,2)}
+                                            adjacentLinks={determineAdjacentLinks(getGraph(state.graphLayoutSpacing,2))}
                                             graphFormatCode={graphFormatCode}
                                         />
                                     )}
@@ -443,7 +436,7 @@ function CompareTwoGraphsVisualisation(props) {
                 </Grid>
             </Grid>
             <Grid item>
-                <Button variant="contained" color="primary" disableElevation endIcon={<CompareArrowsIcon/>} disabled={compareVis1 === null || compareVis2 === null} onClick={handleCompareClick}>
+                <Button variant="contained" color="primary" disableElevation endIcon={<CompareArrowsIcon/>} disabled={sentence1GraphData === null || sentence2GraphData === null} onClick={handleCompareClick}>
                     Compare
                 </Button>
             </Grid>
