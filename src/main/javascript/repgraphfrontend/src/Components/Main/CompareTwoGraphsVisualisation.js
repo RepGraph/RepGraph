@@ -5,7 +5,6 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {AppContext} from "../../Store/AppContextProvider";
 import {cloneDeep} from "lodash";
-
 import {Graph} from "../Graph/Graph";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -19,7 +18,7 @@ import {Chip} from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import ListItem from "@material-ui/core/ListItem";
-
+import FormGroup from '@material-ui/core/FormGroup';
 import Divider from "@material-ui/core/Divider";
 import {Virtuoso} from "react-virtuoso";
 import {Link, useHistory} from "react-router-dom";
@@ -28,8 +27,12 @@ import {determineAdjacentLinks, layoutHierarchy} from "../../LayoutAlgorithms/la
 import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
 import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
 import {ParentSize} from "@visx/responsive";
+
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 import CompareArrowsIcon from "@material-ui/icons/CompareArrows";
 import EditIcon from '@material-ui/icons/Edit';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -80,12 +83,26 @@ function CompareTwoGraphsVisualisation(props) {
     const [sentence1GraphData, setSentence1GraphData] = React.useState(null); //Sentence 1 Graph Data response
     const [sentence2, setSentence2] = React.useState(null); //Sentence 2 ID
     const [sentence2GraphData, setSentence2GraphData] = React.useState(null); //Sentence 2 Graph Data response
-
+  
     const [open, setOpen] = React.useState(false); //Select sentence dialog open
     const [selectSide, setSelectSide] = React.useState(null); //Current side selection
 
     const [compareResponse, setCompareResponse] = useState(null); //Compare response result
     const [showCompare, setShowCompare] = useState(false); //Boolean to determine whether the comparison results can be shown
+
+    const [strict, setStrict] = React.useState(false);
+    const [noSurface, setNoSurface] = React.useState(false);
+    const [noAbstract, setNoAbstract] = React.useState(false);
+
+    function handleStrictSwitch(){
+        setStrict(!strict)
+    };
+    function handleNoSurfaceSwitch(){
+        setNoSurface(!noSurface)
+    };
+    function handleNoAbstractSwitch(){
+        setNoAbstract(!noAbstract)
+    };
 
     //Determine graphFormatCode
     let graphFormatCode = null;
@@ -125,7 +142,7 @@ function CompareTwoGraphsVisualisation(props) {
             redirect: 'follow'
         };
 
-        fetch(state.APIendpoint +"/CompareGraphs?graphID1="+sentence1+"&graphID2="+sentence2+"&strict=false&noAbstract=false&noSurface=false", requestOptions)
+        fetch(state.APIendpoint +"/CompareGraphs?graphID1="+sentence1+"&graphID2="+sentence2+"&strict="+strict+"&noAbstract="+noAbstract+"&"+"noSurface="+noSurface, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     throw "Response not OK";
@@ -436,6 +453,24 @@ function CompareTwoGraphsVisualisation(props) {
                 </Grid>
             </Grid>
             <Grid item>
+                <FormControlLabel control={<Switch
+                    color={"primary"}
+                    checked={strict}
+                    onChange={handleStrictSwitch}
+                    name="Strict"
+                />} label="Strict Comparison"  />
+                <FormControlLabel control={<Switch
+                    color={"primary"}
+                    checked={!noSurface}
+                    onChange={handleNoSurfaceSwitch}
+                    name="NoSurface"
+                />} label="Show Similar Surface Nodes"  />
+                <FormControlLabel control={<Switch
+                    color={"primary"}
+                    checked={!noAbstract}
+                    onChange={handleNoAbstractSwitch}
+                    name="NoAbstract"
+                />} label="Show Similar Abstract Nodes"  />
                 <Button variant="contained" color="primary" disableElevation endIcon={<CompareArrowsIcon/>} disabled={sentence1GraphData === null || sentence2GraphData === null} onClick={handleCompareClick}>
                     Compare
                 </Button>

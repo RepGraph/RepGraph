@@ -7,8 +7,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
-
-import { AppContext } from "../../Store/AppContextProvider.js";
+import {AppContext} from "../../Store/AppContextProvider.js";
 import {useHistory} from "react-router-dom";
 import CompareTwoGraphsVisualisation from "../Main/CompareTwoGraphsVisualisation";
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
@@ -19,10 +18,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function CompareTwoGraphsTool(props){
-    const { state, dispatch } = useContext(AppContext); //Provide access to global state
+function CompareTwoGraphsTool(props) {
+    const {state, dispatch} = useContext(AppContext); //Provide access to global state
     const history = useHistory();
     const [open, setOpen] = React.useState(false);
+
 
     //Handle click open for dialog
     const handleClickOpen = () => {
@@ -36,7 +36,7 @@ function CompareTwoGraphsTool(props){
 
     const classes = useStyles(); //Use styles created above
 
-    return(
+    return (
         <Grid
             container
             direction="column"
@@ -49,27 +49,27 @@ function CompareTwoGraphsTool(props){
                     endIcon={<CompareArrowsIcon/>}
                     disabled={state.dataSet === null}
                 >
+                Compare Two Graphs
+            </Button>
 
-                    Compare Two Graphs
-                </Button>
-                <Dialog
-                    open={open}
-                    fullWidth={true}
-                    maxWidth="xl"
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">{"Compare two graphs:"}</DialogTitle>
-                    <DialogContent>
-                            <CompareTwoGraphsVisualisation />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} variant="contained" color="primary" disableElevation autoFocus >
-                            Close
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+            <Dialog
+                open={open}
+                fullWidth={true}
+                maxWidth="xl"
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Compare two graphs:"}</DialogTitle>
+                <DialogContent>
+                    <CompareTwoGraphsVisualisation/>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} variant="contained" color="primary" disableElevation autoFocus>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Grid>
     );
 
