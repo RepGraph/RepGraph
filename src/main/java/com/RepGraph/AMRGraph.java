@@ -49,7 +49,6 @@ public class AMRGraph extends AbstractGraph {
     }
 
 
-
     public void alignUtil(String NodeID, HashMap<String, Node> nodes, HashMap<String, Boolean> visited, int layer, FileWriter writer) throws IOException {
         // Mark the current node as visited and print it
         visited.put(NodeID, true);

@@ -1,11 +1,17 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.*;
+import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.HasWord;
+import edu.stanford.nlp.pipeline.CoreDocument;
+import edu.stanford.nlp.pipeline.CoreSentence;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.LexedTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.trees.Tree;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -162,28 +168,45 @@ class AbstractGraph {
         this.tokens = tokens;
     }
 
-
-
-
     public ArrayList<Token> extractTokensFromNodes() {
+
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner");
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        // create a document object
+        CoreDocument document = new CoreDocument(this.input);
+        pipeline.annotate(document);
+
+        if (document.sentences().size() > 1) {
+            System.out.println("Multiple Lines");
+            return null;
+        }
         ArrayList<Token> tokenlist = new ArrayList<>();
+        CoreSentence sentence = document.sentences().get(0);
+        List<CoreLabel> tokens = document.tokens();
+        List<String> posTags = sentence.posTags();
+        List<String> nerTags = sentence.nerTags();
+        for (int i = 0; i < tokens.size(); i++) {
+            tokenlist.add(new Token(i, tokens.get(i).originalText(), tokens.get(i).lemma(), null));
+            if (posTags.size() > 0) {
+                tokenlist.get(i).getExtraInformation().put("POS", posTags.get(i));
+            }
+            if (nerTags.size() > 0) {
+                tokenlist.get(i).getExtraInformation().put("NER", nerTags.get(i));
+            }
+        }
 
-        int index =0;
-
-        PTBTokenizer<CoreLabel> ptbt = PTBTokenizer.newPTBTokenizer(new StringReader(this.input),false,true);
-        while (ptbt.hasNext()) {
-            CoreLabel label = ptbt.next();
-            tokenlist.add(new Token(index,label.originalText(),label.word(),label.word()));
-
+        int index = 0;
+        for (CoreLabel label : tokens) {
             for (Node n : this.nodes.values()) {
                 if (n.getAnchors() == null) {
                     continue;
                 }
                 for (Anchors a : n.getAnchors()) {
-                    if (a.getFrom() == label.beginPosition()){
+                    if (a.getFrom() == label.beginPosition()) {
                         a.setFrom(index);
                     }
-                    if (a.getEnd()== label.endPosition()){
+                    if (a.getEnd() == label.endPosition()) {
                         a.setEnd(index);
                     }
                 }
@@ -836,9 +859,9 @@ class AbstractGraph {
         //add the Node objects to a list
         for (Node n : nodes.values()) {
             ordered.add(new Node(n));
-            if (n.getAnchors().size() > 1){
+            if (n.getAnchors().size() > 1) {
                 dummyNodes.put(n.getId(), new ArrayList<String>());
-                for (int i = 1; i < n.getAnchors().size();i++) {
+                for (int i = 1; i < n.getAnchors().size(); i++) {
                     ArrayList<Anchors> anchs = new ArrayList<>();
                     anchs.add(n.getAnchors().get(i));
                     String uuid = UUID.randomUUID().toString();
@@ -855,13 +878,11 @@ class AbstractGraph {
                 if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
                     return -1;
                 } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
-                    if (o1.getAnchors().get(0).getEnd() < o2.getAnchors().get(0).getEnd()){
+                    if (o1.getAnchors().get(0).getEnd() < o2.getAnchors().get(0).getEnd()) {
                         return -1;
-                    }
-                    else if (o1.getAnchors().get(0).getEnd() == o2.getAnchors().get(0).getEnd()){
+                    } else if (o1.getAnchors().get(0).getEnd() == o2.getAnchors().get(0).getEnd()) {
                         return 0;
-                    }
-                    else{
+                    } else {
                         return 1;
                     }
                 }
@@ -872,13 +893,13 @@ class AbstractGraph {
         HashMap<String, String> nodeToToken = new HashMap<>();
 
         int index = 0;
-        for (int i = 0; i < ordered.size()-1; i++) {
-            nodeToToken.put(ordered.get(i).getId(), index+"");
-            if (ordered.get(i).getAnchors().get(0).getEnd()!=ordered.get(i+1).getAnchors().get(0).getEnd()){
+        for (int i = 0; i < ordered.size() - 1; i++) {
+            nodeToToken.put(ordered.get(i).getId(), index + "");
+            if (ordered.get(i).getAnchors().get(0).getEnd() != ordered.get(i + 1).getAnchors().get(0).getEnd()) {
                 index++;
             }
         }
-        nodeToToken.put(ordered.get(ordered.size()-1).getId(), index+"");
+        nodeToToken.put(ordered.get(ordered.size() - 1).getId(), index + "");
 
         ArrayList<Edge> updated = new ArrayList<>();
 
@@ -926,7 +947,6 @@ class AbstractGraph {
             }
 
         }
-
 
 
         HashMap<String, Node> newNodes = new HashMap<>();
