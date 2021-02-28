@@ -1,7 +1,7 @@
 import lodash from "lodash";
 import {v4 as uuidv4} from 'uuid';
 
-export function createDummyNodes(graphData, parents, children) {
+export function createDummyNodes(graphData, parents, children,createEdges) {
     let dummyNodes = []
     let dummyEdges = []
     for (const node of graphData.nodes) {
@@ -22,6 +22,7 @@ export function createDummyNodes(graphData, parents, children) {
                 }
                 dummyNodes.push(nodeClone)
 
+                if (createEdges===true){
                 children.set(uuid, []);
                 parents.set(uuid, []);
                 for (let parent of parents.get(node.id)) {
@@ -36,6 +37,7 @@ export function createDummyNodes(graphData, parents, children) {
                     let temp = children.get(uuid);
                     temp.push(child);
                     children.set(uuid, temp);
+                }
                 }
             }
         }
