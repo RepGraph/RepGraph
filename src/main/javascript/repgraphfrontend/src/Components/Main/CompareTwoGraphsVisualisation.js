@@ -33,6 +33,8 @@ import {determineAdjacentLinks, layoutHierarchy} from "../../LayoutAlgorithms/la
 import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
 import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
 import {ParentSize} from "@visx/responsive";
+import CompareArrowsIcon from "@material-ui/icons/CompareArrows";
+import EditIcon from '@material-ui/icons/Edit';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -111,20 +113,22 @@ function CompareTwoGraphsVisualisation(props) {
     const [open, setOpen] = React.useState(false);
     const [selectSide, setSelectSide] = React.useState(null);
 
+    const [showCompare, setShowCompare] = useState(false);
+
     //Determine graphFormatCode
     let graphFormatCode = null;
     switch (state.visualisationFormat) {
         case "1":
-            graphFormatCode = "hierarchicalCompare";
+            graphFormatCode = showCompare ? "hierarchicalCompare" : "hierarchical";
             break;
         case "2":
-            graphFormatCode = "treeCompare";
+            graphFormatCode = showCompare ? "treeCompare" : "tree";
             break;
         case "3":
-            graphFormatCode = "flatCompare";
+            graphFormatCode = showCompare ? "flatCompare" : "flat";
             break;
         default:
-            graphFormatCode = "hierarchicalCompare";
+            graphFormatCode = showCompare ? "hierarchicalCompare" : "hierarchical";
             break;
     }
 
@@ -165,6 +169,7 @@ function CompareTwoGraphsVisualisation(props) {
                 setCompareVis1(updateCompareGroups(compareVis1, jsonResult.SimilarNodes1, jsonResult.SimilarEdges1));
                 setCompareVis2(updateCompareGroups(compareVis2, jsonResult.SimilarNodes2, jsonResult.SimilarEdges2));
 
+                setShowCompare(true);
             })
             .catch(error => {
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
@@ -232,6 +237,7 @@ function CompareTwoGraphsVisualisation(props) {
                     } else {
                         setCompareVis2(graphData)
                     }
+
                 })
                 .catch((error) => {
                     dispatch({type: "SET_LOADING", payload: {isLoading: false}});
@@ -243,6 +249,7 @@ function CompareTwoGraphsVisualisation(props) {
         function handleSelectSentence(sentenceId) {
             console.log(sentenceId);
             setOpen(false);
+            setShowCompare(false);
 
             if (selectSide === 1) {
                 setSentence1(sentenceId); //stores the id of the sentence selected for graph 1
@@ -365,7 +372,7 @@ function CompareTwoGraphsVisualisation(props) {
                             }}
                             label={sentence1 === null ? "No Sentence Selected" : sentence1}
                             icon={
-                                sentence1 === null ? <AddCircleOutlineIcon/> : <BuildIcon/>
+                                sentence1 === null ? <AddCircleOutlineIcon/> : <EditIcon/>
                             }
                         />
                     </Tooltip>
@@ -410,7 +417,7 @@ function CompareTwoGraphsVisualisation(props) {
                             }}
                             label={sentence2 === null ? "No Sentence Selected" : sentence2}
                             icon={
-                                sentence2 === null ? <AddCircleOutlineIcon/> : <BuildIcon/>
+                                sentence2 === null ? <AddCircleOutlineIcon/> : <EditIcon/>
                             }
                         />
                     </Tooltip>
@@ -436,7 +443,7 @@ function CompareTwoGraphsVisualisation(props) {
                 </Grid>
             </Grid>
             <Grid item>
-                <Button variant="contained" color="primary" disableElevation disabled={compareVis1 === null || compareVis2 === null} onClick={handleCompareClick}>
+                <Button variant="contained" color="primary" disableElevation endIcon={<CompareArrowsIcon/>} disabled={compareVis1 === null || compareVis2 === null} onClick={handleCompareClick}>
                     Compare
                 </Button>
             </Grid>
