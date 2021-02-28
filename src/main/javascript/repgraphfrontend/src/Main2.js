@@ -179,7 +179,6 @@ export default function MiniDrawer() {
     //const matches = useMediaQuery('(min-width:1000px)');
     // const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
-
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -402,21 +401,21 @@ export default function MiniDrawer() {
                                                                             <Chip label="AbstractNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="SurfaceNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="Token" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.tokenStyles.tokenColour
                                                                             }}/>
                                                                         </Grid>
                                                                     </Grid>
@@ -610,21 +609,21 @@ export default function MiniDrawer() {
                                                                             <Chip label="AbstractNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="SurfaceNode" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
                                                                             }}/>
                                                                         </Grid>
                                                                         <Grid item>
                                                                             <Chip label="Token" style={{
                                                                                 color: "white",
                                                                                 fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                                                backgroundColor: state.graphStyles.tokenStyles.tokenColour
                                                                             }}/>
                                                                         </Grid>
                                                                     </Grid>
@@ -715,21 +714,21 @@ export default function MiniDrawer() {
                                                 <Chip label="AbstractNode" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                    backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
                                                 }}/>
                                             </Grid>
                                             <Grid item>
                                                 <Chip label="SurfaceNode" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                    backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
                                                 }}/>
                                             </Grid>
                                             <Grid item>
                                                 <Chip label="Token" style={{
                                                     color: "white",
                                                     fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.hierarchicalStyles.nodeStyles.nodeColour
+                                                    backgroundColor: state.graphStyles.tokenStyles.tokenColour
                                                 }}/>
                                             </Grid>
                                         </Grid>
@@ -801,8 +800,6 @@ export default function MiniDrawer() {
             </Toolbar>;
     }
 
-
-
     // const toolbarList = <List>
     //     <ListItem>
     //         <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
@@ -852,8 +849,6 @@ export default function MiniDrawer() {
     //     </ListItem>
     // </List>;
 
-    console.log(currentScreenWidth);
-
     async function handleSaveFeedback(){
 
         let labels = null;
@@ -897,7 +892,7 @@ export default function MiniDrawer() {
                 <MinimalFeedback
                     save={handleSaveFeedback}
                     value={feedbackText}
-                    onChange={(e) => { setFeedbackText(e); console.log(e);}}
+                    onChange={(e) => { setFeedbackText(e)}}
                 />
             </Box>
             <AppBar

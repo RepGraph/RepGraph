@@ -8,12 +8,13 @@ export const Node = ({
                          handleMouseOver,
                          hideTooltip,
                          setTooltipData,
-                         styles,
                          graphFormatCode,
                          events
                      }) => {
     const [highlighted, setHighlighted] = useState(false);
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
+
+    const styles = state.graphStyles; //Use AppContext styles
 
     let label = (
         <text
@@ -49,7 +50,13 @@ export const Node = ({
             if (node.selected && events && events.hasOwnProperty("select")) {
                 fillColor = styles.nodeStyles.selectedColour;
             } else if (highlighted) {
-                fillColor = styles.nodeStyles.hoverColour;
+
+                if(node.surface){
+                    fillColor = styles.nodeStyles.surfaceNodeHoverColour;
+                }else{
+                    fillColor = styles.nodeStyles.abstractNodeHoverColour;
+                }
+
             } else if (
                 (graphFormatCode === "hierarchicalLongestPath" ||
                     graphFormatCode === "treeLongestPath"||
@@ -67,13 +74,15 @@ export const Node = ({
                         fillColor = styles.compareStyles.nodeColourDissimilar;
                         break;
                     default:
-                        fillColor = styles.nodeStyles.nodeColour;
+                        fillColor = "black";
                         break;
                 }
 
             }
-            else {
-                fillColor = styles.nodeStyles.nodeColour;
+            else if(node.surface){
+                fillColor = styles.nodeStyles.surfaceNodeColour;
+            }else {
+                fillColor = styles.nodeStyles.abstractNodeColour;
             }
             break;
         case "token":

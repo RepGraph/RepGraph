@@ -1,69 +1,114 @@
 import React, {useReducer} from "react";
 import {dmrsData} from "../store";
+
 export const AppContext = React.createContext();
+
+// export const defaultGraphStyles = {
+//     backgroundColour: "#efefef",
+//     hierarchicalStyles: {
+//         nodeStyles: {
+//             nodeColour: "rgba(0,172,237,1)",
+//             hoverColour: "rgba(82, 208, 255,1)",
+//             spanColour: "rgba(0,0,0,0.3)",
+//             selectedColour: "rgba(61, 230, 140, 1)",
+//             labelColour: "rgba(255,255,255,1)"
+//         },
+//         linkStyles: {
+//             linkColour: "rgba(120,120,120,1)",
+//             hoverColour: "rgba(0,0,0,1)",
+//             selectedColour: "rgba(61, 230, 140, 1)"
+//         },
+//         tokenStyles: {
+//             tokenColour: "rgba(255, 220, 106,1)",
+//             hoverColour: "rgba(255, 232, 156,1)",
+//             selectedColour: "rgba(61, 230, 140, 1)",
+//             labelColour: "rgba(0,0,0,1)"
+//         }
+//     },
+//     treeStyles: {
+//         nodeStyles: {
+//             nodeColour: "rgba(0,172,237,1)",
+//             hoverColour: "rgba(82, 208, 255,1)",
+//             spanColour: "rgba(0,0,0,0.3)",
+//             selectedColour: "rgba(61, 230, 140, 1)",
+//             labelColour: "rgba(255,255,255,1)"
+//         },
+//         linkStyles: {
+//             linkColour: "rgba(120,120,120,1)",
+//             hoverColour: "rgba(0,0,0,1)",
+//             selectedColour: "rgba(61, 230, 140, 1)"
+//         },
+//         tokenStyles: {
+//             tokenColour: "rgba(255, 220, 106,1)",
+//             hoverColour: "rgba(255, 232, 156,1)",
+//             selectedColour: "rgba(61, 230, 140, 1)",
+//             labelColour: "rgba(0,0,0,1)"
+//         }
+//     },
+//     flatStyles: {
+//         nodeStyles: {
+//             nodeColour: "rgba(0,172,237,1)",
+//             hoverColour: "rgba(82, 208, 255,1)",
+//             spanColour: "rgba(0,0,0,0.3)",
+//             selectedColour: "rgba(61, 230, 140, 1)",
+//             labelColour: "rgba(255,255,255,1)"
+//         },
+//         linkStyles: {
+//             linkColour: "rgba(120,120,120,1)",
+//             hoverColour: "rgba(0,0,0,1)",
+//             selectedColour: "rgba(61, 230, 140, 1)"
+//         },
+//         tokenStyles: {
+//             tokenColour: "rgba(255, 220, 106,1)",
+//             hoverColour: "rgba(255, 232, 156,1)",
+//             selectedColour: "rgba(61, 230, 140, 1)",
+//             labelColour: "rgba(0,0,0,1)"
+//         }
+//     },
+//     longestPathStyles: {
+//         linkColour: "rgba(225, 9, 9, 1)",
+//         nodeColour: "rgba(225, 9, 9, 1)",
+//         hoverColour: "rgba(248, 84, 84, 1)"
+//     },
+//     compareStyles: {
+//         linkColourDissimilar: "rgba(225, 9, 9, 1)",
+//         linkColourSimilar: "rgba(67, 220, 24, 1)",
+//         nodeColourDissimilar: "rgba(225, 9, 9, 1)",
+//         nodeColourSimilar: "rgba(67, 220, 24, 1)",
+//         hoverNodeColourSimilar: "rgba(125, 237, 94, 1)",
+//         hoverNodeColourDissimilar: "rgba(248, 84, 84, 1)",
+//         hoverLinkColourSimilar: "rgba(125, 237, 94, 1)",
+//         hoverLinkColourDissimilar: "rgba(248, 84, 84, 1)"
+//     },
+//     planarStyles: {
+//         linkColourCross: "rgba(225, 9, 9, 1)",
+//         hoverColour: "rgba(248, 84, 84, 1)"
+//     }
+// };
 
 export const defaultGraphStyles = {
     backgroundColour: "#efefef",
-    hierarchicalStyles: {
-        nodeStyles: {
-            nodeColour: "rgba(0,172,237,1)",
-            hoverColour: "rgba(82, 208, 255,1)",
-            spanColour: "rgba(0,0,0,0.3)",
-            selectedColour: "rgba(61, 230, 140, 1)",
-            labelColour: "rgba(255,255,255,1)"
-        },
-        linkStyles: {
-            linkColour: "rgba(120,120,120,1)",
-            hoverColour: "rgba(0,0,0,1)",
-            selectedColour: "rgba(61, 230, 140, 1)"
-        },
-        tokenStyles: {
-            tokenColour: "rgba(255, 220, 106,1)",
-            hoverColour: "rgba(255, 232, 156,1)",
-            selectedColour: "rgba(61, 230, 140, 1)",
-            labelColour: "rgba(0,0,0,1)"
-        }
+    nodeStyles: {
+        abstractNodeColour: "rgba(0,172,237,1)",
+        abstractNodeHoverColour: "rgba(82, 208, 255,1)",
+        surfaceNodeColour: "rgba(255,194,34,1)",
+        surfaceNodeHoverColour: "rgba(229,188,79,1)",
+        spanColour: "rgba(0,0,0,0.3)",
+        selectedColour: "rgba(61, 230, 140, 1)",
+        labelColour: "rgba(255,255,255,1)"
     },
-    treeStyles: {
-        nodeStyles: {
-            nodeColour: "rgba(0,172,237,1)",
-            hoverColour: "rgba(82, 208, 255,1)",
-            spanColour: "rgba(0,0,0,0.3)",
-            selectedColour: "rgba(61, 230, 140, 1)",
-            labelColour: "rgba(255,255,255,1)"
-        },
-        linkStyles: {
-            linkColour: "rgba(120,120,120,1)",
-            hoverColour: "rgba(0,0,0,1)",
-            selectedColour: "rgba(61, 230, 140, 1)"
-        },
-        tokenStyles: {
-            tokenColour: "rgba(255, 220, 106,1)",
-            hoverColour: "rgba(255, 232, 156,1)",
-            selectedColour: "rgba(61, 230, 140, 1)",
-            labelColour: "rgba(0,0,0,1)"
-        }
+    linkStyles: {
+        linkColour: "rgba(120,120,120,1)",
+        hoverColour: "rgba(0,0,0,1)",
+        selectedColour: "rgba(61, 230, 140, 1)"
     },
-    flatStyles: {
-        nodeStyles: {
-            nodeColour: "rgba(0,172,237,1)",
-            hoverColour: "rgba(82, 208, 255,1)",
-            spanColour: "rgba(0,0,0,0.3)",
-            selectedColour: "rgba(61, 230, 140, 1)",
-            labelColour: "rgba(255,255,255,1)"
-        },
-        linkStyles: {
-            linkColour: "rgba(120,120,120,1)",
-            hoverColour: "rgba(0,0,0,1)",
-            selectedColour: "rgba(61, 230, 140, 1)"
-        },
-        tokenStyles: {
-            tokenColour: "rgba(255, 220, 106,1)",
-            hoverColour: "rgba(255, 232, 156,1)",
-            selectedColour: "rgba(61, 230, 140, 1)",
-            labelColour: "rgba(0,0,0,1)"
-        }
+    tokenStyles: {
+        tokenColour: "rgba(255, 220, 106,1)",
+        hoverColour: "rgba(255, 232, 156,1)",
+        selectedColour: "rgba(61, 230, 140, 1)",
+        labelColour: "rgba(0,0,0,1)"
     },
+
     longestPathStyles: {
         linkColour: "rgba(225, 9, 9, 1)",
         nodeColour: "rgba(225, 9, 9, 1)",
@@ -100,7 +145,7 @@ const initialState = {
     parserResponse: null,
     selectedSentenceID: null,
     selectedSentenceGraphData: null,
-    selectedSentenceVisualisation : null,
+    selectedSentenceVisualisation: null,
     selectedNodeAndEdges: null,
     isLoading: false,
     APIendpoint: "http://localhost:8080",
@@ -108,7 +153,7 @@ const initialState = {
     longestPathVisualisation: null,
     visualisationFormat: "1",
     darkMode: false,
-    framework : "1",
+    framework: "1",
     userID: 1,
     graphStyles: defaultGraphStyles,
     graphLayoutSpacing: defaultGraphLayoutSpacing
