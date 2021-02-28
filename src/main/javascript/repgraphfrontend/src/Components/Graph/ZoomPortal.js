@@ -6,6 +6,15 @@ import {layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
 import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
 import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
 import {AppContext, defaultGraphLayoutSpacing} from "../../Store/AppContextProvider";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+import Button from "@material-ui/core/Button";
+import { positions } from '@material-ui/system';
+import Box from "@material-ui/core/Box";
+
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 const initialTransform = {
     scaleX: 1.25,
@@ -22,11 +31,10 @@ const ZoomPortal = (props) => {
     const [valuesGraphSpacing, setValuesGraphSpacing] = useState(state.graphLayoutSpacing);
 
 
-    const handleChangeGraphSpacing = (event) => {
+    const handleChangeGraphSpacing = (name) => {
 
         let intraValue,interValue;
-        console.log("event", event);
-        if (event.target.name === "decrease") {
+        if (name === "decrease") {
             intraValue = valuesGraphSpacing.intraLevelSpacing - 20;
             interValue = valuesGraphSpacing.interLevelSpacing - 10;
         }
@@ -86,7 +94,6 @@ const ZoomPortal = (props) => {
     }
 
     return (
-        <div style={{display: "flex", flexGrow: 1, border: "0px solid green"}}>
             <Zoom
                 width={width}
                 height={height}
@@ -102,9 +109,10 @@ const ZoomPortal = (props) => {
                     skewX: 0,
                     skewY: 0
                 }}
+
             >
                 {(zoom) => (
-                    <div className="relative">
+                    <div style={{position: 'relative' }}>
                         <svg
                             width={width}
                             height={height}
@@ -133,55 +141,26 @@ const ZoomPortal = (props) => {
                             />
                             <g transform={zoom.toString()}>{props.children}</g>
                         </svg>
-                        <div className="controls">
-                            <button
-                                type="button"
-                                className="btn"
-                                name="increase"
-                                onClick={handleChangeGraphSpacing}
+                        <Box
+                            p={2}
+                            position="absolute"
+                            top={0}
+                            right={0}
+                            zIndex="modal"
+                        >
+                            <ButtonGroup
+                                orientation="vertical"
+                                color="primary"
+                                aria-label="vertical contained primary button group"
+                                variant="contained"
                             >
-                                Increase Spacing
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-bottom"
-                                name="decrease"
-                                onClick={handleChangeGraphSpacing}
-                            >
-                               Decrease Spacing
-                            </button>
-                        </div>
+                                <Button size="small" startIcon={<AddIcon />} onClick={ () => handleChangeGraphSpacing("increase")} disableElevation>Spacing</Button>
+                                <Button size="small" startIcon={<RemoveIcon />} onClick={() => handleChangeGraphSpacing("decrease")} disableElevation>Spacing</Button>
+                            </ButtonGroup>
+                        </Box>
                     </div>
                 )}
             </Zoom>
-            <style jsx>{`
-        .btn {
-          margin-top: 10px;
-          text-align: center;
-          border: none;
-          background: #cfcfcf;
-          color: #000000;
-          padding-top: 10px;
-          padding-bottom: 10px;
-          width: 75px;
-          font-size: 15px;
-        }
-        .btn-bottom {
-          margin-bottom: 1rem;
-        }
-        .controls {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-        } 
-        .relative {
-          position: relative;
-        }
-      `}</style>
-        </div>
     );
 };
 

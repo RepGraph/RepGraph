@@ -52,8 +52,10 @@ const useStyles = makeStyles((theme) => ({
 
 const styleCodes = {
     nodeStyles: {
-        nodeColour: "Node Colour",
-        hoverColour: "Hover Colour",
+        abstractNodeColour: "Abstract Node Colour",
+        surfaceNodeColour: "Surface Node Colour",
+        abstractNodeHoverColour: "Abstract Node Hover Colour",
+        surfaceNodeHoverColour: "Surface Node Hover Colour",
         spanColour: "Span Colour",
         selectedColour: "Selected Colour",
         labelColour: "Label Colour"
@@ -263,11 +265,11 @@ export default function SettingsTool() {
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
     const history = useHistory(); //Use routing history
 
-    const [valuesNodes, setValuesNodes] = useState(state.graphStyles.hierarchicalStyles.nodeStyles);
+    const [valuesNodes, setValuesNodes] = useState(state.graphStyles.nodeStyles);
 
-    const [valuesLinks, setValuesLinks] = useState(state.graphStyles.hierarchicalStyles.linkStyles);
+    const [valuesLinks, setValuesLinks] = useState(state.graphStyles.linkStyles);
 
-    const [valuesTokens, setValuesTokens] = useState(state.graphStyles.hierarchicalStyles.tokenStyles);
+    const [valuesTokens, setValuesTokens] = useState(state.graphStyles.tokenStyles);
 
     const [valuesGraphSpacing, setValuesGraphSpacing] = useState(state.graphLayoutSpacing);
 
@@ -282,24 +284,10 @@ export default function SettingsTool() {
             payload: {
                 graphStyles: {
                     ...state.graphStyles,
-                    hierarchicalStyles: {
-                        ...state.graphStyles.hierarchicalStyles, nodeStyles: {
+                    nodeStyles: {
                             ...valuesNodes,
                             [event.target.name]: event.target.value
                         }
-                    },
-                    treeStyles: {
-                        ...state.graphStyles.treeStyles, nodeStyles: {
-                            ...valuesNodes,
-                            [event.target.name]: event.target.value
-                        }
-                    },
-                    flatStyles: {
-                        ...state.graphStyles.flatStyles, nodeStyles: {
-                            ...valuesNodes,
-                            [event.target.name]: event.target.value
-                        }
-                    }
                 }
             }
         });
@@ -318,24 +306,10 @@ export default function SettingsTool() {
             payload: {
                 graphStyles: {
                     ...state.graphStyles,
-                    hierarchicalStyles: {
-                        ...state.graphStyles.hierarchicalStyles, tokenStyles: {
+                   tokenStyles: {
                             ...valuesTokens,
                             [event.target.name]: event.target.value
                         }
-                    },
-                    treeStyles: {
-                        ...state.graphStyles.treeStyles, tokenStyles: {
-                            ...valuesTokens,
-                            [event.target.name]: event.target.value
-                        }
-                    },
-                    flatStyles: {
-                        ...state.graphStyles.flatStyles, tokenStyles: {
-                            ...valuesTokens,
-                            [event.target.name]: event.target.value
-                        }
-                    }
                 }
             }
         });
@@ -353,24 +327,10 @@ export default function SettingsTool() {
             payload: {
                 graphStyles: {
                     ...state.graphStyles,
-                    hierarchicalStyles: {
-                        ...state.graphStyles.hierarchicalStyles, linkStyles: {
+                    linkStyles: {
                             ...valuesLinks,
                             [event.target.name]: event.target.value
                         }
-                    },
-                    treeStyles: {
-                        ...state.graphStyles.treeStyles, linkStyles: {
-                            ...valuesLinks,
-                            [event.target.name]: event.target.value
-                        }
-                    },
-                    flatStyles: {
-                        ...state.graphStyles.flatStyles, linkStyles: {
-                            ...valuesLinks,
-                            [event.target.name]: event.target.value
-                        }
-                    }
                 }
             }
         });
@@ -430,9 +390,9 @@ export default function SettingsTool() {
     }
 
     const handleResetDefaultStyles = () => {
-        setValuesNodes(defaultGraphStyles.hierarchicalStyles.nodeStyles);
-        setValuesLinks(defaultGraphStyles.hierarchicalStyles.linkStyles);
-        setValuesTokens(defaultGraphStyles.hierarchicalStyles.tokenStyles);
+        setValuesNodes(defaultGraphStyles.nodeStyles);
+        setValuesLinks(defaultGraphStyles.linkStyles);
+        setValuesTokens(defaultGraphStyles.tokenStyles);
         setValuesGraphSpacing(defaultGraphLayoutSpacing);
 
         dispatch({

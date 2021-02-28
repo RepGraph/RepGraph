@@ -19,64 +19,7 @@ export const Graph = ({
     const [tooltipData, setTooltipData] = useState({ extraInformation: {} });
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
 
-    const styles = state.graphStyles;
-
-    let graphStyles = null;
-
-    switch (graphFormatCode) {
-        case "hierarchical":
-            graphStyles = { ...styles.hierarchicalStyles };
-            break;
-        case "tree":
-            graphStyles = { ...styles.treeStyles };
-            break;
-        case "flat":
-            graphStyles = { ...styles.flatStyles };
-            break;
-        case "planar":
-            graphStyles = { ...styles.flatStyles, planarStyles: styles.planarStyles };
-            break;
-        case "hierarchicalLongestPath":
-            graphStyles = {
-                ...styles.hierarchicalStyles,
-                longestPathStyles: styles.longestPathStyles
-            };
-            break;
-        case "treeLongestPath":
-            graphStyles = {
-                ...styles.hierarchicalStyles,
-                longestPathStyles: styles.longestPathStyles
-            };
-            break;
-        case "flatLongestPath":
-            graphStyles = {
-                ...styles.flatStyles,
-                longestPathStyles: styles.longestPathStyles
-            };
-            break;
-        case "hierarchicalCompare":
-            graphStyles = {
-                ...styles.hierarchicalStyles,
-                compareStyles: styles.compareStyles
-            };
-            break;
-        case "treeCompare":
-            graphStyles = {
-                ...styles.treeStyles,
-                compareStyles: styles.compareStyles
-            };
-            break;
-        case "flatCompare":
-            graphStyles = {
-                ...styles.flatStyles,
-                compareStyles: styles.compareStyles
-            };
-            break;
-        default:
-            graphStyles = { ...styles.hierarchicalStyles };
-            break;
-    }
-
+    const styles = state.graphStyles; //Use AppContext styles
 
     const {
         tooltipLeft,
@@ -131,7 +74,6 @@ export const Graph = ({
                     <Link
                         key={`link-${i}`}
                         link={link}
-                        styles={graphStyles}
                         graphFormatCode={graphFormatCode}
                         tooltipData={tooltipData}
                         adjacentLinks={adjacentLinks}
@@ -146,7 +88,6 @@ export const Graph = ({
                         handleMouseOver={handleMouseOver}
                         hideTooltip={hideTooltip}
                         setTooltipData={setTooltipData}
-                        styles={graphStyles}
                         graphFormatCode={graphFormatCode}
                         events={events}
                     />
@@ -183,8 +124,8 @@ export const Graph = ({
                                     style={{
                                         color:
                                             tooltipData.type === "node"
-                                                ? graphStyles.nodeStyles.nodeColour
-                                                : graphStyles.tokenStyles.tokenColour
+                                                ? styles.nodeStyles.nodeColour
+                                                : styles.tokenStyles.tokenColour
                                     }}
                                 >
                                     {tooltipData.label}
@@ -208,8 +149,8 @@ export const Graph = ({
                                                 style={{
                                                     color:
                                                         tooltipData.type === "node"
-                                                            ? graphStyles.nodeStyles.nodeColour
-                                                            : graphStyles.tokenStyles.tokenColour,
+                                                            ? styles.nodeStyles.nodeColour
+                                                            : styles.tokenStyles.tokenColour,
                                                     marginTop: "0.4rem",
                                                     width: "100%"
                                                 }}

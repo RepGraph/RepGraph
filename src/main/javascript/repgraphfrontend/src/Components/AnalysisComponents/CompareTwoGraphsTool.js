@@ -10,6 +10,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import {AppContext} from "../../Store/AppContextProvider.js";
 import {useHistory} from "react-router-dom";
 import CompareTwoGraphsVisualisation from "../Main/CompareTwoGraphsVisualisation";
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,14 +44,11 @@ function CompareTwoGraphsTool(props) {
             alignItems="center"
             className={classes.root}
         >
-
-
-            <Button
-                variant="contained" color="primary" disableElevation onClick={handleClickOpen}
-                endIcon={<LocationSearchingIcon/>}
-                disabled={state.dataSet === null}
-            >
-
+                <Button
+                    variant="contained" color="primary" disableElevation onClick={handleClickOpen}
+                    endIcon={<CompareArrowsIcon/>}
+                    disabled={state.dataSet === null}
+                >
                 Compare Two Graphs
             </Button>
 
