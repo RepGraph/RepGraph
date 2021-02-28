@@ -10,9 +10,6 @@ import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
-//import { AppContext } from "./Store/AppContext.js";
-
-
 const useStyles = makeStyles((theme) => ({
     backdrop: {
         zIndex: theme.zIndex.drawer + 1,
@@ -24,16 +21,15 @@ export default function App() {
     const {state, dispatch} = useContext(AppContext);
     const classes = useStyles();
 
-
     const font = "'Quicksand', 'Helvetica', 'Arial', sans-serif";
 
-    const primaryColor = state.darkMode ? "#eaeaea" : "#00c072";
-    const secondaryColor = state.darkMode ? "#00c072" : "#eaeaea";
-    const textPrimary = state.darkMode ? "#ffffff" : "#000000";
-    const textSecondary = state.darkMode ? "#000000" : "#ffffff";
+    const primaryColor = "#00c072";
+    const secondaryColor = "#eaeaea";
+    const textPrimary = "#000000";
+    const textSecondary = "#ffffff";
 
     const palette = {
-        type: state.darkMode ? "dark" : "light",
+        type: "light",
         primary: {main: primaryColor},
         secondary: {main: secondaryColor},
         text: {

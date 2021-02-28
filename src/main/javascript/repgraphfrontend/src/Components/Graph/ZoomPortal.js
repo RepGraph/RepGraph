@@ -136,7 +136,7 @@ const ZoomPortal = (props) => {
                                 }}
                                 onDoubleClick={(event) => {
                                     zoom.center();
-                                    zoom.reset();
+                                    //zoom.reset();
                                 }}
                             />
                             <g transform={zoom.toString()}>{props.children}</g>
