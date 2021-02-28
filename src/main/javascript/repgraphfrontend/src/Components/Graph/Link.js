@@ -18,20 +18,27 @@ export const Link = ({
 
     const handleOnClick = (event) => {
 
-        if(events && events.hasOwnProperty('select')){
+        if (events && events.hasOwnProperty('select')) {
 
-            if(events.select === "subset"){
+            if (events.select === "subset") {
                 //nothing to do?
-            }else if(events.select === "subgraph"){
+            } else if (events.select === "subgraph") {
 
                 try {
                     const newLinks = state.selectedSentenceVisualisation.links.map(oldLink => ({
                         ...oldLink,
-                        selected: oldLink.type === "link" ? (oldLink.id === link.id ? true: oldLink.selected) : false
+                        selected: oldLink.type === "link" ? (oldLink.id === link.id ? true : oldLink.selected) : false
                     }));
 
-                    dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation , links: newLinks} }});
-                }catch (e) {
+                    dispatch({type: "SET_SENTENCE_VISUALISATION",
+                        payload: {
+                            selectedSentenceVisualisation: {
+                                ...state.selectedSentenceVisualisation,
+                                links: newLinks
+                            }
+                        }
+                    });
+                } catch (e) {
                     console.log(e);
                 }
             }
@@ -46,7 +53,7 @@ export const Link = ({
         strokeColor = styles.linkStyles.hoverColour;
     } else if (
         (graphFormatCode === "hierarchicalLongestPath" ||
-            graphFormatCode === "treeLongestPath"||
+            graphFormatCode === "treeLongestPath" ||
             graphFormatCode === "flatLongestPath") &&
         link.group === "longestPath"
     ) {
@@ -56,7 +63,7 @@ export const Link = ({
         tooltipOpen
     ) {
         strokeColor = styles.linkStyles.hoverColour;
-    } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"|| graphFormatCode === "flatCompare"){
+    } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare" || graphFormatCode === "flatCompare") {
 
         switch (link.group) {
             case "similar":
@@ -70,7 +77,7 @@ export const Link = ({
                 break;
         }
 
-    } else if (graphFormatCode === "planar"){
+    } else if (graphFormatCode === "planar") {
         switch (link.group) {
             case "linkColourCross":
                 strokeColor = styles.planarStyles.linkColourCross;
@@ -145,7 +152,9 @@ function EdgeLayout(link, strokeColor) {
         );
     } else {
         return (
-            <Group>
+            <Group style={{
+                cursor: "pointer",
+            }}>
                 <path
                     id={`edge${link.id}${textPathID}`}
                     d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
@@ -153,21 +162,13 @@ function EdgeLayout(link, strokeColor) {
                     strokeWidth="2"
                     fill="none"
                 />
-                {/*<text textAnchor="middle" dy="-1.5px" x={xMid}*/}
-                {/*      y={yMid} stroke={strokeColor} fill={strokeColor} dominantBaseline="central" side="left">*/}
-                {/*    ➤*/}
-                {/*    /!*<textPath*!/*/}
-                {/*    /!*    href={`#edge${link.id}`}*!/*/}
-                {/*    /!*    startOffset={`50%`}*!/*/}
-                {/*    /!*    side="left"*!/*/}
-                {/*    /!*    stroke={strokeColor}*!/*/}
-                {/*    /!*    fill={strokeColor}*!/*/}
-                {/*    /!*    fontSize="25px"*!/*/}
-                {/*    /!*    dominantBaseline="central"*!/*/}
-                {/*    /!*>*!/*/}
-                {/*    /!*    ➤*!/*/}
-                {/*    /!*</textPath>*!/*/}
-                {/*</text>*/}
+                <path
+                    id={`edge${link.id}${textPathID}2`}
+                    d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
+                    stroke="rgba(0, 0, 0, 0)"
+                    strokeWidth="40"
+                    fill="none"
+                />
                 <text textAnchor="middle" dy="-1.5px">
                     <textPath
                         href={`#edge${link.id}${textPathID}`}

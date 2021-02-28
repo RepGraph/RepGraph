@@ -212,6 +212,9 @@ export const Node = ({
     return (
         <g>
             <Group
+                style={{
+                    cursor: "pointer",
+                }}
                 onMouseEnter={(event) => {
                     //console.log(node.label);
                     setHighlighted(true);
