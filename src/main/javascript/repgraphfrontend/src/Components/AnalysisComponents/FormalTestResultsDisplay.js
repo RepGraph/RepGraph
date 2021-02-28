@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -7,16 +7,16 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import { Button } from "@material-ui/core";
+import {Button} from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { Tooltip, Typography } from "@material-ui/core";
+import {Tooltip, Typography} from "@material-ui/core";
 
-import { cloneDeep } from "lodash";
+import {cloneDeep} from "lodash";
 
-import { AppContext } from "../../Store/AppContextProvider";
+import {AppContext} from "../../Store/AppContextProvider";
 import LongestPathVisualisation from "../Main/LongestPathVisualisation";
 import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
@@ -43,14 +43,14 @@ const useStyles = makeStyles({
 
 //Function to create row data for the formal tests results table
 function createData(test, result) {
-    return { test, result };
+    return {test, result};
 }
 
 export default function FormalTestsResultsDisplay(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false); //Local state of the results dialog
     const [rowClicked, setRowClicked] = React.useState(null); //Local state to store which table row was clicked
-    const { state, dispatch } = React.useContext(AppContext); //Provide access to global state
+    const {state, dispatch} = React.useContext(AppContext); //Provide access to global state
     const response = state.testResults; //Get the test results from the global state
     const history = useHistory(); //Provide access to router history
 
@@ -60,19 +60,34 @@ export default function FormalTestsResultsDisplay(props) {
 
     //Add the rows to the table of results - in consistent order
     try {
-        if(response.hasOwnProperty("Planar")){
+        if (response.hasOwnProperty("Planar")) {
             newRows.push(createData("Planar", response.Planar.planar));
         }
-        if(response.hasOwnProperty("LongestPathDirected")){
-            newRows.push(createData("Longest Directed Path", response.LongestPathDirected));
-        }
-        if(response.hasOwnProperty("LongestPathUndirected")){
-            newRows.push(createData("Longest Undirected Path", response.LongestPathUndirected));
-        }
-        if(response.hasOwnProperty("Connected")){
+        if (response.hasOwnProperty("Connected")) {
             newRows.push(createData("Connected", response.Connected));
         }
-    }catch (e) {
+        if (response.hasOwnProperty("LongestPathDirected")) {
+            let res;
+            if (response.LongestPathDirected !== "Cycle Detected") {
+                res = "There are " + response.LongestPathDirected.length + " longest paths with a length of " + response.LongestPathDirected[0].length;
+            }
+            else{
+                res = "Cycle Detected";
+            }
+            newRows.push(createData("Longest Directed Path", res));
+        }
+        if (response.hasOwnProperty("LongestPathUndirected")) {
+            let res;
+            if (response.LongestPathUndirected !== "Cycle Detected") {
+                res = "There are " + response.LongestPathUndirected.length + " longest paths with a length of " + response.LongestPathUndirected[0].length;
+            }
+            else{
+                res = "Cycle Detected";
+            }
+            newRows.push(createData("Longest Undirected Path", res));
+        }
+
+    } catch (e) {
         console.log(e); //Log the error to the console
         history.push("/404"); //Take the user to the error page
     }
@@ -142,6 +157,7 @@ export default function FormalTestsResultsDisplay(props) {
         );
     }
 
+
     // const [anchorEl, setAnchorEl] = React.useState(null); //Anchor for information popper component
 
     //Handle information button click
@@ -156,6 +172,10 @@ export default function FormalTestsResultsDisplay(props) {
 
     // const popperOpen = Boolean(anchorEl);
     // const id = open ? 'simple-popover' : undefined;
+
+    if (newRows.includes("LongestPathDirected")){
+
+    }
 
     return (
         <TableContainer component={Paper}>
@@ -196,10 +216,12 @@ export default function FormalTestsResultsDisplay(props) {
                             <TableCell>
                                 {
                                     row.test !== "Connected" && (
-                                    <Button color="primary" variant="contained" disableElevation onClick={(event) => handleClickOpen(event, row.test)} disabled={row.result === "Cycle Detected" ? true : false}>
-                                        Visualise
-                                    </Button>
-                                )}
+                                        <Button color="primary" variant="contained" disableElevation
+                                                onClick={(event) => handleClickOpen(event, row.test)}
+                                                disabled={row.result === "Cycle Detected"}>
+                                            Visualise
+                                        </Button>
+                                    )}
                             </TableCell>
                         </TableRow>
                     ))}
