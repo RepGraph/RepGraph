@@ -528,14 +528,14 @@ class AbstractModel {
                 } else {
                     String phrase1 = "";
                     String phrase2 = "";
-
+                    if (n1.getAnchors()!=null){
                     for (Anchors a : n1.getAnchors()) {
                         phrase1 += g1.getTokenInput(g1.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
-                    }
-
+                    }}
+                    if (n2.getAnchors()!=null){
                     for (Anchors a : n2.getAnchors()) {
                         phrase2 += g2.getTokenInput(g2.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
-                    }
+                    }}
 
                     if (n1.getLabel().equals(n2.getLabel()) && phrase1.equals(phrase2)) {
                         //if they are equal then it adds the respective IDs to the individual similar nodes lists for the graphs
@@ -558,12 +558,15 @@ class AbstractModel {
                                 phrase1 = "";
                                 phrase2 = "";
 
-                                for (Anchors a : nn1.getAnchors()) {
-                                    phrase1 += g1.getTokenInput(g1.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
+                                if (nn1.getAnchors()!=null) {
+                                    for (Anchors a : nn1.getAnchors()) {
+                                        phrase1 += g1.getTokenInput(g1.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
+                                    }
                                 }
-
-                                for (Anchors a : nn2.getAnchors()) {
-                                    phrase2 += g2.getTokenInput(g2.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
+                                if (nn2.getAnchors()!=null) {
+                                    for (Anchors a : nn2.getAnchors()) {
+                                        phrase2 += g2.getTokenInput(g2.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
+                                    }
                                 }
                                 if (nn1.getLabel().equals(nn2.getLabel()) && e1.getLabel().equals(e2.getLabel()) && phrase1.equals(phrase2)) {
                                     if (((nn1.isSurface() && nn2.isSurface()) && noSurface == false) || (!nn1.isSurface() && !nn2.isSurface() && noAbstract == false) || (noAbstract == false && noSurface == false)) {

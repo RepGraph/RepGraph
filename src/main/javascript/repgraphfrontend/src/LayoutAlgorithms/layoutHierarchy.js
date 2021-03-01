@@ -43,6 +43,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
         let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
         setAnchors(graphClone, children, parents, nodesWithoutAnchors);
 
+        console.log("GRAPH CLONEEE",graphClone)
 //Determine span lengths of each node
         const graphNodeSpanLengths = Array.from(graphClone.nodes.values())
             .map((node) => node.anchors[0])

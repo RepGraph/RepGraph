@@ -90,8 +90,9 @@ public class Node {
     public Node(Node n) {
         this.label = n.label;
         this.id = n.id;
-        ArrayList<Anchors> anch = new ArrayList<Anchors>();
+        ArrayList<Anchors> anch = null;
         if (n.getAnchors()!=null) {
+            anch = new ArrayList<Anchors>();
             for (Anchors anchor : n.getAnchors()) {
                 anch.add(new Anchors(anchor.getFrom(), anchor.getEnd()));
             }
