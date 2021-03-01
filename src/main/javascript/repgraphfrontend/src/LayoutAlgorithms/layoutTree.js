@@ -1,4 +1,4 @@
-import {childrenAnchors, getPath, topologicalSort, controlPoints, edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther} from "./layoutUtils";
+import {topologicalSort, controlPoints, edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors} from "./layoutUtils";
 
 export const layoutTree = (graphData, graphLayoutSpacing) => {
 
@@ -6,7 +6,6 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
 
         const lodash = require('lodash');
         let graphClone = lodash.cloneDeep(graphData);
-        console.log("graphClone", graphClone);
 
         let nodeMap = new Map();
         for (let node of graphClone.nodes) {
@@ -50,36 +49,9 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                 topologicalSort(nodeOuter, children, visited, stack, graphClone)
             );
         }
+
         let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
-        let topological = getPath(graphClone, children);
-
-        for (let nodeID of topological) {
-            let node = graphClone.nodes.get(nodeID);
-            if (node.anchors === null) {
-                let vis = {};
-                for (let node of graphClone.nodes.values()) {
-                    vis[node.id] = false;
-                }
-                nodesWithoutAnchors.push(node.id);
-                let anch = [];
-                anch.push(childrenAnchors(node, children, vis, graphClone));
-                if (anch[0].from === Number.MAX_VALUE) {
-                    for (let parentID of parents.get(node.id)) {
-                        if (graphClone.nodes.get(parentID).anchors !== null) {
-                            if (graphClone.nodes.get(parentID).anchors[0].from < anch[0].from) {
-                                anch[0] = graphClone.nodes.get(parentID).anchors[0];
-                            }
-                        }
-                    }
-                }
-
-                graphClone.nodes.set(node.id, {...node, anchors: anch, span: false});
-
-            } else {
-                graphClone.nodes.set(node.id, {...node, span: true});
-            }
-
-        }
+        setAnchors(graphClone, children, parents, nodesWithoutAnchors);
 
         let numLevels = 0;
         for (const stack of topologicalStacks.values()) {

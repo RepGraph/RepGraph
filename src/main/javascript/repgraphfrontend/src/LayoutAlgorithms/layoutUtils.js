@@ -139,6 +139,38 @@ export const getPath = (graphClone, children) => {
     return order;
 }
 
+export const setAnchors = (graphClone, children, parents, nodesWithoutAnchors) => {
+    let topological = getPath(graphClone, children);
+
+    for (let nodeID of topological) {
+        let node = graphClone.nodes.get(nodeID)
+
+        if (node.anchors === null) {
+            let vis = {};
+            for (let node of graphClone.nodes.values()) {
+                vis[node.id] = false;
+            }
+            nodesWithoutAnchors.push(node.id);
+            let anch = [];
+            anch.push(childrenAnchors(node, children, vis, graphClone));
+            if (anch[0].from === Number.MAX_VALUE) {
+                for (let parentID of parents.get(node.id)) {
+                    if (graphClone.nodes.get(parentID).anchors !== null) {
+                        if (graphClone.nodes.get(parentID).anchors[0].from < anch[0].from) {
+                            anch[0] = graphClone.nodes.get(parentID).anchors[0];
+                        }
+                    }
+                }
+            }
+
+            graphClone.nodes.set(node.id, {...node, anchors: anch, span: false});
+
+        } else {
+            graphClone.nodes.set(node.id, {...node, span: true});
+        }
+    }
+}
+
 export const controlPoints = (source, target, direction, degree) => {
     let x1 = 0;
     let y1 = 0;
