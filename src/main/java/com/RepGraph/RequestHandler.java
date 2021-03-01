@@ -326,7 +326,11 @@ public class RequestHandler {
         return list;
     }
 
-
+    @GetMapping("/GetModelAnalysis")
+    @ResponseBody
+    public HashMap<String,String> GetModelAnalysis(@RequestHeader(USER_HEADER)String userID) {
+       return RepModel.get(userID).modelAnalysis();
+    }
 
     /**
      * Main Method to run the spring boot application and host the API.

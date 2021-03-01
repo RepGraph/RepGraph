@@ -1012,6 +1012,10 @@ class AbstractGraph {
         return returnInfo;
     }
 
+    @JsonIgnore
+    public boolean isPlanarCheck(){
+        return (boolean) isPlanar().get("planar");
+    }
 
     @Override
     public boolean equals(Object o) {

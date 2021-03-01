@@ -70,7 +70,8 @@ const initialState = {
     framework: "1",
     userID: 1,
     graphStyles: defaultGraphStyles,
-    graphLayoutSpacing: defaultGraphLayoutSpacing
+    graphLayoutSpacing: defaultGraphLayoutSpacing,
+    datasetAnalysis : null
 };
 
 const reducer = (state, action) => {
@@ -105,6 +106,8 @@ const reducer = (state, action) => {
             return {...state, graphStyles: action.payload.graphStyles};
         case "SET_GRAPH_LAYOUT_SPACING":
             return {...state, graphLayoutSpacing: action.payload.graphLayoutSpacing};
+        case "SET_DATASET_ANALYSIS":
+            return {...state, datasetAnalysis: action.payload.datasetAnalysis};
         default:
             break;
     }
