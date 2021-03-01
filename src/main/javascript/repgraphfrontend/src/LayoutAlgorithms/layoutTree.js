@@ -1,4 +1,5 @@
 import {topologicalSort, controlPoints, edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors} from "./layoutUtils";
+import uuid from "react-uuid";
 
 export const layoutTree = (graphData, graphLayoutSpacing) => {
 
@@ -234,14 +235,14 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
 
         //Add top node and corresponding link to graphData
 
-        let topNodeID = graphClone.nodes.length.toString();
+        let topNodeID = graphData.nodes.length.toString();
         //Ensure that topNodeID is unique
-        if (graphClone.nodes.find(node => node.id === topNodeID) !== undefined) {
+        if (graphData.nodes.find(node => node.id === topNodeID) !== undefined) {
             topNodeID = uuid();
         }
 
         //Get top node's x coordinate from its associated node
-        const topNodeX = finalGraphNodes.find(node => node.id === graphClone.tops).x;
+        const topNodeX = finalGraphNodes.find(node => node.id === graphData.tops).x;
 
         //Add the top node to the array of nodes
         finalGraphNodes.push({
@@ -344,9 +345,9 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
 
         const allEdges = finalGraphEdges.concat(tokenEdges);
 
-        let topNodeLinkID = graphClone.edges.length;
+        let topNodeLinkID = graphData.edges.length;
         //Ensure that topNodeLinkID is unique
-        if (graphClone.edges.find(edge => edge.id === topNodeLinkID) !== undefined) {
+        if (graphData.edges.find(edge => edge.id === topNodeLinkID) !== undefined) {
             topNodeLinkID = uuid();
         }
 
@@ -362,7 +363,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         allEdges.push({
             id: topNodeLinkID,
             source: finalGraphNodes.find(node => node.id === topNodeID),
-            target: finalGraphNodes.find(node => node.id === graphClone.tops),
+            target: finalGraphNodes.find(node => node.id === graphData.tops),
             label: "",
             x1: topCP.x1,
             y1: topCP.y1,

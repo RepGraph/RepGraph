@@ -1,5 +1,5 @@
 import lodash from "lodash";
-import {edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors} from "./layoutUtils"
+import {edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors, controlPoints} from "./layoutUtils"
 import uuid from "react-uuid";
 
 export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
@@ -267,6 +267,31 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
                 group: "link",
                 selected: false
             };
+        });
+
+        let topNodeLinkID = graphData.edges.length;
+        //Ensure that topNodeLinkID is unique
+        if (graphData.edges.find(edge => edge.id === topNodeLinkID) !== undefined) {
+            topNodeLinkID = uuid();
+        }
+
+        let topCP = controlPoints(
+            finalGraphNodes.find(node => node.id === topNodeID),
+            finalGraphNodes.find(node => node.id === graphClone.tops),
+            "",
+            0,
+            graphLayoutSpacing
+        );
+
+        //Add the top node link
+        finalGraphEdges.push({
+            id: topNodeLinkID,
+            source: finalGraphNodes.find(node => node.id === topNodeID),
+            target: finalGraphNodes.find(node => node.id === graphData.tops),
+            label: "",
+            x1: topCP.x1,
+            y1: topCP.y1,
+            type: "tokenLink",
         });
 
 
