@@ -170,53 +170,6 @@ class AbstractGraph {
 
     public ArrayList<Token> extractTokensFromNodes() {
 
-        Properties props = new Properties();
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner");
-        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        // create a document object
-        CoreDocument document = new CoreDocument(this.input);
-        pipeline.annotate(document);
-
-        if (document.sentences().size() > 1) {
-            System.out.println("Multiple Lines");
-            return null;
-        }
-        ArrayList<Token> tokenlist = new ArrayList<>();
-        CoreSentence sentence = document.sentences().get(0);
-        List<CoreLabel> tokens = document.tokens();
-        List<String> posTags = sentence.posTags();
-        List<String> nerTags = sentence.nerTags();
-        for (int i = 0; i < tokens.size(); i++) {
-            tokenlist.add(new Token(i, tokens.get(i).originalText(), tokens.get(i).lemma(), null));
-            if (posTags.size() > 0) {
-                tokenlist.get(i).getExtraInformation().put("POS", posTags.get(i));
-            }
-            if (nerTags.size() > 0) {
-                tokenlist.get(i).getExtraInformation().put("NER", nerTags.get(i));
-            }
-        }
-
-        int index = 0;
-        for (CoreLabel label : tokens) {
-            for (Node n : this.nodes.values()) {
-                if (n.getAnchors() == null) {
-                    continue;
-                }
-                for (Anchors a : n.getAnchors()) {
-                    if (a.getFrom() == label.beginPosition()) {
-                        a.setFrom(index);
-                    }
-                    if (a.getEnd() == label.endPosition()) {
-                        a.setEnd(index);
-                    }
-                }
-            }
-
-            index++;
-        }
-
-        return tokenlist;
-
     }
 
 
