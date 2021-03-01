@@ -233,26 +233,28 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
 
         const finalGraphNodes = nodesInFinalLevelsArray.flat().concat(tokens);
 
-        //Add top node and corresponding link to graphData
-
-        let topNodeID = graphData.nodes.length.toString();
-        //Ensure that topNodeID is unique
-        if (graphData.nodes.find(node => node.id === topNodeID) !== undefined) {
-            topNodeID = uuid();
-        }
-
-        //Get top node's x coordinate from its associated node
-        const topNodeX = finalGraphNodes.find(node => node.id === graphData.tops).x;
-
-        //Add the top node to the array of nodes
-        finalGraphNodes.push({
-            id: topNodeID,
-            x: topNodeX,
-            y: 0 - (nodeHeight + interLevelSpacing),
-            type: "topNode",
-            group: "top",
-            label: "TOP",
-        });
+        // //Add top node and corresponding link to graphData
+        //
+        // let topNodeID = graphData.nodes.length.toString();
+        // //Ensure that topNodeID is unique
+        // if (graphData.nodes.find(node => node.id === topNodeID) !== undefined) {
+        //     topNodeID = uuid();
+        // }
+        //
+        // //Get top node's x coordinate from its associated node
+        // const topNodeX = finalGraphNodes.find(node => node.id === graphData.tops).x;
+        //
+        // //Add the top node to the array of nodes
+        // finalGraphNodes.push({
+        //     id: topNodeID,
+        //     x: topNodeX,
+        //     y: 0 - (nodeHeight + interLevelSpacing),
+        //     type: "topNode",
+        //     group: "top",
+        //     label: "TOP",
+        //     anchors: graphData.nodes.find(node => node.id === graphData.tops).anchors,
+        //     span: false
+        // });
 
         const finalGraphEdges = graphClone.edges.map((edge, index) => {
 
@@ -345,30 +347,30 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
 
         const allEdges = finalGraphEdges.concat(tokenEdges);
 
-        let topNodeLinkID = graphData.edges.length;
-        //Ensure that topNodeLinkID is unique
-        if (graphData.edges.find(edge => edge.id === topNodeLinkID) !== undefined) {
-            topNodeLinkID = uuid();
-        }
-
-        let topCP = controlPoints(
-            finalGraphNodes.find(node => node.id === topNodeID),
-            finalGraphNodes.find(node => node.id === graphClone.tops),
-            "",
-            0,
-            graphLayoutSpacing
-        );
-
-        //Add the top node link
-        allEdges.push({
-            id: topNodeLinkID,
-            source: finalGraphNodes.find(node => node.id === topNodeID),
-            target: finalGraphNodes.find(node => node.id === graphData.tops),
-            label: "",
-            x1: topCP.x1,
-            y1: topCP.y1,
-            type: "tokenLink",
-        });
+        // let topNodeLinkID = graphData.edges.length;
+        // //Ensure that topNodeLinkID is unique
+        // if (graphData.edges.find(edge => edge.id === topNodeLinkID) !== undefined) {
+        //     topNodeLinkID = uuid();
+        // }
+        //
+        // let topCP = controlPoints(
+        //     finalGraphNodes.find(node => node.id === topNodeID),
+        //     finalGraphNodes.find(node => node.id === graphClone.tops),
+        //     "",
+        //     0,
+        //     graphLayoutSpacing
+        // );
+        //
+        // //Add the top node link
+        // allEdges.push({
+        //     id: topNodeLinkID,
+        //     source: finalGraphNodes.find(node => node.id === topNodeID),
+        //     target: finalGraphNodes.find(node => node.id === graphData.tops),
+        //     label: "",
+        //     x1: topCP.x1,
+        //     y1: topCP.y1,
+        //     type: "tokenLink",
+        // });
 
         return {nodes: finalGraphNodes, links: allEdges};
     }
