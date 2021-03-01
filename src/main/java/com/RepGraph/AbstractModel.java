@@ -98,10 +98,10 @@ class AbstractModel {
         AnalysisInfo.put("Total Number of Graphs", graphs.values().size() + "");
         AnalysisInfo.put("Total Number of Nodes",total_nodes+"");
         AnalysisInfo.put("Total Number of Edges",total_edges+"");
-        AnalysisInfo.put("Percentage of Directed Cyclic Graphs",Precision.round(total_directed_cyclic/graphs.values().size(),2)*100+"");
-        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs",Precision.round(total_undirected_cyclic/graphs.values().size(),2)*100+"");
-        AnalysisInfo.put("Percentage of Disconnected Graphs",Precision.round(total_not_connected/graphs.values().size(),2)*100+"");
-        AnalysisInfo.put("Percentage of Planar Graphs",Precision.round(total_planar/graphs.values().size(),2)*100+"");
+        AnalysisInfo.put("Percentage of Directed Cyclic Graphs",Precision.round(total_directed_cyclic/graphs.values().size(),4)*100+"");
+        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs",Precision.round(total_undirected_cyclic/graphs.values().size(),4)*100+"");
+        AnalysisInfo.put("Percentage of Disconnected Graphs",Precision.round(total_not_connected/graphs.values().size(),4)*100+"");
+        AnalysisInfo.put("Percentage of Planar Graphs",Precision.round(total_planar/graphs.values().size(),4)*100+"");
         return AnalysisInfo;
     }
 
