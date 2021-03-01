@@ -45,6 +45,8 @@ export const Node = ({
 
     let fillColor = null;
 
+    //console.log(node);
+
     switch (node.type) {
         case "node":
             if (node.selected && events && events.hasOwnProperty("select")) {
@@ -101,6 +103,13 @@ export const Node = ({
                 fillColor = styles.tokenStyles.tokenColour;
             }
             break;
+        case "topNode":
+            if (highlighted) {
+                fillColor = styles.nodeStyles.topNodeHoverColour;
+            }else{
+                fillColor = styles.nodeStyles.topNodeColour;
+            }
+            break;
         default:
             fillColor = "black"; //dunno about this
     }
@@ -121,7 +130,7 @@ export const Node = ({
     // const outline = <circle r={25} fill={fillColor} opacity={1} />;
 
     let span = null;
-    if (node.type !== "token" && node.span === true) {
+    if (node.type === "node" && node.span === true) {
         const fromX =
             ((node.anchors[0].from - node.anchors[0].end) / 2) * 130 - bb.width / 2;
 
