@@ -69,48 +69,53 @@ class AbstractModel {
         props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
             for (AbstractGraph g : this.graphs.values()) {
-                ArrayList<Token> tokenlist = new ArrayList<>();
-                CoreDocument document = new CoreDocument(g.getInput());
-                pipeline.annotate(document);
+                try {
 
-                if (document.sentences().size() > 1) {
-                    System.out.println("Multiple Lines");
-                    return;
-                }
+                    ArrayList<Token> tokenlist = new ArrayList<>();
 
-                CoreSentence sentence = document.sentences().get(0);
-                List<CoreLabel> tokens = document.tokens();
-                List<String> posTags = sentence.posTags();
-                List<String> nerTags = sentence.nerTags();
-                for (int i = 0; i < tokens.size(); i++) {
-                    tokenlist.add(new Token(i, tokens.get(i).originalText(), tokens.get(i).lemma(), null));
-                    if (posTags.size() > 0) {
-                        tokenlist.get(i).getExtraInformation().put("POS", posTags.get(i));
+                    CoreDocument document = new CoreDocument(g.getInput());
+                    pipeline.annotate(document);
+
+                    int index = 0;
+                    List<String> posTags = new ArrayList<>();
+                    List<String> nerTags = new ArrayList<>();
+                    for (int j = 0; j < document.sentences().size(); j++) {
+                        CoreSentence sentence = document.sentences().get(j);
+                        posTags.addAll(sentence.posTags());
+                        nerTags.addAll(sentence.nerTags());
                     }
-                    if (nerTags.size() > 0) {
-                        tokenlist.get(i).getExtraInformation().put("NER", nerTags.get(i));
-                    }
-                }
 
-                int index = 0;
-                for (CoreLabel label : tokens) {
-                    for (Node n : g.getNodes().values()) {
-                        if (n.getAnchors() == null) {
-                            continue;
+                    List<CoreLabel> tokens = document.tokens();
+
+                    for (int i = 0; i < tokens.size(); i++) {
+                        tokenlist.add(new Token(i, tokens.get(i).originalText(), tokens.get(i).lemma(), null));
+                        if (posTags.size() > 0) {
+                            tokenlist.get(i).getExtraInformation().put("POS", posTags.get(i));
                         }
-                        for (Anchors a : n.getAnchors()) {
-                            if (a.getFrom() == label.beginPosition()) {
-                                a.setFrom(index);
-                            }
-                            if (a.getEnd() == label.endPosition()) {
-                                a.setEnd(index);
-                            }
+                        if (nerTags.size() > 0) {
+                            tokenlist.get(i).getExtraInformation().put("NER", nerTags.get(i));
                         }
                     }
 
-                    index++;
-                }
-                g.setTokens(tokenlist); ;
+                    for (CoreLabel label : tokens) {
+                        for (Node n : g.getNodes().values()) {
+                            if (n.getAnchors() == null) {
+                                continue;
+                            }
+                            for (Anchors a : n.getAnchors()) {
+                                if (a.getFrom() == label.beginPosition()) {
+                                    a.setFrom(index);
+                                }
+                                if (a.getEnd() == label.endPosition()) {
+                                    a.setEnd(index);
+                                }
+                            }
+                        }
+
+                        index++;
+                    }
+                    g.setTokens(tokenlist);
+                }catch (Exception e){continue;}
             }
 
     }
