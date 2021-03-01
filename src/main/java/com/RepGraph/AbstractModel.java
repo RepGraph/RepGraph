@@ -5,6 +5,8 @@ import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
+import org.apache.commons.math3.util.Precision;
+
 import java.util.*;
 
 /**
@@ -62,6 +64,45 @@ class AbstractModel {
      */
     public void clearGraphs() {
         graphs.clear();
+    }
+
+    public HashMap<String, String> modelAnalysis() {
+        HashMap<String, String> AnalysisInfo = new HashMap<>();
+
+
+        int total_nodes = 0;
+        int total_edges = 0;
+        float total_directed_cyclic = 0;
+        float total_undirected_cyclic = 0;
+        float total_planar = 0;
+        float total_not_connected = 0;
+
+        for (AbstractGraph g : graphs.values()) {
+            total_nodes += g.getNodes().values().size();
+            total_edges += g.getEdges().size();
+            if (g.isCyclic(true)){
+                total_directed_cyclic++;
+            }
+            if (g.isCyclic(false)){
+                total_undirected_cyclic++;
+            }
+            if (g.isPlanarCheck()){
+                total_planar++;
+            }
+            if (!g.connectedBFS(g.getNodes().values().iterator().next().getId())){
+                total_not_connected++;
+
+            }
+
+        }
+        AnalysisInfo.put("Total Number of Graphs", graphs.values().size() + "");
+        AnalysisInfo.put("Total Number of Nodes",total_nodes+"");
+        AnalysisInfo.put("Total Number of Edges",total_edges+"");
+        AnalysisInfo.put("Percentage of Directed Cyclic Graphs",Precision.round(total_directed_cyclic/graphs.values().size(),2)*100+"");
+        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs",Precision.round(total_undirected_cyclic/graphs.values().size(),2)*100+"");
+        AnalysisInfo.put("Percentage of Disconnected Graphs",Precision.round(total_not_connected/graphs.values().size(),2)*100+"");
+        AnalysisInfo.put("Percentage of Planar Graphs",Precision.round(total_planar/graphs.values().size(),2)*100+"");
+        return AnalysisInfo;
     }
 
     public void parseAlltokens() {
@@ -587,8 +628,6 @@ class AbstractModel {
                         }
                     }
                 }
-
-
 
 
             }
