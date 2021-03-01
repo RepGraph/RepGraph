@@ -1,10 +1,4 @@
-// const nodeHeight = 40;
-// const nodeWidth = 80;
-// const interLevelSpacing = 80;
-// const intraLevelSpacing = 50;
-// const tokenLevelSpacing = 140;
-
-import {childrenAnchors, getPath, topologicalSort} from "./layoutUtils";
+import {childrenAnchors, getPath, topologicalSort, controlPoints, edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther} from "./layoutUtils";
 
 export const layoutTree = (graphData, graphLayoutSpacing) => {
 
@@ -101,7 +95,6 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         ) {
             let currentLevel = [];
             for (let node of graphClone.nodes.values()) {
-                //console.log("node: ",node," Length: ",topologicalStacks.get(node.id).length);
                 if (topologicalStacks.get(node.id).length === numDescendents) {
                     currentLevel.push(node);
                 }
@@ -165,50 +158,46 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                 nodesInLevels[currentLevel + 1] = [];
             }
             for (let n of nodesInLevels[currentLevel]) {
+                let action = "stay";
 
                 if (nodesWithoutAnchors.includes(n.id)) {
                     let lowest = lowestNode.get(xPositions.get(n.id));
                     if (!nodesProcessed.has(lowest)) {
-                        nodesInLevels[currentLevel + 1].push(n);
+                        action = "move";
                     } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
                         //Move the current occupying node up, so the anchorless node stays with its parent.
                         if (
                             topologicalStacks.get(n.id).length <
                             topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length && nodeXPos.get(xPositions.get(n.id)) !== lowest
                         ) {
-                            //Check which of the overlapping nodes have more descendents
-                            //Set the node with the higher descendents in the next level, and remove it from this level.
-                            let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
-                            nodeXPos.set(xPositions.get(n.id), n.id);
-                            nodesInLevels[currentLevel + 1].push(graphClone.nodes.get(currentOccupyingNodeID));
-                            nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
-                            nodesInFinalLevels[currentLevel].set(n.id, n);
+                            action = "replace";
                         } else {
-                                nodesInLevels[currentLevel + 1].push(n);
+                                action = "move";
                             }
-                    } else {
-                        //Designate this node as the node occupying node this xPosition on this level.
-                        nodeXPos.set(xPositions.get(n.id), n.id);
-                        nodesInFinalLevels[currentLevel].set(n.id, n);
-                        nodesProcessed.set(n.id, true);
-                        numNodesProcessed++;
                     }
                 } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
                     if (
                         topologicalStacks.get(n.id).length <
                         topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length
                     ) {
-                        //Check which of the overlapping nodes have more descendents
+                        action = "replace";
+                    } else {
+                        action = "move";
+                    }
+                }
+
+                if (action === "move"){
+                    nodesInLevels[currentLevel + 1].push(n);
+                }
+                else if(action === "replace"){
                         //Set the node with the higher descendents in the next level, and remove it from this level.
                         let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
                         nodeXPos.set(xPositions.get(n.id), n.id);
                         nodesInLevels[currentLevel + 1].push(graphClone.nodes.get(currentOccupyingNodeID));
                         nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
                         nodesInFinalLevels[currentLevel].set(n.id, n);
-                    } else {
-                        nodesInLevels[currentLevel + 1].push(n);
-                    }
-                } else {
+                }
+                else if(action === "stay"){
                     //Designate this node as the node occupying node this xPosition on this level.
                     nodeXPos.set(xPositions.get(n.id), n.id);
                     nodesInFinalLevels[currentLevel].set(n.id, n);
@@ -363,216 +352,3 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
     }
 ;
 
-function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
-
-    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
-
-    let x1 = 0;
-    let y1 = 0;
-
-    if (direction === "vertical-left") {
-        if (source.y < target.y) {
-            x1 = Math.min(
-                target.x - (source.y - target.y) * degree,
-                target.x + intraLevelSpacing + nodeWidth - 25
-            );
-        } else {
-            x1 = Math.max(
-                target.x - (source.y - target.y) * degree,
-                target.x - intraLevelSpacing - nodeWidth + 25
-            );
-        }
-        y1 = (source.y + target.y) / 2;
-    } else if (direction === "vertical-right") {
-        if (source.y < target.y) {
-            x1 = Math.max(
-                target.x + (source.y - target.y) * degree,
-                target.x - intraLevelSpacing - nodeWidth + 25
-            );
-        } else {
-            x1 = Math.min(
-                target.x + (source.y - target.y) * degree,
-                target.x + intraLevelSpacing + nodeWidth - 25
-            );
-        }
-        y1 = (source.y + target.y) / 2;
-    } else if (direction === "horizontal-left") {
-        x1 = (source.x + target.x) / 2;
-        y1 = target.y + (source.x - target.x) * degree;
-    } else if (direction === "horizontal-right") {
-        x1 = (source.x + target.x) / 2;
-        y1 = target.y - (source.x - target.x) * degree;
-    } else if (direction === "custom") {
-        x1 = degree;
-        y1 = source.y + nodeHeight;
-    } else {
-        x1 = (source.x + target.x) / 2;
-        y1 = (source.y + target.y) / 2;
-    }
-
-    return {x1, y1};
-}
-
-function edgeRulesSameColumn(
-    edge,
-    source,
-    target,
-    finalGraphNodes,
-    finalGraphEdges,
-    graphLayoutSpacing
-) {
-    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
-
-    let direction = "";
-    let degree = 0.2;
-
-    if (Math.abs(source.relativeY - target.relativeY) === 1) {
-        //In the same column and 1 level apart
-        //Is there an identical edge? If yes than 1 go left 1 go right, else straight line
-        for (let e of finalGraphEdges) {
-            if (source.id === e.from && target.id === e.to && edge !== e) {
-                //There exists a duplicate edge
-                if (edge.label.localeCompare(e.label) <= 0) {
-                    direction = "vertical-right";
-                } else {
-                    direction = "vertical-left";
-                }
-
-                break;
-            }
-        }
-    } else {
-        //In the same column and more than level apart
-        let found = false;
-        for (let node of finalGraphNodes) {
-            if (node.x === source.x) {
-                if (node.y > source.y && node.y < target.y) {
-                    //There exists a node inbetween the target and source node
-                    //console.log(node);
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if (found) {
-            //Make the edge curve to avoid the clash, otherwise straight.
-            let left = false;
-            //Check if there is an outgoing or incoming edge from the left side
-            for (let edge of finalGraphEdges) {
-                if (edge.source === source.id && edge.target !== target.id) {
-                    let neighbourNode =
-                        finalGraphNodes[
-                            finalGraphNodes.findIndex((node) => node.id === edge.target)
-                            ];
-                    if (source.x - neighbourNode.x === intraLevelSpacing + nodeWidth) {
-                        left = true;
-                    }
-                }
-            }
-
-            degree = 0.4;
-            if (left) {
-                direction = "vertical-left";
-            } else {
-                direction = "vertical-right";
-            }
-        }
-    }
-    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
-}
-
-function edgeRulesSameRow(
-    edge,
-    source,
-    target,
-    finalGraphNodes,
-    finalGraphEdges,
-    graphLayoutSpacing
-) {
-
-    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
-
-    let direction = "";
-    let degree = 0.25;
-
-    if (Math.abs(target.x - source.x) !== intraLevelSpacing + nodeWidth) {
-        //On the same level and more than 1 space apart
-
-        let found = false;
-        for (let node of finalGraphNodes) {
-            if (node.y === source.y) {
-                if (
-                    (node.x > source.x && node.x < target.x) ||
-                    (node.x < source.x && node.x > target.x)
-                ) {
-                    //There exists a node in between the target and source node
-                    //console.log(node);
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if (found) {
-            direction = "horizontal-left";
-        }
-    }
-
-    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
-}
-
-function edgeRulesOther(
-    edge,
-    source,
-    target,
-    finalGraphNodes,
-    finalGraphEdges,
-    graphLayoutSpacing
-) {
-
-    const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
-
-    let direction = "";
-    let degree = 0.2;
-
-    // //Is there a node protruding close to the line
-    // let xProtrusion = 0.0;
-    // let yProtrusion = 0.0;
-    // for (let node of finalGraphNodes) {
-    //   if (
-    //     ((node.y < source.y && node.y > target.y) ||
-    //       (node.y > source.y && node.y < target.y)) &&
-    //     ((node.x < source.x && node.x > target.x) ||
-    //       (node.x > source.x && node.x < target.x))
-    //   ) {
-    //     let xtemp = Math.abs(node.x - source.x);
-    //     let ytemp = Math.abs(node.y - target.y);
-    //     if (ytemp > yProtrusion && xtemp > xProtrusion) {
-    //       xProtrusion = xtemp;
-    //       yProtrusion = ytemp;
-    //     }
-    //   }
-    // }
-
-    // xProtrusion = xProtrusion / Math.abs(target.x - source.x);
-    // yProtrusion = yProtrusion / Math.abs(target.y - source.y);
-    // //console.log(source.label, target.label, xProtrusion, yProtrusion);
-    // if (xProtrusion >= 0.5 && yProtrusion >= 0.5) {
-    //   direction = "custom";
-    //   degree = target.x;
-    //   return controlPoints(source, target, direction, degree);
-    // }
-
-    //Is there an identical edge? If yes than 1 go left 1 go right, else straight line
-    for (let e of finalGraphEdges) {
-        if (source.id === e.from && target.id === e.to && edge !== e) {
-            //There exists a duplicate edge
-            if (edge.label.localeCompare(e.label) <= 0) {
-                direction = "vertical-right";
-            }
-
-            break;
-        }
-    }
-
-    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
-}
