@@ -59,8 +59,8 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
         let topological = getPath(graphClone, children);
 
-        for (let node of topological) {
-
+        for (let nodeID of topological) {
+            let node = graphClone.nodes.get(nodeID);
             if (node.anchors === null) {
                 let vis = {};
                 for (let node of graphClone.nodes.values()) {
@@ -71,7 +71,6 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                 anch.push(childrenAnchors(node, children, vis, graphClone));
                 if (anch[0].from === Number.MAX_VALUE) {
                     for (let parentID of parents.get(node.id)) {
-                        console.log("parentID", parentID)
                         if (graphClone.nodes.get(parentID).anchors !== null) {
                             if (graphClone.nodes.get(parentID).anchors[0].from < anch[0].from) {
                                 anch[0] = graphClone.nodes.get(parentID).anchors[0];
@@ -80,8 +79,10 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                     }
                 }
 
-                graphClone.nodes.set(node.id, {...node, anchors: anch});
+                graphClone.nodes.set(node.id, {...node, anchors: anch, span: false});
 
+            } else {
+                graphClone.nodes.set(node.id, {...node, span: true});
             }
 
         }
@@ -90,6 +91,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         for (const stack of topologicalStacks.values()) {
             numLevels = Math.max(numLevels, stack.length);
         }
+
         //Group nodes together based on the number of descendents they have.
         let nodesInLevels = [];
         for (
@@ -114,14 +116,9 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         //Populate the xPositions map with each node's xPosition and the lowestNode map with the lowest node in each column.
         for (let level of nodesInLevels) {
             for (let n of level) {
-                let column;
-                if (n.anchors !== null) {
-                    column = n.anchors[0].from;
-                } else {
-                    column = null;
-                }
+                let column = n.anchors[0].from;
                 xPositions.set(n.id, column);
-                if (!lowestNode.has(column) && n.anchors !== null) {
+                if (!lowestNode.has(column) && !nodesWithoutAnchors.includes(n.id)) {
                     lowestNode.set(column, n.id);
                 }
             }
@@ -132,7 +129,7 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         for (let level of nodesInLevels) {
             for (let n of level) {
                 if (
-                    xPositions.get(n.id) !== null &&
+                    !nodesWithoutAnchors.includes(n.id) &&
                     lowestNode.get(xPositions.get(n.id)) !== n.id
                 ) {
                     //If the current node in the current level isn't the lowest node in its column
@@ -154,29 +151,12 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
             }
         }
 
-
-        for (let level = 0; level < nodesInLevels.length; level++) {
-            for (let n of nodesInLevels[level]) {
-                if (xPositions.get(n.id) === null) {
-                    if (children.get(n.id).length !== 0) {
-                        xPositions.set(n.id, xPositions.get(children.get(n.id)[0]));
-                    } else if (parents.get(n.id).length !== 0) {
-                        let parentID = parents.get(n.id)[0];
-                        let xPos = xPositions.get(parentID);
-                        xPositions.set(n.id, xPos);
-                    } else {
-                        // ??
-                    }
-                }
-            }
-        }
-
-
         let nodesInFinalLevels = [];
         nodesInFinalLevels[0] = new Map();
 
         //Algorithm to resolve overlapping nodes.
-        let numNodesProcessed = 0;
+        let nodesProcessed = new Map();
+        let numNodesProcessed =0;
         let currentLevel = 0;
         while (numNodesProcessed !== graphClone.nodes.size) {
             let nodeXPos = new Map();
@@ -185,27 +165,32 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                 nodesInLevels[currentLevel + 1] = [];
             }
             for (let n of nodesInLevels[currentLevel]) {
-                if (n.anchors === null &&
-                    parents.get(n.id)[0] !== null &&
-                    xPositions.get(parents.get(n.id)[0]) === xPositions.get(n.id) &&
-                    lowestNode.get(xPositions.get(parents.get(n.id)[0])) === parents.get(n.id)[0]
-                ) {
-                    //Ensures that a node without anchors is not the lowest node in the column because the lowest node has the anchoring edge attached to its token below. If it is the lowest node, it will move it up above its parent in the tree.
-                    if (currentLevel === 0) {
-                        nodesInLevels[currentLevel + 1].push(n);
-                    } else if (!nodesInLevels[currentLevel - 1].includes(parents.get(n.id)[0])) {
+
+                if (nodesWithoutAnchors.includes(n.id)) {
+                    let lowest = lowestNode.get(xPositions.get(n.id));
+                    if (!nodesProcessed.has(lowest)) {
                         nodesInLevels[currentLevel + 1].push(n);
                     } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
                         //Move the current occupying node up, so the anchorless node stays with its parent.
-                        let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
-                        nodeXPos.set(xPositions.get(n.id), n.id);
-                        nodesInLevels[currentLevel + 1].push(graphClone.nodes.get(currentOccupyingNodeID));
-                        nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
-                        nodesInFinalLevels[currentLevel].set(n.id, n);
+                        if (
+                            topologicalStacks.get(n.id).length <
+                            topologicalStacks.get(nodeXPos.get(xPositions.get(n.id))).length && nodeXPos.get(xPositions.get(n.id)) !== lowest
+                        ) {
+                            //Check which of the overlapping nodes have more descendents
+                            //Set the node with the higher descendents in the next level, and remove it from this level.
+                            let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
+                            nodeXPos.set(xPositions.get(n.id), n.id);
+                            nodesInLevels[currentLevel + 1].push(graphClone.nodes.get(currentOccupyingNodeID));
+                            nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
+                            nodesInFinalLevels[currentLevel].set(n.id, n);
+                        } else {
+                                nodesInLevels[currentLevel + 1].push(n);
+                            }
                     } else {
                         //Designate this node as the node occupying node this xPosition on this level.
                         nodeXPos.set(xPositions.get(n.id), n.id);
                         nodesInFinalLevels[currentLevel].set(n.id, n);
+                        nodesProcessed.set(n.id, true);
                         numNodesProcessed++;
                     }
                 } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
@@ -227,13 +212,15 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                     //Designate this node as the node occupying node this xPosition on this level.
                     nodeXPos.set(xPositions.get(n.id), n.id);
                     nodesInFinalLevels[currentLevel].set(n.id, n);
+                    nodesProcessed.set(n.id, true);
                     numNodesProcessed++;
                 }
             }
+
             currentLevel++;
         }
 
-        //convert from array of maps to array of arrays
+//convert from array of maps to array of arrays
         let nodesInFinalLevelsArray = [nodesInFinalLevels.length];
         let level = 0;
         for (let i = 0; i < nodesInFinalLevels.length; i++) {
@@ -274,7 +261,8 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
                     type: "node",
                     nodeLevel: level,
                     group: "node",
-                    span: false
+                    span: false,
+                    anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors //Remove fake anchors assigned to anchorless nodes
                 })
             );
         }
