@@ -5,6 +5,8 @@
 // const tokenLevelSpacing = 140;
 
 //Given an initial start node, returns a stack of its descendent nodes.
+import uuid from "react-uuid";
+
 const topological = (nodeID, visited, stack, neighbours) => {
     visited.set(nodeID, true);
 
@@ -160,8 +162,8 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         while (numNodesProcessed !== graphData.nodes.length) {
             let nodeXPos = new Map();
             nodesInFinalLevels[currentLevel + 1] = new Map();
-            if (currentLevel === nodesInLevels.length-1){
-                nodesInLevels[currentLevel+1]=[];
+            if (currentLevel === nodesInLevels.length - 1) {
+                nodesInLevels[currentLevel + 1] = [];
             }
             for (let n of nodesInLevels[currentLevel]) {
                 if (n.anchors === null &&
@@ -268,6 +270,27 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
 
         const finalGraphNodes = nodesInFinalLevelsArray.flat().concat(tokens);
 
+        //Add top node and corresponding link to graphData
+
+        let topNodeID = graphData.nodes.length.toString();
+        //Ensure that topNodeID is unique
+        if (graphData.nodes.find(node => node.id === topNodeID) !== undefined) {
+            topNodeID = uuid();
+        }
+
+        //Get top node's x coordinate from its associated node
+        const topNodeX = finalGraphNodes.find(node => node.id === graphData.tops).x;
+
+        //Add the top node to the array of nodes
+        finalGraphNodes.push({
+            id: topNodeID,
+            x: topNodeX,
+            y: 0 - (nodeHeight + interLevelSpacing),
+            type: "topNode",
+            group: "top",
+            label: "TOP",
+        });
+
         const finalGraphEdges = graphData.edges.map((edge, index) => {
 
             const sourceNodeIndex = finalGraphNodes.findIndex(
@@ -358,6 +381,31 @@ export const layoutTree = (graphData, graphLayoutSpacing) => {
         }
 
         const allEdges = finalGraphEdges.concat(tokenEdges);
+
+        let topNodeLinkID = graphData.edges.length;
+        //Ensure that topNodeLinkID is unique
+        if (graphData.edges.find(edge => edge.id === topNodeLinkID) !== undefined) {
+            topNodeLinkID = uuid();
+        }
+
+        let topCP = controlPoints(
+            finalGraphNodes.find(node => node.id === topNodeID),
+            finalGraphNodes.find(node => node.id === graphData.tops),
+            "",
+            0,
+            graphLayoutSpacing
+        );
+
+        //Add the top node link
+        allEdges.push({
+            id: topNodeLinkID,
+            source: finalGraphNodes.find(node => node.id === topNodeID),
+            target: finalGraphNodes.find(node => node.id === graphData.tops),
+            label: "",
+            x1: topCP.x1,
+            y1: topCP.y1,
+            type: "tokenLink",
+        });
 
         return {nodes: finalGraphNodes, links: allEdges};
     }

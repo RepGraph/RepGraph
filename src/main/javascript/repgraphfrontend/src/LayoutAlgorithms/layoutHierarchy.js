@@ -1,3 +1,4 @@
+import uuid from "react-uuid";
 
 export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
 
@@ -63,7 +64,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
                 span: false
             };
         } else {
-            return { ...node, span: true };
+            return {...node, span: true};
         }
     });
     //Determine span lengths of each node
@@ -222,6 +223,27 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
         selected: false
     }));
 
+    //Add top node and corresponding link to graphData
+
+    let topNodeID = graphData.nodes.length.toString();
+    //Ensure that topNodeID is unique
+    if (graphData.nodes.find(node => node.id === topNodeID) !== undefined) {
+        topNodeID = uuid();
+    }
+
+    //Get top node's x coordinate from its associated node
+    const topNodeX = nodes.find(node => node.id === graphData.tops).x;
+
+    //Add the top node to the array of nodes
+    nodes.push({
+        id: topNodeID,
+        x: topNodeX,
+        y: 0 - (nodeHeight + interLevelSpacing),
+        type: "topNode",
+        group: "top",
+        label: "TOP",
+    });
+
     const tokens = graphData.tokens.map((token) => ({
         ...token,
         x: (token.index - minTokenIndex) * (nodeWidth + intraLevelSpacing),
@@ -294,8 +316,34 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
         };
     });
 
-    console.log("layoutHierarchy return:", { nodes: finalGraphNodes, links: finalGraphEdges });
-    return { nodes: finalGraphNodes, links: finalGraphEdges };
+    let topNodeLinkID = graphData.edges.length;
+    //Ensure that topNodeLinkID is unique
+    if (graphData.edges.find(edge => edge.id === topNodeLinkID) !== undefined) {
+        topNodeLinkID = uuid();
+    }
+
+    let topCP = controlPoints(
+        finalGraphNodes.find(node => node.id === topNodeID),
+        finalGraphNodes.find(node => node.id === graphData.tops),
+        "",
+        0,
+        graphLayoutSpacing
+    );
+
+    //Add the top node link
+    finalGraphEdges.push({
+        id: topNodeLinkID,
+        source: finalGraphNodes.find(node => node.id === topNodeID),
+        target: finalGraphNodes.find(node => node.id === graphData.tops),
+        label: "",
+        x1: topCP.x1,
+        y1: topCP.y1,
+        type: "tokenLink",
+    });
+
+
+    console.log("layoutHierarchy return:", {nodes: finalGraphNodes, links: finalGraphEdges});
+    return {nodes: finalGraphNodes, links: finalGraphEdges};
 };
 
 function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
@@ -337,10 +385,11 @@ function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
         y1 = (source.y + target.y) / 2;
     } else if (direction === "horizontal-left") {
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y + (source.x - target.x) * degree,target.y + tokenLevelSpacing);
+        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y + tokenLevelSpacing);
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
-        y1 =  y1 = Math.min(target.y - (source.x - target.x) * degree,target.y + tokenLevelSpacing);;
+        y1 = y1 = Math.min(target.y - (source.x - target.x) * degree, target.y + tokenLevelSpacing);
+        ;
     } else if (direction === "custom") {
         x1 = degree;
         y1 = source.y + nodeHeight;
@@ -349,7 +398,7 @@ function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
         y1 = (source.y + target.y) / 2;
     }
 
-    return { x1, y1 };
+    return {x1, y1};
 }
 
 function edgeRulesSameColumn(
@@ -485,7 +534,7 @@ function edgeRulesSameRow(
         }
     }
 
-    if (Math.abs(source.x - target.x)/(intraLevelSpacing+nodeWidth) > 6){
+    if (Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth) > 6) {
         degree = 0.15;
     }
 
