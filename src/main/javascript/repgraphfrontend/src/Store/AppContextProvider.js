@@ -10,6 +10,8 @@ export const defaultGraphStyles = {
         abstractNodeHoverColour: "rgba(82, 208, 255,1)",
         surfaceNodeColour: "rgba(255,194,34,1)",
         surfaceNodeHoverColour: "rgba(229,188,79,1)",
+        topNodeColour: "rgba(255,137,100,1)",
+        topNodeHoverColour: "rgba(198,140,120,1)",
         spanColour: "rgba(0,0,0,0.3)",
         selectedColour: "rgba(61, 230, 140, 1)",
         labelColour: "rgba(255,255,255,1)"
