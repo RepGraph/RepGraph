@@ -36,6 +36,11 @@ public class RequestHandler {
 
 
     }
+    @GetMapping(value = "/ParseTokens")
+    @ResponseBody
+    public void ParseTokens(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
+    RepModel.get(userID).parseAlltokens();
+    }
 
     /**
      * This method is the post request to upload data to the model. It is mapped to "/UploadData"
