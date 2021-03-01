@@ -56,6 +56,8 @@ const styleCodes = {
         surfaceNodeColour: "Surface Node Colour",
         abstractNodeHoverColour: "Abstract Node Hover Colour",
         surfaceNodeHoverColour: "Surface Node Hover Colour",
+        topNodeColour: "Top Node Colour",
+        topNodeHoverColour: "Top Node Hover Colour",
         spanColour: "Span Colour",
         selectedColour: "Selected Colour",
         labelColour: "Label Colour"
