@@ -7,6 +7,8 @@ package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.HashMap;
+
 @JsonIgnoreProperties(value = {"Anchors"})
 public class Token {
 
@@ -30,6 +32,7 @@ public class Token {
      */
     private String carg;
 
+    private HashMap<String,String> extraInformation = new HashMap<>();
     /**
      * Default constructor of the Token class.
      */
@@ -48,6 +51,14 @@ public class Token {
         this.form = form;
         this.lemma = lemma;
         this.carg = carg;
+    }
+
+    public HashMap<String, String> getExtraInformation() {
+        return extraInformation;
+    }
+
+    public void setExtraInformation(HashMap<String, String> extraInformation) {
+        this.extraInformation = extraInformation;
     }
 
     /**

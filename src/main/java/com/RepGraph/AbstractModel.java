@@ -1,5 +1,10 @@
 package com.RepGraph;
 
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.pipeline.CoreDocument;
+import edu.stanford.nlp.pipeline.CoreSentence;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+
 import java.util.*;
 
 /**
@@ -59,15 +64,59 @@ class AbstractModel {
         graphs.clear();
     }
 
-    public void populateAllTokens() {
-        AbstractGraph t = this.graphs.values().iterator().next();
-        if (t.tokens.size() == 0) {
-
+    public void parseAlltokens() {
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner");
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
             for (AbstractGraph g : this.graphs.values()) {
+                try {
 
-                g.setTokens(g.extractTokensFromNodes());
+                    ArrayList<Token> tokenlist = new ArrayList<>();
+
+                    CoreDocument document = new CoreDocument(g.getInput());
+                    pipeline.annotate(document);
+
+                    int index = 0;
+                    List<String> posTags = new ArrayList<>();
+                    List<String> nerTags = new ArrayList<>();
+                    for (int j = 0; j < document.sentences().size(); j++) {
+                        CoreSentence sentence = document.sentences().get(j);
+                        posTags.addAll(sentence.posTags());
+                        nerTags.addAll(sentence.nerTags());
+                    }
+
+                    List<CoreLabel> tokens = document.tokens();
+
+                    for (int i = 0; i < tokens.size(); i++) {
+                        tokenlist.add(new Token(i, tokens.get(i).originalText(), tokens.get(i).lemma(), null));
+                        if (posTags.size() > 0) {
+                            tokenlist.get(i).getExtraInformation().put("POS", posTags.get(i));
+                        }
+                        if (nerTags.size() > 0) {
+                            tokenlist.get(i).getExtraInformation().put("NER", nerTags.get(i));
+                        }
+                    }
+
+                    for (CoreLabel label : tokens) {
+                        for (Node n : g.getNodes().values()) {
+                            if (n.getAnchors() == null) {
+                                continue;
+                            }
+                            for (Anchors a : n.getAnchors()) {
+                                if (a.getFrom() == label.beginPosition()) {
+                                    a.setFrom(index);
+                                }
+                                if (a.getEnd() == label.endPosition()) {
+                                    a.setEnd(index);
+                                }
+                            }
+                        }
+
+                        index++;
+                    }
+                    g.setTokens(tokenlist);
+                }catch (Exception e){continue;}
             }
-        }
 
     }
 

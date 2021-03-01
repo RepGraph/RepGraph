@@ -35,6 +35,12 @@ public class RequestHandler {
     @ResponseBody
     public void Home(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
 
+
+    }
+    @GetMapping(value = "/ParseTokens")
+    @ResponseBody
+    public void ParseTokens(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
+    RepModel.get(userID).parseAlltokens();
     }
 
     /**

@@ -42,28 +42,12 @@ public class AMRGraph extends AbstractGraph {
 
         alignNodes();
 
-        populateTokens();
 
 
 
-    }
-
-    @Override
-    public ArrayList<Token> extractTokensFromNodes() {
-        ArrayList<Token> tokenlist = new ArrayList<>();
-
-        int index = 0;
-
-        PTBTokenizer<CoreLabel> ptbt = PTBTokenizer.newPTBTokenizer(new StringReader(this.input), false, true);
-        while (ptbt.hasNext()) {
-            CoreLabel label = ptbt.next();
-            tokenlist.add(new Token(index, label.originalText(), label.word(), label.word()));
-            index++;
-        }
-
-        return tokenlist;
 
     }
+
 
     public void alignUtil(String NodeID, HashMap<String, Node> nodes, HashMap<String, Boolean> visited, int layer, FileWriter writer) throws IOException {
         // Mark the current node as visited and print it
@@ -95,6 +79,7 @@ public class AMRGraph extends AbstractGraph {
         for (String i : nodes.keySet()) {
             visited.put(i, false);
         }
+
         FileWriter myWriter = new FileWriter("supportScripts/temp/AMR_TEMP.txt");
         myWriter.write("#::snt " + this.input + "\n");
         myWriter.write("(v" + this.top + " / " + nodes.get(this.top).getLabel() + " ");
@@ -110,6 +95,11 @@ public class AMRGraph extends AbstractGraph {
                 new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
         String line = null;
+        String[] tokens = null;
+        String[] ner_tags = null;
+        String[] ner_iob_tags = null;
+        String[] pos_tags = null;
+        String[] lemmas = null;
         while ((line = input.readLine()) != null) {
 
             if (line.startsWith("v")) {
@@ -126,8 +116,32 @@ public class AMRGraph extends AbstractGraph {
                 nodes.get(nodeid).getAnchors().add(a);
 
             }
+            if (line.startsWith("###tokens")){
+                tokens = input.readLine().split("<###>");
+            }
+            if (line.startsWith("###ner_tags")){
+                ner_tags = input.readLine().split("<###>");
+            }
+            if (line.startsWith("###ner_iob_tags")){
+                 ner_iob_tags = input.readLine().split("<###>");
+            }
+            if (line.startsWith("###pos_tags")){
+                 pos_tags = input.readLine().split("<###>");
+            }
+            if (line.startsWith("###lemmas")){
+                 lemmas = input.readLine().split("<###>");
+            }
         }
+        ArrayList<Token> tokenlist = new ArrayList<>();
+        for (int i = 0; i < tokens.length ; i++) {
 
+            tokenlist.add(new Token(i,tokens[i],lemmas[i],null));
+            tokenlist.get(i).getExtraInformation().put("NER",ner_tags[i]);
+            tokenlist.get(i).getExtraInformation().put("NER_IOB",ner_iob_tags[i]);
+            tokenlist.get(i).getExtraInformation().put("POS",pos_tags[i]);
+
+        }
+        setTokens(tokenlist);
 
     }
 

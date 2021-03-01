@@ -1,11 +1,17 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.*;
+import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.HasWord;
+import edu.stanford.nlp.pipeline.CoreDocument;
+import edu.stanford.nlp.pipeline.CoreSentence;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.LexedTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.trees.Tree;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -159,10 +165,9 @@ class AbstractGraph {
         this.tokens = tokens;
     }
 
-
     public ArrayList<Token> extractTokensFromNodes() {
         ArrayList<Token> tokenlist = new ArrayList<>();
-        ArrayList<String> list = new ArrayList<>();
+
         int index = 0;
 
         PTBTokenizer<CoreLabel> ptbt = PTBTokenizer.newPTBTokenizer(new StringReader(this.input), false, true);
