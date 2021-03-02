@@ -1,5 +1,5 @@
 import React, {useReducer} from "react";
-import {dmrsData} from "../store";
+import {dmrsDebugData} from "../store";
 
 export const AppContext = React.createContext();
 
@@ -58,8 +58,8 @@ export const defaultGraphLayoutSpacing = {
 };
 
 const initialState = {
-    dataSet: dmrsData,
-    dataSetFileName: "dmrsData",
+    dataSet: dmrsDebugData,
+    dataSetFileName: "dmrsDebugData",
     dataSetResponse: null,
     selectedSentenceID: null,
     selectedSentenceGraphData: null,
