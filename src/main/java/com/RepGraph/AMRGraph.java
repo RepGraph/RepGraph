@@ -19,6 +19,8 @@ import java.util.Stack;
  */
 public class AMRGraph extends AbstractGraph {
 
+    @JsonIgnore
+    boolean beenProcessed = false;
 
     /**
      * Default constructor for the Graph class.
@@ -71,18 +73,17 @@ public class AMRGraph extends AbstractGraph {
 
     public void alignNodes() throws IOException, InterruptedException {
         setNodeNeighbours();
-        for (Node n:this.nodes.values()) {
-            if (n.getAnchors()!=null){
-                return;
-            }
+
+        if (beenProcessed){
+            return;
         }
 
         HashMap<String, Boolean> visited = new HashMap<>();
         for (String i : nodes.keySet()) {
             visited.put(i, false);
         }
-
-        FileWriter myWriter = new FileWriter("supportScripts/temp/AMR_TEMP.txt");
+        File tempFile = new File("supportScripts/temp/AMR_TEMP.txt");
+        FileWriter myWriter = new FileWriter(tempFile);
         myWriter.write("#::snt " + this.input + "\n");
         myWriter.write("(v" + this.top + " / " + nodes.get(this.top).getLabel() + " ");
 
@@ -145,7 +146,8 @@ public class AMRGraph extends AbstractGraph {
 
         }
         setTokens(tokenlist);
-
+        beenProcessed = true;
+        tempFile.delete();
     }
 
     public void fillInSpans(HashMap<String, Node> nodes) {

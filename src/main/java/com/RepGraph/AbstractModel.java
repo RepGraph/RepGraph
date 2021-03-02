@@ -138,7 +138,7 @@ class AbstractModel {
                 }
 
                     for (int i = 0; i < tokens.size(); i++) {
-
+                        g.getTokens().get(i).setLemma(tokens.get(i).lemma());
                         if (posTags.size() > 0) {
                             g.getTokens().get(i).getExtraInformation().put("POS", posTags.get(i));
                         }

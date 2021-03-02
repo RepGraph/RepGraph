@@ -235,7 +235,7 @@ export const edgeRulesSameColumn = (
         //In the same column and 1 level apart
         //Is there an identical edge? If yes than 1 go left 1 go right, else straight line
         for (let e of finalGraphEdges) {
-            if (source.id === e.from && target.id === e.to && edge !== e) {
+            if (source.id === e.source && target.id === e.target && edge !== e) {
                 //There exists a duplicate edge
                 if (edge.label.localeCompare(e.label) <= 0) {
                     direction = "vertical-right";
