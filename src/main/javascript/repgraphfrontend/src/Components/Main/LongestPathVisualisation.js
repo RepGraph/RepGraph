@@ -94,7 +94,7 @@ function showLongestPath(standardVisualisation, path) {
     let newLinks = currentStandardVisualisation.links.map((link) => ({
         ...link,
         group:
-            path.includes(link.source.id) && path.includes(link.target.id)
+            path.includes(link.source.id) && path.includes(link.target.id) && (Math.abs(path.indexOf(link.source.id) - path.indexOf(link.target.id)) === 1)
                 ? "longestPath"
                 : link.group
     }));
