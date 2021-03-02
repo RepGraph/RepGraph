@@ -132,48 +132,48 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
     })
 
     //Add top node and corresponding link to graphData
-    if(addTopNode){
-
-        //Get top node's associated node
-        const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
-        //console.log("associatedNode", associatedNode);
-
-        if(associatedNode){
-            //Add the top node to the array of nodes
-            finalGraphNodes.push({
-                id: "TOP",
-                x: associatedNode.x,
-                y: 0 - (nodeHeight + interLevelSpacing),
-                type: "topNode",
-                group: "top",
-                label: "TOP",
-                anchors: associatedNode.anchors,
-                span: false
-            });
-
-            const addedTopNode = finalGraphNodes.find(node => node.id === "TOP")
-
-            let topCP = controlPoints(
-                addedTopNode,
-                associatedNode,
-                "",
-                0,
-                graphLayoutSpacing
-            );
-
-            //Add the top node link
-            finalGraphEdges.push({
-                id: "TOPLINK",
-                source: addedTopNode,
-                target: associatedNode,
-                label: "",
-                x1: topCP.x1,
-                y1: topCP.y1,
-                type: "tokenLink",
-            });
-
-        }
-    }
+    // if(addTopNode){
+    //
+    //     //Get top node's associated node
+    //     const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
+    //     //console.log("associatedNode", associatedNode);
+    //
+    //     if(associatedNode){
+    //         //Add the top node to the array of nodes
+    //         finalGraphNodes.push({
+    //             id: "TOP",
+    //             x: associatedNode.x,
+    //             y: 0 - (nodeHeight + interLevelSpacing),
+    //             type: "topNode",
+    //             group: "top",
+    //             label: "TOP",
+    //             anchors: associatedNode.anchors,
+    //             span: false
+    //         });
+    //
+    //         const addedTopNode = finalGraphNodes.find(node => node.id === "TOP")
+    //
+    //         let topCP = controlPoints(
+    //             addedTopNode,
+    //             associatedNode,
+    //             "",
+    //             0,
+    //             graphLayoutSpacing
+    //         );
+    //
+    //         //Add the top node link
+    //         finalGraphEdges.push({
+    //             id: "TOPLINK",
+    //             source: addedTopNode,
+    //             target: associatedNode,
+    //             label: "",
+    //             x1: topCP.x1,
+    //             y1: topCP.y1,
+    //             type: "tokenLink",
+    //         });
+    //
+    //     }
+    // }
 
     if (planar) {
         try {

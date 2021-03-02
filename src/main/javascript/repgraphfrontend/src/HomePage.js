@@ -87,11 +87,11 @@ export default function HomePage(props) {
                     dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
 
 
-                    if(framework === "5"){
-                        request_AMR_align(userID);
-                    }else{
-                        request_Token_Process(userID);
-                    }
+                    // if(framework === "5"){
+                    //     request_AMR_align(userID);
+                    // }else{
+                    //     request_Token_Process(userID);
+                    // }
 
 
                     history.push("/main"); //Take user to the main page
