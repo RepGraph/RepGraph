@@ -413,7 +413,6 @@ export default function MiniDrawer() {
                                                                 <Card>
                                                                     <CardContent>
                                                                         <Grid container spacing={1}>
-                                                                            <div>This needs to be fixed still</div>
                                                                             <Grid item>
                                                                                 <Chip label="AbstractNode" style={{
                                                                                     color: "white",
@@ -426,6 +425,13 @@ export default function MiniDrawer() {
                                                                                     color: "white",
                                                                                     fontWeight: "bold",
                                                                                     backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
+                                                                                }}/>
+                                                                            </Grid>
+                                                                            <Grid item>
+                                                                                <Chip label="TopNode" style={{
+                                                                                    color: "white",
+                                                                                    fontWeight: "bold",
+                                                                                    backgroundColor: state.graphStyles.nodeStyles.topNodeColour
                                                                                 }}/>
                                                                             </Grid>
                                                                             <Grid item>
@@ -629,7 +635,6 @@ export default function MiniDrawer() {
                                                                 <Card>
                                                                     <CardContent>
                                                                         <Grid container spacing={1}>
-                                                                            <div>This needs to be fixed still</div>
                                                                             <Grid item>
                                                                                 <Chip label="AbstractNode" style={{
                                                                                     color: "white",
@@ -644,6 +649,13 @@ export default function MiniDrawer() {
                                                                                     backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
                                                                                 }}/>
                                                                             </Grid>
+                                                                            <Grid item>
+                                                                            <Chip label="TopNode" style={{
+                                                                                color: "white",
+                                                                                fontWeight: "bold",
+                                                                                backgroundColor: state.graphStyles.nodeStyles.topNodeColour
+                                                                            }}/>
+                                                                        </Grid>
                                                                             <Grid item>
                                                                                 <Chip label="Token" style={{
                                                                                     color: "white",
@@ -736,7 +748,6 @@ export default function MiniDrawer() {
                                 <Card>
                                     <CardContent>
                                         <Grid container spacing={1}>
-                                            <div>This needs to be fixed still</div>
                                             <Grid item>
                                                 <Chip label="AbstractNode" style={{
                                                     color: "white",
@@ -749,6 +760,13 @@ export default function MiniDrawer() {
                                                     color: "white",
                                                     fontWeight: "bold",
                                                     backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
+                                                }}/>
+                                            </Grid>
+                                            <Grid item>
+                                                <Chip label="TopNode" style={{
+                                                    color: "white",
+                                                    fontWeight: "bold",
+                                                    backgroundColor: state.graphStyles.nodeStyles.topNodeColour
                                                 }}/>
                                             </Grid>
                                             <Grid item>
