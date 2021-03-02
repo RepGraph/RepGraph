@@ -77,9 +77,12 @@ export default function HomePage(props) {
                     dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: fileObjects[0].name}}); //store name of data-set uploaded
                     dispatch({type: "SET_DATASET_RESPONSE", payload: {dataSetResponse: jsonResult.response}}); //store response from back-end
 
+                    //Reset state data for new dataset
                     dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: null}});
                     dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: null}});
                     dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: null}});
+                    dispatch({type: "SET_DATASET_ANALYSIS", payload: {datasetAnalysis: null}});
+
 
                     dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
 

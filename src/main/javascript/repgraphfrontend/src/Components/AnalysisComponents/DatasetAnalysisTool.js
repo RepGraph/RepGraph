@@ -28,13 +28,12 @@ function DatasetAnalysisTool(props) {
     const classes = useStyles(); //Use styles created above
     //Local state for checkboxes of which tests to perform
 
-
     //Handle request to perform formal tests
     function handleDatasetAnalysis() {
-        var myHeaders = new Headers();
+        let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
 
-        var requestOptions = {
+        let requestOptions = {
             method: 'GET',
             headers: myHeaders,
             redirect: 'follow'
@@ -51,7 +50,7 @@ function DatasetAnalysisTool(props) {
                 const jsonResult = JSON.parse(result);
                  //Debugging
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
-                dispatch({type: "SET_DATASET_ANALYSIS", payload: {datasetAnalysis: jsonResult}}); //Store the test results in global state
+                dispatch({type: "SET_DATASET_ANALYSIS", payload: {datasetAnalysis: jsonResult}}); //Store the analysis results in global state
             })
             .catch((error) => {
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
@@ -76,9 +75,7 @@ function DatasetAnalysisTool(props) {
                         color="primary"
                         disableElevation
                         endIcon={<ArrowForwardIcon/>}
-                        onClick={() => {
-                            handleDatasetAnalysis();
-                        }}
+                        onClick={handleDatasetAnalysis}
                     >
                         Run Analysis
                     </Button>
