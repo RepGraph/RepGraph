@@ -76,6 +76,7 @@ public class AMRGraph extends AbstractGraph {
                 return;
             }
         }
+
         HashMap<String, Boolean> visited = new HashMap<>();
         for (String i : nodes.keySet()) {
             visited.put(i, false);

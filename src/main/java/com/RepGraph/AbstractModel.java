@@ -157,13 +157,15 @@ class AbstractModel {
                         for (int i = 0; i < n.getCharacterSpans().size(); i++) {
 
                             if (n.getCharacterSpans().get(i).getFrom() == label.beginPosition()) {
-
                                 n.getAnchors().get(i).setFrom(index);
+
+
                             }
                             if (n.getCharacterSpans().get(i).getEnd() == label.endPosition()) {
                                 n.getAnchors().get(i).setEnd(index);
+
                             }
-                          
+
                         }
 
                     }

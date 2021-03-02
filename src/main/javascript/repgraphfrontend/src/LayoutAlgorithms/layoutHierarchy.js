@@ -212,7 +212,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             label: node.label,
             anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors, //Remove fake anchors assigned to anchorless nodes
             selected: false,
-            span: true
+            span: nodesWithoutAnchors.includes(node.id) ? false : true
         }));
 
         const tokens = graphClone.tokens.map((token) => ({
