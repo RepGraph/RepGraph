@@ -37,7 +37,7 @@ public class RequestHandler {
 
 
     }
-    @GetMapping(value = "/ParseTokens")
+    @PatchMapping(value = "/ParseTokens")
     @ResponseBody
     public void ParseTokens(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
     RepModel.get(userID).parseAlltokens();
@@ -338,7 +338,7 @@ public class RequestHandler {
        return RepModel.get(userID).modelAnalysis();
     }
 
-    @GetMapping("/AlignAMR")
+    @PatchMapping("/AlignAMR")
     @ResponseBody
     public void AlignAMR(@RequestHeader(USER_HEADER)String userID) throws IOException, InterruptedException {
        AMRModel m = (AMRModel) RepModel.get(userID);
