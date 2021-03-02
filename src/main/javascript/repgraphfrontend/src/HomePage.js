@@ -154,26 +154,30 @@ export default function HomePage(props) {
         myHeaders.append("Content-Type", "application/json");
 
         let raw = null;
+        let dataSetFileName = null;
 
         switch (framework) {
             case "1":
                 raw = JSON.stringify({"data": dmrsData});
+                dataSetFileName = "DMRS Demo Data";
                 break;
             case "2":
                 raw = JSON.stringify({"data": edsData});
+                dataSetFileName = "EDS Demo Data";
                 break;
             case "3":
                 raw = JSON.stringify({"data": ptgData});
+                dataSetFileName = "PTG Demo Data";
                 break;
             case "4":
                 raw = JSON.stringify({"data": uccaData});
+                dataSetFileName = "UCCA Demo Data";
                 break;
             case "5":
                 raw = JSON.stringify({"data": amrData});
+                dataSetFileName = "AMR Demo Data";
                 break;
         }
-
-        console.log(raw);
 
         let requestOptions = {
             method: 'POST',
@@ -196,7 +200,7 @@ export default function HomePage(props) {
                     console.log(jsonResult.response); //Debugging
 
                     dispatch({type: "SET_DATASET", payload: {dataSet: jsonResult.data}}); //Store the data-set (ids and inputs stored in backend)
-                    dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: "DemoData"}}); //store name of data-set uploaded
+                    dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: dataSetFileName}}); //store name of data-set uploaded
                     dispatch({type: "SET_DATASET_RESPONSE", payload: {dataSetResponse: jsonResult.response}}); //store response from back-end
 
                     dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: null}});
