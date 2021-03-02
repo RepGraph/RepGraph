@@ -167,29 +167,32 @@ class AbstractGraph {
     }
 
     public ArrayList<Token> extractTokensFromNodes() {
+        Properties props = new Properties();
+        // set the list of annotators to run
+        props.setProperty("annotators", "tokenize");
+        // build pipeline
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        // create a document object
+        CoreDocument doc = new CoreDocument(this.input);
+        // annotate
+        pipeline.annotate(doc);
         ArrayList<Token> tokenlist = new ArrayList<>();
-
         int index = 0;
-
-        PTBTokenizer<CoreLabel> ptbt = PTBTokenizer.newPTBTokenizer(new StringReader(this.input), false, true);
-        while (ptbt.hasNext()) {
-            CoreLabel label = ptbt.next();
-            tokenlist.add(new Token(index, label.originalText(), label.word(), label.word()));
-
+        for (CoreLabel tok : doc.tokens()) {
+            tokenlist.add(new Token(index, tok.originalText(), null, null));
             for (Node n : this.nodes.values()) {
                 if (n.getAnchors() == null) {
                     continue;
                 }
                 for (Anchors a : n.getAnchors()) {
-                    if (a.getFrom() == label.beginPosition()) {
+                    if (a.getFrom() == tok.beginPosition()) {
                         a.setFrom(index);
                     }
-                    if (a.getEnd() == label.endPosition()) {
+                    if (a.getEnd() == tok.endPosition()) {
                         a.setEnd(index);
                     }
                 }
             }
-
             index++;
         }
 

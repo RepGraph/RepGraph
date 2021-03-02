@@ -123,11 +123,11 @@ class AbstractModel {
         for (AbstractGraph g : this.graphs.values()) {
             try {
 
-                ArrayList<Token> tokenlist = new ArrayList<>();
-
                 CoreDocument document = new CoreDocument(g.getInput());
                 pipeline.annotate(document);
 
+                List<CoreLabel> tokens = document.tokens();
+                if (g.getTokens().size()==tokens.size()) {
 
                 List<String> posTags = new ArrayList<>();
                 List<String> nerTags = new ArrayList<>();
@@ -137,42 +137,16 @@ class AbstractModel {
                     nerTags.addAll(sentence.nerTags());
                 }
 
-                List<CoreLabel> tokens = document.tokens();
+                    for (int i = 0; i < tokens.size(); i++) {
 
-                for (int i = 0; i < tokens.size(); i++) {
-                    tokenlist.add(new Token(i, tokens.get(i).originalText(), tokens.get(i).lemma(), null));
-                    if (posTags.size() > 0) {
-                        tokenlist.get(i).getExtraInformation().put("POS", posTags.get(i));
-                    }
-                    if (nerTags.size() > 0) {
-                        tokenlist.get(i).getExtraInformation().put("NER", nerTags.get(i));
+                        if (posTags.size() > 0) {
+                            g.getTokens().get(i).getExtraInformation().put("POS", posTags.get(i));
+                        }
+                        if (nerTags.size() > 0) {
+                            g.getTokens().get(i).getExtraInformation().put("NER", nerTags.get(i));
+                        }
                     }
                 }
-                int index = 0;
-                for (CoreLabel label : tokens) {
-                    for (Node n : g.getNodes().values()) {
-                        if (n.getCharacterSpans() == null) {
-                            continue;
-                        }
-                        for (int i = 0; i < n.getCharacterSpans().size(); i++) {
-
-                            if (n.getCharacterSpans().get(i).getFrom() == label.beginPosition()) {
-                                n.getAnchors().get(i).setFrom(index);
-
-
-                            }
-                            if (n.getCharacterSpans().get(i).getEnd() == label.endPosition()) {
-                                n.getAnchors().get(i).setEnd(index);
-
-                            }
-
-                        }
-
-                    }
-
-                    index++;
-                }
-                g.setTokens(tokenlist);
             } catch (Exception e) {
                 continue;
             }
