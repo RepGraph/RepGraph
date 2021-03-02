@@ -115,6 +115,7 @@ public class AMRGraph extends AbstractGraph {
                 Anchors a = new Anchors(from, end);
                 nodes.get(nodeid).setAnchors(new ArrayList<Anchors>());
                 nodes.get(nodeid).getAnchors().add(a);
+                nodes.get(nodeid).setSurface(true);
 
             }
             if (line.startsWith("###tokens")) {
