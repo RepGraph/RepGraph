@@ -151,7 +151,7 @@ function CompareTwoGraphsVisualisation(props) {
             })
             .then(result => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //debugging
+                 //debugging
 
                 setCompareResponse(jsonResult);
                 setShowCompare(true);
@@ -216,7 +216,7 @@ function CompareTwoGraphsVisualisation(props) {
 
         function requestSentenceFromBackend(sentenceId){
 
-            console.log("requestSentenceFromBackend: ", sentenceId);
+
 
             let myHeaders = new Headers();
             myHeaders.append("X-USER", state.userID);
@@ -238,7 +238,7 @@ function CompareTwoGraphsVisualisation(props) {
                 })
                 .then((result) => {
                     const jsonResult = JSON.parse(result);
-                    console.log(jsonResult);
+
 
                     dispatch({type: "SET_LOADING", payload: {isLoading: false}});
 
@@ -257,7 +257,7 @@ function CompareTwoGraphsVisualisation(props) {
         }
 
         function handleSelectSentence(sentenceId) {
-            console.log(sentenceId);
+
             setOpen(false);
             setShowCompare(false);
 
@@ -376,7 +376,7 @@ function CompareTwoGraphsVisualisation(props) {
                     >
                         <Chip
                             onClick={() => {
-                                console.log("chip clicked");
+
                                 //Show the dialog to select a sentence
                                 handleSelectSide(1);
                             }}
@@ -421,7 +421,7 @@ function CompareTwoGraphsVisualisation(props) {
                     >
                         <Chip
                             onClick={() => {
-                                console.log("chip clicked");
+
                                 //Show the dialog to select a sentence
                                 handleSelectSide(2);
                             }}

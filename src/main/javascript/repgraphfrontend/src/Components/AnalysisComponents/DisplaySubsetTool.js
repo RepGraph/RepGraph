@@ -126,8 +126,8 @@ function DisplaySubsetTool(props) {
                 return response.text();
             })
             .then((result) => {
-                //console.log(result);//debugging
-                //console.log(JSON.parse(result));//debugging
+                ////debugging
+                ////debugging
                 const jsonResult = JSON.parse(result); //Parse response into JSON
 
                 let graphData = null;

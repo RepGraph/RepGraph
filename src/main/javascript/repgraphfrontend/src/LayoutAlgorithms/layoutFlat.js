@@ -6,7 +6,7 @@ import {forEach} from "react-bootstrap/ElementChildren";
 import uuid from "react-uuid";
 
 export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
-    console.log(graphData);
+
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
@@ -203,7 +203,7 @@ function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSp
             if (node.y === source.y && ((node.x > source.x && node.x < target.x) ||
                 (node.x < source.x && node.x > target.x))) {
                 //There exists a node in between the target and source node
-                //console.log(node);
+                //
                 found = true;
                 break;
             }

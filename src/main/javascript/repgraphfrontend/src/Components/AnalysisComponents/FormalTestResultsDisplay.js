@@ -56,7 +56,7 @@ export default function FormalTestsResultsDisplay(props) {
 
     let newRows = [];
 
-    console.log("response", response);
+
 
     //Add the rows to the table of results - in consistent order
     try {
@@ -96,7 +96,7 @@ export default function FormalTestsResultsDisplay(props) {
 
     //Handle click on table row
     const handleClickOpen = (event, test) => {
-        console.log(test);
+
         if (test !== "Connected") {
             setRowClicked(test);
             setOpen(true);

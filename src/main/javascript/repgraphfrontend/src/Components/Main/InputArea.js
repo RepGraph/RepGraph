@@ -43,7 +43,7 @@ class InputArea extends React.Component
     render(){
 
         const parsedSentences = this.props.sentences;
-        console.log(parsedSentences);
+
         const onSelect = this.props.onSelect;
 
         return (

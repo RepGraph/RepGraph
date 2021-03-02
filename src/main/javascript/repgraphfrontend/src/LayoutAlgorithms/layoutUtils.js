@@ -49,7 +49,7 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
 }
 
 export const childrenAnchors = (node, children, visited, graphClone) => {
-    console.log("node", node.id)
+
     if (visited[node.id] && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
     } else if (visited[node.id] && node.anchors !== null) {
@@ -57,7 +57,7 @@ export const childrenAnchors = (node, children, visited, graphClone) => {
     }
     visited[node.id] = true;
     if (children.get(node.id).length === 0 && node.anchors === null) {
-        console.log("WE HERE")
+
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
         ;
     } else if (node.anchors !== null) {

@@ -61,7 +61,7 @@ function FormalTestsTool(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //Debugging
+                 //Debugging
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
                 dispatch({type: "SET_TEST_RESULTS", payload: {testResults: jsonResult}}); //Store the test results in global state
             })
@@ -111,7 +111,7 @@ function FormalTestsTool(props) {
                         disableElevation
                         endIcon={<ArrowForwardIcon/>}
                         onClick={() => {
-                            console.log(tests); //Debugging
+                             //Debugging
                             handleFormalTests();
                         }}
                     >
