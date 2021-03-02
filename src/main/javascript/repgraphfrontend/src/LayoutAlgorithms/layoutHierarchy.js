@@ -1,5 +1,5 @@
 import lodash from "lodash";
-import {edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors, controlPoints} from "./layoutUtils"
+import {edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors} from "./layoutUtils"
 import uuid from "react-uuid";
 
 export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
@@ -237,7 +237,8 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
                     source,
                     target,
                     finalGraphNodes,
-                    graphClone.edges
+                    graphClone.edges,
+                    graphLayoutSpacing
                 );
             } else if (source.x === target.x) {
                 cp = edgeRulesSameColumn(
@@ -245,7 +246,8 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
                     source,
                     target,
                     finalGraphNodes,
-                    graphClone.edges
+                    graphClone.edges,
+                    graphLayoutSpacing
                 );
             } else {
                 cp = edgeRulesOther(
@@ -254,7 +256,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing) => {
                     target,
                     finalGraphNodes,
                     graphClone.edges,
-                    levelTopology
+                    graphLayoutSpacing
                 );
             }
 

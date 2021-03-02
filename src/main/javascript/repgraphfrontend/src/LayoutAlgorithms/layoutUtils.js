@@ -1,12 +1,6 @@
 import lodash from "lodash";
 import {v4 as uuidv4} from 'uuid';
 
-const nodeHeight = 40;
-const nodeWidth = 80;
-const interLevelSpacing = 80;
-const intraLevelSpacing = 50;
-const tokenLevelSpacing = 140;
-
 export function createDummyNodes(graphData, parents, children, createEdges) {
     let dummyNodes = []
     let dummyEdges = []
@@ -171,7 +165,7 @@ export const setAnchors = (graphClone, children, parents, nodesWithoutAnchors) =
     }
 }
 
-export const controlPoints = (source, target, direction, degree) => {
+export const controlPoints = (source, target, direction, degree, graphLayoutSpacing) => {
     let x1 = 0;
     let y1 = 0;
 
@@ -179,12 +173,12 @@ export const controlPoints = (source, target, direction, degree) => {
         if (source.y < target.y) {
             x1 = Math.min(
                 target.x - (source.y - target.y) * degree,
-                target.x + intraLevelSpacing + nodeWidth - 25
+                target.x + graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth - 25
             );
         } else {
             x1 = Math.max(
                 target.x - (source.y - target.y) * degree,
-                target.x - intraLevelSpacing - nodeWidth + 25
+                target.x - graphLayoutSpacing.intraLevelSpacing -  graphLayoutSpacing.nodeWidth + 25
             );
         }
         y1 = (source.y + target.y) / 2;
@@ -192,25 +186,34 @@ export const controlPoints = (source, target, direction, degree) => {
         if (source.y < target.y) {
             x1 = Math.max(
                 target.x + (source.y - target.y) * degree,
-                target.x - intraLevelSpacing - nodeWidth + 25
+                target.x - graphLayoutSpacing.intraLevelSpacing -  graphLayoutSpacing.nodeWidth + 25
             );
         } else {
             x1 = Math.min(
                 target.x + (source.y - target.y) * degree,
-                target.x + intraLevelSpacing + nodeWidth - 25
+                target.x + graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth - 25
             );
         }
         y1 = (source.y + target.y) / 2;
     } else if (direction === "horizontal-left") {
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y + tokenLevelSpacing);
+        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
-        y1 = y1 = Math.min(target.y - (source.x - target.x) * degree, target.y + tokenLevelSpacing);
+        y1 = y1 = Math.min(target.y - (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
         ;
     } else if (direction === "custom") {
-        x1 = degree;
-        y1 = source.y + nodeHeight;
+        x1 = target.x;
+
+        y1 = source.y;
+    }
+    else if(direction === "duplicate"){
+        if (source.x < target.x) {
+            x1 = (source.x + target.x) / 2 +  graphLayoutSpacing.nodeWidth;
+        } else {
+            x1 = (source.x + target.x) / 2 -  graphLayoutSpacing.nodeWidth;
+        }
+        y1 = (source.y + target.y) / 2 - 2 *  graphLayoutSpacing.nodeHeight;
     } else {
         x1 = (source.x + target.x) / 2;
         y1 = (source.y + target.y) / 2;
@@ -224,7 +227,8 @@ export const edgeRulesSameColumn = (
     source,
     target,
     finalGraphNodes,
-    finalGraphEdges
+    finalGraphEdges,
+    graphLayoutSpacing
 ) => {
     let direction = "";
     let degree = 0.2;
@@ -254,7 +258,6 @@ export const edgeRulesSameColumn = (
                     (node.y < source.y && node.y > target.y)
                 ) {
                     //There exists a node inbetween the target and source node
-                    //
                     found = true;
                     break;
                 }
@@ -273,7 +276,7 @@ export const edgeRulesSameColumn = (
                     if (
                         neighbourNode.x < source.x &&
                         Math.abs(neighbourNode.x - source.x) ===
-                        nodeWidth + intraLevelSpacing
+                         graphLayoutSpacing.nodeWidth + graphLayoutSpacing.intraLevelSpacing
                     ) {
                         left = true;
                     }
@@ -298,7 +301,7 @@ export const edgeRulesSameColumn = (
             }
         }
     }
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
 export const edgeRulesSameRow = (
@@ -306,12 +309,13 @@ export const edgeRulesSameRow = (
     source,
     target,
     finalGraphNodes,
-    finalGraphEdges
+    finalGraphEdges,
+    graphLayoutSpacing
 ) => {
     let direction = "";
     let degree = 0.25;
 
-    if (Math.abs(target.x - source.x) !== intraLevelSpacing + nodeWidth) {
+    if (Math.abs(target.x - source.x) !== graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth) {
         //On the same level and more than 1 space apart
 
         let found = false;
@@ -336,11 +340,22 @@ export const edgeRulesSameRow = (
         }
     }
 
-    if (Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth) > 6) {
-        degree = 0.15;
+    if (Math.abs(source.x - target.x) / ( graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth) > 6) {
+        degree = 0.3;
     }
 
-    return controlPoints(source, target, direction, degree);
+    //Is there an identical edge? Change their curvature to ensure they don't overlap.
+    for (let e of finalGraphEdges) {
+        if (edge.source === e.source && edge.target === e.target && edge !== e) {
+            //There exists a duplicate edge
+            if (edge.label.localeCompare(e.label) <= 0) {
+                degree=degree+0.15;
+            }
+            break;
+        }
+    }
+
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
 export const edgeRulesOther = (
@@ -349,10 +364,22 @@ export const edgeRulesOther = (
     target,
     finalGraphNodes,
     finalGraphEdges,
-    levelTopology
+    graphLayoutSpacing
 ) => {
     let direction = "";
     let degree = 0.2;
+
+    //Is there an identical edge? If yes than 1 go left 1 go right, else straight line
+    for (let e of finalGraphEdges) {
+        if (edge.source === e.source && edge.target === e.target && edge !== e) {
+            //There exists a duplicate edge
+            if (edge.label.localeCompare(e.label) <= 0) {
+                direction = "duplicate";
+                return controlPoints(source, target, direction, degree, graphLayoutSpacing);
+            }
+            break;
+        }
+    }
 
     //Is there a node protruding close to the line
     let xProtrusion = 0.0;
@@ -378,24 +405,11 @@ export const edgeRulesOther = (
     yProtrusion = yProtrusion / Math.abs(target.y - source.y);
     if (xProtrusion >= 0.5 && yProtrusion >= 0.5) {
         direction = "custom";
-        degree = target.x;
-        return controlPoints(source, target, direction, degree);
-    }
-
-    //Is there an identical edge? If yes than 1 go left 1 go right, else straight line
-    for (let e of finalGraphEdges) {
-        if (source.id === e.from && target.id === e.to && edge !== e) {
-            //There exists a duplicate edge
-            if (edge.label.localeCompare(e.label) <= 0) {
-                direction = "vertical-right";
-            }
-
-            break;
-        }
+        return controlPoints(source, target, direction, degree, graphLayoutSpacing);
     }
 
     //Is the source node inbetween two column (due to its span) and is the target node within less of 1 columns distance from it? If so, check for a node below the source node.
-    if (Math.abs(target.x - source.x) < intraLevelSpacing + nodeWidth) {
+    if (Math.abs(target.x - source.x) < graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth) {
         for (let node of finalGraphNodes) {
             if (source.x === node.x && source.y < node.y) {
                 degree = 0.1;
@@ -409,5 +423,5 @@ export const edgeRulesOther = (
         }
     }
 
-    return controlPoints(source, target, direction, degree);
+    return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
