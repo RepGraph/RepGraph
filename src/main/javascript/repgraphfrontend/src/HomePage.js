@@ -235,8 +235,10 @@ export default function HomePage(props) {
     }
 
     const handleFormatChange = (event, newFormat) => {
-        setFramework(newFormat);
-        dispatch({type: "SET_FRAMEWORK", payload: {framework: newFormat}}); //Show loading animation while awaiting response
+        if (newFormat !== null) {
+            setFramework(newFormat);
+            dispatch({type: "SET_FRAMEWORK", payload: {framework: newFormat}}); //Show loading animation while awaiting response
+        }
     }
 
     return (
