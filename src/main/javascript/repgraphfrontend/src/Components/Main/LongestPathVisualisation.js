@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 
 // function showLongestPath(standardVisualisation, path) {
 //     let currentStandardVisualisation = cloneDeep(standardVisualisation);
-//     //console.log(currentStandardVisualisation);
+//     //
 //     let newNodes = currentStandardVisualisation.nodes.map((node, index) => ({
 //         ...node,
 //         label: path.includes(node.id)
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
 
 function showLongestPath(standardVisualisation, path) {
     let currentStandardVisualisation = cloneDeep(standardVisualisation);
-    //console.log(currentStandardVisualisation);
+    //
 
     let newNodes = currentStandardVisualisation.nodes.map((node, index) => ({
         ...node,
@@ -141,7 +141,7 @@ function LongestPathVisualisation({type}) {
     // const events = {
     //     select: function (event) {
     //         let { nodes, edges } = event;
-    //         console.log(nodes, edges);
+    //
     //         dispatch({
     //             type: "SET_SELECT_NODE_EDGE",
     //             payload: { selectedNodeAndEdges: { nodes, edges } }

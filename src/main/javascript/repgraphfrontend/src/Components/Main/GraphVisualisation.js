@@ -9,7 +9,7 @@ const GraphVisualisation = () => {
     const events = {
         select: function (event) {
             let {nodes, edges} = event;
-            console.log(nodes, edges);
+
             dispatch({type: "SET_SELECT_NODE_EDGE", payload: {selectedNodeAndEdges: {nodes, edges}}});
         }
     };

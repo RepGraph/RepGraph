@@ -156,7 +156,7 @@ function SearchSubgraphPatternTool(props) {
 
     //Handle search for node set from backend
     function handleSearchForNodeSet() {
-        //console.log(nodeSet.join(","));
+        //
         let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
 
@@ -177,7 +177,7 @@ function SearchSubgraphPatternTool(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                //console.log(jsonResult); //Debugging
+                // //Debugging
 
                 setNodeSetResult(jsonResult.data);
                 setNodeSetResultSearch(jsonResult.data)//Store the node set results
@@ -246,7 +246,7 @@ function SearchSubgraphPatternTool(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //Debugging
+                 //Debugging
 
                 setSubgraphResult(jsonResult.data);
                 setSubgraphResultSearch(jsonResult.data)//Store the subgraph results
@@ -288,7 +288,7 @@ function SearchSubgraphPatternTool(props) {
 
     //Handle when user selects one of the sentences returned in the results from the backend
     function handleClickSentenceResult(sentenceId) {
-        //console.log(sentenceId); //Debugging
+        // //Debugging
         let myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
         let requestOptions = {
@@ -308,7 +308,7 @@ function SearchSubgraphPatternTool(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                //console.log(jsonResult); //Debugging
+                // //Debugging
 
                 let graphData = null;
 

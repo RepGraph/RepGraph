@@ -48,7 +48,7 @@ export default function SentenceList(props) {
         };
         props.closeSelectSentence(); //Close the dialog
         dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show the loading animation
-        console.log("userID : "+state.userID)
+
 
         fetch(state.APIendpoint + "/GetGraph?graphID=" + sentenceId, requestOptions)
             .then((response) => {
@@ -59,7 +59,7 @@ export default function SentenceList(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult);
+
                 //Update the global state:
 
                 let graphData = null;

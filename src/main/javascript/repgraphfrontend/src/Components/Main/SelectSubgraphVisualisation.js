@@ -56,7 +56,7 @@ const SelectSubgraphVisualisation = () => {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //Debugging
+                 //Debugging
                 setSearchResult(jsonResult.data);
                 setSearchResultSpecific(jsonResult.data);//Store the search results in local state
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
@@ -78,7 +78,7 @@ const SelectSubgraphVisualisation = () => {
 
     //Function to get all the currently selected nodes and edges from the graph
     function getSelected() {
-        //console.log(currentVis);
+        //
         let nodeID = [];
         let edgeID = [];
         let graphID = currentVis.id;
@@ -98,7 +98,7 @@ const SelectSubgraphVisualisation = () => {
         }
 
         const returnValue = { id: graphID, nodes: nodeID, edges: edgeID };
-        console.log(returnValue); //Debugging
+         //Debugging
 
         return returnValue;
     }
@@ -165,7 +165,7 @@ const SelectSubgraphVisualisation = () => {
 
     //Handle when user selects one of the sentences returned in the results from the backend
     function handleClickSentenceResult(sentenceId) {
-        console.log(sentenceId); //Debugging
+         //Debugging
 
         var myHeaders = new Headers();
         myHeaders.append("X-USER", state.userID);
@@ -187,7 +187,7 @@ const SelectSubgraphVisualisation = () => {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //Debugging
+                 //Debugging
                 setSelectedSentenceVisualisation(jsonResult); //Store graph visualisation result
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
             })

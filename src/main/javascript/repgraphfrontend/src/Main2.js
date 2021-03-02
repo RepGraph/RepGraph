@@ -208,7 +208,7 @@ export default function MiniDrawer() {
         //Enforce one format being selected at all times
         if (newFormat !== null) {
             dispatch({type: "SET_VISUALISATION_FORMAT", payload: {visualisationFormat: newFormat}}); //Set global state for visualisation format
-            console.log(newFormat);
+
             //Update the currently displayed graph as well
             if (state.selectedSentenceID !== null) {
                 let myHeaders = new Headers();
@@ -237,7 +237,7 @@ export default function MiniDrawer() {
                         break;
                 }
 
-                console.log("newFormat", newFormat, "graphData", graphData);
+
 
                 dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});

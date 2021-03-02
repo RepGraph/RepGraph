@@ -55,7 +55,7 @@ export default function DatasetAnalysisFormDisplay(props) {
 
     let newRows = [];
 
-    console.log("response", response);
+
 
     //Add the rows to the table of results - in consistent order
     try {
@@ -68,7 +68,7 @@ export default function DatasetAnalysisFormDisplay(props) {
 
         }
     } catch (e) {
-        console.log(e); //Log the error to the console
+         //Log the error to the console
         history.push("/404"); //Take the user to the error page
     }
 

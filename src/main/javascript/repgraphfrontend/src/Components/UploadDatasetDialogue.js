@@ -19,18 +19,18 @@ function DropZoneUploadDataset(props){
             maxFileSize={5000000}
             open={open}
             onAdd={newFileObjs => {
-                console.log('onAdd', newFileObjs);
+
                 setFileObjects([].concat(fileObjects, newFileObjs));
             }}
             onDelete={deleteFileObj => {
-                console.log('onDelete', deleteFileObj);
+
             }}
             onClose={() => {
                 setOpen(false)}}
             onSave={() => {
                 //Fired when the user clicks the Submit button
                 props.handleUploadDataset(fileObjects[0]);
-                console.log('onSave', fileObjects);
+
                 setOpen(false);}}
             showPreviews={true}
             showFileNamesInPreview={true}

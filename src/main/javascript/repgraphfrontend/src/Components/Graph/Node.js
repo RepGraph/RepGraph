@@ -30,7 +30,7 @@ export const Node = ({
         </text>
     );
 
-    //console.log(node);
+    //
 
     let bb = {
         x: 0,
@@ -45,7 +45,7 @@ export const Node = ({
 
     let fillColor = null;
 
-    //console.log(node);
+    //
 
     switch (node.type) {
         case "node":

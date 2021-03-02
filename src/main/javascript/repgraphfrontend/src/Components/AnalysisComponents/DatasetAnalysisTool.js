@@ -49,7 +49,7 @@ function DatasetAnalysisTool(props) {
             })
             .then((result) => {
                 const jsonResult = JSON.parse(result);
-                console.log(jsonResult); //Debugging
+                 //Debugging
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
                 dispatch({type: "SET_DATASET_ANALYSIS", payload: {datasetAnalysis: jsonResult}}); //Store the test results in global state
             })
