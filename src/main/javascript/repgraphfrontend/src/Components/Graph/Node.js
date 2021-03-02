@@ -231,6 +231,7 @@ export const Node = ({
                     setTooltipData({
                         label: node.label,
                         type: node.type,
+                        surface: node.surface,
                         extraInformation: filteredExtraInformation
                     });
                 }}
