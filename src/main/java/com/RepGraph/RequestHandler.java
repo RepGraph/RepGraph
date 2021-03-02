@@ -155,7 +155,8 @@ public class RequestHandler {
 
     @PostMapping("/UploadDemo")
     @ResponseBody
-    public HashMap<String, Object> UploadDemo(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestParam ArrayList<String> demoData) throws IOException {
+    public HashMap<String, Object> UploadDemo(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestBody HashMap<String,Object> demoDataObject) throws IOException {
+        ArrayList<LinkedHashMap> demoData = (ArrayList<LinkedHashMap>) demoDataObject.get("data");
         HashMap<String, Object> returnobj = new HashMap<>();
         ArrayList<HashMap<String, String>> returninfo = new ArrayList<>();
         switch (framework){
@@ -177,22 +178,23 @@ public class RequestHandler {
         }
         ObjectMapper objectMapper = new ObjectMapper();
         boolean duplicates = false;
-        for (String currentLine:demoData) {
+        for (LinkedHashMap<String,Object> currentLine:demoData) {
             AbstractGraph currgraph;
             if (framework.equals("1")) {
-                currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
+
+                currgraph = objectMapper.convertValue(currentLine, DMRSGraph.class);
 
             } else if (framework.equals("2")) {
-                currgraph = objectMapper.readValue(currentLine, EDSGraph.class);
+                currgraph = objectMapper.convertValue(currentLine, EDSGraph.class);
 
             } else if (framework.equals("3")) {
-                currgraph = objectMapper.readValue(currentLine, PTGGraph.class);
+                currgraph = objectMapper.convertValue(currentLine, PTGGraph.class);
 
             }else if (framework.equals("4")) {
-                currgraph = objectMapper.readValue(currentLine, UCCAGraph.class);
+                currgraph = objectMapper.convertValue(currentLine, UCCAGraph.class);
 
             }else {
-                currgraph = objectMapper.readValue(currentLine, AMRGraph.class);
+                currgraph = objectMapper.convertValue(currentLine, AMRGraph.class);
 
             }
             //checks if model doesnt contain the ID already and if it does dont add it and tell the user duplicates were found
