@@ -239,14 +239,19 @@ class AbstractModel {
         parent.setNodeNeighbours();
 
         HashMap<String, Node> DescendentNodes = new HashMap<String, Node>();
+        HashMap<String,Boolean> visited = new HashMap<>();
         ArrayList<Edge> DescendentEdges = new ArrayList<>();
         ArrayList<Token> SubsetTokens = new ArrayList<>();
 
+        for (Node n:parent.getNodes().values()) {
+            visited.put(n.getId(),false);
+        }
 
         Node n = parent.getNodes().get(headNodeID);
 
         //Add the head Node to the descendent nodes hashmap
         DescendentNodes.put(n.getId(), new Node(n));
+        visited.put(n.getId(),true);
         for (Edge e : n.getDirectedEdgeNeighbours()) {
             DescendentEdges.add(new Edge(e));
         }
@@ -270,21 +275,24 @@ class AbstractModel {
         Stack<Node> stack = new Stack<>();
         while (n != null) {
             for (Node nn : n.getDirectedNeighbours()) {
-                DescendentNodes.put(nn.getId(), new Node(nn));
-                stack.push(nn);
-                //Set the min and max span appropriately as found
-                if (nn.getAnchors() != null) {
-                    for (int i = 0; i < nn.getAnchors().size(); i++) {
-                        if (nn.getAnchors().get(i).getFrom() < minFrom) {
-                            minFrom = nn.getAnchors().get(i).getFrom();
-                        }
-                        if (nn.getAnchors().get(i).getEnd() > maxEnd) {
-                            maxEnd = nn.getAnchors().get(i).getEnd();
+                if (!visited.get(nn.getId())) {
+                    DescendentNodes.put(nn.getId(), new Node(nn));
+                    stack.push(nn);
+                    visited.put(nn.getId(), true);
+                    //Set the min and max span appropriately as found
+                    if (nn.getAnchors() != null) {
+                        for (int i = 0; i < nn.getAnchors().size(); i++) {
+                            if (nn.getAnchors().get(i).getFrom() < minFrom) {
+                                minFrom = nn.getAnchors().get(i).getFrom();
+                            }
+                            if (nn.getAnchors().get(i).getEnd() > maxEnd) {
+                                maxEnd = nn.getAnchors().get(i).getEnd();
+                            }
                         }
                     }
-                }
-                for (Edge ne : nn.getDirectedEdgeNeighbours()) {
-                    descEdge.put(ne.getSource() + " " + ne.getTarget(), new Edge(ne));
+                    for (Edge ne : nn.getDirectedEdgeNeighbours()) {
+                        descEdge.put(ne.getSource() + " " + ne.getTarget(), new Edge(ne));
+                    }
                 }
             }
             if (!stack.empty()) {
@@ -309,7 +317,6 @@ class AbstractModel {
 
         return subset;
     }
-
 
     /**
      * Overloaded method to search for subgraph pattern using different parameters

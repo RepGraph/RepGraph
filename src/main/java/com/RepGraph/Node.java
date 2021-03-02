@@ -102,7 +102,7 @@ public class Node {
         this.directedEdgeNeighbours = new ArrayList<>();
         this.directedNeighbours = new ArrayList<>();
         this.undirectedNeighbours = new ArrayList<>();
-
+        this.surface = n.surface;
     }
 
     /**
