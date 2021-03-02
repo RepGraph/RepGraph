@@ -1,6 +1,7 @@
 package com.RepGraph;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -40,11 +41,6 @@ public class AMRGraph extends AbstractGraph {
         this.setNodeNeighbours();
         this.top = top.get(0) + "";
 
-        alignNodes();
-
-
-
-
 
     }
 
@@ -75,6 +71,11 @@ public class AMRGraph extends AbstractGraph {
 
     public void alignNodes() throws IOException, InterruptedException {
         setNodeNeighbours();
+        for (Node n:this.nodes.values()) {
+            if (n.getAnchors()!=null){
+                return;
+            }
+        }
         HashMap<String, Boolean> visited = new HashMap<>();
         for (String i : nodes.keySet()) {
             visited.put(i, false);
@@ -114,31 +115,32 @@ public class AMRGraph extends AbstractGraph {
                 Anchors a = new Anchors(from, end);
                 nodes.get(nodeid).setAnchors(new ArrayList<Anchors>());
                 nodes.get(nodeid).getAnchors().add(a);
+                nodes.get(nodeid).setSurface(true);
 
             }
-            if (line.startsWith("###tokens")){
+            if (line.startsWith("###tokens")) {
                 tokens = input.readLine().split("<###>");
             }
-            if (line.startsWith("###ner_tags")){
+            if (line.startsWith("###ner_tags")) {
                 ner_tags = input.readLine().split("<###>");
             }
-            if (line.startsWith("###ner_iob_tags")){
-                 ner_iob_tags = input.readLine().split("<###>");
+            if (line.startsWith("###ner_iob_tags")) {
+                ner_iob_tags = input.readLine().split("<###>");
             }
-            if (line.startsWith("###pos_tags")){
-                 pos_tags = input.readLine().split("<###>");
+            if (line.startsWith("###pos_tags")) {
+                pos_tags = input.readLine().split("<###>");
             }
-            if (line.startsWith("###lemmas")){
-                 lemmas = input.readLine().split("<###>");
+            if (line.startsWith("###lemmas")) {
+                lemmas = input.readLine().split("<###>");
             }
         }
         ArrayList<Token> tokenlist = new ArrayList<>();
-        for (int i = 0; i < tokens.length ; i++) {
+        for (int i = 0; i < tokens.length; i++) {
 
-            tokenlist.add(new Token(i,tokens[i],lemmas[i],null));
-            tokenlist.get(i).getExtraInformation().put("NER",ner_tags[i]);
-            tokenlist.get(i).getExtraInformation().put("NER_IOB",ner_iob_tags[i]);
-            tokenlist.get(i).getExtraInformation().put("POS",pos_tags[i]);
+            tokenlist.add(new Token(i, tokens[i], lemmas[i], null));
+            tokenlist.get(i).getExtraInformation().put("NER", ner_tags[i]);
+            tokenlist.get(i).getExtraInformation().put("NER_IOB", ner_iob_tags[i]);
+            tokenlist.get(i).getExtraInformation().put("POS", pos_tags[i]);
 
         }
         setTokens(tokenlist);
@@ -217,7 +219,10 @@ public class AMRGraph extends AbstractGraph {
         return searches;
     }
 
-
-
+    @JsonIgnore
+    public HashMap<String,Object> isPlanar() throws IOException, InterruptedException {
+        this.alignNodes();
+        return super.isPlanar();
+    }
 
 }

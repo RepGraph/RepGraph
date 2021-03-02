@@ -7,6 +7,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 import org.apache.commons.math3.util.Precision;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -32,7 +33,7 @@ class AbstractModel {
      * @param graphID A Graph's ID.
      * @return Graph The requested Graph.
      */
-    public AbstractGraph getGraph(String graphID) {
+    public AbstractGraph getGraph(String graphID) throws IOException, InterruptedException {
         return graphs.get(graphID);
     }
 
@@ -66,12 +67,13 @@ class AbstractModel {
         graphs.clear();
     }
 
-    public HashMap<String, String> modelAnalysis() {
+    public HashMap<String, String> modelAnalysis() throws IOException, InterruptedException {
         HashMap<String, String> AnalysisInfo = new HashMap<>();
 
-
-        int total_nodes = 0;
-        int total_edges = 0;
+        float total_nodes = 0;
+        float total_edges = 0;
+        float total_tokens = 0;
+        float total_spans = 0;
         float total_directed_cyclic = 0;
         float total_undirected_cyclic = 0;
         float total_planar = 0;
@@ -80,13 +82,15 @@ class AbstractModel {
         for (AbstractGraph g : graphs.values()) {
             total_nodes += g.getNodes().values().size();
             total_edges += g.getEdges().size();
+            total_tokens += g.getTokens().size();
+            total_spans += g.getAverageSpanLength();
             if (g.isCyclic(true)){
                 total_directed_cyclic++;
             }
             if (g.isCyclic(false)){
                 total_undirected_cyclic++;
             }
-            if (g.isPlanarCheck()){
+            if ((boolean) g.isPlanar().get("planar")){
                 total_planar++;
             }
             if (!g.connectedBFS(g.getNodes().values().iterator().next().getId())){
@@ -96,12 +100,17 @@ class AbstractModel {
 
         }
         AnalysisInfo.put("Total Number of Graphs", graphs.values().size() + "");
-        AnalysisInfo.put("Total Number of Nodes",total_nodes+"");
-        AnalysisInfo.put("Total Number of Edges",total_edges+"");
-        AnalysisInfo.put("Percentage of Directed Cyclic Graphs",Precision.round(total_directed_cyclic/graphs.values().size(),4)*100+"");
-        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs",Precision.round(total_undirected_cyclic/graphs.values().size(),4)*100+"");
-        AnalysisInfo.put("Percentage of Disconnected Graphs",Precision.round(total_not_connected/graphs.values().size(),4)*100+"");
-        AnalysisInfo.put("Percentage of Planar Graphs",Precision.round(total_planar/graphs.values().size(),4)*100+"");
+        AnalysisInfo.put("Total Number of Nodes",Math.round(total_nodes)+"");
+        AnalysisInfo.put("Total Number of Edges",Math.round(total_edges)+"");
+        AnalysisInfo.put("Total Number of Tokens",Math.round(total_tokens)+"");
+        AnalysisInfo.put("Average Span of Node",Precision.round(total_spans/graphs.values().size(),2)+"");
+        AnalysisInfo.put("Average Number of Nodes",Precision.round(total_nodes/graphs.values().size(),2)+"");
+        AnalysisInfo.put("Average Number of Edges",Precision.round(total_edges/graphs.values().size(),2)+"");
+        AnalysisInfo.put("Average Number of Tokens",Precision.round(total_tokens/graphs.values().size(),2)+"");
+        AnalysisInfo.put("Percentage of Directed Cyclic Graphs",Precision.round((total_directed_cyclic/graphs.values().size())*100,4)+"");
+        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs",Precision.round((total_undirected_cyclic/graphs.values().size())*100,4)+"");
+        AnalysisInfo.put("Percentage of Disconnected Graphs",Precision.round((total_not_connected/graphs.values().size())*100,4)+"");
+        AnalysisInfo.put("Percentage of Planar Graphs",Precision.round((total_planar/graphs.values().size())*100,4)+"");
         return AnalysisInfo;
     }
 
@@ -665,7 +674,7 @@ class AbstractModel {
      * the "LongestPathUndirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest undirected paths in the graphs
      * the "Connected" returns a boolean of whether or not the AbstractGraph is connected.
      */
-    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestPathDirected, boolean longestPathUndirected, boolean connected) {
+    public HashMap<String, Object> runFormalTests(String graphID, boolean planar, boolean longestPathDirected, boolean longestPathUndirected, boolean connected) throws IOException, InterruptedException {
         HashMap<String, Object> returnObj = new HashMap<>();
         AbstractGraph g = (AbstractGraph) graphs.get(graphID);
         if (planar) {
