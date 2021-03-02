@@ -40,7 +40,7 @@ public class PTGGraph extends AbstractGraph {
         anchArr.add(anchors);
 
         this.nodes.get("0").setAnchors(anchArr);
-        this.nodes.get("0").setLabel("top");
+        this.nodes.get("0").setLabel("#0");
 
         populateTokens();
     }
