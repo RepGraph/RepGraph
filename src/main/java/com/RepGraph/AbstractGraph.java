@@ -1028,7 +1028,7 @@ class AbstractGraph {
     }
 
 
-
+    @JsonIgnore
     public float getAverageSpanLength(){
         float val=0;
         for (Node n:this.nodes.values()){
