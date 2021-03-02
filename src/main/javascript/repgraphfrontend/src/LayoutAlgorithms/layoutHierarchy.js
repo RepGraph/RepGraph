@@ -211,7 +211,8 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             group: "node",
             label: node.label,
             anchors: nodesWithoutAnchors.includes(node.id) ? null : node.anchors, //Remove fake anchors assigned to anchorless nodes
-            selected: false
+            selected: false,
+            span: true
         }));
 
         const tokens = graphClone.tokens.map((token) => ({
@@ -222,28 +223,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             type: "token",
             group: "token"
         }));
-        // //Add top node and corresponding link to graphData
-        //
-        // let topNodeID = graphData.nodes.length.toString();
-        // //Ensure that topNodeID is unique
-        // if (graphData.nodes.find(node => node.id === topNodeID) !== undefined) {
-        //     topNodeID = uuid();
-        // }
-        //
-        // //Get top node's x coordinate from its associated node
-        // const topNodeX = nodes.find(node => node.id === graphData.tops).x;
-        //
-        // //Add the top node to the array of nodes
-        // nodes.push({
-        //     id: topNodeID,
-        //     x: topNodeX,
-        //     y: 0 - (nodeHeight + interLevelSpacing),
-        //     type: "topNode",
-        //     group: "top",
-        //     label: "TOP",
-        //     anchors: nodes.find(node => node.id === graphData.tops).anchors,
-        //     span: false
-        // });
+
 
         const finalGraphNodes = nodes.concat(tokens);
 

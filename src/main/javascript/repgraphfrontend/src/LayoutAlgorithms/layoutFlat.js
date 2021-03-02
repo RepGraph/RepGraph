@@ -1,6 +1,5 @@
 import uuid from "react-uuid";
 
-
 export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => {
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
@@ -131,34 +130,6 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
             selected: false
         };
     })
-
-    // //Add the top node link
-    // if(!planar){
-    //     let topNodeLinkID = graphData.edges.length;
-    //     //Ensure that topNodeLinkID is unique
-    //     if (graphData.edges.find(edge => edge.id === topNodeLinkID) !== undefined) {
-    //         topNodeLinkID = uuid();
-    //     }
-    //
-    //     let topCP = controlPoints(
-    //         finalGraphNodes.find(node => node.id === topNodeID),
-    //         finalGraphNodes.find(node => node.id === graphData.tops),
-    //         "",
-    //         0,
-    //         graphLayoutSpacing
-    //     );
-    //
-    //     //Add the top node link
-    //     finalGraphEdges.push({
-    //         id: topNodeLinkID,
-    //         source: finalGraphNodes.find(node => node.id === topNodeID),
-    //         target: finalGraphNodes.find(node => node.id === graphData.tops),
-    //         label: "",
-    //         x1: topCP.x1,
-    //         y1: topCP.y1,
-    //         type: "tokenLink",
-    //     });
-    // }
 
     //Add top node and corresponding link to graphData
     if(addTopNode){
