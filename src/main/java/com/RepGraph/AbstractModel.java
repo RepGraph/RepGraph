@@ -81,16 +81,16 @@ class AbstractModel {
 
         for (AbstractGraph g : graphs.values()) {
 
-            if (g.isCyclic(true)){
+            if (g.isCyclic(true)) {
                 total_directed_cyclic++;
             }
-            if (g.isCyclic(false)){
+            if (g.isCyclic(false)) {
                 total_undirected_cyclic++;
             }
-            if ((boolean) g.isPlanar().get("planar")){
+            if ((boolean) g.isPlanar().get("planar")) {
                 total_planar++;
             }
-            if (!g.connectedBFS(g.getNodes().values().iterator().next().getId())){
+            if (!g.connectedBFS(g.getNodes().values().iterator().next().getId())) {
                 total_not_connected++;
 
             }
@@ -102,17 +102,17 @@ class AbstractModel {
         }
 
         AnalysisInfo.put("Total Number of Graphs", graphs.values().size() + "");
-        AnalysisInfo.put("Total Number of Nodes",Math.round(total_nodes)+"");
-        AnalysisInfo.put("Total Number of Edges",Math.round(total_edges)+"");
-        AnalysisInfo.put("Total Number of Tokens",Math.round(total_tokens)+"");
-        AnalysisInfo.put("Average Span of Node",Precision.round(total_spans/graphs.values().size(),2)+"");
-        AnalysisInfo.put("Average Number of Nodes",Precision.round(total_nodes/graphs.values().size(),2)+"");
-        AnalysisInfo.put("Average Number of Edges",Precision.round(total_edges/graphs.values().size(),2)+"");
-        AnalysisInfo.put("Average Number of Tokens",Precision.round(total_tokens/graphs.values().size(),2)+"");
-        AnalysisInfo.put("Percentage of Directed Cyclic Graphs",Precision.round((total_directed_cyclic/graphs.values().size())*100,2)+"");
-        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs",Precision.round((total_undirected_cyclic/graphs.values().size())*100,2)+"");
-        AnalysisInfo.put("Percentage of Disconnected Graphs",Precision.round((total_not_connected/graphs.values().size())*100,2)+"");
-        AnalysisInfo.put("Percentage of Planar Graphs",Precision.round((total_planar/graphs.values().size())*100,2)+"");
+        AnalysisInfo.put("Total Number of Nodes", Math.round(total_nodes) + "");
+        AnalysisInfo.put("Total Number of Edges", Math.round(total_edges) + "");
+        AnalysisInfo.put("Total Number of Tokens", Math.round(total_tokens) + "");
+        AnalysisInfo.put("Average Span of Node", Precision.round(total_spans / graphs.values().size(), 2) + "");
+        AnalysisInfo.put("Average Number of Nodes", Precision.round(total_nodes / graphs.values().size(), 2) + "");
+        AnalysisInfo.put("Average Number of Edges", Precision.round(total_edges / graphs.values().size(), 2) + "");
+        AnalysisInfo.put("Average Number of Tokens", Precision.round(total_tokens / graphs.values().size(), 2) + "");
+        AnalysisInfo.put("Percentage of Directed Cyclic Graphs", Precision.round((total_directed_cyclic / graphs.values().size()) * 100, 2) + "");
+        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs", Precision.round((total_undirected_cyclic / graphs.values().size()) * 100, 2) + "");
+        AnalysisInfo.put("Percentage of Disconnected Graphs", Precision.round((total_not_connected / graphs.values().size()) * 100, 2) + "");
+        AnalysisInfo.put("Percentage of Planar Graphs", Precision.round((total_planar / graphs.values().size()) * 100, 2) + "");
         return AnalysisInfo;
     }
 
@@ -120,55 +120,61 @@ class AbstractModel {
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-            for (AbstractGraph g : this.graphs.values()) {
-                try {
+        for (AbstractGraph g : this.graphs.values()) {
+            try {
 
-                    ArrayList<Token> tokenlist = new ArrayList<>();
+                ArrayList<Token> tokenlist = new ArrayList<>();
 
-                    CoreDocument document = new CoreDocument(g.getInput());
-                    pipeline.annotate(document);
+                CoreDocument document = new CoreDocument(g.getInput());
+                pipeline.annotate(document);
 
-                    int index = 0;
-                    List<String> posTags = new ArrayList<>();
-                    List<String> nerTags = new ArrayList<>();
-                    for (int j = 0; j < document.sentences().size(); j++) {
-                        CoreSentence sentence = document.sentences().get(j);
-                        posTags.addAll(sentence.posTags());
-                        nerTags.addAll(sentence.nerTags());
+
+                List<String> posTags = new ArrayList<>();
+                List<String> nerTags = new ArrayList<>();
+                for (int j = 0; j < document.sentences().size(); j++) {
+                    CoreSentence sentence = document.sentences().get(j);
+                    posTags.addAll(sentence.posTags());
+                    nerTags.addAll(sentence.nerTags());
+                }
+
+                List<CoreLabel> tokens = document.tokens();
+
+                for (int i = 0; i < tokens.size(); i++) {
+                    tokenlist.add(new Token(i, tokens.get(i).originalText(), tokens.get(i).lemma(), null));
+                    if (posTags.size() > 0) {
+                        tokenlist.get(i).getExtraInformation().put("POS", posTags.get(i));
                     }
-
-                    List<CoreLabel> tokens = document.tokens();
-
-                    for (int i = 0; i < tokens.size(); i++) {
-                        tokenlist.add(new Token(i, tokens.get(i).originalText(), tokens.get(i).lemma(), null));
-                        if (posTags.size() > 0) {
-                            tokenlist.get(i).getExtraInformation().put("POS", posTags.get(i));
-                        }
-                        if (nerTags.size() > 0) {
-                            tokenlist.get(i).getExtraInformation().put("NER", nerTags.get(i));
-                        }
+                    if (nerTags.size() > 0) {
+                        tokenlist.get(i).getExtraInformation().put("NER", nerTags.get(i));
                     }
+                }
+                int index = 0;
+                for (CoreLabel label : tokens) {
+                    for (Node n : g.getNodes().values()) {
+                        if (n.getCharacterSpans() == null) {
+                            continue;
+                        }
+                        for (int i = 0; i < n.getCharacterSpans().size(); i++) {
 
-                    for (CoreLabel label : tokens) {
-                        for (Node n : g.getNodes().values()) {
-                            if (n.getAnchors() == null) {
-                                continue;
+                            if (n.getCharacterSpans().get(i).getFrom() == label.beginPosition()) {
+
+                                n.getAnchors().get(i).setFrom(index);
                             }
-                            for (Anchors a : n.getAnchors()) {
-                                if (a.getFrom() == label.beginPosition()) {
-                                    a.setFrom(index);
-                                }
-                                if (a.getEnd() == label.endPosition()) {
-                                    a.setEnd(index);
-                                }
+                            if (n.getCharacterSpans().get(i).getEnd() == label.endPosition()) {
+                                n.getAnchors().get(i).setEnd(index);
                             }
+                          
                         }
 
-                        index++;
                     }
-                    g.setTokens(tokenlist);
-                }catch (Exception e){continue;}
+
+                    index++;
+                }
+                g.setTokens(tokenlist);
+            } catch (Exception e) {
+                continue;
             }
+        }
 
     }
 
@@ -250,19 +256,19 @@ class AbstractModel {
         parent.setNodeNeighbours();
 
         HashMap<String, Node> DescendentNodes = new HashMap<String, Node>();
-        HashMap<String,Boolean> visited = new HashMap<>();
+        HashMap<String, Boolean> visited = new HashMap<>();
         ArrayList<Edge> DescendentEdges = new ArrayList<>();
         ArrayList<Token> SubsetTokens = new ArrayList<>();
 
-        for (Node n:parent.getNodes().values()) {
-            visited.put(n.getId(),false);
+        for (Node n : parent.getNodes().values()) {
+            visited.put(n.getId(), false);
         }
 
         Node n = parent.getNodes().get(headNodeID);
 
         //Add the head Node to the descendent nodes hashmap
         DescendentNodes.put(n.getId(), new Node(n));
-        visited.put(n.getId(),true);
+        visited.put(n.getId(), true);
         for (Edge e : n.getDirectedEdgeNeighbours()) {
             DescendentEdges.add(new Edge(e));
         }
@@ -587,14 +593,16 @@ class AbstractModel {
                 } else {
                     String phrase1 = "";
                     String phrase2 = "";
-                    if (n1.getAnchors()!=null){
-                    for (Anchors a : n1.getAnchors()) {
-                        phrase1 += g1.getTokenInput(g1.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
-                    }}
-                    if (n2.getAnchors()!=null){
-                    for (Anchors a : n2.getAnchors()) {
-                        phrase2 += g2.getTokenInput(g2.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
-                    }}
+                    if (n1.getAnchors() != null) {
+                        for (Anchors a : n1.getAnchors()) {
+                            phrase1 += g1.getTokenInput(g1.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
+                        }
+                    }
+                    if (n2.getAnchors() != null) {
+                        for (Anchors a : n2.getAnchors()) {
+                            phrase2 += g2.getTokenInput(g2.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
+                        }
+                    }
 
                     if (n1.getLabel().equals(n2.getLabel()) && phrase1.equals(phrase2)) {
                         //if they are equal then it adds the respective IDs to the individual similar nodes lists for the graphs
@@ -617,12 +625,12 @@ class AbstractModel {
                                 phrase1 = "";
                                 phrase2 = "";
 
-                                if (nn1.getAnchors()!=null) {
+                                if (nn1.getAnchors() != null) {
                                     for (Anchors a : nn1.getAnchors()) {
                                         phrase1 += g1.getTokenInput(g1.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
                                     }
                                 }
-                                if (nn2.getAnchors()!=null) {
+                                if (nn2.getAnchors() != null) {
                                     for (Anchors a : nn2.getAnchors()) {
                                         phrase2 += g2.getTokenInput(g2.getTokenSpan(a.getFrom(), a.getEnd())).toLowerCase();
                                     }

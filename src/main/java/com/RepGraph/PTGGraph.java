@@ -27,6 +27,15 @@ public class PTGGraph extends AbstractGraph {
     public void setNodes(ArrayList<Node> nodelist) {
 
         for (Node n : nodelist) {
+            ArrayList<Anchors> characterSpans = null;
+            if (n.getAnchors()!=null){
+                characterSpans = new ArrayList<>();
+                for (Anchors a:n.getAnchors()) {
+                    Anchors AnchChar = new Anchors(a.getFrom(),a.getEnd());
+                    characterSpans.add(AnchChar);
+                }}
+            n.setCharacterSpans(characterSpans);
+
             if (n.getLabel()!=null){
             if (n.getLabel().startsWith("#")){
                 n.setSurface(false);
