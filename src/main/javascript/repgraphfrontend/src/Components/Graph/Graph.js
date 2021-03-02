@@ -124,8 +124,8 @@ export const Graph = ({
                                     style={{
                                         color:
                                             tooltipData.type === "node"
-                                                ? styles.nodeStyles.nodeColour
-                                                : styles.tokenStyles.tokenColour
+                                                ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
+                                                : tooltipData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour
                                     }}
                                 >
                                     {tooltipData.label}
@@ -149,8 +149,8 @@ export const Graph = ({
                                                 style={{
                                                     color:
                                                         tooltipData.type === "node"
-                                                            ? styles.nodeStyles.nodeColour
-                                                            : styles.tokenStyles.tokenColour,
+                                                            ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
+                                                            : tooltipData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour,
                                                     marginTop: "0.4rem",
                                                     width: "100%"
                                                 }}
