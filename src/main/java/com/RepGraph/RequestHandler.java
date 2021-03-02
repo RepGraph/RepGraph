@@ -271,7 +271,7 @@ public class RequestHandler {
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public HashMap<String, Object> TestGraph(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestPathDirected, @RequestParam boolean longestPathUndirected, @RequestParam boolean connected) {
+    public HashMap<String, Object> TestGraph(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestPathDirected, @RequestParam boolean longestPathUndirected, @RequestParam boolean connected) throws IOException, InterruptedException {
         return RepModel.get(userID).runFormalTests(graphID, planar, longestPathDirected, longestPathUndirected, connected);
 
     }
@@ -285,7 +285,7 @@ public class RequestHandler {
      */
     @GetMapping("/GetGraph")
     @ResponseBody
-    public AbstractGraph GetGraph(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID) {
+    public AbstractGraph GetGraph(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID) throws IOException, InterruptedException {
         return RepModel.get(userID).getGraph(graphID);
     }
 
@@ -334,8 +334,15 @@ public class RequestHandler {
 
     @GetMapping("/GetModelAnalysis")
     @ResponseBody
-    public HashMap<String,String> GetModelAnalysis(@RequestHeader(USER_HEADER)String userID) {
+    public HashMap<String,String> GetModelAnalysis(@RequestHeader(USER_HEADER)String userID) throws IOException, InterruptedException {
        return RepModel.get(userID).modelAnalysis();
+    }
+
+    @GetMapping("/AlignAMR")
+    @ResponseBody
+    public void AlignAMR(@RequestHeader(USER_HEADER)String userID) throws IOException, InterruptedException {
+       AMRModel m = (AMRModel) RepModel.get(userID);
+       m.alignAllGraphs();
     }
 
     /**
