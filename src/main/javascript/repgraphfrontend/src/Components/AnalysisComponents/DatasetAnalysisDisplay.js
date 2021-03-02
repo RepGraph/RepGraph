@@ -55,8 +55,6 @@ export default function DatasetAnalysisFormDisplay(props) {
 
     let newRows = [];
 
-
-
     //Add the rows to the table of results - in consistent order
     try {
         const keys = Object.keys(response).sort();
