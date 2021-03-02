@@ -33,6 +33,15 @@ public class EDSGraph extends AbstractGraph {
 
         //Dont understand the CARG property thing
         for (Node n : nodelist) {
+            ArrayList<Anchors> characterSpans = null;
+            if (n.getAnchors()!=null){
+                characterSpans = new ArrayList<>();
+                for (Anchors a:n.getAnchors()) {
+                    Anchors AnchChar = new Anchors(a.getFrom(),a.getEnd());
+                    characterSpans.add(AnchChar);
+                }}
+            n.setCharacterSpans(characterSpans);
+
             if (n.getLabel().startsWith("_") || (n.getProperties()!=null && n.getProperties().contains("CARG")) ){n.setSurface(true);}else{n.setSurface(false);}
             this.nodes.put(n.getId(), n);
         }

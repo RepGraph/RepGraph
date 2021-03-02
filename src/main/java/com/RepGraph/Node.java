@@ -24,10 +24,8 @@ public class Node {
     @JsonProperty("id")
     private String id;
 
-
     @JsonProperty("label")
     private String label;
-
 
     @JsonProperty("anchors")
     private ArrayList<Anchors> anchors;
@@ -40,6 +38,9 @@ public class Node {
 
     @JsonProperty("surface")
     private boolean surface;
+
+    @JsonIgnore
+    private ArrayList<Anchors> characterSpans;
 
     @JsonIgnore
     private ArrayList<Node> directedNeighbours;
@@ -120,7 +121,13 @@ public class Node {
     }
 
 
+    public void setCharacterSpans(ArrayList<Anchors> characterSpans) {
+        this.characterSpans = characterSpans;
+    }
 
+    public ArrayList<Anchors> getCharacterSpans() {
+        return characterSpans;
+    }
 
     public String getLabel() {
         return label;

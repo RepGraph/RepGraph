@@ -231,6 +231,15 @@ class AbstractGraph {
 
         for (Node n : nodelist) {
             this.nodes.put(n.getId(), n);
+            ArrayList<Anchors> characterSpans = null;
+            if (n.getAnchors()!=null){
+                characterSpans = new ArrayList<>();
+            for (Anchors a:this.nodes.get(n.getId()).getAnchors()) {
+                Anchors AnchChar = new Anchors(a.getFrom(),a.getEnd());
+                characterSpans.add(AnchChar);
+            }}
+
+            this.nodes.get(n.getId()).setCharacterSpans(characterSpans);
             if (this.nodes.get(n.getId()).getLabel().startsWith("_")){
                 this.nodes.get(n.getId()).setSurface(true);
             }
@@ -958,7 +967,7 @@ class AbstractGraph {
 
             }
         }
-        // MIN 9
+
 
         for (int i = 0; i < ordered.size() - 1; i++) {
             if (!(ordered.get(i).getAnchors().get(0).getFrom() == ordered.get(i + 1).getAnchors().get(0).getFrom() && ordered.get(i).getAnchors().get(0).getEnd() == ordered.get(i + 1).getAnchors().get(0).getEnd())) {

@@ -19,7 +19,10 @@ public class Anchors {
      */
     public Anchors() {}
 
-
+    public Anchors(Anchors a) {
+        this.from = a.from;
+        this.end = a.end;
+    }
 
     /**
      * This is the parameterised constructor

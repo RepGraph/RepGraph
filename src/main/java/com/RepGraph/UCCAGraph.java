@@ -28,6 +28,14 @@ public class UCCAGraph extends AbstractGraph {
         this.input = input;
         this.edges = edges;
         for (Node n : nodes) {
+            ArrayList<Anchors> characterSpans = null;
+            if (n.getAnchors()!=null){
+                characterSpans = new ArrayList<>();
+                for (Anchors a:n.getAnchors()) {
+                    Anchors AnchChar = new Anchors(a.getFrom(),a.getEnd());
+                    characterSpans.add(AnchChar);
+                }}
+            n.setCharacterSpans(characterSpans);
             this.nodes.put(n.getId(), n);
         }
         this.setNodeNeighbours();
