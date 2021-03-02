@@ -1,5 +1,6 @@
 import uuid from "react-uuid";
 
+
 export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => {
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;

@@ -1,5 +1,5 @@
 import lodash from "lodash";
-import {edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors} from "./layoutUtils"
+import {edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors,controlPoints} from "./layoutUtils"
 import uuid from "react-uuid";
 
 export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
