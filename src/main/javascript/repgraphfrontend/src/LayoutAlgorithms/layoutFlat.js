@@ -25,10 +25,13 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
             addTopNode = true;
             break;
         case "3":
+            addTopNode = true;
             break;
         case "4":
+            addTopNode = true;
             break;
         case "5":
+            addTopNode = true;
             break;
         default:
     }
