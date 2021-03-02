@@ -224,16 +224,16 @@ export default function MiniDrawer() {
                 let graphData = null;
                 switch (newFormat) {
                     case "1":
-                        graphData = layoutHierarchy(state.selectedSentenceGraphData, state.graphLayoutSpacing);
+                        graphData = layoutHierarchy(state.selectedSentenceGraphData, state.graphLayoutSpacing, state.framework);
                         break;
                     case "2":
-                        graphData = layoutTree(state.selectedSentenceGraphData, state.graphLayoutSpacing);
+                        graphData = layoutTree(state.selectedSentenceGraphData, state.graphLayoutSpacing, state.framework);
                         break;
                     case "3":
-                        graphData = layoutFlat(state.selectedSentenceGraphData, false, state.graphLayoutSpacing);
+                        graphData = layoutFlat(state.selectedSentenceGraphData, false, state.graphLayoutSpacing, state.framework);
                         break;
                     default:
-                        graphData = layoutHierarchy(state.selectedSentenceGraphData, state.graphLayoutSpacing);
+                        graphData = layoutHierarchy(state.selectedSentenceGraphData, state.graphLayoutSpacing, state.framework);
                         break;
                 }
 
