@@ -20,6 +20,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
             case "4":
                 break;
             case "5":
+                addTopNode = true;
                 break;
             default:
         }
