@@ -39,7 +39,7 @@ function DatasetAnalysisTool(props) {
             headers: myHeaders,
             redirect: 'follow'
         };
-
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}});
         fetch(state.APIendpoint +"/GetModelAnalysis", requestOptions)
             .then((response) => {
                 if (!response.ok) {

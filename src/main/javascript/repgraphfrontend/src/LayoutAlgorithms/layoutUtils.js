@@ -70,7 +70,7 @@ export const childrenAnchors = (node, children, visited, graphClone) => {
 
                 let temp = childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone);
 
-                if (temp.from != Number.MAX_VALUE) {
+                if (temp.from !== Number.MAX_VALUE) {
                     graphClone.nodes.set(node.id, {...node, anchors: [{from: temp.from, end: temp.end}], span: false});
                 }
                 anchors.push({from: temp.from, end: temp.end});

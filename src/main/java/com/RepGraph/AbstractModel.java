@@ -80,10 +80,6 @@ class AbstractModel {
         float total_not_connected = 0;
 
         for (AbstractGraph g : graphs.values()) {
-            total_nodes += g.getNodes().values().size();
-            total_edges += g.getEdges().size();
-            total_tokens += g.getTokens().size();
-            total_spans += g.getAverageSpanLength();
 
             if (g.isCyclic(true)){
                 total_directed_cyclic++;
@@ -98,8 +94,13 @@ class AbstractModel {
                 total_not_connected++;
 
             }
+            total_nodes += g.getNodes().values().size();
+            total_edges += g.getEdges().size();
+            total_tokens += g.getTokens().size();
+            total_spans += g.getAverageSpanLength();
 
         }
+
         AnalysisInfo.put("Total Number of Graphs", graphs.values().size() + "");
         AnalysisInfo.put("Total Number of Nodes",Math.round(total_nodes)+"");
         AnalysisInfo.put("Total Number of Edges",Math.round(total_edges)+"");
