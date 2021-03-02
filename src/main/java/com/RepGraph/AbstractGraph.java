@@ -1026,7 +1026,8 @@ class AbstractGraph {
             float span = 0;
             if (n.getAnchors()!=null){
                 for (Anchors a:n.getAnchors()) {
-                span+= a.getEnd()-a.getFrom();
+                span+= a.getEnd()-a.getFrom()+1;
+
             }
             span/=n.getAnchors().size();
             }

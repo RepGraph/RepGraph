@@ -60,7 +60,7 @@ export default function DatasetAnalysisFormDisplay(props) {
     //Add the rows to the table of results - in consistent order
     try {
         for (const newRow in response) {
-            if (newRow.includes("Total")){
+            if (newRow.includes("Total") || newRow.includes("Average")){
                 newRows.push(createData(newRow, response[newRow]));
             }else{
                 newRows.push(createData(newRow, response[newRow]+"%"));
