@@ -73,6 +73,7 @@ class AbstractModel {
         float total_nodes = 0;
         float total_edges = 0;
         float total_tokens = 0;
+        float total_spans = 0;
         float total_directed_cyclic = 0;
         float total_undirected_cyclic = 0;
         float total_planar = 0;
@@ -82,6 +83,7 @@ class AbstractModel {
             total_nodes += g.getNodes().values().size();
             total_edges += g.getEdges().size();
             total_tokens += g.getTokens().size();
+            total_spans += g.getAverageSpanLength();
             if (g.isCyclic(true)){
                 total_directed_cyclic++;
             }
@@ -101,6 +103,7 @@ class AbstractModel {
         AnalysisInfo.put("Total Number of Nodes",Math.round(total_nodes)+"");
         AnalysisInfo.put("Total Number of Edges",Math.round(total_edges)+"");
         AnalysisInfo.put("Total Number of Tokens",Math.round(total_tokens)+"");
+        AnalysisInfo.put("Average Span of Node",Precision.round(total_spans/graphs.values().size(),2)+"");
         AnalysisInfo.put("Average Number of Nodes",Precision.round(total_nodes/graphs.values().size(),2)+"");
         AnalysisInfo.put("Average Number of Edges",Precision.round(total_edges/graphs.values().size(),2)+"");
         AnalysisInfo.put("Average Number of Tokens",Precision.round(total_tokens/graphs.values().size(),2)+"");

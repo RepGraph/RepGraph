@@ -1018,6 +1018,24 @@ class AbstractGraph {
         return returnInfo;
     }
 
+
+
+    public float getAverageSpanLength(){
+        float val=0;
+        for (Node n:this.nodes.values()){
+            float span = 0;
+            if (n.getAnchors()!=null){
+                for (Anchors a:n.getAnchors()) {
+                span+= a.getEnd()-a.getFrom();
+            }
+            span/=n.getAnchors().size();
+            }
+            val+=span;
+        }
+        val/=this.nodes.values().size();
+        return val;
+    }
+
     @Override
     public boolean equals(Object o) {
 
