@@ -153,18 +153,11 @@ public class RequestHandler {
     }
 
 
-    /**
-     * This method is the POST request that takes in a single Graph JSON and uploads a single Graph to the model object. It is mapped to "/UploadSingle".
-     *
-     * @param data This is the Graph object to be uploaded
-     * @return HashMap<String, String> This is a hashmap object with the Graph id and Graph input.
-     * Key:
-     * - id : Graph ID
-     * - input : Graph input
-     */
-    @PostMapping("/UploadSingle")
+    @PostMapping("/UploadDemo")
     @ResponseBody
-    public HashMap<String, String> UploadDataSingle(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestBody AbstractGraph data) {
+    public HashMap<String, Object> UploadDemo(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestParam ArrayList<String> demoData) throws IOException {
+        HashMap<String, Object> returnobj = new HashMap<>();
+        ArrayList<HashMap<String, String>> returninfo = new ArrayList<>();
         switch (framework){
             case "1":
                 this.RepModel.put(userID,new DMRSModel());
@@ -182,15 +175,51 @@ public class RequestHandler {
                 this.RepModel.put(userID,new AMRModel());
                 break;
         }
+        ObjectMapper objectMapper = new ObjectMapper();
+        boolean duplicates = false;
+        for (String currentLine:demoData) {
+            AbstractGraph currgraph;
+            if (framework.equals("1")) {
+                currgraph = objectMapper.readValue(currentLine, DMRSGraph.class);
 
-        HashMap<String, String> returninfo = new HashMap<>();
+            } else if (framework.equals("2")) {
+                currgraph = objectMapper.readValue(currentLine, EDSGraph.class);
 
-        returninfo.put("input", data.getInput());
-        returninfo.put("id", data.getId());
-        //add Graph to model
-        RepModel.get(userID).addGraph(data);
+            } else if (framework.equals("3")) {
+                currgraph = objectMapper.readValue(currentLine, PTGGraph.class);
 
-        return returninfo;
+            }else if (framework.equals("4")) {
+                currgraph = objectMapper.readValue(currentLine, UCCAGraph.class);
+
+            }else {
+                currgraph = objectMapper.readValue(currentLine, AMRGraph.class);
+
+            }
+            //checks if model doesnt contain the ID already and if it does dont add it and tell the user duplicates were found
+            if (!RepModel.containsKey(currgraph.getId())) {
+
+                RepModel.get(userID).addGraph(currgraph);
+
+                HashMap<String, String> returnGraph = new HashMap<>();
+                returnGraph.put("id", currgraph.getId());
+                returnGraph.put("input", currgraph.getInput());
+                returninfo.add(returnGraph);
+            } else {
+                duplicates = true;
+            }
+        }
+
+        if (duplicates) {
+            returnobj.put("response", "Duplicates Found");
+
+        } else {
+            returnobj.put("response", "Data-set Uploaded Successfully");
+
+        }
+
+        returnobj.put("data", returninfo);
+
+        return returnobj;
     }
 
 
