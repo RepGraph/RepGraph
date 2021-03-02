@@ -11,11 +11,13 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import uuid from 'react-uuid'
 
+import {dmrsData, edsData, ptgData, uccaData, amrData} from "./store";
+
 export default function HomePage(props) {
     const [fileObjects, setFileObjects] = useState([]);
     const [open, setOpen] = React.useState(false);
     const history = useHistory();
-    const [framework, setFramework] = useState(null);
+    const [framework, setFramework] = useState("1");
     const {state, dispatch} = useContext(AppContext);
 
 
@@ -34,8 +36,7 @@ export default function HomePage(props) {
     }
 
     function handleUpload() {
-        //let userID = uuid();
-        let userID = 1;
+        let userID = uuid();
         dispatch({type: "SET_USER_ID", payload: {userID: userID}}); //Show loading animation while awaiting response
 
         console.log(userID); //Debugging
@@ -87,11 +88,11 @@ export default function HomePage(props) {
                     dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
 
 
-                    if(framework === "5"){
-                        request_AMR_align(userID);
-                    }else{
-                        request_Token_Process(userID);
-                    }
+                    // if(framework === "5"){
+                    //     request_AMR_align(userID);
+                    // }else{
+                    //     request_Token_Process(userID);
+                    // }
 
 
                     history.push("/main"); //Take user to the main page
@@ -145,93 +146,72 @@ export default function HomePage(props) {
 
     function handleSkip() {
 
-        // console.log(process.env.PUBLIC_URL + '/dmrsDemoData.dmrs');
-        //
-        // const res = await fetch(process.env.PUBLIC_URL + '/dmrsDemoData.dmrs');
-        // console.log(res);
+        let userID = uuid();
+        dispatch({type: "SET_USER_ID", payload: {userID: userID}}); //Show loading animation while awaiting response
 
-        // fetch(process.env.PUBLIC_URL + '/dmrsDemoData.dmrs').then(
-        //     response => console.log("response", response)
-        // ).catch(e => console.log(e));
+        let myHeaders = new Headers();
+        myHeaders.append("X-USER", userID);
+        myHeaders.append("Content-Type", "application/json");
 
-        // //let userID = uuid();
-        // let userID = 1;
-        // dispatch({type: "SET_USER_ID", payload: {userID: userID}}); //Show loading animation while awaiting response
-        //
-        // let demoFile = null;
-        //
-        // switch (state.framework) {
-        //     case 1:
-        //         demoFile = dmrsDemoData;
-        //         break;
-        //     case 2:
-        //         demoFile = "edsDemoData.mrp";
-        //         break;
-        //     case 3:
-        //         demoFile = "ptgDemoData.mrp";
-        //         break;
-        //     case 4:
-        //         demoFile = "uccaDemoData.mrp";
-        //         break;
-        //     case 5:
-        //         demoFile = "amrDemoData.mrp";
-        //         break;
-        //     default:
-        //         demoFile = "dmrsDemoData.dmrs";
-        // }
-        //
-        // console.log(userID); //Debugging
-        //
-        // let formData = new FormData();
-        // console.log("fileObjects", fileObjects);
-        // formData.append("data", fileObjects[0]);
-        //
-        // let myHeaders = new Headers();
-        // myHeaders.append("X-USER", userID);
-        //
-        // let requestOptions = {
-        //     method: "POST",
-        //     headers: myHeaders,
-        //     body: formData,
-        //     redirect: "follow"
-        // };
-        //
-        // dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation while awaiting response
-        //
-        // //Upload the file chosen by the user
-        // fetch(
-        //     state.APIendpoint + "/UploadData?FileName=SupremeLeaderJanBuys&Framework=" + state.framework,
-        //     requestOptions
-        // ).then((response) => {
-        //         console.log(response);
-        //         if (!response.ok) {
-        //             throw "Uploaded File Response not OK";
-        //         }
-        //         return response.text();
-        //     }).then((result) => {
-        //         const jsonResult = JSON.parse(result);
-        //         console.log(jsonResult); //Debugging
-        //         console.log(jsonResult.response); //Debugging
-        //
-        //         dispatch({type: "SET_DATASET", payload: {dataSet: jsonResult.data}}); //Store the data-set (ids and inputs stored in backend)
-        //         dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: fileObjects[0].name}}); //store name of data-set uploaded
-        //         dispatch({type: "SET_DATASET_RESPONSE", payload: {dataSetResponse: jsonResult.response}}); //store response from back-end
-        //
-        //         dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: null}});
-        //         dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: null}});
-        //         dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: null}});
-        //
-        //         dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
-        //         history.push("/main"); //Take user to the main page
-        //
-        //     })
-        //     .catch((error) => {
-        //         console.log("error", error);
-        //         dispatch({type: "SET_LOADING", payload: {isLoading: false}});
-        //         history.push("/404"); //Take user to error page
-        //     });
+        let raw = null;
 
-        history.push("/main"); //Take user to the main page
+        switch (framework) {
+            case "1":
+                raw = JSON.stringify({"data": dmrsData});
+                break;
+            case "2":
+                raw = JSON.stringify({"data": edsData});
+                break;
+            case "3":
+                raw = JSON.stringify({"data": ptgData});
+                break;
+            case "4":
+                raw = JSON.stringify({"data": uccaData});
+                break;
+            case "5":
+                raw = JSON.stringify({"data": amrData});
+                break;
+        }
+
+        console.log(raw);
+
+        let requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch(state.APIendpoint+"/UploadDemo?Framework="+ framework, requestOptions)
+            .then((response) => {
+                        console.log(response);
+                        if (!response.ok) {
+                            throw "Uploaded File Response not OK";
+                        }
+                        return response.text();
+                    })
+            .then((result) => {
+                    const jsonResult = JSON.parse(result);
+                    console.log(jsonResult); //Debugging
+                    console.log(jsonResult.response); //Debugging
+
+                    dispatch({type: "SET_DATASET", payload: {dataSet: jsonResult.data}}); //Store the data-set (ids and inputs stored in backend)
+                    dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: "DemoData"}}); //store name of data-set uploaded
+                    dispatch({type: "SET_DATASET_RESPONSE", payload: {dataSetResponse: jsonResult.response}}); //store response from back-end
+
+                    dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: null}});
+                    dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: null}});
+                    dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: null}});
+                    dispatch({type: "SET_DATASET_ANALYSIS", payload: {datasetAnalysis: null}});
+
+                    dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+                    history.push("/main"); //Take user to the main page
+
+                }).catch((error) => {
+                        console.log("error", error);
+                        dispatch({type: "SET_LOADING", payload: {isLoading: false}});
+                        history.push("/404"); //Take user to error page
+                    });
 
     }
 

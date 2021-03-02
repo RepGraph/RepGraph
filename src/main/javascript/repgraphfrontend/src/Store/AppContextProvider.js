@@ -58,8 +58,8 @@ export const defaultGraphLayoutSpacing = {
 };
 
 const initialState = {
-    dataSet: dmrsDebugData,
-    dataSetFileName: "dmrsDebugData",
+    dataSet: null,
+    dataSetFileName: null,
     dataSetResponse: null,
     selectedSentenceID: null,
     selectedSentenceGraphData: null,
