@@ -416,16 +416,16 @@ export default function SettingsTool() {
 
             switch (state.visualisationFormat) {
                 case "1":
-                    graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing, state.framework);
                     break;
                 case "2":
-                    graphData = layoutTree(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
+                    graphData = layoutTree(state.selectedSentenceGraphData, defaultGraphLayoutSpacing, state.framework);
                     break;
                 case "3":
-                    graphData = layoutFlat(state.selectedSentenceGraphData, false, defaultGraphLayoutSpacing);
+                    graphData = layoutFlat(state.selectedSentenceGraphData, false, defaultGraphLayoutSpacing, state.framework);
                     break;
                 default:
-                    graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing);
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, defaultGraphLayoutSpacing, state.framework);
                     break;
             }
 

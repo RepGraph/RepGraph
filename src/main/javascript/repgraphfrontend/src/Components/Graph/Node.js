@@ -132,12 +132,12 @@ export const Node = ({
     let span = null;
     if (node.type === "node" && node.span === true) {
         const fromX =
-            ((node.anchors[0].from - node.anchors[0].end) / 2) * 130 - bb.width / 2;
+            ((node.anchors[0].from - node.anchors[0].end) / 2) * (state.graphLayoutSpacing.nodeWidth + state.graphLayoutSpacing.intraLevelSpacing) - bb.width / 2;
 
         const fromY = bb.y + bb.height + 10;
 
         const toX =
-            (((node.anchors[0].end - node.anchors[0].from) * 1.0) / 2) * 130 +
+            ((node.anchors[0].end - node.anchors[0].from) / 2) * (state.graphLayoutSpacing.nodeWidth + state.graphLayoutSpacing.intraLevelSpacing) +
             bb.width / 2;
         const toY = bb.y + bb.height + 10;
 
