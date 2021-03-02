@@ -84,6 +84,7 @@ class AbstractModel {
             total_edges += g.getEdges().size();
             total_tokens += g.getTokens().size();
             total_spans += g.getAverageSpanLength();
+
             if (g.isCyclic(true)){
                 total_directed_cyclic++;
             }
@@ -107,10 +108,10 @@ class AbstractModel {
         AnalysisInfo.put("Average Number of Nodes",Precision.round(total_nodes/graphs.values().size(),2)+"");
         AnalysisInfo.put("Average Number of Edges",Precision.round(total_edges/graphs.values().size(),2)+"");
         AnalysisInfo.put("Average Number of Tokens",Precision.round(total_tokens/graphs.values().size(),2)+"");
-        AnalysisInfo.put("Percentage of Directed Cyclic Graphs",Precision.round((total_directed_cyclic/graphs.values().size())*100,4)+"");
-        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs",Precision.round((total_undirected_cyclic/graphs.values().size())*100,4)+"");
-        AnalysisInfo.put("Percentage of Disconnected Graphs",Precision.round((total_not_connected/graphs.values().size())*100,4)+"");
-        AnalysisInfo.put("Percentage of Planar Graphs",Precision.round((total_planar/graphs.values().size())*100,4)+"");
+        AnalysisInfo.put("Percentage of Directed Cyclic Graphs",Precision.round((total_directed_cyclic/graphs.values().size())*100,2)+"");
+        AnalysisInfo.put("Percentage of Undirected Cyclic Graphs",Precision.round((total_undirected_cyclic/graphs.values().size())*100,2)+"");
+        AnalysisInfo.put("Percentage of Disconnected Graphs",Precision.round((total_not_connected/graphs.values().size())*100,2)+"");
+        AnalysisInfo.put("Percentage of Planar Graphs",Precision.round((total_planar/graphs.values().size())*100,2)+"");
         return AnalysisInfo;
     }
 
