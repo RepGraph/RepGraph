@@ -171,16 +171,16 @@ function CompareTwoGraphsVisualisation(props) {
 
             switch (state.visualisationFormat) {
                 case "1":
-                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing);
+                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing, state.framework), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing, state.framework);
                     break;
                 case "2":
-                    graphData = showCompare ? updateCompareGroups(layoutTree(sentence1GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutTree(sentence1GraphData, state.graphLayoutSpacing);
+                    graphData = showCompare ? updateCompareGroups(layoutTree(sentence1GraphData, state.graphLayoutSpacing, state.framework), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutTree(sentence1GraphData, state.graphLayoutSpacing, state.framework);
                     break;
                 case "3":
-                    graphData = showCompare ? updateCompareGroups(layoutFlat(sentence1GraphData,false, state.graphLayoutSpacing), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutFlat(sentence1GraphData,false, state.graphLayoutSpacing);
+                    graphData = showCompare ? updateCompareGroups(layoutFlat(sentence1GraphData,false, state.graphLayoutSpacing, state.framework), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutFlat(sentence1GraphData,false, state.graphLayoutSpacing, state.framework);
                     break;
                 default:
-                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing);
+                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing, state.framework), compareResponse.SimilarNodes1, compareResponse.SimilarEdges1) : layoutHierarchy(sentence1GraphData, state.graphLayoutSpacing, state.framework);
                     break;
             }
 
@@ -190,16 +190,16 @@ function CompareTwoGraphsVisualisation(props) {
 
             switch (state.visualisationFormat) {
                 case "1":
-                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing);
+                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing, state.framework), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing, state.framework);
                     break;
                 case "2":
-                    graphData = showCompare ? updateCompareGroups(layoutTree(sentence2GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutTree(sentence2GraphData, state.graphLayoutSpacing);
+                    graphData = showCompare ? updateCompareGroups(layoutTree(sentence2GraphData, state.graphLayoutSpacing, state.framework), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutTree(sentence2GraphData, state.graphLayoutSpacing, state.framework);
                     break;
                 case "3":
-                    graphData = showCompare ? updateCompareGroups(layoutFlat(sentence2GraphData,false, state.graphLayoutSpacing), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutFlat(sentence2GraphData,false, state.graphLayoutSpacing);
+                    graphData = showCompare ? updateCompareGroups(layoutFlat(sentence2GraphData,false, state.graphLayoutSpacing, state.framework), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutFlat(sentence2GraphData,false, state.graphLayoutSpacing, state.framework);
                     break;
                 default:
-                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing);
+                    graphData = showCompare ? updateCompareGroups(layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing, state.framework), compareResponse.SimilarNodes2, compareResponse.SimilarEdges2) : layoutHierarchy(sentence2GraphData, state.graphLayoutSpacing, state.framework);
                     break;
             }
 

@@ -76,16 +76,16 @@ const ZoomPortal = (props) => {
 
             switch (state.visualisationFormat) {
                 case "1":
-                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing);
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing, state.framework);
                     break;
                 case "2":
-                    graphData = layoutTree(state.selectedSentenceGraphData, newSpacing);
+                    graphData = layoutTree(state.selectedSentenceGraphData, newSpacing, state.framework);
                     break;
                 case "3":
-                    graphData = layoutFlat(state.selectedSentenceGraphData, false, newSpacing);
+                    graphData = layoutFlat(state.selectedSentenceGraphData, false, newSpacing, state.framework);
                     break;
                 default:
-                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing);
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, newSpacing, state.framework);
                     break;
             }
 
