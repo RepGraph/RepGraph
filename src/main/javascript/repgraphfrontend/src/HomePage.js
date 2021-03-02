@@ -15,6 +15,7 @@ export default function HomePage(props) {
     const [fileObjects, setFileObjects] = useState([]);
     const [open, setOpen] = React.useState(false);
     const history = useHistory();
+    const [framework, setFramework] = useState(null);
     const {state, dispatch} = useContext(AppContext);
 
 
@@ -76,11 +77,22 @@ export default function HomePage(props) {
                     dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: fileObjects[0].name}}); //store name of data-set uploaded
                     dispatch({type: "SET_DATASET_RESPONSE", payload: {dataSetResponse: jsonResult.response}}); //store response from back-end
 
+                    //Reset state data for new dataset
                     dispatch({type: "SET_SENTENCE_GRAPHDATA", payload: {selectedSentenceGraphData: null}});
                     dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: null}});
                     dispatch({type: "SET_SELECTED_SENTENCE_ID", payload: {selectedSentenceID: null}});
+                    dispatch({type: "SET_DATASET_ANALYSIS", payload: {datasetAnalysis: null}});
+
 
                     dispatch({type: "SET_LOADING", payload: {isLoading: false}}); //Stop the loading animation
+
+                    request_Token_Process(userID);
+
+                    if(framework === "5"){
+                        request_AMR_align(userID);
+                    }
+
+
                     history.push("/main"); //Take user to the main page
 
                 })
@@ -92,6 +104,42 @@ export default function HomePage(props) {
         } else {
             setOpen(true);
         }
+    }
+
+    const request_Token_Process = (userID) =>{
+
+            let myHeaders = new Headers();
+            myHeaders.append("X-USER", userID);
+
+            let requestOptions = {
+                method: 'PATCH',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            fetch(state.APIendpoint+"/ParseTokens", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+
+    }
+
+    const request_AMR_align = (userID) =>{
+
+            let myHeaders = new Headers();
+            myHeaders.append("X-USER", userID);
+
+            let requestOptions = {
+                method: 'PATCH',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            fetch(state.APIendpoint+"/AlignAMR", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+
     }
 
     function handleSkip() {
@@ -187,7 +235,10 @@ export default function HomePage(props) {
     }
 
     const handleFormatChange = (event, newFormat) => {
-        dispatch({type: "SET_FRAMEWORK", payload: {framework: newFormat}}); //Show loading animation while awaiting response
+        if (newFormat !== null) {
+            setFramework(newFormat);
+            dispatch({type: "SET_FRAMEWORK", payload: {framework: newFormat}}); //Show loading animation while awaiting response
+        }
     }
 
     return (

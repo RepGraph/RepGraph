@@ -183,42 +183,6 @@ export default function MiniDrawer() {
     //const matches = useMediaQuery('(min-width:1000px)');
     // const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
-    const request_Token_Process = () =>{
-        if (state.dataset!=null){
-        var myHeaders = new Headers();
-        myHeaders.append("X-USER", state.userID);
-
-        var requestOptions = {
-            method: 'PATCH',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-
-        fetch(state.APIendpoint+"/ParseTokens", requestOptions)
-            .then(response => response.text())
-            .then(result => console.log(result))
-            .catch(error => console.log('error', error));
-    }
-    }
-
-    const request_AMR_align = () =>{
-        if (state.dataset!=null){
-            var myHeaders = new Headers();
-            myHeaders.append("X-USER", state.userID);
-
-            var requestOptions = {
-                method: 'PATCH',
-                headers: myHeaders,
-                redirect: 'follow'
-            };
-
-            fetch(state.APIendpoint+"/AlignAMR", requestOptions)
-                .then(response => response.text())
-                .then(result => console.log(result))
-                .catch(error => console.log('error', error));
-        }
-    }
-
     const handleDrawerOpen = () => {
         setOpen(true);
     };
