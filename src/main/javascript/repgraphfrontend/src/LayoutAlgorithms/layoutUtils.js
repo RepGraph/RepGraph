@@ -200,8 +200,7 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         y1 = Math.min(target.y + (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
-        y1 = y1 = Math.min(target.y - (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
-        ;
+        y1 = Math.min(target.y - (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
     } else if (direction === "custom") {
         x1 = target.x;
 
@@ -218,7 +217,6 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         x1 = (source.x + target.x) / 2;
         y1 = (source.y + target.y) / 2;
     }
-
     return {x1, y1};
 }
 
