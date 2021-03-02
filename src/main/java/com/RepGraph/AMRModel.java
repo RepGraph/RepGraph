@@ -23,6 +23,7 @@ public class AMRModel extends AbstractModel {
         for (AbstractGraph t:graphs.values()) {
             AMRGraph g =  (AMRGraph)t;
             g.alignNodes();
+
         }
     }
 
