@@ -15,6 +15,7 @@ import edu.stanford.nlp.trees.Tree;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -832,7 +833,7 @@ class AbstractGraph {
     }
 
     @JsonIgnore
-    public HashMap<String, Object> isPlanar() {
+    public HashMap<String, Object> isPlanar() throws IOException, InterruptedException {
 
         ArrayList<Node> ordered = new ArrayList<>();
         HashMap<String, ArrayList<String>> dummyNodes = new HashMap<>();
@@ -1015,11 +1016,6 @@ class AbstractGraph {
         returnInfo.put("planar", planar);
 
         return returnInfo;
-    }
-
-    @JsonIgnore
-    public boolean isPlanarCheck(){
-        return (boolean) isPlanar().get("planar");
     }
 
     @Override

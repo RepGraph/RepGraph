@@ -1,5 +1,6 @@
 package com.RepGraph;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -12,6 +13,18 @@ public class AMRModel extends AbstractModel {
         super();
     }
 
+    public AMRGraph getGraph(String graphID) throws IOException, InterruptedException {
+        AMRGraph g =  (AMRGraph)graphs.get(graphID);
+        g.alignNodes();
+        return g;
+    }
+
+    public void alignAllGraphs() throws IOException, InterruptedException {
+        for (AbstractGraph t:graphs.values()) {
+            AMRGraph g =  (AMRGraph)t;
+            g.alignNodes();
+        }
+    }
 
 
 }
