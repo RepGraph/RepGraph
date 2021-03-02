@@ -1,12 +1,6 @@
-// const nodeHeight = 40;
-// const nodeWidth = 80;
-// const intraLevelSpacing = 50;
-
-import {forEach} from "react-bootstrap/ElementChildren";
 import uuid from "react-uuid";
 
-export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
-
+export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => {
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
@@ -19,6 +13,24 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
         group: "node",
         span: false
     }));
+
+    let addTopNode = false;
+
+    switch (framework) {
+        case "1":
+            addTopNode = true;
+            break;
+        case "2":
+            addTopNode = true;
+            break;
+        case "3":
+            break;
+        case "4":
+            break;
+        case "5":
+            break;
+        default:
+    }
 
     // //Add top node and corresponding link to graphData
     //
@@ -144,10 +156,51 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing) => {
     //     });
     // }
 
+    //Add top node and corresponding link to graphData
+    if(addTopNode){
+
+        //Get top node's associated node
+        const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
+        //console.log("associatedNode", associatedNode);
+
+        if(associatedNode){
+            //Add the top node to the array of nodes
+            finalGraphNodes.push({
+                id: "TOP",
+                x: associatedNode.x,
+                y: 0 - (nodeHeight + interLevelSpacing),
+                type: "topNode",
+                group: "top",
+                label: "TOP",
+                anchors: associatedNode.anchors,
+                span: false
+            });
+
+            const addedTopNode = finalGraphNodes.find(node => node.id === "TOP")
+
+            let topCP = controlPoints(
+                addedTopNode,
+                associatedNode,
+                "",
+                0,
+                graphLayoutSpacing
+            );
+
+            //Add the top node link
+            finalGraphEdges.push({
+                id: "TOPLINK",
+                source: addedTopNode,
+                target: associatedNode,
+                label: "",
+                x1: topCP.x1,
+                y1: topCP.y1,
+                type: "tokenLink",
+            });
+
+        }
+    }
+
     if (planar) {
-        // for (const indexElement of graphData.crossingEdges) {
-        //     finalGraphEdges[indexElement] = {...finalGraphEdges[indexElement], group: "linkColourCross"}
-        // }
         try {
             finalGraphEdges = finalGraphEdges.map((link) => ({
                 ...link,

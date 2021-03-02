@@ -314,16 +314,16 @@ function SearchSubgraphPatternTool(props) {
 
                 switch (state.visualisationFormat) {
                     case "1":
-                        graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
+                        graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing, state.framework);
                         break;
                     case "2":
-                        graphData = layoutTree(jsonResult, state.graphLayoutSpacing);
+                        graphData = layoutTree(jsonResult, state.graphLayoutSpacing, state.framework);
                         break;
                     case "3":
-                        graphData = layoutFlat(jsonResult,false, state.graphLayoutSpacing);
+                        graphData = layoutFlat(jsonResult,false, state.graphLayoutSpacing, state.framework);
                         break;
                     default:
-                        graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing);
+                        graphData = layoutHierarchy(jsonResult, state.graphLayoutSpacing, state.framework);
                         break;
                 }
 
