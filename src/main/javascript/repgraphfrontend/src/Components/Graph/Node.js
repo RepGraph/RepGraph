@@ -180,10 +180,11 @@ export const Node = ({
 
                 const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
                     ...oldNode,
-                    selected: oldNode.type === "node" ? (oldNode.id === node.id ? true: oldNode.selected) : false
+                    selected: oldNode.type === "node" ? oldNode.id === node.id ? !oldNode.selected: oldNode.selected : oldNode.selected
                 }));
 
                 dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation , nodes: newNodes} }});
+
                 }catch (e) {
                     console.log(e);
                 }

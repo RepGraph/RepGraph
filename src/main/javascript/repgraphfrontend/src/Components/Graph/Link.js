@@ -27,7 +27,7 @@ export const Link = ({
                 try {
                     const newLinks = state.selectedSentenceVisualisation.links.map(oldLink => ({
                         ...oldLink,
-                        selected: oldLink.type === "link" ? (oldLink.id === link.id ? true : oldLink.selected) : false
+                        selected: oldLink.type === "link" ? oldLink.id === link.id ? !oldLink.selected: oldLink.selected : oldLink.selected
                     }));
 
                     dispatch({type: "SET_SENTENCE_VISUALISATION",
