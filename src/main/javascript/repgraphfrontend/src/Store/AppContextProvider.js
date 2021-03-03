@@ -22,7 +22,7 @@ export const defaultGraphStyles = {
         selectedColour: "rgba(61, 230, 140, 1)"
     },
     tokenStyles: {
-        tokenColour: "rgba(255, 220, 106,1)",
+        tokenColour: "rgba(0, 192, 114,1)",
         hoverColour: "rgba(255, 232, 156,1)",
         selectedColour: "rgba(61, 230, 140, 1)",
         labelColour: "rgba(0,0,0,1)"
