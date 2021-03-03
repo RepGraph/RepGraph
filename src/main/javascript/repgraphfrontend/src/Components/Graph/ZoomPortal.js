@@ -29,34 +29,27 @@ const initialTransform = {
 const ZoomPortal = (props) => {
     const {width, height, backgroundColour} = props;
     const {state, dispatch} = useContext(AppContext);
-    const [valuesGraphSpacing, setValuesGraphSpacing] = useState(state.graphLayoutSpacing);
-
 
     const handleChangeGraphSpacing = (name) => {
 
         let intraValue,interValue;
         if (name === "decrease") {
-            intraValue = valuesGraphSpacing.intraLevelSpacing - 20;
-            interValue = valuesGraphSpacing.interLevelSpacing - 10;
+            intraValue = state.graphLayoutSpacing.intraLevelSpacing - 20;
+            interValue = state.graphLayoutSpacing.interLevelSpacing - 10;
         }
         else{
-            intraValue = valuesGraphSpacing.intraLevelSpacing + 20;
-            interValue = valuesGraphSpacing.interLevelSpacing + 10;
+            intraValue = state.graphLayoutSpacing.intraLevelSpacing + 20;
+            interValue = state.graphLayoutSpacing.interLevelSpacing + 10;
         }
 
         if (intraValue >= 0 && interValue >= 0){
-            setValuesGraphSpacing({
-                ...valuesGraphSpacing,
-                ["intraLevelSpacing"]: intraValue,
-                ["interLevelSpacing"]: interValue,
-            });
 
 
             dispatch({
                 type: "SET_GRAPH_LAYOUT_SPACING",
                 payload: {
                     graphLayoutSpacing: {
-                        ...valuesGraphSpacing,
+                        ...state.graphLayoutSpacing,
                         ["intraLevelSpacing"]: intraValue,
                         ["interLevelSpacing"]: interValue,
                     }
@@ -64,7 +57,7 @@ const ZoomPortal = (props) => {
             });
 
             handleUpdateStyles({
-                ...valuesGraphSpacing,
+                ...state.graphLayoutSpacing,
                 ["intraLevelSpacing"]: intraValue,
                 ["interLevelSpacing"]: interValue,
             });
