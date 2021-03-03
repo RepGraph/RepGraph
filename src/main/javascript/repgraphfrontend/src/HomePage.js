@@ -53,7 +53,7 @@ export default function HomePage(props) {
 
     //Handle change when user selects a file
     function handleChange(files) {
-        setFileObjects([...fileObjects, ...files]);
+        setFileObjects([...files]);
     }
 
     function handleUpload() {
