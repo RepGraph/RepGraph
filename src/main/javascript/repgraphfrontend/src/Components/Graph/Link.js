@@ -106,6 +106,27 @@ export const Link = ({
 };
 
 function EdgeLayout(link, strokeColor) {
+    let mouseStartX;
+    let mouseStartY;
+
+    const handleDragEnter = (event) => {
+        console.log("starting");
+        mouseStartX = event.clientX;
+        mouseStartY = event.clientY;
+        console.log("mouseStartX, mouseStartY", mouseStartX, mouseStartY);
+    };
+
+    const handleEnd = (event) => {
+        console.log("end");
+        let xPos = link.x1 - (mouseStartX - event.clientX);
+        let yPos = link.y1 - (mouseStartY - event.clientY);
+        if (!isNaN(xPos) && !isNaN(yPos)) {
+            link.x1 = xPos;
+            link.y1 = yPos;
+            console.log("clientx,clienty", event.clientX, event.clientY);
+            console.log("link.x1,link.y1", link.x1, link.y1);
+        }
+    };
     const t = 0.5;
 
     const x0 = link.source.x;
@@ -189,6 +210,9 @@ function EdgeLayout(link, strokeColor) {
                     y={yMid}
                     dy={`${labelOffset}px`}
                     fontWeight="bold"
+                    draggable="true"
+                    onDragEnd={handleEnd}
+                    onDragEnter={handleDragEnter}
                 >
                     {link.label}
                 </text>
