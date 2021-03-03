@@ -12,6 +12,24 @@ import ToggleButton from "@material-ui/lab/ToggleButton";
 import uuid from 'react-uuid'
 
 import {dmrsData, edsData, ptgData, uccaData, amrData} from "./store";
+import Box from "@material-ui/core/Box";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
+
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+        flexDirection: "column",
+        alignItems: "center"
+
+    },
+    actions: {
+        display: 'flex',
+        flexDirection: "column",
+        alignItems: "center"
+    },
+}));
 
 export default function HomePage(props) {
     const [fileObjects, setFileObjects] = useState([]);
@@ -19,6 +37,9 @@ export default function HomePage(props) {
     const history = useHistory();
     const [framework, setFramework] = useState("1");
     const {state, dispatch} = useContext(AppContext);
+
+    const classes = useStyles();
+    const theme = useTheme();
 
 
     //Handle close for the alert shown to user
@@ -227,70 +248,91 @@ export default function HomePage(props) {
     }
 
     return (
+
+        // <Box height="100vh" bgcolor="grey.300" style={{border:"1px solid red"}}/>
         <Grid
             container
             direction="column"
             justify="center"
             alignItems="center"
-            style={{minHeight: "100vh", minWidth: "100vw"}}
-
-            spacing={2}
+            style={{height:"100vh"}}
         >
-            <Grid item>
-                <Typography color="primary" variant="h2">Welcome to RepGraph</Typography>
-            </Grid>
-            <ToggleButtonGroup
-                value={state.framework}
-                exclusive
-                onChange={handleFormatChange}
-                aria-label="Framework formats"
-            >
-                <ToggleButton color="primary" value="1" aria-label="DMRS">
-                    <Typography color="textPrimary">DMRS</Typography>
-                </ToggleButton>
-                <ToggleButton color="primary" value="2" aria-label="EDS">
-                    <Typography color="textPrimary">EDS</Typography>
-                </ToggleButton>
-                <ToggleButton color="primary" value="3" aria-label="PTG">
-                    <Typography color="textPrimary">PTG</Typography>
-                </ToggleButton>
-                <ToggleButton color="primary" value="4" aria-label="UCCA">
-                    <Typography color="textPrimary">UCCA</Typography>
-                </ToggleButton>
-                <ToggleButton color="primary" value="5" aria-label="AMR">
-                    <Typography color="textPrimary">AMR</Typography>
-                </ToggleButton>
-            </ToggleButtonGroup>
-            <Grid item>
-                <Typography variant="h5">Please upload a data-set to begin</Typography>
-            </Grid>
-            <Grid item style={{minWidth: "50vw"}}>
-                <DropzoneArea
-                    acceptedFiles={[".dmrs", ".eds", ".amr", ".ptg", ".ucca", ".mrp"]}
-                    dropzoneText={"Drag and drop"}
-                    icon={<CloudUploadIcon/>}
-                    onChange={(files) => {
-                        console.log("Files:", files);
-                        handleChange(files);
-                    }}
-                />
-            </Grid>
-            <Grid item>
-                <Button onClick={handleUpload} color="primary" variant="contained" disableElevation
-                        startIcon={<CloudUploadIcon/>}>
-                    <Typography variant="h6">Upload</Typography>
-                </Button>
-            </Grid>
-            <Grid><Button onClick={handleSkip} color="primary" variant="contained" disableElevation
-                          startIcon={<ArrowForwardIcon/>}>
-                <Typography variant="h6">Skip Upload </Typography>
-            </Button></Grid>
+            <Card variant="outlined">
+                <CardContent className={classes.root}>
+                    <Grid container
+                          direction="column"
+                          justify="center"
+                          alignItems="center"
+                    spacing={2}>
+                        <Grid item>
+                            <Typography color="primary" component="div">
+                                <Box  fontWeight={500} m={1} fontSize="h2.fontSize">
+                                Welcome to RepGraph
+                                </Box>
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <ToggleButtonGroup
+                                value={state.framework}
+                                exclusive
+                                onChange={handleFormatChange}
+                                aria-label="Framework formats"
+                            >
+                                <ToggleButton color="primary" value="1" aria-label="DMRS">
+                                    <Typography color="textPrimary">DMRS</Typography>
+                                </ToggleButton>
+                                <ToggleButton color="primary" value="2" aria-label="EDS">
+                                    <Typography color="textPrimary">EDS</Typography>
+                                </ToggleButton>
+                                <ToggleButton color="primary" value="3" aria-label="PTG">
+                                    <Typography color="textPrimary">PTG</Typography>
+                                </ToggleButton>
+                                <ToggleButton color="primary" value="4" aria-label="UCCA">
+                                    <Typography color="textPrimary">UCCA</Typography>
+                                </ToggleButton>
+                                <ToggleButton color="primary" value="5" aria-label="AMR">
+                                    <Typography color="textPrimary">AMR</Typography>
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h5">Please upload a data-set to begin</Typography>
+                        </Grid>
+                        <Grid item style={{width:"100%"}}>
+                            <DropzoneArea
+                                acceptedFiles={[".dmrs", ".eds", ".amr", ".ptg", ".ucca", ".mrp"]}
+                                dropzoneText={"Drag and drop"}
+                                icon={<CloudUploadIcon/>}
+                                filesLimit={1}
+                                onChange={(files) => {
+                                    console.log("Files:", files);
+                                    handleChange(files);
+                                }}
+
+                                onDelete={(deletedFile) => {console.log(deletedFile)}}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Button onClick={handleUpload} color="primary" variant="contained" disableElevation
+                                    startIcon={<CloudUploadIcon/>} size="large">Upload
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button onClick={handleSkip} color="primary" variant="contained" disableElevation
+                                    startIcon={<ArrowForwardIcon/>} size="large">Skip Upload
+                            </Button>
+                        </Grid>
+
+
+                    </Grid>
+
+                </CardContent>
+            </Card>
             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                 <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="warning">
                     Please select a data-set first.
                 </MuiAlert>
             </Snackbar>
-
         </Grid>
     );
 }
