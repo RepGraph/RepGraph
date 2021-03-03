@@ -5,7 +5,6 @@ certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
 cymem==2.0.5
-en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0-py3-none-any.whl
 filelock==3.0.12
 idna==2.10
 Jinja2==2.11.3
@@ -15,7 +14,7 @@ murmurhash==1.0.5
 numpy==1.20.1
 packaging==20.9
 pathy==0.4.0
-Penman==1.1.1
+Penman==1.2.0
 preshed==3.0.5
 pydantic==1.7.3
 pyparsing==2.4.7
@@ -26,13 +25,14 @@ six==1.15.0
 smart-open==3.0.0
 smatch==1.0.4
 spacy==3.0.3
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0.tar.gz#egg=en_core_web_sm
 spacy-legacy==3.0.1
 srsly==2.4.0
 thinc==8.0.1
 tokenizers==0.10.1
-torch==1.7.1
-tqdm==4.57.0
-transformers==4.3.2
+https://download.pytorch.org/whl/cpu/torch-1.7.1%2Bcpu-cp38-cp38-linux_x86_64.whl
+tqdm==4.58.0
+transformers==4.3.3
 typer==0.3.2
 typing-extensions==3.7.4.3
 urllib3==1.26.3
