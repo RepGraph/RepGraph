@@ -71,7 +71,13 @@ export default function FormalTestsResultsDisplay(props) {
         if (response.hasOwnProperty("LongestPathDirected")) {
             let res;
             if (response.LongestPathDirected !== "Cycle Detected") {
-                res = "There are " + response.LongestPathDirected.length + " longest paths with a length of " + response.LongestPathDirected[0].length;
+                if (response.LongestPathDirected.length === 1){
+                    res = "There is " + response.LongestPathDirected.length + " longest path with a length of " + response.LongestPathDirected[0].length;
+                }
+                else{
+                    res = "There are " + response.LongestPathDirected.length + " longest paths with a length of " + response.LongestPathDirected[0].length;
+                }
+
             }
             else{
                 res = "Cycle Detected";
@@ -81,7 +87,12 @@ export default function FormalTestsResultsDisplay(props) {
         if (response.hasOwnProperty("LongestPathUndirected")) {
             let res;
             if (response.LongestPathUndirected !== "Cycle Detected") {
-                res = "There are " + response.LongestPathUndirected.length + " longest paths with a length of " + response.LongestPathUndirected[0].length;
+                if (response.LongestPathUndirected.length === 1){
+                    res = "There is " + response.LongestPathUndirected.length + " longest path with a length of " + response.LongestPathUndirected[0].length;
+                }
+                else {
+                    res = "There are " + response.LongestPathUndirected.length + " longest paths with a length of " + response.LongestPathUndirected[0].length;
+                }
             }
             else{
                 res = "Cycle Detected";
