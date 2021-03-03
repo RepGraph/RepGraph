@@ -116,7 +116,7 @@ public class AMRGraph extends AbstractGraph {
                 int from = Integer.parseInt(line.substring(line.indexOf("(") + 1, line.indexOf(",")));
                 int end = from;
 
-                if (line.substring(line.indexOf(",") + 1, line.indexOf(")")) != "") {
+                if (!line.substring(line.indexOf(",") + 1, line.indexOf(")")).equals("")) {
                     end = Integer.parseInt(line.substring(line.indexOf(",") + 1, line.indexOf(")")));
                 }
 
