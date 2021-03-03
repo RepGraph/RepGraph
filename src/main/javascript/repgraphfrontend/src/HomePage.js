@@ -229,6 +229,8 @@ export default function HomePage(props) {
             redirect: 'follow'
         };
 
+        dispatch({type: "SET_LOADING", payload: {isLoading: true}}); //Show loading animation while awaiting response
+
         fetch(state.APIendpoint+"/UploadDemo?Framework="+ framework, requestOptions)
             .then((response) => {
                         console.log(response);
