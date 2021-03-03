@@ -27,6 +27,8 @@ import {Graph} from "../Graph/Graph";
 import {determineAdjacentLinks, layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
 import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
 import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+import Box from "@material-ui/core/Box";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -552,6 +554,11 @@ function SearchSubgraphPatternTool(props) {
                                 Display
                             </Button>
                         </DialogActions>
+                        <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose} >
+                                <Alert variant="filled" severity="warning">
+                                    Please ensure the subgraph is connected with no dangling edges.
+                                </Alert>
+                        </Snackbar>
                     </Dialog>
                     <Dialog
                         open={openSubgraphResultsDialog}
@@ -648,11 +655,7 @@ function SearchSubgraphPatternTool(props) {
                 </CardContent>
             </Card>
 
-            <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-                <MuiAlert elevation={6} variant="filled" onClose={handleAlertClose} severity="error">
-                    Error: Could not search for subgraph
-                </MuiAlert>
-            </Snackbar>
+
         </React.Fragment>
 
 
