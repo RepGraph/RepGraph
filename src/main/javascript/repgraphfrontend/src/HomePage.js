@@ -309,7 +309,7 @@ export default function HomePage(props) {
                                     handleChange(files);
                                 }}
 
-                                onDelete={(deletedFile) => {console.log(deletedFile)}}
+                                onDelete={() => {setFileObjects([]);}}
                             />
                         </Grid>
                         <Grid item>
