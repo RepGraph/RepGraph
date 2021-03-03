@@ -17,6 +17,18 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Tooltip from "@material-ui/core/Tooltip";
+
+import Popover from 'material-ui-popup-state/HoverPopover'
+import {
+    usePopupState,
+    bindHover,
+    bindPopover,
+} from 'material-ui-popup-state/hooks'
+
+import {Link as  MaterialLink}from '@material-ui/core';
+
+
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -40,6 +52,16 @@ export default function HomePage(props) {
 
     const classes = useStyles();
     const theme = useTheme();
+
+    const popupStateSkip = usePopupState({
+        variant: 'popover',
+        popupId: 'skipPopover',
+    })
+
+    const popupStateFramework = usePopupState({
+        variant: 'popover',
+        popupId: 'frameworkPopover',
+    })
 
 
     //Handle close for the alert shown to user
@@ -247,6 +269,8 @@ export default function HomePage(props) {
         }
     }
 
+    const preventDefault = (event) => event.preventDefault();
+
     return (
 
         // <Box height="100vh" bgcolor="grey.300" style={{border:"1px solid red"}}/>
@@ -277,6 +301,7 @@ export default function HomePage(props) {
                                 exclusive
                                 onChange={handleFormatChange}
                                 aria-label="Framework formats"
+                                {...bindHover(popupStateFramework)}
                             >
                                 <ToggleButton color="primary" value="1" aria-label="DMRS">
                                     <Typography color="textPrimary">DMRS</Typography>
@@ -294,6 +319,24 @@ export default function HomePage(props) {
                                     <Typography color="textPrimary">AMR</Typography>
                                 </ToggleButton>
                             </ToggleButtonGroup>
+                                <Popover
+                                    {...bindPopover(popupStateFramework)}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'center',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'center',
+                                    }}
+                                    disableRestoreFocus
+                                >
+                                    <Typography style={{ margin: 10 }}>
+                                        <MaterialLink rel="noopener noreferrer" href="http://mrp.nlpl.eu/2020/index.php?page=14" target="_blank">
+                                        Select your desired MRP 2020 framework that uses the Uniform Graph Interchange Format.
+                                        </MaterialLink>
+                                    </Typography>
+                                </Popover>
                         </Grid>
                         <Grid item>
                             <Typography variant="h5">Please upload a data-set to begin</Typography>
@@ -318,9 +361,27 @@ export default function HomePage(props) {
                             </Button>
                         </Grid>
                         <Grid item>
+
                             <Button onClick={handleSkip} color="primary" variant="contained" disableElevation
-                                    startIcon={<ArrowForwardIcon/>} size="large">Skip Upload
+                                    startIcon={<ArrowForwardIcon/>} size="large" {...bindHover(popupStateSkip)}>Skip and Use Demo Data
                             </Button>
+                                <Popover
+                                    {...bindPopover(popupStateSkip)}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'center',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'center',
+                                    }}
+                                    disableRestoreFocus
+                                >
+                                    <Typography style={{ margin: 10 }} color="primary">
+                                        A Demo MRP Data-set for the Selected Framework Will Be Uploaded for You.
+                                    </Typography>
+                                </Popover>
+
                         </Grid>
 
 
