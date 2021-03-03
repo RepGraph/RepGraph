@@ -82,7 +82,15 @@ public class AMRGraph extends AbstractGraph {
         for (String i : nodes.keySet()) {
             visited.put(i, false);
         }
+        File tempDir = new File("supportScripts/temp");
+        if (!tempDir.exists()){
+            tempDir.mkdir();
+        }
         File tempFile = new File("supportScripts/temp/AMR_TEMP.txt");
+        if (!tempFile.exists()){
+            tempFile.createNewFile();
+        }
+
         FileWriter myWriter = new FileWriter(tempFile);
         myWriter.write("#::snt " + this.input + "\n");
         myWriter.write("(v" + this.top + " / " + nodes.get(this.top).getLabel() + " ");
