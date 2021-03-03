@@ -257,7 +257,7 @@ export default function HomePage(props) {
             alignItems="center"
             style={{height:"100vh"}}
         >
-            <Card variant="outlined">
+            <Card raised={false} elevation={0}>
                 <CardContent className={classes.root}>
                     <Grid container
                           direction="column"
