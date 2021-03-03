@@ -65,7 +65,7 @@ const initialState = {
     selectedSentenceGraphData: null,
     selectedSentenceVisualisation: null,
     isLoading: false,
-    APIendpoint: "http://localhost:8080",
+    APIendpoint: "http://repgraph-backend.herokuapp.com",
     testResults: null,
     longestPathVisualisation: null,
     visualisationFormat: "1",
