@@ -7,7 +7,7 @@ export const defaultGraphStyles = {
     backgroundColour: "#efefef",
     nodeStyles: {
         abstractNodeColour: "rgba(0,172,237,1)",
-        abstractNodeHoverColour: "rgba(82, 208, 255,1)",
+        abstractNodeHoverColour: "rgb(47,145,183)",
         surfaceNodeColour: "rgba(255,194,34,1)",
         surfaceNodeHoverColour: "rgba(229,188,79,1)",
         topNodeColour: "rgba(255,137,100,1)",
@@ -22,8 +22,8 @@ export const defaultGraphStyles = {
         selectedColour: "rgba(61, 230, 140, 1)"
     },
     tokenStyles: {
-        tokenColour: "rgba(0, 192, 114,1)",
-        hoverColour: "rgba(255, 232, 156,1)",
+        tokenColour: "rgba(0,192,114, 1)",
+        hoverColour: "rgb(31,155,105)",
         selectedColour: "rgba(61, 230, 140, 1)",
         labelColour: "rgba(0,0,0,1)"
     },
