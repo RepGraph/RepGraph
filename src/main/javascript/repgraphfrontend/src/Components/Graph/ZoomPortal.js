@@ -15,6 +15,7 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
+import CenterFocusStrongIcon from '@material-ui/icons/CenterFocusStrong';
 
 const initialTransform = {
     scaleX: 1.25,
@@ -137,7 +138,7 @@ const ZoomPortal = (props) => {
                                     if (zoom.isDragging) zoom.dragEnd();
                                 }}
                                 onDoubleClick={(event) => {
-                                    zoom.center();
+                                    //zoom.center();
                                     //zoom.reset();
                                 }}
                             />
@@ -158,6 +159,7 @@ const ZoomPortal = (props) => {
                             >
                                 <Button size="small" startIcon={<AddIcon />} onClick={ () => handleChangeGraphSpacing("increase")} disableElevation>Spacing</Button>
                                 <Button size="small" startIcon={<RemoveIcon />} onClick={() => handleChangeGraphSpacing("decrease")} disableElevation>Spacing</Button>
+                                <Button size="small" startIcon={<CenterFocusStrongIcon />} onClick={() => zoom.center()} disableElevation>Center</Button>
                             </ButtonGroup>
                         </Box>
                     </div>
