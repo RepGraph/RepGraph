@@ -38,6 +38,7 @@ import Button from "@material-ui/core/Button";
 import {layoutHierarchy} from "../../LayoutAlgorithms/layoutHierarchy";
 import {layoutTree} from "../../LayoutAlgorithms/layoutTree";
 import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -391,11 +392,10 @@ export default function SettingsTool() {
         }
     }
 
-    const handleResetDefaultStyles = () => {
+    const handleResetDefaultGraphStyles = () => {
         setValuesNodes(defaultGraphStyles.nodeStyles);
         setValuesLinks(defaultGraphStyles.linkStyles);
         setValuesTokens(defaultGraphStyles.tokenStyles);
-        setValuesGraphSpacing(defaultGraphLayoutSpacing);
 
         dispatch({
             type: "SET_GRAPH_STYLES",
@@ -403,6 +403,31 @@ export default function SettingsTool() {
                 graphStyles: defaultGraphStyles
             }
         });
+
+        if (state.selectedSentenceID) {
+            let graphData = null;
+
+            switch (state.visualisationFormat) {
+                case "1":
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, valuesGraphSpacing, state.framework);
+                    break;
+                case "2":
+                    graphData = layoutTree(state.selectedSentenceGraphData, valuesGraphSpacing, state.framework);
+                    break;
+                case "3":
+                    graphData = layoutFlat(state.selectedSentenceGraphData, false, valuesGraphSpacing, state.framework);
+                    break;
+                default:
+                    graphData = layoutHierarchy(state.selectedSentenceGraphData, valuesGraphSpacing, state.framework);
+                    break;
+            }
+
+            dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
+        }
+    }
+
+    const handleResetGraphLayoutSpacing = () => {
+        setValuesGraphSpacing(defaultGraphLayoutSpacing);
 
         dispatch({
             type: "SET_GRAPH_LAYOUT_SPACING",
@@ -617,10 +642,21 @@ export default function SettingsTool() {
                         </AccordionDetails>
                     </Accordion>
                 </Grid>
-                <Grid item>
-                    <Button variant="outlined" color="primary" onClick={handleResetDefaultStyles}>
-                        Reset Default Styles
-                    </Button>
+                <Grid item style={{marginTop:10}}>
+                    <ButtonGroup
+                        orientation="vertical"
+                        color="primary"
+                        aria-label="vertical contained primary button group"
+                        variant="contained"
+                        disableElevation
+                    >
+                        <Button onClick={handleResetDefaultGraphStyles}>
+                            Reset Graph Styles
+                        </Button>
+                        <Button onClick={handleResetGraphLayoutSpacing}>
+                            Reset Graph Layout Spacing
+                        </Button>
+                    </ButtonGroup>
                 </Grid>
             </Grid>
         </div>
