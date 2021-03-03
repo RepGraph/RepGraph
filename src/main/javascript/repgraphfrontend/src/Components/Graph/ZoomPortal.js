@@ -43,29 +43,31 @@ const ZoomPortal = (props) => {
             interValue = valuesGraphSpacing.interLevelSpacing + 10;
         }
 
-        setValuesGraphSpacing({
-            ...valuesGraphSpacing,
-            ["intraLevelSpacing"]: intraValue,
-            ["interLevelSpacing"]: interValue,
-        });
+        if (intraValue >= 0 && interValue >= 0){
+            setValuesGraphSpacing({
+                ...valuesGraphSpacing,
+                ["intraLevelSpacing"]: intraValue,
+                ["interLevelSpacing"]: interValue,
+            });
 
 
-        dispatch({
-            type: "SET_GRAPH_LAYOUT_SPACING",
-            payload: {
-                graphLayoutSpacing: {
-                    ...valuesGraphSpacing,
-                    ["intraLevelSpacing"]: intraValue,
-                    ["interLevelSpacing"]: interValue,
+            dispatch({
+                type: "SET_GRAPH_LAYOUT_SPACING",
+                payload: {
+                    graphLayoutSpacing: {
+                        ...valuesGraphSpacing,
+                        ["intraLevelSpacing"]: intraValue,
+                        ["interLevelSpacing"]: interValue,
+                    }
                 }
-            }
-        });
+            });
 
-        handleUpdateStyles({
-            ...valuesGraphSpacing,
-            ["intraLevelSpacing"]: intraValue,
-            ["interLevelSpacing"]: interValue,
-        });
+            handleUpdateStyles({
+                ...valuesGraphSpacing,
+                ["intraLevelSpacing"]: intraValue,
+                ["interLevelSpacing"]: interValue,
+            });
+        }
     };
 
     const handleUpdateStyles = (newSpacing) => {
