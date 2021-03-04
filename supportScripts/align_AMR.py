@@ -4,12 +4,11 @@ from amrlib.graph_processing.annotator import add_lemmas,annotate_graph
 import penman
 from penman.surface import Alignment
 import os
+import sys
 
 if __name__ == '__main__':
-    dirname = os.path.dirname(__file__)
-    filename = os.path.join(dirname, os.path.join('temp',"AMR_TEMP.txt"))
-    f = open(filename, "r")
-    graph_string = f.read()
+
+    graph_string = sys.argv[1]
 
     penman_graph = annotate_graph(graph_string)
     tokens = eval(penman_graph.metadata["tokens"])

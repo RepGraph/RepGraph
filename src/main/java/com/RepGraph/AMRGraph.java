@@ -47,7 +47,7 @@ public class AMRGraph extends AbstractGraph {
     }
 
 
-    public void alignUtil(String NodeID, HashMap<String, Node> nodes, HashMap<String, Boolean> visited, int layer, FileWriter writer) throws IOException {
+    public void alignUtil(String NodeID, HashMap<String, Node> nodes, HashMap<String, Boolean> visited, int layer, StringWriter writer) throws IOException {
         // Mark the current node as visited and print it
         visited.put(NodeID, true);
 
@@ -82,28 +82,24 @@ public class AMRGraph extends AbstractGraph {
         for (String i : nodes.keySet()) {
             visited.put(i, false);
         }
-        File tempDir = new File("supportScripts/temp");
-        if (!tempDir.exists()){
-            tempDir.mkdir();
-        }
-        File tempFile = new File("supportScripts/temp/AMR_TEMP.txt");
-        if (!tempFile.exists()){
-            tempFile.createNewFile();
-        }
 
-        FileWriter myWriter = new FileWriter(tempFile);
+        StringWriter myWriter = new StringWriter();
+
+
         myWriter.write("#::snt " + this.input + "\n");
         myWriter.write("(v" + this.top + " / " + nodes.get(this.top).getLabel() + " ");
 
         alignUtil(this.top, this.nodes, visited, 0, myWriter);
 
-        myWriter.close();
+        String amr_graph = myWriter.toString();
 
 
-        Process proc = Runtime.getRuntime().exec(new String[]{"python3", "supportScripts/align_AMR.py"});
+
+        Process proc = Runtime.getRuntime().exec(new String[]{"python3", "supportScripts/align_AMR.py",""+amr_graph+""});
         proc.waitFor();
         BufferedReader input =
                 new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
 
         String line = null;
         String[] tokens = null;
@@ -111,6 +107,8 @@ public class AMRGraph extends AbstractGraph {
         String[] ner_iob_tags = null;
         String[] pos_tags = null;
         String[] lemmas = null;
+
+
         while ((line = input.readLine()) != null) {
 
             if (line.startsWith("v")) {
@@ -118,7 +116,7 @@ public class AMRGraph extends AbstractGraph {
                 int from = Integer.parseInt(line.substring(line.indexOf("(") + 1, line.indexOf(",")));
                 int end = from;
 
-                if (line.substring(line.indexOf(",") + 1, line.indexOf(")")) != "") {
+                if (!line.substring(line.indexOf(",") + 1, line.indexOf(")")).equals("")) {
                     end = Integer.parseInt(line.substring(line.indexOf(",") + 1, line.indexOf(")")));
                 }
 
@@ -145,17 +143,19 @@ public class AMRGraph extends AbstractGraph {
             }
         }
         ArrayList<Token> tokenlist = new ArrayList<>();
-        for (int i = 0; i < tokens.length; i++) {
+        if (tokens!=null) {
+            for (int i = 0; i < tokens.length; i++) {
 
-            tokenlist.add(new Token(i, tokens[i], lemmas[i], null));
-            tokenlist.get(i).getExtraInformation().put("NER", ner_tags[i]);
-            tokenlist.get(i).getExtraInformation().put("NER_IOB", ner_iob_tags[i]);
-            tokenlist.get(i).getExtraInformation().put("POS", pos_tags[i]);
+                tokenlist.add(new Token(i, tokens[i], lemmas[i], null));
+                tokenlist.get(i).getExtraInformation().put("NER", ner_tags[i]);
+                tokenlist.get(i).getExtraInformation().put("NER_IOB", ner_iob_tags[i]);
+                tokenlist.get(i).getExtraInformation().put("POS", pos_tags[i]);
 
+            }
+            setTokens(tokenlist);
         }
-        setTokens(tokenlist);
         beenProcessed = true;
-        tempFile.delete();
+
     }
 
     public void fillInSpans(HashMap<String, Node> nodes) {
