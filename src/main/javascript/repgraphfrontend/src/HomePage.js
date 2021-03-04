@@ -299,7 +299,7 @@ export default function HomePage(props) {
                         </Grid>
                         <Grid item>
                             <ToggleButtonGroup
-                                value={state.framework}
+                                value={framework}
                                 exclusive
                                 onChange={handleFormatChange}
                                 aria-label="Framework formats"
