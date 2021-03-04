@@ -48,7 +48,7 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
     return graphData;
 }
 
-export const childrenAnchors = (node, children, visited, graphClone) => {
+export const childrenAnchors = (node, children, visited, graphClone, nodesWithoutAnchors) => {
 
     if (visited[node.id] && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
@@ -68,10 +68,11 @@ export const childrenAnchors = (node, children, visited, graphClone) => {
         for (let childID of children.get(node.id)) {
             if (graphClone.nodes.get(childID).anchors === null) {
 
-                let temp = childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone);
+                let temp = childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone, nodesWithoutAnchors);
 
                 if (temp.from !== Number.MAX_VALUE) {
                     graphClone.nodes.set(node.id, {...node, anchors: [{from: temp.from, end: temp.end}], span: false});
+                    nodesWithoutAnchors.push(node.id);
                 }
                 anchors.push({from: temp.from, end: temp.end});
 
@@ -146,7 +147,7 @@ export const setAnchors = (graphClone, children, parents, nodesWithoutAnchors) =
             }
             nodesWithoutAnchors.push(node.id);
             let anch = [];
-            anch.push(childrenAnchors(node, children, vis, graphClone));
+            anch.push(childrenAnchors(node, children, vis, graphClone, nodesWithoutAnchors));
             if (anch[0].from === Number.MAX_VALUE) {
                 for (let parentID of parents.get(node.id)) {
                     if (graphClone.nodes.get(parentID).anchors !== null) {
