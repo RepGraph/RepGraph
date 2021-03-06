@@ -1,8 +1,10 @@
 import uuid from "react-uuid";
+import {addTokenSpanText} from "./layoutUtils";
 
 export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => {
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
 
     const nodes = graphData.nodes.map((node, index) => ({
         ...node,
@@ -34,6 +36,8 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
             break;
         default:
     }
+
+    addTokenSpanText(graphData);
 
     let finalGraphNodes = nodes;
 

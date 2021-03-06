@@ -48,6 +48,27 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
     return graphData;
 }
 
+export function addTokenSpanText(graphData){
+
+    for (let j = 0; j < graphData.nodes.length; j++) {
+        let node = graphData.nodes[j];
+        let output = ""
+        if (node.anchors!==null){
+            for (let i = 0; i < node.anchors.length; i++) {
+            let anch = node.anchors[i];
+                for (let i = anch.from; i < anch.end+1; i++) {
+                    output+=graphData.tokens[i].form+" "
+                }
+                output = output.trim();
+                anch = {...anch,text : output}
+                output="";
+                graphData.nodes[j].anchors[i]=anch;
+            }
+        }
+    }
+
+}
+
 export const childrenAnchors = (node, children, visited, graphClone, nodesWithoutAnchors) => {
 
     if (visited[node.id] && node.anchors === null) {
