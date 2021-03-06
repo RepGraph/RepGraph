@@ -256,7 +256,7 @@ function DisplaySubsetTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Subset result based upon node selection:"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Subset result"}</DialogTitle>
                 <DialogContent style={{height: "80vh"}}>
                     {subsetResponse === null ? (
                         <div>No result to display</div>

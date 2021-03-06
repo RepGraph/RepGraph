@@ -464,13 +464,13 @@ function CompareTwoGraphsVisualisation(props) {
                     checked={!noSurface}
                     onChange={handleNoSurfaceSwitch}
                     name="NoSurface"
-                />} label="Show Similar Surface Nodes"  />
+                />} label="Match Surface Nodes"  />
                 <FormControlLabel control={<Switch
                     color={"primary"}
                     checked={!noAbstract}
                     onChange={handleNoAbstractSwitch}
                     name="NoAbstract"
-                />} label="Show Similar Abstract Nodes"  />
+                />} label="Match Abstract Nodes"  />
                 <Button variant="contained" color="primary" disableElevation endIcon={<CompareArrowsIcon/>} disabled={sentence1GraphData === null || sentence2GraphData === null} onClick={handleCompareClick}>
                     Compare
                 </Button>

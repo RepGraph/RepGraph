@@ -976,15 +976,15 @@ export default function MiniDrawer() {
                     </ListItem>
                     <ListItem button onClick={handleSubgraphToolClick}>
                         <ListItemIcon>{<SearchIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Subgraph Tool"}/>
+                        <ListItemText primary={"Subgraph Pattern Search"}/>
                     </ListItem>
                     <ListItem button onClick={handleCompareToolClick}>
                         <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Compare Tool"}/>
+                        <ListItemText primary={"Compare Two Graphs"}/>
                     </ListItem>
                     <ListItem button onClick={handleTestsToolClick}>
                         <ListItemIcon>{<AssessmentIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Tests Tool"}/>
+                        <ListItemText primary={"Graph Analysis"}/>
                     </ListItem>
                     <ListItem button onClick={handleDatasetAnalysisToolClick}>
                         <ListItemIcon>{<AssignmentIcon/>}</ListItemIcon>
@@ -1055,8 +1055,7 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2" color="textPrimary">
-                                        Select a node on the graph displayed in the visualization area to
-                                        see the corresponding subset of the graph.
+                                        Select a graph node visually. The node and its adjacent or descendent nodes (and the corresponding tokens) will be displayed as a subgraph.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -1083,7 +1082,7 @@ export default function MiniDrawer() {
                 onClose={handleSubgraphDialogClose}
             >
                 <DialogTitle>
-                    Subgraph Tool
+                    Subgraph Pattern Search
                 </DialogTitle>
                 <DialogContent>
                     <Grid
@@ -1108,8 +1107,7 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2">
-                                        Search for a sub-graph pattern using the nodes and labels of the current
-                                        graph.
+                                        Search for occurrences of a sub-graph pattern across the entire dataset. Select the pattern using nodes and labels of the current graph.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -1136,7 +1134,7 @@ export default function MiniDrawer() {
                 onClose={handleCompareToolDialogClose}
             >
                 <DialogTitle>
-                    Compare Tool
+                    Compare Two Graphs
                 </DialogTitle>
                 <DialogContent>
                     <Grid
@@ -1190,7 +1188,7 @@ export default function MiniDrawer() {
                 onClose={handleTestsToolDialogClose}
             >
                 <DialogTitle>
-                    Tests Tool
+                    Graph Analysis
                 </DialogTitle>
                 <DialogContent>
                     <Grid
@@ -1216,8 +1214,7 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2" color="textPrimary">
-                                        Select a number of graph properties with which to test the
-                                        currently displayed graph.
+                                        Run graph analyses on the current graph. The results are visualized where applicable.
                                     </Typography>
                                 </CardContent>
                             </Card>
