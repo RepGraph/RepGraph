@@ -251,24 +251,20 @@ export const edgeRulesSameColumn = (
     graphLayoutSpacing
 ) => {
     let direction = "";
-    let degree = 0.2;
-
-    if (Math.abs(source.relativeY - target.relativeY) === 1) {
-        //In the same column and 1 level apart
-        //Is there an identical edge? If yes than 1 go left 1 go right, else straight line
-        for (let e of finalGraphEdges) {
-            if (source.id === e.source && target.id === e.target && edge !== e) {
-                //There exists a duplicate edge
-                if (edge.label.localeCompare(e.label) <= 0) {
-                    direction = "vertical-right";
-                } else {
-                    direction = "vertical-left";
-                }
-
-                break;
+    let degree = 0.4;
+    for (let e of finalGraphEdges) {
+        if (source.id === e.source && target.id === e.target && edge !== e) {
+            //There exists a duplicate edge
+            if (edge.label.localeCompare(e.label) <= 0) {
+                direction = "vertical-right";
+            } else {
+                direction = "vertical-left";
             }
+            degree = 0.3;
+            return controlPoints(source, target, direction, degree, graphLayoutSpacing);
         }
-    } else {
+    }
+    if (Math.abs(source.relativeY - target.relativeY) !== 1){
         //In the same column and more than level apart
         let found = false;
         for (let node of finalGraphNodes) {
@@ -305,14 +301,12 @@ export const edgeRulesSameColumn = (
 
             //Make the edge go to absolute left, need to check direction of edge.
             if (target.y < source.y) {
-                degree = 0.4;
                 if (left) {
                     direction = "vertical-right";
                 } else {
                     direction = "vertical-left";
                 }
             } else {
-                degree = 0.4;
                 if (left) {
                     direction = "vertical-left";
                 } else {
@@ -412,6 +406,7 @@ export const edgeRulesOther = (
                 ((node.x < source.x && node.x > target.x) ||
                     (node.x > source.x && node.x < target.x))
             ) {
+
                 let xtemp = Math.abs(node.x - source.x);
                 let ytemp = Math.abs(node.y - target.y);
                 if (ytemp > yProtrusion && xtemp > xProtrusion) {
@@ -421,8 +416,9 @@ export const edgeRulesOther = (
             }
         }
     }
-    xProtrusion = xProtrusion / Math.abs(target.x - source.x);
-    yProtrusion = yProtrusion / Math.abs(target.y - source.y);
+
+    xProtrusion = (xProtrusion / Math.abs(target.x - source.x)).toFixed(3);
+    yProtrusion = (yProtrusion / Math.abs(target.y - source.y)).toFixed(3);
     if (xProtrusion >= 0.5 && yProtrusion >= 0.5) {
         direction = "custom";
         return controlPoints(source, target, direction, degree, graphLayoutSpacing);
