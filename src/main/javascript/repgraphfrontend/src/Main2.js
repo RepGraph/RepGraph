@@ -976,7 +976,7 @@ export default function MiniDrawer() {
                     </ListItem>
                     <ListItem button onClick={handleSubgraphToolClick}>
                         <ListItemIcon>{<SearchIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Subgraph Tool"}/>
+                        <ListItemText primary={"Subgraph Pattern Search"}/>
                     </ListItem>
                     <ListItem button onClick={handleCompareToolClick}>
                         <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
@@ -1055,8 +1055,7 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2" color="textPrimary">
-                                        Select a node on the graph displayed in the visualization area to
-                                        see the corresponding subset of the graph.
+                                        Select a graph node visually. The node and its adjacent or descendent nodes (and the corresponding tokens) will be displayed as a subgraph.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -1083,7 +1082,7 @@ export default function MiniDrawer() {
                 onClose={handleSubgraphDialogClose}
             >
                 <DialogTitle>
-                    Subgraph Tool
+                    Subgraph Pattern Search
                 </DialogTitle>
                 <DialogContent>
                     <Grid
@@ -1108,8 +1107,7 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2">
-                                        Search for a sub-graph pattern using the nodes and labels of the current
-                                        graph.
+                                        Search for occurrences of a sub-graph pattern across the entire dataset. Select the pattern using nodes and labels of the current graph.
                                     </Typography>
                                 </CardContent>
                             </Card>
