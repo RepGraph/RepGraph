@@ -93,19 +93,18 @@ const ZoomPortal = (props) => {
             <Zoom
                 width={width}
                 height={height}
-                scaleXMin={1 / 4}
+                scaleXMin={1 / 8}
                 scaleXMax={4}
-                scaleYMin={1 / 4}
+                scaleYMin={1 / 8}
                 scaleYMax={4}
                 transformMatrix={{
-                    scaleX: 1,
-                    scaleY: 1,
+                    scaleX: 1/4,
+                    scaleY: 1/4,
                     translateX: 0,
                     translateY: 0,
                     skewX: 0,
                     skewY: 0
                 }}
-
             >
                 {(zoom) => (
                     <div style={{position: 'relative' }}>
