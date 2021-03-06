@@ -109,17 +109,6 @@ export const Link = ({
 function EdgeLayout(link, strokeColor) {
     let mouseStartX,mouseStartY, startLinkX, startLinkY, startOffsetX, startOffsetY;
 
-    //let labelOffsetY;
-    // if (
-    //     link.source.relativeY === link.target.relativeY &&
-    //     link.source.relativeY === 0
-    // ) {
-    //     labelOffsetY = 20;
-    // }
-    // else{
-    //     labelOffsetY = -20;
-    // }
-
     const onMoveArrow = (event) => {
        console.log("mouse pos:", event.clientX, event.clientY);
         let changeX = mouseStartX - event.clientX;
@@ -128,13 +117,7 @@ function EdgeLayout(link, strokeColor) {
 
         link.x1 = startLinkX - changeX;
         link.y1 = startLinkY - changeY;
-       // let xPos = startLinkX - changeX;
-      //  let yPos = startLinkY - changeY;
-       // if (!isNaN(xPos) && !isNaN(yPos)) {
-       //     link.x1 = xPos;
-        //    link.y1 = yPos;
            console.log("final link pos", link.x1, link.y1);
-       // }
     };
 
     const onClickArrow = (event) => {
@@ -152,6 +135,28 @@ function EdgeLayout(link, strokeColor) {
         document.addEventListener("mousemove", onMoveArrow);
         document.addEventListener("click", onClickArrow);
     };
+
+    // const onClickArrow = (event) => {
+    //     console.log("mouse pos:", event.clientX, event.clientY);
+    //     let changeX = mouseStartX - event.clientX;
+    //     let changeY = mouseStartY - event.clientY;
+    //     console.log("change x , y", changeX, changeY);
+    //
+    //     link.x1 = startLinkX - changeX;
+    //     link.y1 = startLinkY - changeY;
+    //     console.log("final link pos", link.x1, link.y1);
+    //     document.removeEventListener("click", onClickArrow);
+    // };
+    //
+    // const handleDoubleClickArrow = (event) => {
+    //     mouseStartX = event.clientX;
+    //     mouseStartY = event.clientY;
+    //     startLinkX = link.x1;
+    //     startLinkY = link.y1;
+    //     console.log("start pos:", link.x1, link.y1);
+    //     console.log("mouseStartX, mouseStartY", mouseStartX, mouseStartY);
+    //     document.addEventListener("click", onClickArrow);
+    // };
 
     const onMoveLabel = (event) => {
         let changeX = mouseStartX - event.clientX;
@@ -174,17 +179,42 @@ function EdgeLayout(link, strokeColor) {
         document.addEventListener("click", onClickLabel);
     };
 
-    // const handleDragEnter = (event) => {
+    //DIDN'T WORK
+    // const onMouseUpArrow = (event) => {
+    //     let changeX = mouseStartX - event.clientX;
+    //     let changeY = mouseStartY - event.clientY;
+    //     link.x1 = startLinkX - changeX;
+    //     link.y1 = startLinkY - changeY;
+    //
+    //     document.removeEventListener("onmouseup", onMouseUpArrow);
+    // };
+    //
+    // const onMouseDownArrow = (event) => {
     //     mouseStartX = event.clientX;
     //     mouseStartY = event.clientY;
+    //     startLinkX = link.x1;
+    //     startLinkY = link.y1;
+    //     document.addEventListener("onmouseup", onMouseUpArrow);
     // };
-    // const handleEnd = (event) => {
-    //     let xPos = link.x1 - (mouseStartX - event.clientX);
-    //     let yPos = link.y1 - (mouseStartY - event.clientY);
-    //     if (!isNaN(xPos) && !isNaN(yPos)) {
-    //         link.x1 = xPos;
-    //         link.y1 = yPos;
-    //     }
+
+    //DRAG END HAS NAN ISSUES
+    // const onDragEnd = (event) => {
+    //     console.log("mouse pos:", event.clientX, event.clientY);
+    //     let changeX = mouseStartX - event.clientX;
+    //     let changeY = mouseStartY - event.clientY;
+    //     console.log("change x , y", changeX, changeY);
+    //     link.x1 = startLinkX - changeX;
+    //     link.y1 = startLinkY - changeY;
+    // };
+    //
+    // const onDragEnter = (event) => {
+    //     mouseStartX = event.clientX;
+    //     mouseStartY = event.clientY;
+    //     startLinkX = link.x1;
+    //     startLinkY = link.y1;
+    //
+    //     console.log("start pos:", link.x1, link.y1);
+    //     console.log("mouseStartX, mouseStartY", mouseStartX, mouseStartY);
     // };
 
     const t = 0.5;
@@ -253,6 +283,9 @@ function EdgeLayout(link, strokeColor) {
                         fontSize="25px"
                         dominantBaseline="central"
                         onDoubleClick={handleDoubleClickArrow}
+                       // onMouseDown={onMouseDownArrow}
+                       //  onDragEnter={onDragEnter}
+                       //  onDragEnd={onDragEnd}
                     >
                         ➤
                     </textPath>
