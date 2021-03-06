@@ -169,7 +169,7 @@ class AbstractGraph {
     public ArrayList<Token> extractTokensFromNodes() {
         Properties props = new Properties();
         // set the list of annotators to run
-        props.setProperty("annotators", "tokenize");
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma");
         // build pipeline
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         // create a document object
@@ -179,7 +179,7 @@ class AbstractGraph {
         ArrayList<Token> tokenlist = new ArrayList<>();
         int index = 0;
         for (CoreLabel tok : doc.tokens()) {
-            tokenlist.add(new Token(index, tok.originalText(), null, null));
+            tokenlist.add(new Token(index, tok.originalText(), tok.lemma(), null));
             for (Node n : this.nodes.values()) {
                 if (n.getAnchors() == null) {
                     continue;
