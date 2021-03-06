@@ -530,7 +530,7 @@ function SearchSubgraphPatternTool(props) {
                         aria-describedby="alert-dialog-description"
                     >
                         <DialogTitle id="alert-dialog-title">
-                            {"Select connected nodes and edges on the graph: "}
+                            {"Select connected nodes and edges on the graph"}
                         </DialogTitle>
                         <DialogContent style={{height: "80vh"}}>
                             <div className={classes.graphDiv}>

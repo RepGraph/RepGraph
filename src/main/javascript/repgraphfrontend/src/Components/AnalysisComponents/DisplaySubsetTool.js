@@ -219,7 +219,7 @@ function DisplaySubsetTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Select a node on the graph:"}<Chip
+                <DialogTitle id="alert-dialog-title">{"Select a node on the graph"}<Chip
                     label={`Selected Node: ${getSelectedNodeLabel()}`}/></DialogTitle>
                 <DialogContent style={{height: "80vh"}}>
                     {state.selectedSentenceID === null ? (
