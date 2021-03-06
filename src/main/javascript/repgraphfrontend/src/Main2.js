@@ -984,7 +984,7 @@ export default function MiniDrawer() {
                     </ListItem>
                     <ListItem button onClick={handleTestsToolClick}>
                         <ListItemIcon>{<AssessmentIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Tests Tool"}/>
+                        <ListItemText primary={"Graph Analysis"}/>
                     </ListItem>
                     <ListItem button onClick={handleDatasetAnalysisToolClick}>
                         <ListItemIcon>{<AssignmentIcon/>}</ListItemIcon>
@@ -1190,7 +1190,7 @@ export default function MiniDrawer() {
                 onClose={handleTestsToolDialogClose}
             >
                 <DialogTitle>
-                    Tests Tool
+                    Graph Analysis
                 </DialogTitle>
                 <DialogContent>
                     <Grid
