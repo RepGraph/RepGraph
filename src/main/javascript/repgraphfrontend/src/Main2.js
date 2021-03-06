@@ -477,7 +477,7 @@ export default function MiniDrawer() {
                                                                 onClick={() => {
                                                                     setSentenceOpen(true);
                                                                 }}
-                                                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "Select a Sentence" : state.selectedSentenceID} {state.selectedSentenceID === null ?
                                                             <AddCircleOutlineIcon/> :
                                                             <EditIcon/>}</Button>
                                                     </Tooltip></Grid>
@@ -807,7 +807,7 @@ export default function MiniDrawer() {
                     </Grid>
                     <Grid item className={classes.menuButton}>
                         <Tooltip arrow
-                                 title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
+                                 title={state.selectedSentenceID === null ? "Select a Sentence for Visualisation" : "Change Sentence"}>
                             {/*<Fab color="primary" aria-label="add" variant="extended"*/}
                             {/*     className={classes.fabButton} onClick={() => {*/}
                             {/*    setSentenceOpen(true);*/}
@@ -820,7 +820,7 @@ export default function MiniDrawer() {
                             <Button color="primary" variant="contained" disableElevation onClick={() => {
                                 setSentenceOpen(true);
                             }}
-                                    disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                    disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "Select a Sentence" : state.selectedSentenceID} {state.selectedSentenceID === null ?
                                 <AddCircleOutlineIcon/> :
                                 <EditIcon/>}</Button>
                         </Tooltip>
