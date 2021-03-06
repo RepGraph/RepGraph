@@ -980,7 +980,7 @@ export default function MiniDrawer() {
                     </ListItem>
                     <ListItem button onClick={handleCompareToolClick}>
                         <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Compare Tool"}/>
+                        <ListItemText primary={"Compare Two Graphs"}/>
                     </ListItem>
                     <ListItem button onClick={handleTestsToolClick}>
                         <ListItemIcon>{<AssessmentIcon/>}</ListItemIcon>
@@ -1136,7 +1136,7 @@ export default function MiniDrawer() {
                 onClose={handleCompareToolDialogClose}
             >
                 <DialogTitle>
-                    Compare Tool
+                    Compare Two Graphs
                 </DialogTitle>
                 <DialogContent>
                     <Grid
