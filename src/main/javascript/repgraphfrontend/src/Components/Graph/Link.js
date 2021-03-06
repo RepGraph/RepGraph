@@ -109,14 +109,24 @@ export const Link = ({
 function EdgeLayout(link, strokeColor) {
     let mouseStartX;
     let mouseStartY;
+    let startLinkX;
+    let startLinkY;
 
     const onMouseMove = (event) => {
-        let xPos = link.x1 - (mouseStartX - event.clientX);
-        let yPos = link.y1 - (mouseStartY - event.clientY);
-        if (!isNaN(xPos) && !isNaN(yPos)) {
-            link.x1 = xPos;
-            link.y1 = yPos;
-        }
+       console.log("mouse pos:", event.clientX, event.clientY);
+        let changeX = mouseStartX - event.clientX;
+        let changeY = mouseStartY - event.clientY;
+       console.log("change x , y", changeX, changeY);
+
+        link.x1 = startLinkX - changeX;
+        link.y1 = startLinkY - changeY;
+       // let xPos = startLinkX - changeX;
+      //  let yPos = startLinkY - changeY;
+       // if (!isNaN(xPos) && !isNaN(yPos)) {
+       //     link.x1 = xPos;
+        //    link.y1 = yPos;
+           console.log("final link pos", link.x1, link.y1);
+       // }
     };
 
     const onClick = (event) => {
@@ -127,6 +137,10 @@ function EdgeLayout(link, strokeColor) {
     const handleDoubleClick = (event) => {
         mouseStartX = event.clientX;
         mouseStartY = event.clientY;
+        startLinkX = link.x1;
+        startLinkY = link.y1;
+       console.log("start pos:", link.x1, link.y1);
+       console.log("mouseStartX, mouseStartY", mouseStartX, mouseStartY);
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("click", onClick);
     };
@@ -200,13 +214,13 @@ function EdgeLayout(link, strokeColor) {
                     strokeWidth="2"
                     fill="none"
                 />
-                <path
-                    id={`edge${link.id}${textPathID}2`}
-                    d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
-                    stroke="rgba(0, 0, 0, 0)"
-                    strokeWidth="40"
-                    fill="none"
-                />
+                {/*<path*/}
+                {/*    id={`edge${link.id}${textPathID}2`}*/}
+                {/*    d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}*/}
+                {/*    stroke="rgba(0, 0, 0, 0)"*/}
+                {/*    strokeWidth="40"*/}
+                {/*    fill="none"*/}
+                {/*/>*/}
                 <text textAnchor="middle" dy="-1.5px">
                     <textPath
                         href={`#edge${link.id}${textPathID}`}
@@ -234,17 +248,6 @@ function EdgeLayout(link, strokeColor) {
                 >
                     {link.label}
                 </text>
-                {/*<rect*/}
-                {/*    x={xMid}*/}
-                {/*    y={yMid}*/}
-                {/*    width={40}*/}
-                {/*    height={20}*/}
-                {/*    cursor="move"*/}
-                {/*    fill="rgba(0,0,0,0)"*/}
-                {/*    onDragEnd={handleEnd}*/}
-                {/*    onDragEnter={handleDragEnter}*/}
-                {/*>*/}
-                {/*</rect>*/}
 
             </Group>
         );
