@@ -458,7 +458,7 @@ function SearchSubgraphPatternTool(props) {
                                             }}
                                             footer={() => (
                                                 <div style={{padding: "1rem", textAlign: "center"}}>
-                                                    <Typography >-- end of dataset --</Typography>
+                                                    <Typography >-- end of search results --</Typography>
                                                 </div>
                                             )}
                                         />}
@@ -610,7 +610,7 @@ function SearchSubgraphPatternTool(props) {
                                                 }}
                                                 footer={() => (
                                                     <div style={{padding: "1rem", textAlign: "center"}}>
-                                                        <Typography > -- end of dataset
+                                                        <Typography > -- end of search results
                                                             -- </Typography>
                                                     </div>
                                                 )}
