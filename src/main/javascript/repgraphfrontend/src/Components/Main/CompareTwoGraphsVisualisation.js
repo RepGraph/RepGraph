@@ -36,8 +36,8 @@ import EditIcon from '@material-ui/icons/Edit';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        maxWidth: "100%",
-        height: "100%",
+        // maxWidth: "100%",
+        // height: "100%",
     },
     header: {
         display: "flex",
@@ -47,8 +47,10 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.default
     },
     body: {
+        width: "100%",
         height: "100%",
-        display: "block"
+        display: "block",
+        // border: "1px solid red"
     },
     graphDiv: {
         height: "100%",
@@ -335,147 +337,157 @@ function CompareTwoGraphsVisualisation(props) {
     }
 
     return (
-        <Grid
-            className={classes.root}
-            container
-            direction="row"
-            justify="center"
-            alignItems="center"
-            spacing={1}
-        >
-            <Dialog
-                fullWidth
-                maxWidth="md"
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="select comparison sentence"
+        <Grid className={classes.root}
+              container
+              direction="column"
+              justify="center"
+              alignItems="center"
+              spacing={1}>
+            <Grid item >
+            <FormControlLabel control={<Switch
+                color={"primary"}
+                checked={strict}
+                onChange={handleStrictSwitch}
+                name="Strict"
+            />} label="Strict Comparison"  />
+            <FormControlLabel control={<Switch
+                color={"primary"}
+                checked={!noSurface}
+                onChange={handleNoSurfaceSwitch}
+                name="NoSurface"
+            />} label="Match Surface Nodes"  />
+            <FormControlLabel control={<Switch
+                color={"primary"}
+                checked={!noAbstract}
+                onChange={handleNoAbstractSwitch}
+                name="NoAbstract"
+            />} label="Match Abstract Nodes"  />
+        </Grid>
+            <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                spacing={1}
             >
-                <DialogTitle id="select-comparison-sentence-title">
-                    Select Graph: {selectSide}
-                </DialogTitle>
-                <DialogContent>
-                    <SelectSentenceList/>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} variant="contained" color="primary" disableElevation>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Grid container item xs={6} className={classes.body} spacing={1}>
-                <Grid
-                    item
-                    container
-                    direction="column"
-                    justify="center"
-                    alignItems="center"
+                <Dialog
+                    fullWidth
+                    maxWidth="md"
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="select comparison sentence"
                 >
-                    <Tooltip
-                        arrow
-                        title={sentence1 === null ? "Select Sentence" : "Change Sentence"}
+                    <DialogTitle id="select-comparison-sentence-title">
+                        Select Graph: {selectSide}
+                    </DialogTitle>
+                    <DialogContent>
+                        <SelectSentenceList/>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} variant="contained" color="primary" disableElevation>
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Grid container item xs={6} className={classes.body} spacing={1}>
+                    <Grid
+                        item
+                        container
+                        direction="column"
+                        justify="center"
+                        alignItems="center"
                     >
-                        <Chip
-                            onClick={() => {
+                        <Tooltip
+                            arrow
+                            title={sentence1 === null ? "Select Sentence" : "Change Sentence"}
+                        >
+                            <Chip
+                                onClick={() => {
 
-                                //Show the dialog to select a sentence
-                                handleSelectSide(1);
-                            }}
-                            label={sentence1 === null ? "No Sentence Selected" : sentence1}
-                            icon={
-                                sentence1 === null ? <AddCircleOutlineIcon/> : <EditIcon/>
-                            }
-                        />
-                    </Tooltip>
-                </Grid>
-                <Grid item style={{width: "100%", height: "50vh"}}>
-                    {
-                        sentence1GraphData === null ? <div>Please select a sentence</div> :
+                                    //Show the dialog to select a sentence
+                                    handleSelectSide(1);
+                                }}
+                                label={sentence1 === null ? "Select a Sentence" : sentence1}
+                                icon={
+                                    sentence1 === null ? <AddCircleOutlineIcon/> : <EditIcon/>
+                                }
+                            />
+                        </Tooltip>
+                    </Grid>
+                    <Grid item style={{width: "100%", height: "50vh"}}>
+                        {
+                            sentence1GraphData === null ? <div>Please select a sentence</div> :
 
-                            <div className={classes.graphDiv}>
-                                <ParentSize>
-                                    {parent => (
-                                        <Graph
-                                            width={parent.width}
-                                            height={parent.height}
-                                            graph={getGraph(state.graphLayoutSpacing,1)}
-                                            adjacentLinks={determineAdjacentLinks(getGraph(state.graphLayoutSpacing,1))}
-                                            graphFormatCode={graphFormatCode}
-                                        />
-                                    )}
-                                </ParentSize>
-                            </div>
-                    }
+                                <div className={classes.graphDiv}>
+                                    <ParentSize>
+                                        {parent => (
+                                            <Graph
+                                                width={parent.width}
+                                                height={parent.height}
+                                                graph={getGraph(state.graphLayoutSpacing,1)}
+                                                adjacentLinks={determineAdjacentLinks(getGraph(state.graphLayoutSpacing,1))}
+                                                graphFormatCode={graphFormatCode}
+                                            />
+                                        )}
+                                    </ParentSize>
+                                </div>
+                        }
+                    </Grid>
                 </Grid>
-            </Grid>
-            <Grid container item xs={6} className={classes.body} spacing={1}>
-                <Grid
-                    item
-                    container
-                    direction="column"
-                    justify="center"
-                    alignItems="center"
-                >
-                    <Tooltip
-                        arrow
-                        title={sentence2 === null ? "Select Sentence" : "Change Sentence"}
+                <Grid container item xs={6} className={classes.body} spacing={1}>
+                    <Grid
+                        item
+                        container
+                        direction="column"
+                        justify="center"
+                        alignItems="center"
                     >
-                        <Chip
-                            onClick={() => {
+                        <Tooltip
+                            arrow
+                            title={sentence2 === null ? "Select Sentence" : "Change Sentence"}
+                        >
+                            <Chip
+                                onClick={() => {
 
-                                //Show the dialog to select a sentence
-                                handleSelectSide(2);
-                            }}
-                            label={sentence2 === null ? "No Sentence Selected" : sentence2}
-                            icon={
-                                sentence2 === null ? <AddCircleOutlineIcon/> : <EditIcon/>
-                            }
-                        />
-                    </Tooltip>
-                </Grid>
-                <Grid item style={{width: "100%", height: "50vh"}}>
-                    {
-                        sentence2GraphData === null ? <div>Please select a sentence</div> :
+                                    //Show the dialog to select a sentence
+                                    handleSelectSide(2);
+                                }}
+                                label={sentence2 === null ? "Select a Sentence" : sentence2}
+                                icon={
+                                    sentence2 === null ? <AddCircleOutlineIcon/> : <EditIcon/>
+                                }
+                            />
+                        </Tooltip>
+                    </Grid>
+                    <Grid item style={{width: "100%", height: "50vh"}}>
+                        {
+                            sentence2GraphData === null ? <div>Please select a sentence</div> :
 
-                            <div className={classes.graphDiv}>
-                                <ParentSize>
-                                    {parent => (
-                                        <Graph
-                                            width={parent.width}
-                                            height={parent.height}
-                                            graph={getGraph(state.graphLayoutSpacing,2)}
-                                            adjacentLinks={determineAdjacentLinks(getGraph(state.graphLayoutSpacing,2))}
-                                            graphFormatCode={graphFormatCode}
-                                        />
-                                    )}
-                                </ParentSize>
-                            </div>
-                    }
+                                <div className={classes.graphDiv}>
+                                    <ParentSize>
+                                        {parent => (
+                                            <Graph
+                                                width={parent.width}
+                                                height={parent.height}
+                                                graph={getGraph(state.graphLayoutSpacing,2)}
+                                                adjacentLinks={determineAdjacentLinks(getGraph(state.graphLayoutSpacing,2))}
+                                                graphFormatCode={graphFormatCode}
+                                            />
+                                        )}
+                                    </ParentSize>
+                                </div>
+                        }
+                    </Grid>
                 </Grid>
             </Grid>
             <Grid item>
-                <FormControlLabel control={<Switch
-                    color={"primary"}
-                    checked={strict}
-                    onChange={handleStrictSwitch}
-                    name="Strict"
-                />} label="Strict Comparison"  />
-                <FormControlLabel control={<Switch
-                    color={"primary"}
-                    checked={!noSurface}
-                    onChange={handleNoSurfaceSwitch}
-                    name="NoSurface"
-                />} label="Match Surface Nodes"  />
-                <FormControlLabel control={<Switch
-                    color={"primary"}
-                    checked={!noAbstract}
-                    onChange={handleNoAbstractSwitch}
-                    name="NoAbstract"
-                />} label="Match Abstract Nodes"  />
                 <Button variant="contained" color="primary" disableElevation endIcon={<CompareArrowsIcon/>} disabled={sentence1GraphData === null || sentence2GraphData === null} onClick={handleCompareClick}>
                     Compare
                 </Button>
             </Grid>
         </Grid>
+
+
     );
 }
 
