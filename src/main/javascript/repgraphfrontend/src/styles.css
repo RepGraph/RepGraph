@@ -20,7 +20,7 @@ body {
   align-content: center;
 }
 .tooltipSection {
-  background-color: "#efefef";
+  background-color: white;
   border: 2px solid #dedede;
   padding: 0.4rem;
   border-radius: 8px;
@@ -41,7 +41,7 @@ body {
 }
 
 .tooltipDivider {
-  width: 80%;
+  width: 100%;
   height: 0px;
   border: 1px solid #dedede;
   border-radius: 8px;

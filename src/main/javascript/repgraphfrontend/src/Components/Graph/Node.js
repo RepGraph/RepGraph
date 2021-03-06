@@ -219,6 +219,10 @@ export const Node = ({
             return obj;
         }, {});
 
+    if(filteredExtraInformation.hasOwnProperty("anchors")){
+        filteredExtraInformation.anchors = filteredExtraInformation.anchors.map(anchor => anchor.from + "-" + anchor.end).join(", ");
+    }
+
     return (
         <g>
             <Group
