@@ -1,10 +1,10 @@
 import React, {useState, useRef, useCallback, useReducer, useContext} from "react";
 
 import ZoomPortal from "./ZoomPortal";
-import { Node } from "./Node";
-import { Link } from "./Link";
+import {Node} from "./Node";
+import {Link} from "./Link";
 
-import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
+import {useTooltip, useTooltipInPortal, defaultStyles} from "@visx/tooltip";
 import {AppContext} from "../../Store/AppContextProvider";
 
 export const Graph = ({
@@ -15,8 +15,8 @@ export const Graph = ({
                           adjacentLinks,
                           events
                       }) => {
-    const { nodes, links } = graph;
-    const [tooltipData, setTooltipData] = useState({ extraInformation: {} });
+    const {nodes, links} = graph;
+    const [tooltipData, setTooltipData] = useState({extraInformation: {}});
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
 
     const styles = state.graphStyles; //Use AppContext styles
@@ -29,7 +29,7 @@ export const Graph = ({
         hideTooltip
     } = useTooltip();
 
-    const { containerRef, containerBounds, TooltipInPortal } = useTooltipInPortal(
+    const {containerRef, containerBounds, TooltipInPortal} = useTooltipInPortal(
         {
             // use TooltipWithBounds
             detectBounds: true,
@@ -114,14 +114,6 @@ export const Graph = ({
                             >
                                 <div
                                     style={{
-                                        color: "black",
-                                        marginBottom: "0.4rem"
-                                    }}
-                                >
-                                    Label:
-                                </div>
-                                <div
-                                    style={{
                                         color:
                                             tooltipData.type === "node"
                                                 ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
@@ -132,42 +124,66 @@ export const Graph = ({
                                 </div>
                             </div>
                             <div className="tooltipSection">
-                                <div
-                                    style={{
-                                        color: "black"
-                                    }}
-                                >
-                                    Extra Information:
-                                </div>
-                                <div className="tooltipDivider"></div>
                                 {Object.entries(tooltipData.extraInformation).map(
                                     (entry, i) => {
                                         return (
-                                            <div
-                                                key={`extraInfo-${i}`}
-                                                className="extraInfo"
-                                                style={{
-                                                    color:
-                                                        tooltipData.type === "node"
-                                                            ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
-                                                            : tooltipData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour,
-                                                    marginTop: "0.4rem",
-                                                    width: "100%"
-                                                }}
-                                            >
-                                                <div
-                                                    style={{
-                                                        color: "black",
-                                                        marginLeft: "0.4rem",
-                                                        marginRight: "0.4rem",
-                                                        width: "auto"
-                                                    }}
-                                                >
-                                                    {entry[0]}:
-                                                </div>
-                                                <div style={{ marginRight: "0.4rem", width: "auto" }}>
-                                                    {JSON.stringify(entry[1])}
-                                                </div>
+                                            entry[0] !== "extraInformation" ?
+                                                (
+                                                    <div
+                                                        key={`extraInfo-${i}`}
+                                                        className="extraInfo"
+                                                        style={{
+                                                            color:
+                                                                tooltipData.type === "node"
+                                                                    ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
+                                                                    : tooltipData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour,
+                                                            marginTop: "0.4rem",
+                                                            width: "100%"
+                                                        }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                color: "black",
+                                                                marginLeft: "0.4rem",
+                                                                marginRight: "0.4rem",
+                                                                width: "auto"
+                                                            }}
+                                                        >
+                                                            {entry[0] === "extraInformation" ? "Additional Data" : entry[0]}:
+                                                        </div>
+                                                        <div style={{marginRight: "0.4rem", width: "auto"}}>
+                                                            {typeof entry[1] === "object" && entry[1] !== null ?
+                                                                Array.isArray(entry[1]) ? entry[1].join(", ") : JSON.stringify(entry[1]) : entry[1]}
+                                                        </div>
+                                                    </div>) : <div style={{width: "100%"}} key={`extraInfo-${i}`}>
+                                                    <div className={"tooltipDivider"}/>
+                                                    {(Object.entries(entry[1]).map((extraEntry, index) =>
+                                                        <div
+                                                            key={`additionalInfo-${index}`}
+                                                            className="extraInfo"
+                                                            style={{
+                                                                color:
+                                                                    tooltipData.type === "node"
+                                                                        ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
+                                                                        : tooltipData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour,
+                                                                marginTop: "0.4rem",
+                                                                width: "100%"
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    color: "black",
+                                                                    marginLeft: "0.4rem",
+                                                                    marginRight: "0.4rem",
+                                                                    width: "auto"
+                                                                }}
+                                                            >
+                                                                {extraEntry[0]}
+                                                            </div>
+                                                            <div style={{marginRight: "0.4rem", width: "auto"}}>
+                                                                {extraEntry[1]}
+                                                            </div>
+                                                        </div>))}
                                             </div>
                                         );
                                     }
