@@ -1216,8 +1216,7 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2" color="textPrimary">
-                                        Select a number of graph properties with which to test the
-                                        currently displayed graph.
+                                        Run graph analyses on the current graph. The results are visualized where applicable.
                                     </Typography>
                                 </CardContent>
                             </Card>
