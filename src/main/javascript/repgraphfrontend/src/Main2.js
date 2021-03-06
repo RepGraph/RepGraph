@@ -1086,16 +1086,17 @@ export default function MiniDrawer() {
                 </DialogTitle>
                 <DialogContent>
                     <Grid
-                        className={classes.rootJustWidth}
+                        // className={classes.rootJustWidth}
                         container
-                        direction="row"
-                        justify="space-between"
+                        direction="column"
+                        justify="center"
                         alignItems="center"
                         spacing={2}
+                        style={{width:"100%"}}
                     >
-                        <Grid item xs={6} className={classes.body}>
-                            <Card className={classes.body} variant="outlined">
-                                <CardContent className={classes.body}>
+                        <Grid item>
+                            <Card variant="outlined" >
+                                <CardContent >
                                     <Typography
                                         className={classes.title}
                                         gutterBottom
@@ -1112,9 +1113,9 @@ export default function MiniDrawer() {
                                 </CardContent>
                             </Card>
                         </Grid>
-                        <Grid item xs={6} style={{height: "100%"}}>
-                            <Card className={classes.body} variant="outlined">
-                                <CardContent>
+                        <Grid item style={{flexGrow:"1"}}>
+                            <Card  variant="outlined">
+                                <CardContent >
                                     <SearchSubgraphPatternTool/>
                                 </CardContent>
                             </Card>
