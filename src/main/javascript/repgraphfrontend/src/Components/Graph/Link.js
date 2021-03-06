@@ -107,12 +107,20 @@ export const Link = ({
 };
 
 function EdgeLayout(link, strokeColor) {
-    let mouseStartX;
-    let mouseStartY;
-    let startLinkX;
-    let startLinkY;
+    let mouseStartX,mouseStartY, startLinkX, startLinkY, startOffsetX, startOffsetY;
 
-    const onMouseMove = (event) => {
+    //let labelOffsetY;
+    // if (
+    //     link.source.relativeY === link.target.relativeY &&
+    //     link.source.relativeY === 0
+    // ) {
+    //     labelOffsetY = 20;
+    // }
+    // else{
+    //     labelOffsetY = -20;
+    // }
+
+    const onMoveArrow = (event) => {
        console.log("mouse pos:", event.clientX, event.clientY);
         let changeX = mouseStartX - event.clientX;
         let changeY = mouseStartY - event.clientY;
@@ -129,35 +137,56 @@ function EdgeLayout(link, strokeColor) {
        // }
     };
 
-    const onClick = (event) => {
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("click", onClick);
+    const onClickArrow = (event) => {
+        document.removeEventListener("mousemove", onMoveArrow);
+        document.removeEventListener("click", onClickArrow);
     };
 
-    const handleDoubleClick = (event) => {
+    const handleDoubleClickArrow = (event) => {
         mouseStartX = event.clientX;
         mouseStartY = event.clientY;
         startLinkX = link.x1;
         startLinkY = link.y1;
        console.log("start pos:", link.x1, link.y1);
        console.log("mouseStartX, mouseStartY", mouseStartX, mouseStartY);
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("click", onClick);
+        document.addEventListener("mousemove", onMoveArrow);
+        document.addEventListener("click", onClickArrow);
     };
 
-    const handleDragEnter = (event) => {
+    const onMoveLabel = (event) => {
+        let changeX = mouseStartX - event.clientX;
+        let changeY = mouseStartY - event.clientY;
+        link.labelOffsetX = startOffsetX - changeX;
+        link.labelOffsetY = startOffsetY - changeY;
+    };
+
+    const onClickLabel = (event) => {
+        document.removeEventListener("mousemove", onMoveLabel);
+        document.removeEventListener("click", onClickLabel);
+    };
+
+    const handleDoubleClickLabel = (event) => {
         mouseStartX = event.clientX;
         mouseStartY = event.clientY;
+        startOffsetX = link.labelOffsetX;
+        startOffsetY = link.labelOffsetY;
+        document.addEventListener("mousemove", onMoveLabel);
+        document.addEventListener("click", onClickLabel);
     };
 
-    const handleEnd = (event) => {
-        let xPos = link.x1 - (mouseStartX - event.clientX);
-        let yPos = link.y1 - (mouseStartY - event.clientY);
-        if (!isNaN(xPos) && !isNaN(yPos)) {
-            link.x1 = xPos;
-            link.y1 = yPos;
-        }
-    };
+    // const handleDragEnter = (event) => {
+    //     mouseStartX = event.clientX;
+    //     mouseStartY = event.clientY;
+    // };
+    // const handleEnd = (event) => {
+    //     let xPos = link.x1 - (mouseStartX - event.clientX);
+    //     let yPos = link.y1 - (mouseStartY - event.clientY);
+    //     if (!isNaN(xPos) && !isNaN(yPos)) {
+    //         link.x1 = xPos;
+    //         link.y1 = yPos;
+    //     }
+    // };
+
     const t = 0.5;
 
     const x0 = link.source.x;
@@ -180,14 +209,7 @@ function EdgeLayout(link, strokeColor) {
         (1 - t) * 3 * t * t * y2 +
         Math.pow(t, 3) * y3;
 
-    let labelOffset = -20;
 
-    if (
-        link.source.relativeY === link.target.relativeY &&
-        link.source.relativeY === 0
-    ) {
-        labelOffset = 20;
-    }
 
     const textPathID = uuid();
 
@@ -230,6 +252,7 @@ function EdgeLayout(link, strokeColor) {
                         fill={strokeColor}
                         fontSize="25px"
                         dominantBaseline="central"
+                        onDoubleClick={handleDoubleClickArrow}
                     >
                         ➤
                     </textPath>
@@ -239,11 +262,12 @@ function EdgeLayout(link, strokeColor) {
                     fill={strokeColor}
                     x={xMid}
                     y={yMid}
-                    dy={`${labelOffset}px`}
+                    dy={`${link.labelOffsetY}px`}
+                    dx={`${link.labelOffsetX}px`}
                     fontWeight="bold"
                     // onDragEnd={handleEnd}
                     // onDragEnter={handleDragEnter}
-                    onDoubleClick={handleDoubleClick}
+                    onDoubleClick={handleDoubleClickLabel}
                     cursor="move"
                 >
                     {link.label}
