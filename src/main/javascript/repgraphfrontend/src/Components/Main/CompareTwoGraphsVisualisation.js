@@ -407,7 +407,7 @@ function CompareTwoGraphsVisualisation(props) {
                                     //Show the dialog to select a sentence
                                     handleSelectSide(1);
                                 }}
-                                label={sentence1 === null ? "No Sentence Selected" : sentence1}
+                                label={sentence1 === null ? "Select a Sentence" : sentence1}
                                 icon={
                                     sentence1 === null ? <AddCircleOutlineIcon/> : <EditIcon/>
                                 }
@@ -452,7 +452,7 @@ function CompareTwoGraphsVisualisation(props) {
                                     //Show the dialog to select a sentence
                                     handleSelectSide(2);
                                 }}
-                                label={sentence2 === null ? "No Sentence Selected" : sentence2}
+                                label={sentence2 === null ? "Select a Sentence" : sentence2}
                                 icon={
                                     sentence2 === null ? <AddCircleOutlineIcon/> : <EditIcon/>
                                 }
