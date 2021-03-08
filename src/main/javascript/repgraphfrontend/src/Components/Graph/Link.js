@@ -172,12 +172,12 @@ export const Link = ({
             }}
             onClick={handleOnClick}
         >
-            {EdgeLayout(link, strokeColor,onMouseDown, handleDoubleClick, onMouseDownLabel)}
+            {EdgeLayout(link, strokeColor,onMouseDown, onMouseDownLabel)}
         </Group>
     );
 };
 
-function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onMouseDownLabel) {
+function EdgeLayout(link, strokeColor, onMouseDown, onMouseDownLabel) {
 
     const t = 0.5;
 
