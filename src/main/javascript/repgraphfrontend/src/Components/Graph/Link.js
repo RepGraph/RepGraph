@@ -62,19 +62,9 @@ export const Link = ({
     };
 
     const onMouseUp = (event) => {
-        document.getElementById(`dot${link.id}`).style.visibility = "hidden";
+       // document.getElementById(`dot${link.id}`).style.visibility = "hidden";
         document.removeEventListener("mouseup", onMouseUp);
         document.removeEventListener("mousemove",onMove);
-    };
-
-    const handleDoubleClick = (event) => {
-        if (
-            document.getElementById(`dot${link.id}`).style.visibility === "visible"
-        ) {
-            document.getElementById(`dot${link.id}`).style.visibility = "hidden";
-        } else {
-            document.getElementById(`dot${link.id}`).style.visibility = "visible";
-        }
     };
 
     const onMove = (event) => {
@@ -172,12 +162,12 @@ export const Link = ({
             }}
             onClick={handleOnClick}
         >
-            {EdgeLayout(link, strokeColor,onMouseDown, handleDoubleClick, onMouseDownLabel)}
+            {EdgeLayout(link, strokeColor,onMouseDown, onMouseDownLabel)}
         </Group>
     );
 };
 
-function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onMouseDownLabel) {
+function EdgeLayout(link, strokeColor, onMouseDown, onMouseDownLabel) {
 
     const t = 0.5;
 
@@ -251,7 +241,8 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onMouseDo
                         fill={strokeColor}
                         fontSize="25px"
                         dominantBaseline="central"
-                        onDoubleClick={handleDoubleClick}
+                        onMouseDown={onMouseDown}
+                        cursor="move"
                     >
                         ➤
                     </textPath>
@@ -269,16 +260,16 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onMouseDo
                 >
                     {link.label}
                 </text>
-                <circle
-                    id={`dot${link.id}`}
-                    cx={link.x1}
-                    cy={link.y1}
-                    r="5"
-                    fill="red"
-                    visibility="hidden"
-                    onMouseDown={onMouseDown}
-                    cursor="move"
-                ></circle>
+                {/*<circle*/}
+                {/*    id={`dot${link.id}`}*/}
+                {/*    cx={link.x1}*/}
+                {/*    cy={link.y1}*/}
+                {/*    r="5"*/}
+                {/*    fill="red"*/}
+                {/*    visibility="hidden"*/}
+                {/*    onMouseDown={onMouseDown}*/}
+                {/*    cursor="move"*/}
+                {/*></circle>*/}
             </Group>
         );
     }
