@@ -104,8 +104,8 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
             source: finalGraphNodes[sourceNodeIndex],
             target: finalGraphNodes[targetNodeIndex],
             label: edge.label,
-            labelOffsetX: 0,
-            labelOffsetY: (source.relativeY ===target.relativeY && source.relativeY === 0) ? 20 : -20,
+            labelOffsetX: cp.offsetX,
+            labelOffsetY: cp.offsetY,
             x1: cp.x1,
             y1: cp.y1,
             type: "link",
@@ -187,9 +187,11 @@ function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
     if (direction === "horizontal-left") {
         x1 = (source.x + target.x) / 2;
         y1 = target.y + (source.x - target.x) * degree;
+        offsetY = source.x < target.x ? -20 : 20;
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
         y1 = target.y - (source.x - target.x) * degree;
+        offsetY = source.x < target.x ? 20 : -20;
     } else {
         x1 = (source.x + target.x) / 2;
         y1 = (source.y + target.y) / 2;
@@ -202,7 +204,7 @@ function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSp
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
-    let direction = "horizontal-right";
+    let direction = "horizontal-left";
     let degree = 0.25;
 
     if (planar) {
@@ -211,12 +213,11 @@ function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSp
         } else {
             direction = "horizontal-right";
         }
-        let distance = Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth);
-        if (distance > 10 && !planar) {
-            degree = 0.15;
-        }
     }
-
+    let distance = Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth);
+    if (distance > 10 && !planar) {
+        degree = 0.15;
+    }
 
     return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
