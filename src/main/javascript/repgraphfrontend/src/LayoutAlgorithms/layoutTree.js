@@ -304,6 +304,8 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                 source: finalGraphNodes[sourceNodeIndex],
                 target: finalGraphNodes[targetNodeIndex],
                 label: edge.label,
+                labelOffsetX: cp.offsetX,
+                labelOffsetY: cp.offsetY,
                 x1: cp.x1,
                 y1: cp.y1,
                 type: "link",

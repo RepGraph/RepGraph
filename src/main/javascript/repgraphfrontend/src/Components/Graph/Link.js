@@ -28,10 +28,11 @@ export const Link = ({
                 try {
                     const newLinks = state.selectedSentenceVisualisation.links.map(oldLink => ({
                         ...oldLink,
-                        selected: oldLink.type === "link" ? oldLink.id === link.id ? !oldLink.selected: oldLink.selected : oldLink.selected
+                        selected: oldLink.type === "link" ? oldLink.id === link.id ? !oldLink.selected : oldLink.selected : oldLink.selected
                     }));
 
-                    dispatch({type: "SET_SENTENCE_VISUALISATION",
+                    dispatch({
+                        type: "SET_SENTENCE_VISUALISATION",
                         payload: {
                             selectedSentenceVisualisation: {
                                 ...state.selectedSentenceVisualisation,
@@ -44,6 +45,68 @@ export const Link = ({
                 }
             }
         }
+    };
+
+    let mouseStartX,
+        mouseStartY,
+        ElementStartX,
+        ElementStartY;
+
+    const onMouseDown = (event) => {
+        mouseStartX = event.clientX;
+        mouseStartY = event.clientY;
+        ElementStartX = link.x1;
+        ElementStartY = link.y1;
+        document.addEventListener("mousemove",onMove);
+        document.addEventListener("mouseup", onMouseUp);
+    };
+
+    const onMouseUp = (event) => {
+        document.getElementById(`dot${link.id}`).style.visibility = "hidden";
+        document.removeEventListener("mouseup", onMouseUp);
+        document.removeEventListener("mousemove",onMove);
+    };
+
+    const handleDoubleClick = (event) => {
+        if (
+            document.getElementById(`dot${link.id}`).style.visibility === "visible"
+        ) {
+            document.getElementById(`dot${link.id}`).style.visibility = "hidden";
+        } else {
+            document.getElementById(`dot${link.id}`).style.visibility = "visible";
+        }
+    };
+
+    const onMove = (event) => {
+        let changeX = mouseStartX - event.clientX;
+        let changeY = mouseStartY - event.clientY;
+        link.x1 = ElementStartX - changeX;
+        link.y1 = ElementStartY - changeY;
+        setHighlighted(true);
+        setHighlighted(false);
+    };
+
+    const onClickLabel = (event) => {
+        document.removeEventListener("mousemove",onMoveLabel);
+        document.removeEventListener("click", onClickLabel);
+    };
+
+    const onMoveLabel = (event) => {
+        let changeX = mouseStartX - event.clientX;
+        let changeY = mouseStartY - event.clientY;
+        link.labelOffsetX = ElementStartX - changeX;
+        link.labelOffsetY = ElementStartY - changeY;
+        setHighlighted(true);
+        setHighlighted(false);
+    };
+
+    const onMouseDownLabel = (event) => {
+        mouseStartX = event.clientX;
+        mouseStartY = event.clientY;
+        ElementStartX = link.labelOffsetX;
+        ElementStartY = link.labelOffsetY;
+        document.addEventListener("mousemove",onMoveLabel);
+        document.addEventListener("click", onClickLabel);
     };
 
     let strokeColor = null;
@@ -109,12 +172,13 @@ export const Link = ({
             }}
             onClick={handleOnClick}
         >
-            {EdgeLayout(link, strokeColor)}
+            {EdgeLayout(link, strokeColor,onMouseDown, handleDoubleClick, onMouseDownLabel)}
         </Group>
     );
 };
 
-function EdgeLayout(link, strokeColor) {
+function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onMouseDownLabel) {
+
     const t = 0.5;
 
     const x0 = link.source.x;
@@ -137,14 +201,6 @@ function EdgeLayout(link, strokeColor) {
         (1 - t) * 3 * t * t * y2 +
         Math.pow(t, 3) * y3;
 
-    let labelOffset = -20;
-
-    if (
-        link.source.relativeY === link.target.relativeY &&
-        link.source.relativeY === 0
-    ) {
-        labelOffset = 20;
-    }
 
     const textPathID = uuid();
 
@@ -171,9 +227,7 @@ function EdgeLayout(link, strokeColor) {
         );
     }else {
         return (
-            <Group style={{
-                cursor: "pointer",
-            }}>
+            <Group rel="stylesheet" href="../../styles.css" className="unselectable">
                 <path
                     id={`edge${link.id}${textPathID}`}
                     d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
@@ -185,7 +239,7 @@ function EdgeLayout(link, strokeColor) {
                     id={`edge${link.id}${textPathID}2`}
                     d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
                     stroke="rgba(0, 0, 0, 0)"
-                    strokeWidth="40"
+                    strokeWidth="20"
                     fill="none"
                 />
                 <text textAnchor="middle" dy="-1.5px">
@@ -197,6 +251,7 @@ function EdgeLayout(link, strokeColor) {
                         fill={strokeColor}
                         fontSize="25px"
                         dominantBaseline="central"
+                        onDoubleClick={handleDoubleClick}
                     >
                         ➤
                     </textPath>
@@ -206,11 +261,24 @@ function EdgeLayout(link, strokeColor) {
                     fill={strokeColor}
                     x={xMid}
                     y={yMid}
-                    dy={`${labelOffset}px`}
+                    dy={`${link.labelOffsetY}px`}
+                    dx={`${link.labelOffsetX}px`}
                     fontWeight="bold"
+                    onMouseDown={onMouseDownLabel}
+                    cursor="move"
                 >
                     {link.label}
                 </text>
+                <circle
+                    id={`dot${link.id}`}
+                    cx={link.x1}
+                    cy={link.y1}
+                    r="5"
+                    fill="red"
+                    visibility="hidden"
+                    onMouseDown={onMouseDown}
+                    cursor="move"
+                ></circle>
             </Group>
         );
     }
