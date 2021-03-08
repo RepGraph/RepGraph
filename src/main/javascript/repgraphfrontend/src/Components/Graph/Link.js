@@ -62,7 +62,7 @@ export const Link = ({
     };
 
     const onMouseUp = (event) => {
-        document.getElementById(`dot${link.id}`).style.visibility = "hidden";
+    //    document.getElementById(`dot${link.id}`).style.visibility = "hidden";
         document.removeEventListener("mouseup", onMouseUp);
         document.removeEventListener("mousemove",onMove);
     };
