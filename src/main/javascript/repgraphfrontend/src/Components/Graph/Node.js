@@ -220,7 +220,15 @@ export const Node = ({
         }, {});
 
     if(filteredExtraInformation.hasOwnProperty("anchors")){
-        filteredExtraInformation.anchors = filteredExtraInformation.anchors.map(anchor => anchor.from + "-" + anchor.end).join(", ");
+        filteredExtraInformation.anchors = filteredExtraInformation.anchors.map(anchor => {
+
+            let anchorString = anchor.from + "-" + anchor.end;
+            if(anchor.hasOwnProperty("text")){
+                anchorString += " : "+anchor.text;
+            }
+            return anchorString;
+
+            }).join(", ");
     }
 
     return (

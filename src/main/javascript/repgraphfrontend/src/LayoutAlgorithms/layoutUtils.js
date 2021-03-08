@@ -55,7 +55,7 @@ export function addTokenSpanText(graphData){
         let output = ""
         if (node.anchors!==null){
             for (let i = 0; i < node.anchors.length; i++) {
-            let anch = node.anchors[i];
+                let anch = node.anchors[i];
                 for (let i = anch.from; i < anch.end+1; i++) {
                     output+=graphData.tokens[i].form+" "
                 }
