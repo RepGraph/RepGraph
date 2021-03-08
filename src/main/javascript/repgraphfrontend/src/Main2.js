@@ -698,36 +698,45 @@ export default function MiniDrawer() {
                     </IconButton>
                 </div>
                 <List>
+                    <Tooltip title="Subset Tool" placement="right" arrow>
                     <ListItem button onClick={handleSubsetToolClick}>
                         <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
                         <ListItemText primary={"Subset Tool"}/>
                     </ListItem>
+                    </Tooltip>
+                    <Tooltip title="Subgraph Pattern Search" placement="right" arrow>
                     <ListItem button onClick={handleSubgraphToolClick}>
                         <ListItemIcon>{<SearchIcon/>}</ListItemIcon>
                         <ListItemText primary={"Subgraph Pattern Search"}/>
                     </ListItem>
+                    </Tooltip>
+                    <Tooltip title="Compare Two Graphs" placement="right" arrow>
                     <ListItem button onClick={handleCompareToolClick}>
                         <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
                         <ListItemText primary={"Compare Two Graphs"}/>
                     </ListItem>
+                    </Tooltip>
+                    <Tooltip title="Graph Analysis" placement="right" arrow>
                     <ListItem button onClick={handleTestsToolClick}>
                         <ListItemIcon>{<AssessmentIcon/>}</ListItemIcon>
                         <ListItemText primary={"Graph Analysis"}/>
                     </ListItem>
+                    </Tooltip>
+                    <Tooltip title="Data-set Analysis" placement="right" arrow>
                     <ListItem button onClick={handleDatasetAnalysisToolClick}>
                         <ListItemIcon>{<AssignmentIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Dataset Analysis"}/>
+                        <ListItemText primary={"Data-set Analysis"}/>
                     </ListItem>
-
+                    </Tooltip>
                 </List>
                 <Divider/>
                 <List>
-                    {['Settings',].map((text, index) => (
-                        <ListItem button onClick={handleSettingsClick} key={text}>
+                    <Tooltip title="Settings" placement="right" arrow>
+                        <ListItem button onClick={handleSettingsClick}>
                             <ListItemIcon>{<SettingsIcon/>}</ListItemIcon>
-                            <ListItemText primary={text}/>
+                            <ListItemText primary={'Settings'}/>
                         </ListItem>
-                    ))}
+                    </Tooltip>
                 </List>
                 {showSettings && <SettingsTool/>}
             </Drawer>
