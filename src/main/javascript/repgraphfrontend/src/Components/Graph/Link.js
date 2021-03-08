@@ -2,6 +2,7 @@ import React, {useContext, useState} from "react";
 import {Group} from "@visx/visx";
 import uuid from "react-uuid";
 import {AppContext} from "../../Store/AppContextProvider";
+import {lighten, darken} from "@material-ui/core";
 
 export const Link = ({
                          link,
@@ -50,7 +51,12 @@ export const Link = ({
     if (link.selected && events && events.hasOwnProperty("select")) {
         strokeColor = styles.linkStyles.selectedColour;
     } else if (highlighted) {
-        strokeColor = styles.linkStyles.hoverColour;
+        if(link.type === "topLink"){
+            strokeColor = darken(styles.nodeStyles.topNodeColour, 0.3);
+        }else{
+            strokeColor = styles.linkStyles.hoverColour;
+        }
+
     } else if (
         (graphFormatCode === "hierarchicalLongestPath" ||
             graphFormatCode === "treeLongestPath" ||
@@ -86,7 +92,10 @@ export const Link = ({
                 strokeColor = styles.linkStyles.linkColour;
                 break;
         }
-    } else {
+    } else if(link.type === "topLink"){
+        strokeColor = styles.nodeStyles.topNodeColour;
+    }
+    else {
         strokeColor = styles.linkStyles.linkColour;
     }
 
@@ -150,7 +159,17 @@ function EdgeLayout(link, strokeColor) {
                 strokeDasharray="10,10"
             />
         );
-    } else {
+    } else if (link.type === "topLink") {
+        return (
+            <path
+                id={`edge${link.id}${textPathID}`}
+                d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
+                stroke={strokeColor}
+                strokeWidth="2"
+                fill="none"
+            />
+        );
+    }else {
         return (
             <Group style={{
                 cursor: "pointer",
