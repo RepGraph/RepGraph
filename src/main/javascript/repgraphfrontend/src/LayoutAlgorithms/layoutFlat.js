@@ -181,6 +181,8 @@ function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
 
     let x1 = 0;
     let y1 = 0;
+    let offsetX = 0;
+    let offsetY = 0;
 
     if (direction === "horizontal-left") {
         x1 = (source.x + target.x) / 2;
@@ -188,15 +190,12 @@ function controlPoints(source, target, direction, degree, graphLayoutSpacing) {
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
         y1 = target.y - (source.x - target.x) * degree;
-    } else if (direction === "custom") {
-        x1 = degree;
-        y1 = source.y + nodeHeight;
     } else {
         x1 = (source.x + target.x) / 2;
         y1 = (source.y + target.y) / 2;
     }
 
-    return {x1, y1};
+    return {x1, y1, offsetX, offsetY};
 }
 
 function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSpacing) {

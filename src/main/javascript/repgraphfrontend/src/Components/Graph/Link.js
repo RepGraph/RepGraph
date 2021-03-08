@@ -49,32 +49,24 @@ export const Link = ({
     let mouseStartX,
         mouseStartY,
         ElementStartX,
-        ElementStartY,
-        click = false;
+        ElementStartY;
 
     const onMouseDown = (event) => {
-        click = false;
         mouseStartX = event.clientX;
         mouseStartY = event.clientY;
         ElementStartX = link.x1;
         ElementStartY = link.y1;
-        // console.log("mouse start: ", mouseStartX, mouseStartY);
         document.addEventListener("mousemove",onMove);
         document.addEventListener("mouseup", onMouseUp);
-
-        console.log("DOWN", click);
-        // document.body.style.cursor="move"
     };
 
     const onMouseUp = (event) => {
         document.getElementById(`dot${link.id}`).style.visibility = "hidden";
         document.removeEventListener("mouseup", onMouseUp);
         document.removeEventListener("mousemove",onMove);
-        // console.log("UP", click);
     };
 
     const handleDoubleClick = (event) => {
-        click = true;
         if (
             document.getElementById(`dot${link.id}`).style.visibility === "visible"
         ) {
@@ -82,13 +74,6 @@ export const Link = ({
         } else {
             document.getElementById(`dot${link.id}`).style.visibility = "visible";
         }
-        //  document.getElementById(`dot${link.id}`).style.visibility = "visible";
-        console.log("DOUBLE", click);
-    };
-
-    const dragClick = (event) => {
-      document.removeEventListener("mousemove",onMove);
-      document.removeEventListener("click", dragClick);
     };
 
     const onMove = (event) => {
@@ -100,16 +85,6 @@ export const Link = ({
         setHighlighted(false);
     };
 
-    const onDragEnter = (event) => {
-        mouseStartX = event.clientX;
-        mouseStartY = event.clientY;
-        ElementStartX = link.x1;
-        ElementStartY = link.y1;
-
-        document.addEventListener("mousemove",onMove);
-        document.addEventListener("click", dragClick);
-    };
-
     const onClickLabel = (event) => {
         document.removeEventListener("mousemove",onMoveLabel);
         document.removeEventListener("click", onClickLabel);
@@ -119,7 +94,7 @@ export const Link = ({
         let changeX = mouseStartX - event.clientX;
         let changeY = mouseStartY - event.clientY;
         link.labelOffsetX = ElementStartX - changeX;
-         link.labelOffsetY = ElementStartY - changeY;
+        link.labelOffsetY = ElementStartY - changeY;
         setHighlighted(true);
         setHighlighted(false);
     };
@@ -188,12 +163,12 @@ export const Link = ({
             }}
             onClick={handleOnClick}
         >
-            {EdgeLayout(link, strokeColor,onMouseDown, handleDoubleClick, onDragEnter, onMouseDownLabel)}
+            {EdgeLayout(link, strokeColor,onMouseDown, handleDoubleClick, onMouseDownLabel)}
         </Group>
     );
 };
 
-function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onDragEnter, onMouseDownLabel) {
+function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onMouseDownLabel) {
 
     const t = 0.5;
 
@@ -233,7 +208,7 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onDragEnt
         );
     } else {
         return (
-            <Group rel="stylesheet" href="../../styles.css" class="unselectable">
+            <Group rel="stylesheet" href="../../styles.css" className="unselectable">
                 <path
                     id={`edge${link.id}${textPathID}`}
                     d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
@@ -241,13 +216,13 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onDragEnt
                     strokeWidth="2"
                     fill="none"
                 />
-                {/*<path*/}
-                {/*    id={`edge${link.id}${textPathID}2`}*/}
-                {/*    d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}*/}
-                {/*    stroke="rgba(0, 0, 0, 0)"*/}
-                {/*    strokeWidth="40"*/}
-                {/*    fill="none"*/}
-                {/*/>*/}
+                <path
+                    id={`edge${link.id}${textPathID}2`}
+                    d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
+                    stroke="rgba(0, 0, 0, 0)"
+                    strokeWidth="40"
+                    fill="none"
+                />
                 <text textAnchor="middle" dy="-1.5px">
                     <textPath
                         href={`#edge${link.id}${textPathID}`}
@@ -258,8 +233,6 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onDragEnt
                         fontSize="25px"
                         dominantBaseline="central"
                         onDoubleClick={handleDoubleClick}
-                        //  onMouseDown={onDragEnter}
-                        // cursor="move"
                     >
                         ➤
                     </textPath>
