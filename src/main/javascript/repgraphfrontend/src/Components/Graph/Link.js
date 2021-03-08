@@ -259,6 +259,7 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onDragEnt
                         dominantBaseline="central"
                         onDoubleClick={handleDoubleClick}
                         //  onMouseDown={onDragEnter}
+                        // cursor="move"
                     >
                         ➤
                     </textPath>
@@ -272,6 +273,7 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onDragEnt
                     dx={`${link.labelOffsetX}px`}
                     fontWeight="bold"
                     onMouseDown={onMouseDownLabel}
+                    cursor="move"
                 >
                     {link.label}
                 </text>
