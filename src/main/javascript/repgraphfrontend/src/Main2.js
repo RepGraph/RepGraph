@@ -965,9 +965,9 @@ export default function MiniDrawer() {
                             </Card>
                         </Grid>
                         {state.testResults !== null &&
-                        <Grid container item xs={12}>
-                            <Card className={classes.body} variant="outlined">
-                                <CardContent>
+                        <Grid container item style={{width: "100%"}}>
+                            <Card variant="outlined" style={{width: "100%"}}>
+                                <CardContent style={{width: "100%"}}>
                                     <FormalTestResultsDisplay response={state.testResults}/>
                                 </CardContent>
                             </Card>

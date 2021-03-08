@@ -191,7 +191,7 @@ export default function FormalTestsResultsDisplay(props) {
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} style={{width:"100%"}} elevation={0}>
             {/*<Popover*/}
             {/*    id={id}*/}
             {/*    open={popperOpen}*/}
