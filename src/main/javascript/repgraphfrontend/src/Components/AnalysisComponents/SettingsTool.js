@@ -64,7 +64,7 @@ const styleCodes = {
         labelColour: "Label Colour"
     },
     linkStyles: {
-        linkColour: "Link Colour",
+        linkColour: "Edge Colour",
         hoverColour: "Hover Colour",
         selectedColour: "Selected Colour",
     },
@@ -555,7 +555,7 @@ export default function SettingsTool() {
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon/>}
                         >
-                            <Typography className={classes.heading}>Link Styles</Typography>
+                            <Typography className={classes.heading}>Edge Styles</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             <List

@@ -81,7 +81,7 @@ function FormalTestsTool(props) {
             className={classes.root}
         >
             <FormControl component="fieldset">
-                <FormLabel component="legend"><Typography color={"textPrimary"}> Graph Property Tests</Typography></FormLabel>
+                <FormLabel component="legend"><Typography color={"textPrimary"}> Graph Properties: </Typography></FormLabel>
                 <FormGroup>
                     <FormControlLabel
                         control={<Checkbox checked={tests.planar} onChange={handleChange} color="secondary"

@@ -219,8 +219,11 @@ function DisplaySubsetTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Select a node on the graph:"}<Chip
-                    label={`Selected Node: ${getSelectedNodeLabel()}`}/></DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Select a node on the graph:"}<Chip style={{marginLeft:"10px", marginRight:"10px"}}
+                    label={`Selected Node: ${getSelectedNodeLabel()}`}/> <Button onClick={handleDisplaySubset} variant="contained" color="primary" disableElevation autoFocus
+                                                                                 disabled={getSelectedNodeID() === null ? true : false}>
+                    Display
+                </Button></DialogTitle>
                 <DialogContent style={{height: "80vh"}}>
                     {state.selectedSentenceID === null ? (
                         <div>Select a sentence first.</div>
@@ -242,10 +245,7 @@ function DisplaySubsetTool(props) {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDisplaySubset} variant="contained" color="primary" disableElevation autoFocus
-                            disabled={getSelectedNodeID() === null ? true : false}>
-                        Display
-                    </Button>
+
                 </DialogActions>
             </Dialog>
             <Dialog
@@ -256,7 +256,7 @@ function DisplaySubsetTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Subset result based upon node selection:"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Subset result"}</DialogTitle>
                 <DialogContent style={{height: "80vh"}}>
                     {subsetResponse === null ? (
                         <div>No result to display</div>

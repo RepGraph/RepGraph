@@ -48,7 +48,28 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
     return graphData;
 }
 
-export const childrenAnchors = (node, children, visited, graphClone) => {
+export function addTokenSpanText(graphData){
+
+    for (let j = 0; j < graphData.nodes.length; j++) {
+        let node = graphData.nodes[j];
+        let output = ""
+        if (node.anchors!==null){
+            for (let i = 0; i < node.anchors.length; i++) {
+            let anch = node.anchors[i];
+                for (let i = anch.from; i < anch.end+1; i++) {
+                    output+=graphData.tokens[i].form+" "
+                }
+                output = output.trim();
+                anch = {...anch,text : output}
+                output="";
+                graphData.nodes[j].anchors[i]=anch;
+            }
+        }
+    }
+
+}
+
+export const childrenAnchors = (node, children, visited, graphClone, nodesWithoutAnchors) => {
 
     if (visited[node.id] && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
@@ -68,10 +89,11 @@ export const childrenAnchors = (node, children, visited, graphClone) => {
         for (let childID of children.get(node.id)) {
             if (graphClone.nodes.get(childID).anchors === null) {
 
-                let temp = childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone);
+                let temp = childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone, nodesWithoutAnchors);
 
                 if (temp.from !== Number.MAX_VALUE) {
                     graphClone.nodes.set(node.id, {...node, anchors: [{from: temp.from, end: temp.end}], span: false});
+                    nodesWithoutAnchors.push(node.id);
                 }
                 anchors.push({from: temp.from, end: temp.end});
 
@@ -146,7 +168,7 @@ export const setAnchors = (graphClone, children, parents, nodesWithoutAnchors) =
             }
             nodesWithoutAnchors.push(node.id);
             let anch = [];
-            anch.push(childrenAnchors(node, children, vis, graphClone));
+            anch.push(childrenAnchors(node, children, vis, graphClone, nodesWithoutAnchors));
             if (anch[0].from === Number.MAX_VALUE) {
                 for (let parentID of parents.get(node.id)) {
                     if (graphClone.nodes.get(parentID).anchors !== null) {
@@ -229,24 +251,20 @@ export const edgeRulesSameColumn = (
     graphLayoutSpacing
 ) => {
     let direction = "";
-    let degree = 0.2;
-
-    if (Math.abs(source.relativeY - target.relativeY) === 1) {
-        //In the same column and 1 level apart
-        //Is there an identical edge? If yes than 1 go left 1 go right, else straight line
-        for (let e of finalGraphEdges) {
-            if (source.id === e.source && target.id === e.target && edge !== e) {
-                //There exists a duplicate edge
-                if (edge.label.localeCompare(e.label) <= 0) {
-                    direction = "vertical-right";
-                } else {
-                    direction = "vertical-left";
-                }
-
-                break;
+    let degree = 0.4;
+    for (let e of finalGraphEdges) {
+        if (source.id === e.source && target.id === e.target && edge !== e) {
+            //There exists a duplicate edge
+            if (edge.label.localeCompare(e.label) <= 0) {
+                direction = "vertical-right";
+            } else {
+                direction = "vertical-left";
             }
+            degree = 0.3;
+            return controlPoints(source, target, direction, degree, graphLayoutSpacing);
         }
-    } else {
+    }
+    if (Math.abs(source.relativeY - target.relativeY) !== 1){
         //In the same column and more than level apart
         let found = false;
         for (let node of finalGraphNodes) {
@@ -283,14 +301,12 @@ export const edgeRulesSameColumn = (
 
             //Make the edge go to absolute left, need to check direction of edge.
             if (target.y < source.y) {
-                degree = 0.4;
                 if (left) {
                     direction = "vertical-right";
                 } else {
                     direction = "vertical-left";
                 }
             } else {
-                degree = 0.4;
                 if (left) {
                     direction = "vertical-left";
                 } else {
@@ -390,6 +406,7 @@ export const edgeRulesOther = (
                 ((node.x < source.x && node.x > target.x) ||
                     (node.x > source.x && node.x < target.x))
             ) {
+
                 let xtemp = Math.abs(node.x - source.x);
                 let ytemp = Math.abs(node.y - target.y);
                 if (ytemp > yProtrusion && xtemp > xProtrusion) {
@@ -399,8 +416,9 @@ export const edgeRulesOther = (
             }
         }
     }
-    xProtrusion = xProtrusion / Math.abs(target.x - source.x);
-    yProtrusion = yProtrusion / Math.abs(target.y - source.y);
+
+    xProtrusion = (xProtrusion / Math.abs(target.x - source.x)).toFixed(3);
+    yProtrusion = (yProtrusion / Math.abs(target.y - source.y)).toFixed(3);
     if (xProtrusion >= 0.5 && yProtrusion >= 0.5) {
         direction = "custom";
         return controlPoints(source, target, direction, degree, graphLayoutSpacing);

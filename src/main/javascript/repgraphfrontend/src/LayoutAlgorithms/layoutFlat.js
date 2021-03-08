@@ -1,8 +1,10 @@
 import uuid from "react-uuid";
+import {addTokenSpanText} from "./layoutUtils";
 
 export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => {
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
+
 
     const nodes = graphData.nodes.map((node, index) => ({
         ...node,
@@ -34,6 +36,8 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
             break;
         default:
     }
+
+    addTokenSpanText(graphData);
 
     let finalGraphNodes = nodes;
 
@@ -111,13 +115,13 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
     })
 
     //Add top node and corresponding link to graphData
-    if(addTopNode){
+    if (addTopNode) {
 
         //Get top node's associated node
         const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
         //console.log("associatedNode", associatedNode);
 
-        if(associatedNode){
+        if (associatedNode) {
             //Add the top node to the array of nodes
             finalGraphNodes.push({
                 id: "TOP",
@@ -163,7 +167,7 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
                         ? "linkColourCross"
                         : link.group
             }));
-        }catch (e) {
+        } catch (e) {
             console.log(e);
         }
 
@@ -199,39 +203,19 @@ function edgeRulesSameRow(source, target, finalGraphNodes, planar, graphLayoutSp
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
-    let direction = "";
+    let direction = "horizontal-right";
     let degree = 0.25;
 
-    if (Math.abs(target.x - source.x) !== intraLevelSpacing + nodeWidth) {
-        //On the same level and more than 1 space apart
-
-        let found = false;
-        for (let node of finalGraphNodes) {
-            if (node.y === source.y && ((node.x > source.x && node.x < target.x) ||
-                (node.x < source.x && node.x > target.x))) {
-                //There exists a node in between the target and source node
-                //
-                found = true;
-                break;
-            }
+    if (planar) {
+        if (source.x < target.x) {
+            direction = "horizontal-left";
+        } else {
+            direction = "horizontal-right";
         }
-        if (found) {
-            if (planar) {
-                if (source.x < target.x) {
-                    direction = "horizontal-left";
-                } else {
-                    direction = "horizontal-right";
-                }
-            } else {
-                direction = "horizontal-right";
-            }
-            let distance = Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth);
-            if (distance > 10 && !planar) {
-                degree = 0.15;
-            }
+        let distance = Math.abs(source.x - target.x) / (intraLevelSpacing + nodeWidth);
+        if (distance > 10 && !planar) {
+            degree = 0.15;
         }
-
-
     }
 
 

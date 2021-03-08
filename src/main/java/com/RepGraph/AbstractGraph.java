@@ -169,7 +169,7 @@ class AbstractGraph {
     public ArrayList<Token> extractTokensFromNodes() {
         Properties props = new Properties();
         // set the list of annotators to run
-        props.setProperty("annotators", "tokenize");
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma");
         // build pipeline
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         // create a document object
@@ -179,7 +179,7 @@ class AbstractGraph {
         ArrayList<Token> tokenlist = new ArrayList<>();
         int index = 0;
         for (CoreLabel tok : doc.tokens()) {
-            tokenlist.add(new Token(index, tok.originalText(), null, null));
+            tokenlist.add(new Token(index, tok.originalText(), tok.lemma(), null));
             for (Node n : this.nodes.values()) {
                 if (n.getAnchors() == null) {
                     continue;
@@ -221,6 +221,23 @@ class AbstractGraph {
         for (Node n : this.nodes.values()) {
             returnNodes.add(n);
         }
+        Collections.sort(returnNodes, new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
+                    return -1;
+                } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
+                    if (o1.getAnchors().get(0).getEnd() < o2.getAnchors().get(0).getEnd()) {
+                        return -1;
+                    } else if (o1.getAnchors().get(0).getEnd() == o2.getAnchors().get(0).getEnd()) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                }
+                return 1;
+            }
+        });
         return returnNodes;
     }
 
