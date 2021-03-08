@@ -220,7 +220,7 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onMouseDo
                     id={`edge${link.id}${textPathID}2`}
                     d={`M ${link.source.x} ${link.source.y} C  ${link.x1} ${link.y1} ${link.x1} ${link.y1} ${link.target.x} ${link.target.y}`}
                     stroke="rgba(0, 0, 0, 0)"
-                    strokeWidth="40"
+                    strokeWidth="20"
                     fill="none"
                 />
                 <text textAnchor="middle" dy="-1.5px">
