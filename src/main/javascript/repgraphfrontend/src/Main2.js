@@ -614,7 +614,7 @@ export default function MiniDrawer() {
                                  title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
                             <Button color="primary" variant="contained" disableElevation onClick={() => {
                                 history.push("/");
-                            }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
+                            }}>{state.dataSet === null ? "Upload data-set" : state.dataSetFileName} {state.dataSet === null ?
                                 <CloudUploadIcon/> : <EjectIcon/>}</Button>
                         </Tooltip>
                     </Grid>
