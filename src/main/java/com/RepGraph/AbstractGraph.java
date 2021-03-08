@@ -224,6 +224,9 @@ class AbstractGraph {
         Collections.sort(returnNodes, new Comparator<Node>() {
             @Override
             public int compare(Node o1, Node o2) {
+                if (o1.getAnchors()==null || o2.getAnchors()==null){
+                    return 0;
+                }
                 if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
                     return -1;
                 } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
