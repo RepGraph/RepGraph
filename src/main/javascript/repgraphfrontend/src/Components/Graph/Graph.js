@@ -69,6 +69,7 @@ export const Graph = ({
                 width={width}
                 height={height}
                 backgroundColour={styles.backgroundColour}
+                graphFormatCode={graphFormatCode}
             >
                 {links.map((link, i) => (
                     <Link

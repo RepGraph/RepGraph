@@ -388,96 +388,21 @@ export default function MiniDrawer() {
                                                     style={{}}
                                                     spacing={2}
                                                 >
-                                                    <Grid item>
-                                                        <div>
-                                                            {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                                                            {/*     className={classes.fabButton} onClick={handleClickGraphLegend}>*/}
-                                                            {/*    Show Graph Legend*/}
-                                                            {/*</Fab>*/}
-                                                            <Button color="primary" variant="contained" disableElevation
-                                                                    onClick={handleClickGraphLegend}>Show Graph
-                                                                Legend</Button>
-                                                            <Popover
-                                                                open={legendOpen}
-                                                                anchorEl={anchorEl}
-                                                                onClose={handleCloseGraphLegend}
-                                                                anchorOrigin={{
-                                                                    vertical: 'bottom',
-                                                                    horizontal: 'center',
-                                                                }}
-                                                                transformOrigin={{
-                                                                    vertical: 'top',
-                                                                    horizontal: 'center',
-                                                                }}
-                                                            >
-                                                                <Card>
-                                                                    <CardContent>
-                                                                        <Grid container spacing={1}>
-                                                                            <Grid item>
-                                                                                <Chip label="AbstractNode" style={{
-                                                                                    color: "white",
-                                                                                    fontWeight: "bold",
-                                                                                    backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
-                                                                                }}/>
-                                                                            </Grid>
-                                                                            <Grid item>
-                                                                                <Chip label="SurfaceNode" style={{
-                                                                                    color: "white",
-                                                                                    fontWeight: "bold",
-                                                                                    backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
-                                                                                }}/>
-                                                                            </Grid>
-                                                                            <Grid item>
-                                                                                <Chip label="TopNode" style={{
-                                                                                    color: "white",
-                                                                                    fontWeight: "bold",
-                                                                                    backgroundColor: state.graphStyles.nodeStyles.topNodeColour
-                                                                                }}/>
-                                                                            </Grid>
-                                                                            <Grid item>
-                                                                                <Chip label="Token" style={{
-                                                                                    color: "white",
-                                                                                    fontWeight: "bold",
-                                                                                    backgroundColor: state.graphStyles.tokenStyles.tokenColour
-                                                                                }}/>
-                                                                            </Grid>
-                                                                        </Grid>
-                                                                    </CardContent>
-                                                                </Card>
-                                                            </Popover>
-                                                        </div>
-                                                    </Grid>
                                                     <Grid item><Tooltip arrow
                                                                         title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
-                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                                                        {/*     className={classes.fabButton} onClick={() => {*/}
-                                                        {/*    history.push("/");*/}
-                                                        {/*}}>*/}
-                                                        {/*    {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?*/}
-                                                        {/*    <CloudUploadIcon/> : <BuildIcon/>}*/}
-                                                        {/*</Fab>*/}
                                                         <Button color="primary" variant="contained" disableElevation
                                                                 onClick={() => {
                                                                     history.push("/");
-                                                                }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
+                                                                }}>{state.dataSet === null ? "Upload data-set" : state.dataSetFileName} {state.dataSet === null ?
                                                             <CloudUploadIcon/> : <EjectIcon/>}</Button>
                                                     </Tooltip></Grid>
                                                     <Grid item><Tooltip arrow
-                                                                        title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
-                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                                                        {/*     className={classes.fabButton} onClick={() => {*/}
-                                                        {/*    setSentenceOpen(true);*/}
-                                                        {/*}} disabled={state.dataSet === null}>*/}
-                                                        {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
-                                                        {/*    <AddCircleOutlineIcon/> :*/}
-                                                        {/*    <BuildIcon/>}*/}
-                                                        {/*</Fab>*/}
-
+                                                                        title={state.selectedSentenceID === null ? "Select a Sentence for Visualisation" : "Change Sentence"}>
                                                         <Button color="primary" variant="contained" disableElevation
                                                                 onClick={() => {
                                                                     setSentenceOpen(true);
                                                                 }}
-                                                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "Select a Sentence" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "Select Sentence" : state.selectedSentenceID} {state.selectedSentenceID === null ?
                                                             <AddCircleOutlineIcon/> :
                                                             <EditIcon/>}</Button>
                                                     </Tooltip></Grid>
@@ -542,20 +467,12 @@ export default function MiniDrawer() {
                     alignItems="center"
                 >
                     <Grid item className={classes.menuButton}><Tooltip arrow
-                                                                       title={state.selectedSentenceID === null ? "Select Sentence" : "Change Sentence"}>
-                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                        {/*     className={classes.fabButton} onClick={() => {*/}
-                        {/*    setSentenceOpen(true);*/}
-                        {/*}} disabled={state.dataSet === null}>*/}
-                        {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
-                        {/*    <AddCircleOutlineIcon/> :*/}
-                        {/*    <BuildIcon/>}*/}
-                        {/*</Fab>*/}
+                                                                       title={state.selectedSentenceID === null ? "Select a Sentence for Visualisation" : "Change Sentence"}>
 
                         <Button color="primary" variant="contained" disableElevation onClick={() => {
                             setSentenceOpen(true);
                         }}
-                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "Select Sentence" : state.selectedSentenceID} {state.selectedSentenceID === null ?
                             <AddCircleOutlineIcon/> :
                             <EditIcon/>}</Button>
                     </Tooltip></Grid>
@@ -610,78 +527,12 @@ export default function MiniDrawer() {
                                                     style={{}}
                                                     spacing={2}
                                                 >
-                                                    <Grid item>
-                                                        <div>
-                                                            {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                                                            {/*     className={classes.fabButton} onClick={handleClickGraphLegend}>*/}
-                                                            {/*    Show Graph Legend*/}
-                                                            {/*</Fab>*/}
-                                                            <Button color="primary" variant="contained" disableElevation
-                                                                    onClick={handleClickGraphLegend}>Show Graph
-                                                                Legend</Button>
-                                                            <Popover
-                                                                open={legendOpen}
-                                                                anchorEl={anchorEl}
-                                                                onClose={handleCloseGraphLegend}
-                                                                anchorOrigin={{
-                                                                    vertical: 'bottom',
-                                                                    horizontal: 'center',
-                                                                }}
-                                                                transformOrigin={{
-                                                                    vertical: 'top',
-                                                                    horizontal: 'center',
-                                                                }}
-                                                            >
-                                                                <Card>
-                                                                    <CardContent>
-                                                                        <Grid container spacing={1}>
-                                                                            <Grid item>
-                                                                                <Chip label="AbstractNode" style={{
-                                                                                    color: "white",
-                                                                                    fontWeight: "bold",
-                                                                                    backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
-                                                                                }}/>
-                                                                            </Grid>
-                                                                            <Grid item>
-                                                                                <Chip label="SurfaceNode" style={{
-                                                                                    color: "white",
-                                                                                    fontWeight: "bold",
-                                                                                    backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
-                                                                                }}/>
-                                                                            </Grid>
-                                                                            <Grid item>
-                                                                            <Chip label="TopNode" style={{
-                                                                                color: "white",
-                                                                                fontWeight: "bold",
-                                                                                backgroundColor: state.graphStyles.nodeStyles.topNodeColour
-                                                                            }}/>
-                                                                        </Grid>
-                                                                            <Grid item>
-                                                                                <Chip label="Token" style={{
-                                                                                    color: "white",
-                                                                                    fontWeight: "bold",
-                                                                                    backgroundColor: state.graphStyles.tokenStyles.tokenColour
-                                                                                }}/>
-                                                                            </Grid>
-                                                                        </Grid>
-                                                                    </CardContent>
-                                                                </Card>
-                                                            </Popover>
-                                                        </div>
-                                                    </Grid>
                                                     <Grid item><Tooltip arrow
                                                                         title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
-                                                        {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                                                        {/*     className={classes.fabButton} onClick={() => {*/}
-                                                        {/*    history.push("/");*/}
-                                                        {/*}}>*/}
-                                                        {/*    {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?*/}
-                                                        {/*    <CloudUploadIcon/> : <BuildIcon/>}*/}
-                                                        {/*</Fab>*/}
                                                         <Button color="primary" variant="contained" disableElevation
                                                                 onClick={() => {
                                                                     history.push("/");
-                                                                }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
+                                                                }}>{state.dataSet === null ? "Upload data-set" : state.dataSetFileName} {state.dataSet === null ?
                                                             <CloudUploadIcon/> : <EjectIcon/>}</Button>
                                                     </Tooltip></Grid>
                                                 </Grid>
@@ -725,64 +576,6 @@ export default function MiniDrawer() {
                     alignItems="center"
                 >
                     <Grid item className={classes.menuButton}>
-                        <div>
-                            {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                            {/*     className={classes.fabButton} onClick={handleClickGraphLegend}>*/}
-                            {/*    Show Graph Legend*/}
-                            {/*</Fab>*/}
-                            <Button color="primary" variant="contained" disableElevation
-                                    onClick={handleClickGraphLegend}>Show Graph Legend</Button>
-                            <Popover
-                                open={legendOpen}
-                                anchorEl={anchorEl}
-                                onClose={handleCloseGraphLegend}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'center',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'center',
-                                }}
-                            >
-                                <Card>
-                                    <CardContent>
-                                        <Grid container spacing={1}>
-                                            <Grid item>
-                                                <Chip label="AbstractNode" style={{
-                                                    color: "white",
-                                                    fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.nodeStyles.abstractNodeColour
-                                                }}/>
-                                            </Grid>
-                                            <Grid item>
-                                                <Chip label="SurfaceNode" style={{
-                                                    color: "white",
-                                                    fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.nodeStyles.surfaceNodeColour
-                                                }}/>
-                                            </Grid>
-                                            <Grid item>
-                                                <Chip label="TopNode" style={{
-                                                    color: "white",
-                                                    fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.nodeStyles.topNodeColour
-                                                }}/>
-                                            </Grid>
-                                            <Grid item>
-                                                <Chip label="Token" style={{
-                                                    color: "white",
-                                                    fontWeight: "bold",
-                                                    backgroundColor: state.graphStyles.tokenStyles.tokenColour
-                                                }}/>
-                                            </Grid>
-                                        </Grid>
-                                    </CardContent>
-                                </Card>
-                            </Popover>
-                        </div>
-                    </Grid>
-                    <Grid item className={classes.menuButton}>
                         <Tooltip arrow
                                  title={"Select visualisation format"}>
                             <ToggleButtonGroup
@@ -808,19 +601,10 @@ export default function MiniDrawer() {
                     <Grid item className={classes.menuButton}>
                         <Tooltip arrow
                                  title={state.selectedSentenceID === null ? "Select a Sentence for Visualisation" : "Change Sentence"}>
-                            {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                            {/*     className={classes.fabButton} onClick={() => {*/}
-                            {/*    setSentenceOpen(true);*/}
-                            {/*}} disabled={state.dataSet === null}>*/}
-                            {/*    {state.selectedSentenceID === null ? "No Sentence Selected" : state.selectedSentenceID} {state.selectedSentenceID === null ?*/}
-                            {/*    <AddCircleOutlineIcon/> :*/}
-                            {/*    <BuildIcon/>}*/}
-                            {/*</Fab>*/}
-
                             <Button color="primary" variant="contained" disableElevation onClick={() => {
                                 setSentenceOpen(true);
                             }}
-                                    disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "Select a Sentence" : state.selectedSentenceID} {state.selectedSentenceID === null ?
+                                    disabled={state.dataSet === null}>{state.selectedSentenceID === null ? "Select Sentence" : state.selectedSentenceID} {state.selectedSentenceID === null ?
                                 <AddCircleOutlineIcon/> :
                                 <EditIcon/>}</Button>
                         </Tooltip>
@@ -828,13 +612,6 @@ export default function MiniDrawer() {
                     <Grid item className={classes.menuButton}>
                         <Tooltip arrow
                                  title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
-                            {/*<Fab color="primary" aria-label="add" variant="extended"*/}
-                            {/*     className={classes.fabButton} onClick={() => {*/}
-                            {/*    history.push("/");*/}
-                            {/*}}>*/}
-                            {/*    {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?*/}
-                            {/*    <CloudUploadIcon/> : <BuildIcon/>}*/}
-                            {/*</Fab>*/}
                             <Button color="primary" variant="contained" disableElevation onClick={() => {
                                 history.push("/");
                             }}>{state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
@@ -844,55 +621,6 @@ export default function MiniDrawer() {
                 </Grid>
             </Toolbar>;
     }
-
-    // const toolbarList = <List>
-    //     <ListItem>
-    //         <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
-    //         <Button color="primary" variant="contained" disableElevation noWrap
-    //                 onClick={handleClickGraphLegend}>Show Graph Legend</Button>
-    //             <Popover
-    //                 open={legendOpen}
-    //                 anchorEl={anchorEl}
-    //                 onClose={handleCloseGraphLegend}
-    //                 anchorOrigin={{
-    //                     vertical: 'bottom',
-    //                     horizontal: 'center',
-    //                 }}
-    //                 transformOrigin={{
-    //                     vertical: 'top',
-    //                     horizontal: 'center',
-    //                 }}
-    //             >
-    //                 <Card>
-    //                     <CardContent>
-    //                         <Grid container spacing={1}>
-    //                             <Grid item>
-    //                                 <Chip label="AbstractNode" style={{
-    //                                     color: "white",
-    //                                     fontWeight: "bold",
-    //                                     backgroundColor: state.visualisationOptions.groups.node.color
-    //                                 }}/>
-    //                             </Grid>
-    //                             <Grid item>
-    //                                 <Chip label="SurfaceNode" style={{
-    //                                     color: "white",
-    //                                     fontWeight: "bold",
-    //                                     backgroundColor: state.visualisationOptions.groups.surfaceNode.color
-    //                                 }}/>
-    //                             </Grid>
-    //                             <Grid item>
-    //                                 <Chip label="Token" style={{
-    //                                     color: "white",
-    //                                     fontWeight: "bold",
-    //                                     backgroundColor: state.visualisationOptions.groups.token.color
-    //                                 }}/>
-    //                             </Grid>
-    //                         </Grid>
-    //                     </CardContent>
-    //                 </Card>
-    //             </Popover>
-    //     </ListItem>
-    // </List>;
 
     async function handleSaveFeedback() {
 
