@@ -314,27 +314,21 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
             };
         });
 
-        let tokenEdges = [tokens.size];
+        let tokenEdges = [];
         let i = 0;
         for (let token of tokens) {
             if (lowestNode.get(token.relativeX) !== undefined) {
+                let node = finalGraphNodes[
+                    finalGraphNodes.findIndex(
+                        (node) => node.id === lowestNode.get(token.relativeX))]
                 let cp = controlPoints(
-                    finalGraphNodes[
-                        finalGraphNodes.findIndex(
-                            (node) => node.id === lowestNode.get(token.relativeX)
-                        )
-                        ],
+                    node,
                     token,
                     "",
                     0, graphLayoutSpacing
                 );
                 let temp = {
-                    source:
-                        finalGraphNodes[
-                            finalGraphNodes.findIndex(
-                                (node) => node.id === lowestNode.get(token.relativeX)
-                            )
-                            ],
+                    source: node,
                     target: token,
                     type: "tokenLink",
                     label: "",
@@ -343,6 +337,28 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                 };
                 tokenEdges[i] = temp;
                 i++;
+                if (node.surface === true){
+                    if (node.anchors[0].from - node.anchors[0].end !== 0){
+                       for (let j = node.anchors[0].from + 1; j<node.anchors[0].end+1;j++){
+                           cp = controlPoints(
+                               node,
+                               tokens[j],
+                               "",
+                               0, graphLayoutSpacing
+                           );
+                           temp = {
+                               source: node,
+                               target: tokens[j],
+                               type: "tokenLink",
+                               label: "",
+                               x1: cp.x1,
+                               y1: cp.y1
+                           };
+                           tokenEdges[i] = temp;
+                           i++;
+                       }
+                    }
+                }
             }
         }
 
