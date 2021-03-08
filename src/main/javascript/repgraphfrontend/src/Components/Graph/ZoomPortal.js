@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useRef, useEffect} from "react";
 import {Zoom} from "@visx/zoom";
 import {RectClipPath} from "@visx/clip-path";
 import {localPoint} from "@visx/event";
@@ -17,18 +17,32 @@ import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import CenterFocusStrongIcon from '@material-ui/icons/CenterFocusStrong';
 
+import GraphLegend from "./Legend";
+import Tooltip from "@material-ui/core/Tooltip";
+
+
 const initialTransform = {
-    scaleX: 1.25,
-    scaleY: 1.25,
-    translateX: 0,
-    translateY: 0,
+    scaleX: 1/4,
+    scaleY: 1/4,
+    translateX: 200,
+    translateY: 200,
     skewX: 0,
     skewY: 0
 };
 
 const ZoomPortal = (props) => {
-    const {width, height, backgroundColour} = props;
+    const {width, height, backgroundColour, graphFormatCode} = props;
     const {state, dispatch} = useContext(AppContext);
+    const zoomRef = useRef(null);
+
+    // useEffect(
+    //     () => {
+    //         if(zoomRef.current){
+    //             zoomRef.current.center();
+    //         }
+    //     },
+    //     [zoomRef.current],
+    // );
 
     const handleChangeGraphSpacing = (name) => {
 
@@ -97,16 +111,11 @@ const ZoomPortal = (props) => {
                 scaleXMax={4}
                 scaleYMin={1 / 8}
                 scaleYMax={4}
-                transformMatrix={{
-                    scaleX: 1/4,
-                    scaleY: 1/4,
-                    translateX: 0,
-                    translateY: 0,
-                    skewX: 0,
-                    skewY: 0
-                }}
+                transformMatrix={initialTransform}
             >
-                {(zoom) => (
+                {(zoom) => {
+                    zoomRef.current = zoom;
+                    return (
                     <div style={{position: 'relative' }}>
                         <svg
                             width={width}
@@ -149,13 +158,20 @@ const ZoomPortal = (props) => {
                                 aria-label="vertical contained primary button group"
                                 variant="contained"
                             >
+                                <Tooltip title="Increase Spacing Between Elements of the Graph" placement="left" arrow>
                                 <Button size="small" startIcon={<AddIcon />} onClick={ () => handleChangeGraphSpacing("increase")} disableElevation>Spacing</Button>
+                                </Tooltip>
+                                <Tooltip title="Decrease Spacing Between Elements of the Graph" placement="left" arrow>
                                 <Button size="small" startIcon={<RemoveIcon />} onClick={() => handleChangeGraphSpacing("decrease")} disableElevation>Spacing</Button>
+                                </Tooltip>
+                                <Tooltip title="Bring the Graph Into View" placement="left" arrow>
                                 <Button size="small" startIcon={<CenterFocusStrongIcon />} onClick={() => zoom.center()} disableElevation>Center</Button>
+                                </Tooltip>
                             </ButtonGroup>
                         </Box>
-                    </div>
-                )}
+                        <GraphLegend graphFormatCode={graphFormatCode}/>
+                    </div>)
+                }}
             </Zoom>
     );
 };
