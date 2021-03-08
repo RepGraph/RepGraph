@@ -48,15 +48,18 @@ export const Link = ({
 
     let mouseStartX,
         mouseStartY,
-        linkStartX,
-        linkStartY,
+        ElementStartX,
+        ElementStartY,
         click = false;
 
     const onMouseDown = (event) => {
         click = false;
         mouseStartX = event.clientX;
         mouseStartY = event.clientY;
+        ElementStartX = link.x1;
+        ElementStartY = link.y1;
         // console.log("mouse start: ", mouseStartX, mouseStartY);
+        document.addEventListener("mousemove",onMove);
         document.addEventListener("mouseup", onMouseUp);
 
         console.log("DOWN", click);
@@ -64,33 +67,10 @@ export const Link = ({
     };
 
     const onMouseUp = (event) => {
-        linkStartX = link.x1;
-        linkStartY = link.y1;
-        // console.log("link start: ", linkStartX, linkStartY);
-        // console.log("mouse end: ", event.clientX, event.clientY);
-        let changeX = mouseStartX - event.clientX;
-        let changeY = mouseStartY - event.clientY;
-
-        link.x1 = linkStartX - changeX;
-        link.y1 = linkStartY - changeY;
-        // console.log("change: ", changeX, changeY);
-        // console.log("link end: ", link.x1, link.y1);
+        document.getElementById(`dot${link.id}`).style.visibility = "hidden";
         document.removeEventListener("mouseup", onMouseUp);
-        setHighlighted(true);
-        setHighlighted(false);
-        console.log("UP", click);
-        //  document.getElementById(`dot${link.id}`).style.visibility = "visible";
-    };
-    const onClick = (event) => {
-        console.log("click", click);
-        if (click) {
-            console.log("TRUE CLICK");
-            document.getElementById(`dot${link.id}`).style.visibility = "hidden";
-            document.removeEventListener("click", onClick);
-        } else {
-            click = true;
-            console.log("CLICK BUT NOT CLICK");
-        }
+        document.removeEventListener("mousemove",onMove);
+        // console.log("UP", click);
     };
 
     const handleDoubleClick = (event) => {
@@ -103,8 +83,54 @@ export const Link = ({
             document.getElementById(`dot${link.id}`).style.visibility = "visible";
         }
         //  document.getElementById(`dot${link.id}`).style.visibility = "visible";
-        document.addEventListener("click", onClick);
         console.log("DOUBLE", click);
+    };
+
+    const dragClick = (event) => {
+      document.removeEventListener("mousemove",onMove);
+      document.removeEventListener("click", dragClick);
+    };
+
+    const onMove = (event) => {
+        let changeX = mouseStartX - event.clientX;
+        let changeY = mouseStartY - event.clientY;
+        link.x1 = ElementStartX - changeX;
+        link.y1 = ElementStartY - changeY;
+        setHighlighted(true);
+        setHighlighted(false);
+    };
+
+    const onDragEnter = (event) => {
+        mouseStartX = event.clientX;
+        mouseStartY = event.clientY;
+        ElementStartX = link.x1;
+        ElementStartY = link.y1;
+
+        document.addEventListener("mousemove",onMove);
+        document.addEventListener("click", dragClick);
+    };
+
+    const onClickLabel = (event) => {
+        document.removeEventListener("mousemove",onMoveLabel);
+        document.removeEventListener("click", onClickLabel);
+    };
+
+    const onMoveLabel = (event) => {
+        let changeX = mouseStartX - event.clientX;
+        let changeY = mouseStartY - event.clientY;
+        link.labelOffsetX = ElementStartX - changeX;
+         link.labelOffsetY = ElementStartY - changeY;
+        setHighlighted(true);
+        setHighlighted(false);
+    };
+
+    const onMouseDownLabel = (event) => {
+        mouseStartX = event.clientX;
+        mouseStartY = event.clientY;
+        ElementStartX = link.labelOffsetX;
+        ElementStartY = link.labelOffsetY;
+        document.addEventListener("mousemove",onMoveLabel);
+        document.addEventListener("click", onClickLabel);
     };
 
     let strokeColor = null;
@@ -162,121 +188,12 @@ export const Link = ({
             }}
             onClick={handleOnClick}
         >
-            {EdgeLayout(link, strokeColor,onMouseDown, handleDoubleClick)}
+            {EdgeLayout(link, strokeColor,onMouseDown, handleDoubleClick, onDragEnter, onMouseDownLabel)}
         </Group>
     );
 };
 
-function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick) {
-    //let mouseStartX, mouseStartY, startLinkX, startLinkY, startOffsetX, startOffsetY;
-
-    // const onMoveArrow = (event) => {
-    //     console.log("mouse pos:", event.clientX, event.clientY);
-    //     let changeX = mouseStartX - event.clientX;
-    //     let changeY = mouseStartY - event.clientY;
-    //     console.log("change x , y", changeX, changeY);
-    //
-    //     link.x1 = startLinkX - changeX;
-    //     link.y1 = startLinkY - changeY;
-    //     console.log("final link pos", link.x1, link.y1);
-    // };
-    //
-    // const onClickArrow = (event) => {
-    //     document.removeEventListener("mousemove", onMoveArrow);
-    //     document.removeEventListener("click", onClickArrow);
-    // };
-    //
-    // const handleDoubleClickArrow = (event) => {
-    //     mouseStartX = event.clientX;
-    //     mouseStartY = event.clientY;
-    //     startLinkX = link.x1;
-    //     startLinkY = link.y1;
-    //     console.log("start pos:", link.x1, link.y1);
-    //     console.log("mouseStartX, mouseStartY", mouseStartX, mouseStartY);
-    //     document.addEventListener("mousemove", onMoveArrow);
-    //     document.addEventListener("click", onClickArrow);
-    // };
-
-    // const onClickArrow = (event) => {
-    //     console.log("mouse pos:", event.clientX, event.clientY);
-    //     let changeX = mouseStartX - event.clientX;
-    //     let changeY = mouseStartY - event.clientY;
-    //     console.log("change x , y", changeX, changeY);
-    //
-    //     link.x1 = startLinkX - changeX;
-    //     link.y1 = startLinkY - changeY;
-    //     console.log("final link pos", link.x1, link.y1);
-    //     document.removeEventListener("click", onClickArrow);
-    // };
-    //
-    // const handleDoubleClickArrow = (event) => {
-    //     mouseStartX = event.clientX;
-    //     mouseStartY = event.clientY;
-    //     startLinkX = link.x1;
-    //     startLinkY = link.y1;
-    //     console.log("start pos:", link.x1, link.y1);
-    //     console.log("mouseStartX, mouseStartY", mouseStartX, mouseStartY);
-    //     document.addEventListener("click", onClickArrow);
-    // };
-
-    // const onMoveLabel = (event) => {
-    //     let changeX = mouseStartX - event.clientX;
-    //     let changeY = mouseStartY - event.clientY;
-    //     link.labelOffsetX = startOffsetX - changeX;
-    //     link.labelOffsetY = startOffsetY - changeY;
-    // };
-    //
-    // const onClickLabel = (event) => {
-    //     document.removeEventListener("mousemove", onMoveLabel);
-    //     document.removeEventListener("click", onClickLabel);
-    // };
-    //
-    // const handleDoubleClickLabel = (event) => {
-    //     mouseStartX = event.clientX;
-    //     mouseStartY = event.clientY;
-    //     startOffsetX = link.labelOffsetX;
-    //     startOffsetY = link.labelOffsetY;
-    //     document.addEventListener("mousemove", onMoveLabel);
-    //     document.addEventListener("click", onClickLabel);
-    // };
-
-    //DIDN'T WORK
-    // const onMouseUpArrow = (event) => {
-    //     let changeX = mouseStartX - event.clientX;
-    //     let changeY = mouseStartY - event.clientY;
-    //     link.x1 = startLinkX - changeX;
-    //     link.y1 = startLinkY - changeY;
-    //
-    //     document.removeEventListener("onmouseup", onMouseUpArrow);
-    // };
-    //
-    // const onMouseDownArrow = (event) => {
-    //     mouseStartX = event.clientX;
-    //     mouseStartY = event.clientY;
-    //     startLinkX = link.x1;
-    //     startLinkY = link.y1;
-    //     document.addEventListener("onmouseup", onMouseUpArrow);
-    // };
-
-    //DRAG END HAS NAN ISSUES
-    // const onDragEnd = (event) => {
-    //     console.log("mouse pos:", event.clientX, event.clientY);
-    //     let changeX = mouseStartX - event.clientX;
-    //     let changeY = mouseStartY - event.clientY;
-    //     console.log("change x , y", changeX, changeY);
-    //     link.x1 = startLinkX - changeX;
-    //     link.y1 = startLinkY - changeY;
-    // };
-    //
-    // const onDragEnter = (event) => {
-    //     mouseStartX = event.clientX;
-    //     mouseStartY = event.clientY;
-    //     startLinkX = link.x1;
-    //     startLinkY = link.y1;
-    //
-    //     console.log("start pos:", link.x1, link.y1);
-    //     console.log("mouseStartX, mouseStartY", mouseStartX, mouseStartY);
-    // };
+function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick, onDragEnter, onMouseDownLabel) {
 
     const t = 0.5;
 
@@ -341,9 +258,7 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick) {
                         fontSize="25px"
                         dominantBaseline="central"
                         onDoubleClick={handleDoubleClick}
-                        // onMouseDown={onMouseDownArrow}
-                        //   onDragEnter={onDragEnter}
-                        //   onDragEnd={onDragEnd}
+                        //  onMouseDown={onDragEnter}
                     >
                         ➤
                     </textPath>
@@ -356,10 +271,7 @@ function EdgeLayout(link, strokeColor, onMouseDown, handleDoubleClick) {
                     dy={`${link.labelOffsetY}px`}
                     dx={`${link.labelOffsetX}px`}
                     fontWeight="bold"
-                    // onDragEnd={handleEnd}
-                    // onDragEnter={handleDragEnter}
-                    // onDoubleClick={handleDoubleClickLabel}
-                    // cursor="move"
+                    onMouseDown={onMouseDownLabel}
                 >
                     {link.label}
                 </text>
