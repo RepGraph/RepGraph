@@ -190,6 +190,8 @@ export const setAnchors = (graphClone, children, parents, nodesWithoutAnchors) =
 export const controlPoints = (source, target, direction, degree, graphLayoutSpacing) => {
     let x1 = 0;
     let y1 = 0;
+    let offsetX = 0;
+    let offsetY = 0;
 
     if (direction === "vertical-left") {
         if (source.y < target.y) {
@@ -197,36 +199,47 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
                 target.x - (source.y - target.y) * degree,
                 target.x + graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth - 25
             );
+            offsetX=20;
         } else {
             x1 = Math.max(
                 target.x - (source.y - target.y) * degree,
                 target.x - graphLayoutSpacing.intraLevelSpacing -  graphLayoutSpacing.nodeWidth + 25
             );
+            offsetX=-20;
         }
         y1 = (source.y + target.y) / 2;
+        offsetY = -20;
     } else if (direction === "vertical-right") {
         if (source.y < target.y) {
             x1 = Math.max(
                 target.x + (source.y - target.y) * degree,
                 target.x - graphLayoutSpacing.intraLevelSpacing -  graphLayoutSpacing.nodeWidth + 25
             );
+            offsetX=-20;
         } else {
             x1 = Math.min(
                 target.x + (source.y - target.y) * degree,
                 target.x + graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth - 25
             );
+            offsetX=20;
         }
         y1 = (source.y + target.y) / 2;
+        offsetY = -20;
     } else if (direction === "horizontal-left") {
         x1 = (source.x + target.x) / 2;
         y1 = Math.min(target.y + (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
+        offsetX=0;
+        offsetY = source.x < target.x ? -20 : 20;
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
         y1 = Math.min(target.y - (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
+        offsetX=0;
+        offsetY = source.x < target.x ? 20 : -20;
     } else if (direction === "custom") {
         x1 = target.x;
-
         y1 = source.y;
+        offsetX = source.x < target.x ? 30 : -30;
+        offsetY = 20;
     }
     else if(direction === "duplicate"){
         if (source.x < target.x) {
@@ -235,11 +248,21 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
             x1 = (source.x + target.x) / 2 -  graphLayoutSpacing.nodeWidth;
         }
         y1 = (source.y + target.y) / 2 - 2 *  graphLayoutSpacing.nodeHeight;
+        offsetY= source.x === target.x ? -10 : -20;
+        offsetX= source.y === target.y ? 0 : source.x < target.x ? 22 : -22;
     } else {
         x1 = (source.x + target.x) / 2;
         y1 = (source.y + target.y) / 2;
+        if (source.y < target.y) {
+            offsetY = source.x === target.x ? -10 : -20;
+            offsetX = source.y === target.y ? 0 : source.x < target.x ? 20 : -20;
+        }
+        else{
+            offsetY = source.x === target.x ? -20 : -10;
+            offsetX = source.y === target.y ? 0 : source.x < target.x ? -20 : 20;
+        }
     }
-    return {x1, y1};
+    return {x1, y1, offsetX, offsetY};
 }
 
 export const edgeRulesSameColumn = (
