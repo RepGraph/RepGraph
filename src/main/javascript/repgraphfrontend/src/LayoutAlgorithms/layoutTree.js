@@ -383,7 +383,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                     label: "",
                     x1: topCP.x1,
                     y1: topCP.y1,
-                    type: "tokenLink",
+                    type: "topLink",
                 });
 
             }
