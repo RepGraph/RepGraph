@@ -41,13 +41,13 @@ const GraphLegend = (props) => {
                 ? {timeout: {appear: 500, enter: 500, exit: 500}}
                 : {})}
         >
-            <Paper elevation={0}>
+            <Paper elevation={0} style={{backgroundColor:"transparent"}}>
                 <Grid
                     container
                     spacing={1}
                     direction="column"
                     justify="center"
-                    alignItems="center"
+                    // alignItems="center"
                 >
                     {!(graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare" || graphFormatCode === "flatCompare") &&
                     <>
