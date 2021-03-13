@@ -1,5 +1,12 @@
 import lodash from "lodash";
-import {edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors,controlPoints} from "./layoutUtils"
+import {
+    edgeRulesSameColumn,
+    edgeRulesSameRow,
+    edgeRulesOther,
+    setAnchors,
+    controlPoints,
+    createDummyNodes
+} from "./layoutUtils"
 import uuid from "react-uuid";
 
 export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
@@ -65,6 +72,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
         setAnchors(graphClone, children, parents, nodesWithoutAnchors);
     }
 
+    graphClone = createDummyNodes(graphClone,parents, children ,false);
 //Determine span lengths of each node
         const graphNodeSpanLengths = Array.from(graphClone.nodes.values())
             .map((node) => node.anchors[0])

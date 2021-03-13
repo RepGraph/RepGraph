@@ -1,4 +1,12 @@
-import {topologicalSort, controlPoints, edgeRulesSameColumn, edgeRulesSameRow, edgeRulesOther, setAnchors} from "./layoutUtils";
+import {
+    topologicalSort,
+    controlPoints,
+    edgeRulesSameColumn,
+    edgeRulesSameRow,
+    edgeRulesOther,
+    setAnchors,
+    createDummyNodes
+} from "./layoutUtils";
 import uuid from "react-uuid";
 import lodash from "lodash";
 
@@ -54,7 +62,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
             temp.push(e.source);
             parents.set(e.target, temp);
         }
-
+        graphClone = createDummyNodes(graphClone, parents, children, false);
         let topologicalStacks = new Map(); //Will hold each node's descendent nodes
 
         //Fill the topological stacks map with the number descendants each node has.
@@ -73,9 +81,10 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
         }
 
         let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
-    if(framework === "3" || framework === "5") {
-        setAnchors(graphClone, children, parents, nodesWithoutAnchors);
-    }
+        if (framework === "3" || framework === "5") {
+            setAnchors(graphClone, children, parents, nodesWithoutAnchors);
+        }
+
         let numLevels = 0;
         for (const stack of topologicalStacks.values()) {
             numLevels = Math.max(numLevels, stack.length);
@@ -144,7 +153,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
 
         //Algorithm to resolve overlapping nodes.
         let nodesProcessed = new Map();
-        let numNodesProcessed =0;
+        let numNodesProcessed = 0;
         let currentLevel = 0;
         while (numNodesProcessed !== graphClone.nodes.size) {
             let nodeXPos = new Map();
@@ -167,8 +176,8 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                         ) {
                             action = "replace";
                         } else {
-                                action = "move";
-                            }
+                            action = "move";
+                        }
                     }
                 } else if (nodeXPos.has(xPositions.get(n.id))) { //If this xPosition is already taken in this level
                     if (
@@ -181,18 +190,16 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                     }
                 }
 
-                if (action === "move"){
+                if (action === "move") {
                     nodesInLevels[currentLevel + 1].push(n);
-                }
-                else if(action === "replace"){
-                        //Set the node with the higher descendents in the next level, and remove it from this level.
-                        let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
-                        nodeXPos.set(xPositions.get(n.id), n.id);
-                        nodesInLevels[currentLevel + 1].push(graphClone.nodes.get(currentOccupyingNodeID));
-                        nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
-                        nodesInFinalLevels[currentLevel].set(n.id, n);
-                }
-                else if(action === "stay"){
+                } else if (action === "replace") {
+                    //Set the node with the higher descendents in the next level, and remove it from this level.
+                    let currentOccupyingNodeID = nodeXPos.get(xPositions.get(n.id));
+                    nodeXPos.set(xPositions.get(n.id), n.id);
+                    nodesInLevels[currentLevel + 1].push(graphClone.nodes.get(currentOccupyingNodeID));
+                    nodesInFinalLevels[currentLevel].delete(currentOccupyingNodeID);
+                    nodesInFinalLevels[currentLevel].set(n.id, n);
+                } else if (action === "stay") {
                     //Designate this node as the node occupying node this xPosition on this level.
                     nodeXPos.set(xPositions.get(n.id), n.id);
                     nodesInFinalLevels[currentLevel].set(n.id, n);
@@ -337,26 +344,26 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                 };
                 tokenEdges[i] = temp;
                 i++;
-                if (node.surface === true){
-                    if (node.anchors[0].from - node.anchors[0].end !== 0){
-                       for (let j = node.anchors[0].from + 1; j<node.anchors[0].end+1;j++){
-                           cp = controlPoints(
-                               node,
-                               tokens[j],
-                               "",
-                               0, graphLayoutSpacing
-                           );
-                           temp = {
-                               source: node,
-                               target: tokens[j],
-                               type: "tokenLink",
-                               label: "",
-                               x1: cp.x1,
-                               y1: cp.y1
-                           };
-                           tokenEdges[i] = temp;
-                           i++;
-                       }
+                if (node.surface === true) {
+                    if (node.anchors[0].from - node.anchors[0].end !== 0) {
+                        for (let j = node.anchors[0].from + 1; j < node.anchors[0].end + 1; j++) {
+                            cp = controlPoints(
+                                node,
+                                tokens[j],
+                                "",
+                                0, graphLayoutSpacing
+                            );
+                            temp = {
+                                source: node,
+                                target: tokens[j],
+                                type: "tokenLink",
+                                label: "",
+                                x1: cp.x1,
+                                y1: cp.y1
+                            };
+                            tokenEdges[i] = temp;
+                            i++;
+                        }
                     }
                 }
             }
@@ -365,12 +372,12 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
         const allEdges = finalGraphEdges.concat(tokenEdges);
 
         //Add top node and corresponding link to graphData
-        if(addTopNode){
+        if (addTopNode) {
             //Get top node's associated node
             const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
             //console.log("associatedNode", associatedNode);
 
-            if(associatedNode){
+            if (associatedNode) {
                 //Add the top node to the array of nodes
                 finalGraphNodes.push({
                     id: "TOP",
@@ -409,5 +416,5 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
 
         return {nodes: finalGraphNodes, links: allEdges};
     }
-    ;
+;
 
