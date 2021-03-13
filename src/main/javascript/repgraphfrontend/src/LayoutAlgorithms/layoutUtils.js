@@ -4,8 +4,8 @@ import {v4 as uuidv4} from 'uuid';
 export function createDummyNodes(graphData, parents, children, createEdges) {
     let dummyNodes = []
     let dummyEdges = []
-    for (const node of graphData.nodes) {
 
+    for (let [key, node] of graphData.nodes) {
         if (node.anchors !== null && node.anchors.length > 1) {
 
             for (let i = 1; i < node.anchors.length; i++) {
@@ -25,48 +25,52 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
                     anchors: [nodeClone.anchors[i]]
                 }
                 dummyNodes.push(nodeClone)
-
-                if (createEdges === true) {
-                    children.set(uuid, []);
-                    parents.set(uuid, []);
-                    for (let parent of parents.get(node.id)) {
+                children.set(uuid, []);
+                parents.set(uuid, []);
+                for (let parent of parents.get(node.id)) {
+                    if (createEdges === true) {
                         dummyEdges.push({source: parent, target: uuid, label: "\"\""})
-
-                        let temp = parents.get(uuid);
-                        temp.push(parent);
-                        parents.set(uuid, temp);
                     }
-                    for (let child of children.get(node.id)) {
-                        dummyEdges.push({source: uuid, target: child, label: "\"\""})
-                        let temp = children.get(uuid);
-                        temp.push(child);
-                        children.set(uuid, temp);
-                    }
+                    let temp = parents.get(uuid);
+                    temp.push(parent);
+                    parents.set(uuid, temp);
                 }
+                for (let child of children.get(node.id)) {
+                    if (createEdges === true) {
+                        dummyEdges.push({source: uuid, target: child, label: "\"\""})
+                    }
+                    let temp = children.get(uuid);
+                    temp.push(child);
+                    children.set(uuid, temp);
+                }
+
             }
         }
     }
-    graphData.nodes = graphData.nodes.concat(dummyNodes)
-    graphData.edges = graphData.edges.concat(dummyEdges)
+
+    for (let node of dummyNodes) {
+        graphData.nodes.set(node.id, node);
+    }
+    graphData.edges = graphData.edges.concat(dummyEdges);
 
     return graphData;
 }
 
-export function addTokenSpanText(graphData){
+export function addTokenSpanText(graphData) {
 
     for (let j = 0; j < graphData.nodes.length; j++) {
         let node = graphData.nodes[j];
         let output = ""
-        if (node.anchors!==null){
+        if (node.anchors !== null) {
             for (let i = 0; i < node.anchors.length; i++) {
                 let anch = node.anchors[i];
-                for (let i = anch.from; i < anch.end+1; i++) {
-                    output+=graphData.tokens[i].form+" "
+                for (let i = anch.from; i < anch.end + 1; i++) {
+                    output += graphData.tokens[i].form + " "
                 }
                 output = output.trim();
-                anch = {...anch,text : output}
-                output="";
-                graphData.nodes[j].anchors[i]=anch;
+                anch = {...anch, text: output}
+                output = "";
+                graphData.nodes[j].anchors[i] = anch;
             }
         }
     }
@@ -201,15 +205,15 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         if (source.y < target.y) {
             x1 = Math.min(
                 target.x - (source.y - target.y) * degree,
-                target.x + graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth - 25
+                target.x + graphLayoutSpacing.intraLevelSpacing + graphLayoutSpacing.nodeWidth - 25
             );
-            offsetX=20;
+            offsetX = 20;
         } else {
             x1 = Math.max(
                 target.x - (source.y - target.y) * degree,
-                target.x - graphLayoutSpacing.intraLevelSpacing -  graphLayoutSpacing.nodeWidth + 25
+                target.x - graphLayoutSpacing.intraLevelSpacing - graphLayoutSpacing.nodeWidth + 25
             );
-            offsetX=-20;
+            offsetX = -20;
         }
         y1 = (source.y + target.y) / 2;
         offsetY = -20;
@@ -217,51 +221,49 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         if (source.y < target.y) {
             x1 = Math.max(
                 target.x + (source.y - target.y) * degree,
-                target.x - graphLayoutSpacing.intraLevelSpacing -  graphLayoutSpacing.nodeWidth + 25
+                target.x - graphLayoutSpacing.intraLevelSpacing - graphLayoutSpacing.nodeWidth + 25
             );
-            offsetX=-20;
+            offsetX = -20;
         } else {
             x1 = Math.min(
                 target.x + (source.y - target.y) * degree,
-                target.x + graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth - 25
+                target.x + graphLayoutSpacing.intraLevelSpacing + graphLayoutSpacing.nodeWidth - 25
             );
-            offsetX=20;
+            offsetX = 20;
         }
         y1 = (source.y + target.y) / 2;
         offsetY = -20;
     } else if (direction === "horizontal-left") {
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
-        offsetX=0;
+        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing);
+        offsetX = 0;
         offsetY = source.x < target.x ? -20 : 20;
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y - (source.x - target.x) * degree, target.y +  graphLayoutSpacing.tokenLevelSpacing);
-        offsetX=0;
+        y1 = Math.min(target.y - (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing);
+        offsetX = 0;
         offsetY = source.x < target.x ? 20 : -20;
     } else if (direction === "custom") {
         x1 = target.x;
         y1 = source.y;
         offsetX = source.x < target.x ? 30 : -30;
         offsetY = 20;
-    }
-    else if(direction === "duplicate"){
+    } else if (direction === "duplicate") {
         if (source.x < target.x) {
-            x1 = (source.x + target.x) / 2 +  graphLayoutSpacing.nodeWidth;
+            x1 = (source.x + target.x) / 2 + graphLayoutSpacing.nodeWidth;
         } else {
-            x1 = (source.x + target.x) / 2 -  graphLayoutSpacing.nodeWidth;
+            x1 = (source.x + target.x) / 2 - graphLayoutSpacing.nodeWidth;
         }
-        y1 = (source.y + target.y) / 2 - 2 *  graphLayoutSpacing.nodeHeight;
-        offsetY= source.x === target.x ? -10 : -20;
-        offsetX= source.y === target.y ? 0 : source.x < target.x ? 22 : -22;
+        y1 = (source.y + target.y) / 2 - 2 * graphLayoutSpacing.nodeHeight;
+        offsetY = source.x === target.x ? -10 : -20;
+        offsetX = source.y === target.y ? 0 : source.x < target.x ? 22 : -22;
     } else {
         x1 = (source.x + target.x) / 2;
         y1 = (source.y + target.y) / 2;
         if (source.y < target.y) {
             offsetY = source.x === target.x ? -10 : -20;
             offsetX = source.y === target.y ? 0 : source.x < target.x ? 20 : -20;
-        }
-        else{
+        } else {
             offsetY = source.x === target.x ? -20 : -10;
             offsetX = source.y === target.y ? 0 : source.x < target.x ? -20 : 20;
         }
@@ -291,7 +293,7 @@ export const edgeRulesSameColumn = (
             return controlPoints(source, target, direction, degree, graphLayoutSpacing);
         }
     }
-    if (Math.abs(source.relativeY - target.relativeY) !== 1){
+    if (Math.abs(source.relativeY - target.relativeY) !== 1) {
         //In the same column and more than level apart
         let found = false;
         for (let node of finalGraphNodes) {
@@ -319,7 +321,7 @@ export const edgeRulesSameColumn = (
                     if (
                         neighbourNode.x < source.x &&
                         Math.abs(neighbourNode.x - source.x) ===
-                         graphLayoutSpacing.nodeWidth + graphLayoutSpacing.intraLevelSpacing
+                        graphLayoutSpacing.nodeWidth + graphLayoutSpacing.intraLevelSpacing
                     ) {
                         left = true;
                     }
@@ -356,7 +358,7 @@ export const edgeRulesSameRow = (
     let direction = "";
     let degree = 0.25;
 
-    if (Math.abs(target.x - source.x) !== graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth) {
+    if (Math.abs(target.x - source.x) !== graphLayoutSpacing.intraLevelSpacing + graphLayoutSpacing.nodeWidth) {
         //On the same level and more than 1 space apart
 
         let found = false;
@@ -381,7 +383,7 @@ export const edgeRulesSameRow = (
         }
     }
 
-    if (Math.abs(source.x - target.x) / ( graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth) > 6) {
+    if (Math.abs(source.x - target.x) / (graphLayoutSpacing.intraLevelSpacing + graphLayoutSpacing.nodeWidth) > 6) {
         degree = 0.3;
     }
 
@@ -390,7 +392,7 @@ export const edgeRulesSameRow = (
         if (edge.source === e.source && edge.target === e.target && edge !== e) {
             //There exists a duplicate edge
             if (edge.label.localeCompare(e.label) <= 0) {
-                degree=degree+0.15;
+                degree = degree + 0.15;
             }
             break;
         }
@@ -452,7 +454,7 @@ export const edgeRulesOther = (
     }
 
     //Is the source node inbetween two column (due to its span) and is the target node within less of 1 columns distance from it? If so, check for a node below the source node.
-    if (Math.abs(target.x - source.x) < graphLayoutSpacing.intraLevelSpacing +  graphLayoutSpacing.nodeWidth) {
+    if (Math.abs(target.x - source.x) < graphLayoutSpacing.intraLevelSpacing + graphLayoutSpacing.nodeWidth) {
         for (let node of finalGraphNodes) {
             if (source.x === node.x && source.y < node.y) {
                 degree = 0.1;
