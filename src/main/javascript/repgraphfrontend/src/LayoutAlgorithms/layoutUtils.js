@@ -9,6 +9,10 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
         if (node.anchors !== null && node.anchors.length > 1) {
 
             for (let i = 1; i < node.anchors.length; i++) {
+                if (node.anchors[i].from===node.anchors[0].end || node.anchors[i].from===node.anchors[0].end+1){
+                    node.anchors[0].end = node.anchors[i].end;
+                    continue;
+                }
                 let anchs = [];
                 anchs.push(node.anchors[i]);
                 let uuid = uuidv4().toString()
