@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
-import { useState } from "react";
-import { Group } from "@visx/visx";
+import {useState} from "react";
+import {Group} from "@visx/visx";
 import {AppContext} from "../../Store/AppContextProvider";
 
 export const Node = ({
@@ -44,29 +44,31 @@ export const Node = ({
     bb.y -= bb.height / 2 + margin;
 
     let fillColor = null;
-
+    let stroke = null;
+    let strokeWidth = null;
     //
 
     switch (node.type) {
         case "node":
+
             if (node.selected && events && events.hasOwnProperty("select")) {
                 fillColor = styles.nodeStyles.selectedColour;
             } else if (highlighted) {
 
-                if(node.surface){
+                if (node.surface) {
                     fillColor = styles.nodeStyles.surfaceNodeHoverColour;
-                }else{
+                } else {
                     fillColor = styles.nodeStyles.abstractNodeHoverColour;
                 }
 
             } else if (
                 (graphFormatCode === "hierarchicalLongestPath" ||
-                    graphFormatCode === "treeLongestPath"||
+                    graphFormatCode === "treeLongestPath" ||
                     graphFormatCode === "flatLongestPath") &&
                 node.group === "longestPath"
             ) {
                 fillColor = styles.longestPathStyles.nodeColour;
-            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare"|| graphFormatCode === "flatCompare"){
+            } else if (graphFormatCode === "hierarchicalCompare" || graphFormatCode === "treeCompare" || graphFormatCode === "flatCompare") {
 
                 switch (node.group) {
                     case "similar":
@@ -80,11 +82,14 @@ export const Node = ({
                         break;
                 }
 
-            }
-            else if(node.surface){
+            } else if (node.surface) {
                 fillColor = styles.nodeStyles.surfaceNodeColour;
-            }else {
+            } else {
                 fillColor = styles.nodeStyles.abstractNodeColour;
+            }
+            if (node.dummy){
+                stroke=styles.nodeStyles.topNodeColour;
+                strokeWidth="0.8%"
             }
             break;
         case "token":
@@ -94,7 +99,7 @@ export const Node = ({
                 fillColor = styles.tokenStyles.hoverColour;
             } else if (
                 (graphFormatCode === "hierarchicalLongestPath" ||
-                    graphFormatCode === "treeLongestPath"||
+                    graphFormatCode === "treeLongestPath" ||
                     graphFormatCode === "flatLongestPath") &&
                 node.group === "longestPath"
             ) {
@@ -106,7 +111,7 @@ export const Node = ({
         case "topNode":
             if (highlighted) {
                 fillColor = styles.nodeStyles.topNodeHoverColour;
-            }else{
+            } else {
                 fillColor = styles.nodeStyles.topNodeColour;
             }
             break;
@@ -124,6 +129,8 @@ export const Node = ({
             height={bb.height}
             className="labeloutline"
             fill={fillColor}
+            stroke={stroke}
+            strokeWidth={strokeWidth}
         ></rect>
     );
 
@@ -157,35 +164,49 @@ export const Node = ({
 
     const handleOnClick = (event) => {
 
-        if(events && events.hasOwnProperty('select')){
+        if (events && events.hasOwnProperty('select')) {
 
-            if(events.select === "subset" && node.type === "node"){
+            if (events.select === "subset" && node.type === "node") {
 
                 try {
 
                     const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
                         ...oldNode,
-                        selected: oldNode.type === "node" ? (oldNode.id === node.id ? true: false) : false
+                        selected: oldNode.type === "node" ? (oldNode.id === node.id ? true : false) : false
                     }));
 
-                    dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation , nodes: newNodes} }});
+                    dispatch({type: "SET_SENTENCE_VISUALISATION",
+                        payload: {
+                            selectedSentenceVisualisation: {
+                                ...state.selectedSentenceVisualisation,
+                                nodes: newNodes
+                            }
+                        }
+                    });
 
-                }catch (e) {
+                } catch (e) {
                     console.log(e);
                 }
 
-            }else if(events.select === "subgraph" && node.type === "node"){
+            } else if (events.select === "subgraph" && node.type === "node") {
 
                 try {
 
-                const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
-                    ...oldNode,
-                    selected: oldNode.type === "node" ? oldNode.id === node.id ? !oldNode.selected: oldNode.selected : oldNode.selected
-                }));
+                    const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
+                        ...oldNode,
+                        selected: oldNode.type === "node" ? oldNode.id === node.id ? !oldNode.selected : oldNode.selected : oldNode.selected
+                    }));
 
-                dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: {...state.selectedSentenceVisualisation , nodes: newNodes} }});
+                    dispatch({type: "SET_SENTENCE_VISUALISATION",
+                        payload: {
+                            selectedSentenceVisualisation: {
+                                ...state.selectedSentenceVisualisation,
+                                nodes: newNodes
+                            }
+                        }
+                    });
 
-                }catch (e) {
+                } catch (e) {
                     console.log(e);
                 }
             }
@@ -219,16 +240,16 @@ export const Node = ({
             return obj;
         }, {});
 
-    if(filteredExtraInformation.hasOwnProperty("anchors")){
+    if (filteredExtraInformation.hasOwnProperty("anchors")) {
         filteredExtraInformation.anchors = filteredExtraInformation.anchors.map(anchor => {
 
             let anchorString = anchor.from + "-" + anchor.end;
-            if(anchor.hasOwnProperty("text")){
-                anchorString += " : "+anchor.text;
+            if (anchor.hasOwnProperty("text")) {
+                anchorString += " : " + anchor.text;
             }
             return anchorString;
 
-            }).join(", ");
+        }).join(", ");
     }
 
     return (

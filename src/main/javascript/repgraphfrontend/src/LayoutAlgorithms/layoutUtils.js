@@ -7,20 +7,31 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
 
     for (let [key, node] of graphData.nodes) {
         if (node.anchors !== null && node.anchors.length > 1) {
+            let skip =[]
+            for (let i = 0; i < node.anchors.length; i++) {
+                for (let j = 0; j < node.anchors.length; j++){
+                    if ((i!==j)&&(node.anchors[j].from<=node.anchors[i].from && node.anchors[j].end>=node.anchors[i].from && node.anchors[j].end<=node.anchors[i].end) || (node.anchors[j].end===node.anchors[i].from-1)){
+                        node.anchors[j].end = node.anchors[i].end;
+                        skip.push(i);
+                    }
+                }
+            }
 
             for (let i = 1; i < node.anchors.length; i++) {
-                if (node.anchors[i].from===node.anchors[0].end || node.anchors[i].from===node.anchors[0].end+1){
-                    node.anchors[0].end = node.anchors[i].end;
+
+                if (skip.includes(i)){
                     continue;
                 }
+
                 let anchs = [];
                 anchs.push(node.anchors[i]);
                 let uuid = uuidv4().toString()
 
                 let nodeClone = lodash.cloneDeep(node)
                 nodeClone = {
+                    dummy: true,
                     ...nodeClone,
-                    label: nodeClone.label + " " + (i + 1),
+                    label: nodeClone.label + " ID:"+ nodeClone.id+ " Span "+ (i + 1),
                     id: uuid,
                     anchors: [nodeClone.anchors[i]]
                 }
