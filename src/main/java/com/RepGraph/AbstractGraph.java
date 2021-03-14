@@ -218,15 +218,19 @@ class AbstractGraph {
     @JsonGetter("nodes")
     public ArrayList<Node> returnNodeInArrayList() {
         ArrayList<Node> returnNodes = new ArrayList<Node>();
+        ArrayList<Node> noAnchors = new ArrayList<>();
         for (Node n : this.nodes.values()) {
-            returnNodes.add(n);
+            if (n.getAnchors()==null){
+                noAnchors.add(n);
+            }else{
+                returnNodes.add(n);
+            }
+
         }
         Collections.sort(returnNodes, new Comparator<Node>() {
             @Override
             public int compare(Node o1, Node o2) {
-                if (o1.getAnchors()==null || o2.getAnchors()==null){
-                    return 0;
-                }
+
                 if (o1.getAnchors().get(0).getFrom() < o2.getAnchors().get(0).getFrom()) {
                     return -1;
                 } else if (o1.getAnchors().get(0).getFrom() == o2.getAnchors().get(0).getFrom()) {
@@ -241,6 +245,7 @@ class AbstractGraph {
                 return 1;
             }
         });
+        returnNodes.addAll(noAnchors);
         return returnNodes;
     }
 
