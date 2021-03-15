@@ -89,7 +89,7 @@ export const Node = ({
             }
             if (node.dummy){
                 stroke=styles.nodeStyles.topNodeColour;
-                strokeWidth="0.8%"
+                strokeWidth="6px"
             }
             break;
         case "token":
