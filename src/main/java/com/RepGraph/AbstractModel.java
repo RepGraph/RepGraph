@@ -78,7 +78,7 @@ class AbstractModel {
         float total_undirected_cyclic = 0;
         float total_planar = 0;
         float total_not_connected = 0;
-
+        float total_edge_length =0;
         for (AbstractGraph g : graphs.values()) {
 
             if (g.isCyclic(true)) {
@@ -87,6 +87,7 @@ class AbstractModel {
             if (g.isCyclic(false)) {
                 total_undirected_cyclic++;
             }
+
             if ((boolean) g.isPlanar().get("planar")) {
                 total_planar++;
             }
@@ -98,6 +99,7 @@ class AbstractModel {
             total_edges += g.getEdges().size();
             total_tokens += g.getTokens().size();
             total_spans += g.getAverageSpanLength();
+            total_edge_length += g.getAverageEdgeLength();
 
         }
 
@@ -109,6 +111,7 @@ class AbstractModel {
         AnalysisInfo.put("Average Number of Nodes", Precision.round(total_nodes / graphs.values().size(), 2) + "");
         AnalysisInfo.put("Average Number of Edges", Precision.round(total_edges / graphs.values().size(), 2) + "");
         AnalysisInfo.put("Average Number of Tokens", Precision.round(total_tokens / graphs.values().size(), 2) + "");
+        AnalysisInfo.put("Average Edge Length", Precision.round(total_edge_length / graphs.values().size(), 2) + "");
         AnalysisInfo.put("Percentage of Directed Cyclic Graphs", Precision.round((total_directed_cyclic / graphs.values().size()) * 100, 2) + "");
         AnalysisInfo.put("Percentage of Undirected Cyclic Graphs", Precision.round((total_undirected_cyclic / graphs.values().size()) * 100, 2) + "");
         AnalysisInfo.put("Percentage of Disconnected Graphs", Precision.round((total_not_connected / graphs.values().size()) * 100, 2) + "");

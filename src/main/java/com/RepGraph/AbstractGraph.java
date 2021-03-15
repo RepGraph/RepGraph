@@ -1074,6 +1074,18 @@ class AbstractGraph {
         return val;
     }
 
+    @JsonIgnore
+    public float getAverageEdgeLength() throws IOException, InterruptedException {
+        float val=0;
+        HashMap<String, Object> planarGraph = (HashMap<String, Object>) this.isPlanar().get("planarForm");
+        ArrayList<Edge> newEdges = (ArrayList<Edge>) planarGraph.get("edges");
+        for (Edge e:newEdges) {
+            val += Math.abs(Integer.parseInt(e.getTarget())-Integer.parseInt(e.getSource()));
+        }
+        val/=newEdges.size();
+        return val;
+      }
+
     @Override
     public boolean equals(Object o) {
 
