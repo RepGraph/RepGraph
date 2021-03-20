@@ -43,7 +43,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 const useStyles = makeStyles((theme) => ({
     root: {
         width: "100%",
-        backgroundColor: theme.palette.background.paper
+        backgroundColour: theme.palette.background.paper
     },
     heading: {
         fontSize: theme.typography.pxToRem(15),
@@ -52,6 +52,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const styleCodes = {
+    general: {
+        backgroundColour: "Background Colour"
+    },
     nodeStyles: {
         abstractNodeColour: "Abstract Node Colour",
         surfaceNodeColour: "Surface Node Colour",
@@ -190,8 +193,8 @@ const NumberInput = (props) => {
             InputProps={{
                 inputComponent: NumberFormatSpacingInput,
                 inputProps: {
-                                min: 0
-                            }
+                    min: 0
+                }
             }}
         />
     );
@@ -276,6 +279,8 @@ export default function SettingsTool() {
 
     const [valuesGraphSpacing, setValuesGraphSpacing] = useState(state.graphLayoutSpacing);
 
+    const [valuesGeneral, setValuesGeneral] = useState(state.graphStyles.general);
+
     const handleChangeNodes = (event) => {
         setValuesNodes({
             ...valuesNodes,
@@ -288,9 +293,9 @@ export default function SettingsTool() {
                 graphStyles: {
                     ...state.graphStyles,
                     nodeStyles: {
-                            ...valuesNodes,
-                            [event.target.name]: event.target.value
-                        }
+                        ...valuesNodes,
+                        [event.target.name]: event.target.value
+                    }
                 }
             }
         });
@@ -309,10 +314,10 @@ export default function SettingsTool() {
             payload: {
                 graphStyles: {
                     ...state.graphStyles,
-                   tokenStyles: {
-                            ...valuesTokens,
-                            [event.target.name]: event.target.value
-                        }
+                    tokenStyles: {
+                        ...valuesTokens,
+                        [event.target.name]: event.target.value
+                    }
                 }
             }
         });
@@ -331,9 +336,30 @@ export default function SettingsTool() {
                 graphStyles: {
                     ...state.graphStyles,
                     linkStyles: {
-                            ...valuesLinks,
-                            [event.target.name]: event.target.value
-                        }
+                        ...valuesLinks,
+                        [event.target.name]: event.target.value
+                    }
+                }
+            }
+        });
+        handleUpdateStyles(valuesGraphSpacing);
+    };
+
+    const handleChangeGeneral = (event) => {
+        setValuesGeneral({
+            ...valuesGeneral,
+            [event.target.name]: event.target.value
+        });
+
+        dispatch({
+            type: "SET_GRAPH_STYLES",
+            payload: {
+                graphStyles: {
+                    ...state.graphStyles,
+                    general: {
+                        ...valuesGeneral,
+                        [event.target.name]: event.target.value
+                    }
                 }
             }
         });
@@ -396,6 +422,7 @@ export default function SettingsTool() {
         setValuesNodes(defaultGraphStyles.nodeStyles);
         setValuesLinks(defaultGraphStyles.linkStyles);
         setValuesTokens(defaultGraphStyles.tokenStyles);
+        setValuesGeneral(defaultGraphStyles.general)
 
         dispatch({
             type: "SET_GRAPH_STYLES",
@@ -641,8 +668,49 @@ export default function SettingsTool() {
                             </List>
                         </AccordionDetails>
                     </Accordion>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon/>}
+                        >
+                            <Typography className={classes.heading}>General</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <List
+                                component="nav"
+                                style={{width: "100%"}}
+                            >
+                                {Object.keys(valuesGeneral).map((key, index) => (
+                                    <ListItem key={`${key}${index}`}>
+                                        <Grid
+                                            container
+                                            direction="column"
+                                            justify="center"
+                                            alignItems="center"
+                                            spacing={2}
+                                        >
+                                            <Grid item>
+                                                <ListItemIcon>
+                                                    <ColorizeIcon/>
+                                                </ListItemIcon>
+                                            </Grid>
+                                            <Grid item>
+                                                <Typography>{styleCodes.general[key]}</Typography>
+                                            </Grid>
+                                            <Grid item>
+                                                <MaskedColourPicker
+                                                    name={key}
+                                                    values={valuesGeneral}
+                                                    onChange={handleChangeGeneral}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </AccordionDetails>
+                    </Accordion>
                 </Grid>
-                <Grid item style={{marginTop:10}}>
+                <Grid item style={{marginTop: 10}}>
                     <ButtonGroup
                         orientation="vertical"
                         color="primary"
