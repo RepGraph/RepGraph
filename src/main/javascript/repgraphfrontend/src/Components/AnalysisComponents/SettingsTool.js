@@ -417,6 +417,7 @@ export default function SettingsTool() {
         setValuesNodes(defaultGraphStyles.nodeStyles);
         setValuesLinks(defaultGraphStyles.linkStyles);
         setValuesTokens(defaultGraphStyles.tokenStyles);
+        setValuesBackground(defaultGraphStyles.backgroundColour)
 
         dispatch({
             type: "SET_GRAPH_STYLES",
