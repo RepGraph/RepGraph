@@ -1,12 +1,75 @@
 import uuid from "react-uuid";
-import {addTokenSpanText} from "./layoutUtils";
+import {addTokenSpanText, createDummyNodes} from "./layoutUtils";
+import lodash from "lodash";
 
 export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => {
 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
+    let graphClone = lodash.cloneDeep(graphData);
 
-    const nodes = graphData.nodes.map((node, index) => ({
+
+    let children = new Map();
+    let parents = new Map();
+
+    //Assign empty neighbour arrays to each node id
+    for (const node of graphClone.nodes) {
+        children.set(node.id, []);
+        parents.set(node.id, []);
+    }
+
+    //Fill in children node id's and parent node ids for each node.
+    for (const e of graphClone.edges) {
+        let temp = children.get(e.source);
+        temp.push(e.target);
+        children.set(e.source, temp);
+
+        temp = parents.get(e.target);
+        temp.push(e.source);
+        parents.set(e.target, temp);
+    }
+
+    let nodeMap = new Map();
+    for (let node of graphClone.nodes) {
+        nodeMap.set(node.id, node);
+    }
+    graphClone.nodes = nodeMap;
+    if (!planar) {
+        graphClone = createDummyNodes(graphClone, parents, children, false)
+
+        let nodesNoAnchors = Array.from(graphClone.nodes.values()).filter(function (node) {
+            return node.anchors === null
+        });
+
+        let nodesWithAnchors = Array.from(graphClone.nodes.values()).filter(function (node) {
+            return node.anchors !== null
+        });
+
+        function compareAnchors(node1, node2) {
+            if (node1.anchors[0].from === node2.anchors[0].from) {
+                if (node1.anchors[0].end < node2.anchors.end) {
+                    return -1;
+                } else if (node1.anchors[0].end > node2.anchors.end) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+            if (node1.anchors[0].from < node2.anchors[0].from) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
+        nodesWithAnchors.sort(compareAnchors);
+
+        graphClone.nodes = nodesWithAnchors.concat(nodesNoAnchors);
+
+    }
+
+
+    const nodes = Array.from(graphClone.nodes.values()).map((node, index) => ({
         ...node,
         x: index * (nodeWidth + intraLevelSpacing),
         y: nodeHeight,
@@ -14,7 +77,9 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
         type: "node",
         group: "node",
         span: false
+
     }));
+
 
     let addTopNode = false;
 
@@ -37,7 +102,7 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
         default:
     }
 
-    addTokenSpanText(graphData);
+    addTokenSpanText(graphClone);
 
     let finalGraphNodes = nodes;
 
@@ -84,7 +149,7 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
 
     }
 
-    let finalGraphEdges = graphData.edges.map((edge, index) => {
+    let finalGraphEdges = graphClone.edges.map((edge, index) => {
         const sourceNodeIndex = finalGraphNodes.findIndex(
             (node) => node.id === edge.source
         );
@@ -114,11 +179,11 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
         };
     })
 
-    //Add top node and corresponding link to graphData
+    //Add top node and corresponding link to graphClone
     if (addTopNode) {
 
         //Get top node's associated node
-        const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
+        const associatedNode = finalGraphNodes.find(node => node.id === graphClone.tops);
         //console.log("associatedNode", associatedNode);
 
         if (associatedNode) {
@@ -160,10 +225,14 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
 
     if (planar) {
         try {
+            finalGraphNodes = finalGraphNodes.map((node) => ({
+                ...node,
+                dummy: node.label.includes("Dummy Span") ? true : false
+            }))
             finalGraphEdges = finalGraphEdges.map((link) => ({
                 ...link,
                 group:
-                    graphData.crossingEdges.includes(link.id)
+                    graphClone.crossingEdges.includes(link.id)
                         ? "linkColourCross"
                         : link.group
             }));
