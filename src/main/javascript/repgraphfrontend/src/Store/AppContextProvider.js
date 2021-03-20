@@ -5,7 +5,7 @@ export const AppContext = React.createContext();
 
 export const defaultGraphStyles = {
     general: {
-    backgroundColour: "rgba(239,239,239,239)"
+    backgroundColour: "rgba(239,239,239,1)"
     },
     nodeStyles: {
         abstractNodeColour: "rgba(0,172,237,1)",
