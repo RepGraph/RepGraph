@@ -52,7 +52,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const styleCodes = {
-    backgroundColour: "Background Colour",
+    general: {
+        backgroundColour: "Background Colour"
+    },
     nodeStyles: {
         abstractNodeColour: "Abstract Node Colour",
         surfaceNodeColour: "Surface Node Colour",
@@ -277,7 +279,7 @@ export default function SettingsTool() {
 
     const [valuesGraphSpacing, setValuesGraphSpacing] = useState(state.graphLayoutSpacing);
 
-    const [valuesBackground, setValuesBackground] = useState(state.graphStyles.backgroundColour);
+    const [valuesGeneral, setValuesGeneral] = useState(state.graphStyles.general);
 
     const handleChangeNodes = (event) => {
         setValuesNodes({
@@ -343,9 +345,9 @@ export default function SettingsTool() {
         handleUpdateStyles(valuesGraphSpacing);
     };
 
-    const handleChangeBackground = (event) => {
-        setValuesBackground({
-            ...valuesBackground,
+    const handleChangeGeneral = (event) => {
+        setValuesGeneral({
+            ...valuesGeneral,
             [event.target.name]: event.target.value
         });
 
@@ -354,7 +356,10 @@ export default function SettingsTool() {
             payload: {
                 graphStyles: {
                     ...state.graphStyles,
-                    backgroundColour: event.target.value
+                    general: {
+                        ...valuesGeneral,
+                        [event.target.name]: event.target.value
+                    }
                 }
             }
         });
@@ -417,7 +422,7 @@ export default function SettingsTool() {
         setValuesNodes(defaultGraphStyles.nodeStyles);
         setValuesLinks(defaultGraphStyles.linkStyles);
         setValuesTokens(defaultGraphStyles.tokenStyles);
-        setValuesBackground(defaultGraphStyles.backgroundColour)
+        setValuesGeneral(defaultGraphStyles.general)
 
         dispatch({
             type: "SET_GRAPH_STYLES",
@@ -674,7 +679,8 @@ export default function SettingsTool() {
                                 component="nav"
                                 style={{width: "100%"}}
                             >
-                                    <ListItem key={"backgroundColour"}>
+                                {Object.keys(valuesGeneral).map((key, index) => (
+                                    <ListItem key={`${key}${index}`}>
                                         <Grid
                                             container
                                             direction="column"
@@ -688,17 +694,18 @@ export default function SettingsTool() {
                                                 </ListItemIcon>
                                             </Grid>
                                             <Grid item>
-                                                <Typography>{styleCodes["backgroundColour"]}</Typography>
+                                                <Typography>{styleCodes.general[key]}</Typography>
                                             </Grid>
                                             <Grid item>
                                                 <MaskedColourPicker
-                                                    name={"backgroundColour"}
-                                                    values={valuesBackground}
-                                                    onChange={handleChangeBackground}
+                                                    name={key}
+                                                    values={valuesGeneral}
+                                                    onChange={handleChangeGeneral}
                                                 />
                                             </Grid>
                                         </Grid>
                                     </ListItem>
+                                ))}
                             </List>
                         </AccordionDetails>
                     </Accordion>

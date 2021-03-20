@@ -68,7 +68,7 @@ export const Graph = ({
             <ZoomPortal
                 width={width}
                 height={height}
-                backgroundColour={styles.backgroundColour}
+                backgroundColour={styles.general.backgroundColour}
                 graphFormatCode={graphFormatCode}
             >
                 {links.map((link, i) => (

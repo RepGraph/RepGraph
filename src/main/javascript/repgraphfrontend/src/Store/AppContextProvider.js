@@ -4,7 +4,9 @@ import {dmrsDebugData} from "../store";
 export const AppContext = React.createContext();
 
 export const defaultGraphStyles = {
-    backgroundColour: "#efefef",
+    general: {
+    backgroundColour: "rgba(239,239,239,239)"
+    },
     nodeStyles: {
         abstractNodeColour: "rgba(0,172,237,1)",
         abstractNodeHoverColour: "rgb(47,145,183)",
