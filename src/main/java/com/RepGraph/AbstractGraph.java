@@ -884,7 +884,9 @@ class AbstractGraph {
                     ArrayList<Anchors> anchs = new ArrayList<>();
                     anchs.add(n.getAnchors().get(i));
                     String uuid = UUID.randomUUID().toString();
-                    ordered.add(new Node(uuid, n.getLabel() +" Dummy Span "+ (i+1), anchs));
+                    Node dum = new Node(uuid, n.getLabel() +" Dummy Span "+ (i+1), anchs);
+                    dum.setSurface(n.isSurface());
+                    ordered.add(dum);
                     dummyNodes.get(n.getId()).add(uuid);
                 }
             }

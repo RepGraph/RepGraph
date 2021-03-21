@@ -172,8 +172,9 @@ export const Node = ({
 
                     const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
                         ...oldNode,
-                        selected: oldNode.type === "node" ? (oldNode.id === node.id ? true : false) : false
+                        selected: oldNode.type === "node" && !oldNode.hasOwnProperty("dummy") ? (oldNode.id === node.id ? true : false) : false
                     }));
+                    console.log("WAH",newNodes)
 
                     dispatch({type: "SET_SENTENCE_VISUALISATION",
                         payload: {
@@ -194,7 +195,7 @@ export const Node = ({
 
                     const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
                         ...oldNode,
-                        selected: oldNode.type === "node" ? oldNode.id === node.id ? !oldNode.selected : oldNode.selected : oldNode.selected
+                        selected: oldNode.type === "node" && !oldNode.hasOwnProperty("dummy") ? oldNode.id === node.id ? !oldNode.selected : oldNode.selected : oldNode.selected
                     }));
 
                     dispatch({type: "SET_SENTENCE_VISUALISATION",
@@ -225,11 +226,12 @@ export const Node = ({
         "nodeLevel",
         "span",
         "surface",
-        "selected"
+        "selected",
+        "dummy"
     ]; //Extra information object keys to be excluded from tooltip
 
     //Remove id property from tree-like token tooltip
-    if (node.type === "token") {
+    if (node.type === "token" || node.dummy===true) {
         notAllowed = notAllowed.concat("id");
     }
 
