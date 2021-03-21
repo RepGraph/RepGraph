@@ -175,7 +175,7 @@ export const Node = ({
                         ...oldNode,
                         selected: oldNode.type === "node" && !oldNode.hasOwnProperty("dummy") ? (oldNode.id === node.id ? true : false) : false
                     }));
-                    console.log("WAH",newNodes)
+
 
                     dispatch({type: "SET_SENTENCE_VISUALISATION",
                         payload: {
