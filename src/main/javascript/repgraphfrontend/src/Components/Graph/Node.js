@@ -88,7 +88,8 @@ export const Node = ({
                 fillColor = styles.nodeStyles.abstractNodeColour;
             }
             if (node.dummy){
-                stroke=styles.nodeStyles.topNodeColour;
+                fillColor = styles.nodeStyles.surfaceNodeColour;
+                stroke=styles.nodeStyles.dummyNodeColour;
                 strokeWidth="6px"
             }
             break;
@@ -131,7 +132,7 @@ export const Node = ({
             fill={fillColor}
             stroke={stroke}
             strokeWidth={strokeWidth}
-        ></rect>
+        />
     );
 
     // const outline = <circle r={25} fill={fillColor} opacity={1} />;

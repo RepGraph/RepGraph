@@ -41,7 +41,7 @@ const GraphLegend = (props) => {
                 ? {timeout: {appear: 500, enter: 500, exit: 500}}
                 : {})}
         >
-            <Paper elevation={0} style={{backgroundColor:"transparent"}}>
+            <Paper elevation={0} style={{backgroundColor: "transparent"}}>
                 <Grid
                     container
                     spacing={1}
@@ -74,6 +74,25 @@ const GraphLegend = (props) => {
                             />
                         </Grid>
                     </>}
+                    <Grid item>
+                        <Chip
+                            size="large"
+                            style={{
+                                backgroundColor:
+                                state.graphStyles.nodeStyles.dummyNodeColour,
+                            }}
+                            label={<Chip
+                                size="small"
+                                label="Dummy Node"
+                                style={{
+                                    color: "white",
+                                    fontWeight: "bold",
+                                    backgroundColor:
+                                    state.graphStyles.nodeStyles.surfaceNodeColour,
+                                }}
+                            />}
+                        />
+                    </Grid>
                     <Grid item>
                         <Chip
                             label="Top Node"
