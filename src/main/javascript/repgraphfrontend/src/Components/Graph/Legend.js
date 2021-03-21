@@ -73,46 +73,26 @@ const GraphLegend = (props) => {
                                 }}
                             />
                         </Grid>
-                        <Grid item>
-                            {/*<svg>*/}
-                            {/*    <g>*/}
-                            {/*        <rect*/}
-                            {/*            x="5"*/}
-                            {/*            y="4"*/}
-                            {/*            rx="15"*/}
-                            {/*            ry="15"*/}
-                            {/*            width="100"*/}
-                            {/*            height="28"*/}
-                            {/*            style={{*/}
-                            {/*                fill: state.graphStyles.nodeStyles.surfaceNodeColour,*/}
-                            {/*                stroke: state.graphStyles.nodeStyles.topNodeColour,*/}
-                            {/*                strokeWidth: "6px"*/}
-                            {/*            }}*/}
-                            {/*        ></rect>*/}
-                            {/*        <text x="11" y="22" fontWeight="bold" fontSize="13px" fill="white">*/}
-                            {/*            Dummy Node*/}
-                            {/*        </text>*/}
-                            {/*    </g>*/}
-                            {/*</svg>*/}
-                            <Chip
-                                size="large"
-                                style={{
-                                    backgroundColor:
-                                    state.graphStyles.nodeStyles.dummyNodeColour,
-                                }}
-                                label={<Chip
-                                    size="small"
-                                    label="Dummy Node"
-                                    style={{
-                                        color: "white",
-                                        fontWeight: "bold",
-                                        backgroundColor:
-                                        state.graphStyles.nodeStyles.surfaceNodeColour,
-                                    }}
-                                />}
-                            />
-                        </Grid>
                     </>}
+                    <Grid item>
+                        <Chip
+                            size="large"
+                            style={{
+                                backgroundColor:
+                                state.graphStyles.nodeStyles.dummyNodeColour,
+                            }}
+                            label={<Chip
+                                size="small"
+                                label="Dummy Node"
+                                style={{
+                                    color: "white",
+                                    fontWeight: "bold",
+                                    backgroundColor:
+                                    state.graphStyles.nodeStyles.surfaceNodeColour,
+                                }}
+                            />}
+                        />
+                    </Grid>
                     <Grid item>
                         <Chip
                             label="Top Node"

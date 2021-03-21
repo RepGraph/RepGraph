@@ -88,6 +88,7 @@ export const Node = ({
                 fillColor = styles.nodeStyles.abstractNodeColour;
             }
             if (node.dummy){
+                fillColor = styles.nodeStyles.surfaceNodeColour;
                 stroke=styles.nodeStyles.dummyNodeColour;
                 strokeWidth="6px"
             }
