@@ -63,6 +63,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
             parents.set(e.target, temp);
         }
         graphClone = createDummyNodes(graphClone, parents, children, false);
+
         let topologicalStacks = new Map(); //Will hold each node's descendent nodes
 
         //Fill the topological stacks map with the number descendants each node has.
@@ -347,15 +348,17 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                 if (node.surface === true) {
                     if (node.anchors[0].from - node.anchors[0].end !== 0) {
                         for (let j = node.anchors[0].from + 1; j < node.anchors[0].end + 1; j++) {
+                            let index = tokens.findIndex( (token) => token.index === j);
                             cp = controlPoints(
                                 node,
-                                tokens[j],
+                                tokens[index],
                                 "",
-                                0, graphLayoutSpacing
+                                0,
+                                graphLayoutSpacing
                             );
                             temp = {
                                 source: node,
-                                target: tokens[j],
+                                target: tokens[index],
                                 type: "tokenLink",
                                 label: "",
                                 x1: cp.x1,
