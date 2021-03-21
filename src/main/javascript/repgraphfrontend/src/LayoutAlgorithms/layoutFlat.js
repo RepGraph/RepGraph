@@ -206,7 +206,7 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
             labelOffsetY: cp.offsetY,
             x1: cp.x1,
             y1: cp.y1,
-            type: "link",
+            type: edge.id === "TOPLINK" ? "topLink" : "link",
             group: "link",
             selected: false
         };

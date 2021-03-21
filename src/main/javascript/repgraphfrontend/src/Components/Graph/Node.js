@@ -111,9 +111,8 @@ export const Node = ({
                 fillColor = styles.tokenStyles.tokenColour;
                 let anchs = tooltipData.extraInformation.anchors;
                 if (anchs.includes(",")) {
-
                     while (anchs.includes(",")) {
-                        console.log("anchs",anchs);
+
                         let commaIndex = anchs.indexOf(",");
                         let index = anchs.indexOf("-");
                         let lower = parseInt(anchs.slice(0, index));
@@ -125,7 +124,6 @@ export const Node = ({
                         anchs = anchs.slice(commaIndex + 2);
                     }
                 }
-                console.log("anchs",anchs);
                 let index = anchs.indexOf("-");
                 let lower = parseInt(anchs.slice(0, index));
                 let upper = parseInt(anchs.slice(index + 1));
