@@ -213,6 +213,8 @@ function EdgeLayout(link, strokeColor, onMouseDown, onMouseDownLabel) {
                 stroke={strokeColor}
                 strokeWidth="2"
                 fill="none"
+                onMouseDown={onMouseDown}
+                cursor="move"
             />
         );
     }else {
@@ -231,6 +233,8 @@ function EdgeLayout(link, strokeColor, onMouseDown, onMouseDownLabel) {
                     stroke="rgba(0, 0, 0, 0)"
                     strokeWidth="20"
                     fill="none"
+                    onMouseDown={onMouseDown}
+                    cursor="move"
                 />
                 <text textAnchor="middle" dy="-1.5px">
                     <textPath
