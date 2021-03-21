@@ -266,7 +266,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
         //Add top node and corresponding link to graphData
         if (addTopNode) {
             //Get top node's associated node
-            const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
+            const associatedNode = finalGraphNodes.find(node => node.id === graphClone.tops);
             //console.log("associatedNode", associatedNode);
 
             if (associatedNode) {
@@ -295,8 +295,6 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
 
             }
         }
-
-        console.log("edges", graphClone.edges);
 
         const finalGraphEdges = graphClone.edges.map((edge, index) => {
 
