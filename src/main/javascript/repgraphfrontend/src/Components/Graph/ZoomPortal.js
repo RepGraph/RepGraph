@@ -165,7 +165,7 @@ const ZoomPortal = (props) => {
                                 <Button size="small" startIcon={<RemoveIcon />} onClick={() => handleChangeGraphSpacing("decrease")} disableElevation>Spacing</Button>
                                 </Tooltip>
                                 <Tooltip title="Bring the Graph Into View" placement="left" arrow>
-                                <Button size="small" startIcon={<CenterFocusStrongIcon />} onClick={() => zoom.reset()} disableElevation>Center</Button>
+                                <Button size="small" startIcon={<CenterFocusStrongIcon />} onClick={() => zoom.center()} disableElevation>Center</Button>
                                 </Tooltip>
                             </ButtonGroup>
                         </Box>
