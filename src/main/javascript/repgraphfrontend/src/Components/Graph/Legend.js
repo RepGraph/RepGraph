@@ -76,7 +76,7 @@ const GraphLegend = (props) => {
                     </>}
                     <Grid item>
                         <Chip
-                            size="large"
+                            size="medium"
                             style={{
                                 backgroundColor:
                                 state.graphStyles.nodeStyles.dummyNodeColour,
