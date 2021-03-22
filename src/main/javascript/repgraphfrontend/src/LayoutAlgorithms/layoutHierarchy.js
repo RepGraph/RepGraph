@@ -11,7 +11,7 @@ import uuid from "react-uuid";
 
 export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
 
-        console.log("graphData", graphData);
+
 
         const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
@@ -152,19 +152,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             let newLevel = [];
             for (const uniqueSpanArr of level) {
                 const newUniqueSpanArr = uniqueSpanArr.map((node, i) => {
-                    // console.log(
-                    //     "slice",
-                    //     "from",
-                    //     node.anchors[0].from - minTokenIndex,
-                    //     "to",
-                    //     node.anchors[0].end - minTokenIndex + 1,
-                    //     "...",
-                    //     ...levelTopology.slice(
-                    //         node.anchors[0].from - minTokenIndex,
-                    //         node.anchors[0].end - minTokenIndex + 1
-                    //     )
-                    // );
-
+                    
                     return {
                         ...node,
                         x: node.anchors[0].from - minTokenIndex,
@@ -203,7 +191,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
         const nodeSectionHeight =
             levelTopologyMax * nodeHeight + (levelTopologyMax - 1) * interLevelSpacing;
 
-        console.log("GRAPPPPPP", graphData)
+
 
         const nodes = newNodesInLevels.flat(2).map((node) => ({
             ...node,
@@ -236,7 +224,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
         if (addTopNode) {
             //Get top node's associated node
             const associatedNode = finalGraphNodes.find(node => node.id === graphClone.tops);
-            //console.log("associatedNode", associatedNode);
+            //
 
             if (associatedNode) {
                 //Add the top node to the array of nodes
@@ -325,7 +313,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
 
         const gheight = (graphLayoutSpacing.nodeHeight + graphLayoutSpacing.interLevelSpacing) * (levelTopologyMax + 1)
         const gwidth = (graphLayoutSpacing.nodeWidth + graphLayoutSpacing.intraLevelSpacing) * tokens.length;
-        console.log("layoutHierarchy", {nodes: finalGraphNodes, links: finalGraphEdges});
+
         return {nodes: finalGraphNodes, links: finalGraphEdges, graphHeight: gheight, graphWidth: gwidth};
     }
 ;

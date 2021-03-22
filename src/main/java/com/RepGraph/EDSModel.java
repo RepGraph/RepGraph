@@ -3,7 +3,7 @@ package com.RepGraph;
 import java.util.*;
 
 /**
- * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
+ * Model class for EDS graphs - contains EDS specific functions
  */
 public class EDSModel extends AbstractModel {
 

@@ -268,7 +268,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
         if (addTopNode) {
             //Get top node's associated node
             const associatedNode = finalGraphNodes.find(node => node.id === graphClone.tops);
-            //console.log("associatedNode", associatedNode);
+            //
 
             if (associatedNode) {
                 //Add the top node to the array of nodes

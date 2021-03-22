@@ -299,7 +299,7 @@ export const Node = ({
                     cursor: "pointer",
                 }}
                 onMouseEnter={(event) => {
-                    //console.log(node.label);
+                    //
                     setHighlighted(true);
                     setTooltipData({
                         label: node.label,
@@ -309,7 +309,7 @@ export const Node = ({
                     });
                 }}
                 onMouseLeave={(event) => {
-                    //console.log(node.label);
+                    //
                     setHighlighted(false);
                 }}
                 onMouseOver={handleMouseOver}

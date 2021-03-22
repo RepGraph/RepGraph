@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
+ * The EDS Graph class represents a graph following the EDS Framework
  */
 public class EDSGraph extends AbstractGraph {
 
 
     /**
-     * Default constructor for the Graph class.
+     * Default constructor for the EDS Graph class.
      */
     public EDSGraph() {
         super();
@@ -28,6 +28,10 @@ public class EDSGraph extends AbstractGraph {
 
     }
 
+    /**
+     * Set the hashmap of nodes from an array of nodes - uses EDS specific rules
+     * @param nodelist Array of Node objects
+     */
     @JsonSetter("nodes")
     public void setNodes(ArrayList<Node> nodelist) {
 

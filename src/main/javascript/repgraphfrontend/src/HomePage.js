@@ -82,10 +82,9 @@ export default function HomePage(props) {
         let userID = uuid();
         dispatch({type: "SET_USER_ID", payload: {userID: userID}}); //Show loading animation while awaiting response
 
-        console.log(userID); //Debugging
         if (fileObjects.length > 0) {
             let formData = new FormData();
-            console.log("fileObjects", fileObjects);
+
             formData.append("data", fileObjects[0]);
 
             let myHeaders = new Headers();
@@ -242,7 +241,7 @@ export default function HomePage(props) {
             .then((result) => {
                     const jsonResult = JSON.parse(result);
                     console.log(jsonResult); //Debugging
-                    console.log(jsonResult.response); //Debugging
+
 
                     dispatch({type: "SET_DATASET", payload: {dataSet: jsonResult.data}}); //Store the data-set (ids and inputs stored in backend)
                     dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: dataSetFileName}}); //store name of data-set uploaded
@@ -350,7 +349,7 @@ export default function HomePage(props) {
                                 icon={<CloudUploadIcon/>}
                                 filesLimit={1}
                                 onChange={(files) => {
-                                    console.log("Files:", files);
+
                                     handleChange(files);
                                 }}
 

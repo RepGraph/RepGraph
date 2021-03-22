@@ -154,7 +154,7 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
     if (addTopNode) {
         //Get top node's associated node
         const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
-        //console.log("associatedNode", associatedNode);
+        //
 
         if (associatedNode) {
             //Add the top node to the array of nodes
