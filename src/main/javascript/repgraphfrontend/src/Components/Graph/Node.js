@@ -8,6 +8,8 @@ export const Node = ({
                          handleMouseOver,
                          hideTooltip,
                          setTooltipData,
+                         tooltipOpen,
+                         tooltipData,
                          graphFormatCode,
                          events
                      }) => {
@@ -46,7 +48,6 @@ export const Node = ({
     let fillColor = null;
     let stroke = null;
     let strokeWidth = null;
-    //
 
     switch (node.type) {
         case "node":
@@ -87,10 +88,10 @@ export const Node = ({
             } else {
                 fillColor = styles.nodeStyles.abstractNodeColour;
             }
-            if (node.dummy){
+            if (node.dummy) {
                 fillColor = styles.nodeStyles.surfaceNodeColour;
-                stroke=styles.nodeStyles.dummyNodeColour;
-                strokeWidth="6px"
+                stroke = styles.nodeStyles.dummyNodeColour;
+                strokeWidth = "6px"
             }
             break;
         case "token":
@@ -105,6 +106,30 @@ export const Node = ({
                 node.group === "longestPath"
             ) {
                 fillColor = styles.longestPathStyles.tokenColour;
+            } else if (tooltipOpen && tooltipData.extraInformation.hasOwnProperty("anchors")) {
+                fillColor = styles.tokenStyles.tokenColour;
+                let anchs = tooltipData.extraInformation.anchors;
+                if (anchs.includes(",")) {
+                    while (anchs.includes(",")) {
+                        let commaIndex = anchs.indexOf(",");
+                        let index = anchs.indexOf("-");
+                        let lower = parseInt(anchs.slice(0, index));
+                        let upper = parseInt(anchs.slice(index + 1, commaIndex));
+                        if (node.index >= lower && node.index <= upper) {
+                            stroke = "black"
+                            strokeWidth="4"
+                            break;
+                        }
+                        anchs = anchs.slice(commaIndex + 2);
+                    }
+                }
+                let index = anchs.indexOf("-");
+                let lower = parseInt(anchs.slice(0, index));
+                let upper = parseInt(anchs.slice(index + 1));
+                if (node.index >= lower && node.index <= upper) {
+                    stroke = "black"
+                    strokeWidth="4"
+                }
             } else {
                 fillColor = styles.tokenStyles.tokenColour;
             }
@@ -177,7 +202,8 @@ export const Node = ({
                     }));
 
 
-                    dispatch({type: "SET_SENTENCE_VISUALISATION",
+                    dispatch({
+                        type: "SET_SENTENCE_VISUALISATION",
                         payload: {
                             selectedSentenceVisualisation: {
                                 ...state.selectedSentenceVisualisation,
@@ -199,7 +225,8 @@ export const Node = ({
                         selected: oldNode.type === "node" && !oldNode.hasOwnProperty("dummy") ? oldNode.id === node.id ? !oldNode.selected : oldNode.selected : oldNode.selected
                     }));
 
-                    dispatch({type: "SET_SENTENCE_VISUALISATION",
+                    dispatch({
+                        type: "SET_SENTENCE_VISUALISATION",
                         payload: {
                             selectedSentenceVisualisation: {
                                 ...state.selectedSentenceVisualisation,
@@ -232,7 +259,7 @@ export const Node = ({
     ]; //Extra information object keys to be excluded from tooltip
 
     //Remove id property from tree-like token tooltip
-    if (node.type === "token" || node.dummy===true) {
+    if (node.type === "token" || node.dummy === true) {
         notAllowed = notAllowed.concat("id");
     }
 

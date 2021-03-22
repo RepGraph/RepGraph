@@ -57,7 +57,7 @@ export const defaultGraphLayoutSpacing = {
     nodeWidth: 80,
     interLevelSpacing: 80,
     intraLevelSpacing: 50,
-    tokenLevelSpacing: 140
+    tokenLevelSpacing: 200
 };
 
 const initialState = {

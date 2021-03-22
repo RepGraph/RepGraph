@@ -9,6 +9,7 @@ import {AppContext} from "../../src/Store/AppContextProvider";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import {Typography} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     backdrop: {
@@ -172,7 +173,10 @@ export default function App() {
     return (
         <MuiThemeProvider theme={theme}>
             <Backdrop className={classes.backdrop} open={state.isLoading}>
-                <CircularProgress color="inherit"/>
+                <div style={{display:"flex", flexDirection: "column"}}>
+                    <CircularProgress style={{position: "absolute", top: "50%", left: "50%"}} color="inherit"/>
+                    <Typography style={{position: "relative", top: "80px", fontSize: "14", fontWeight: "bold", textAlign: "center"}}>Loading times might be slow due to the free demo server being used.</Typography>
+                </div>
             </Backdrop>
             <Router>
                 <Routes/>

@@ -91,6 +91,8 @@ export const Graph = ({
                         handleMouseOver={handleMouseOver}
                         hideTooltip={hideTooltip}
                         setTooltipData={setTooltipData}
+                        tooltipOpen={tooltipOpen}
+                        tooltipData={tooltipData}
                         graphFormatCode={graphFormatCode}
                         events={events}
                     />
