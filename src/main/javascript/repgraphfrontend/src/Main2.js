@@ -697,10 +697,10 @@ export default function MiniDrawer() {
                     </IconButton>
                 </div>
                 <List>
-                    <Tooltip title="Subset Tool" placement="right" arrow>
+                    <Tooltip title="Subgraph Tool" placement="right" arrow>
                         <ListItem button onClick={handleSubsetToolClick}>
                             <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
-                            <ListItemText primary={"Subset Tool"}/>
+                            <ListItemText primary={"Subgraph Tool"}/>
                         </ListItem>
                     </Tooltip>
                     <Tooltip title="Subgraph Pattern Search" placement="right" arrow>
@@ -764,7 +764,7 @@ export default function MiniDrawer() {
                 onClose={handleSubsetDialogClose}
             >
                 <DialogTitle>
-                    Subset Tool
+                    Subgraph Tool
                 </DialogTitle>
                 <DialogContent>
                     <Grid

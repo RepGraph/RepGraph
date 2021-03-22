@@ -197,7 +197,7 @@ function DisplaySubsetTool(props) {
 
     return (
         <CardContent>
-            <FormLabel><Typography color={"textPrimary"}>Select Type of Subset</Typography></FormLabel>
+            <FormLabel><Typography color={"textPrimary"}>Select Type of Subgraph</Typography></FormLabel>
             <RadioGroup aria-label="subset-type" name="subset" value={subsetType} onChange={handleChange}>
                 <FormControlLabel value="adjacent" control={<Radio/>}
                                   label={<Typography color={"textPrimary"}> Display Adjacent Nodes</Typography>}/>
@@ -256,7 +256,7 @@ function DisplaySubsetTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Subset result"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Subgraph Result"}</DialogTitle>
                 <DialogContent style={{height: "80vh"}}>
                     {subsetResponse === null ? (
                         <div>No result to display</div>
