@@ -6,6 +6,7 @@ import {Link} from "./Link";
 
 import {useTooltip, useTooltipInPortal, defaultStyles} from "@visx/tooltip";
 import {AppContext} from "../../Store/AppContextProvider";
+import {cloneDeep} from "lodash";
 
 export const Graph = ({
                           graph,
@@ -53,6 +54,11 @@ export const Graph = ({
         },
         [showTooltip, containerBounds, tooltipData]
     );
+
+    //Only show original, unprocessed anchors information from the data-set
+    const tooltipDisplayData = cloneDeep(tooltipData);
+    tooltipDisplayData.extraInformation.anchors = tooltipDisplayData.extraInformation.anchorsCopy;
+    delete tooltipDisplayData.extraInformation.anchorsCopy;
 
     return (
         <div
@@ -120,16 +126,16 @@ export const Graph = ({
                                 <div
                                     style={{
                                         color:
-                                            tooltipData.type === "node"
-                                                ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
-                                                : tooltipData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour
+                                            tooltipDisplayData.type === "node"
+                                                ? (tooltipDisplayData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
+                                                : tooltipDisplayData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour
                                     }}
                                 >
-                                    {tooltipData.label}
+                                    {tooltipDisplayData.label}
                                 </div>
                             </div>
                             <div className="tooltipSection">
-                                {Object.entries(tooltipData.extraInformation).map(
+                                {Object.entries(tooltipDisplayData.extraInformation).map(
                                     (entry, i) => {
                                         return (
                                             entry[0] !== "extraInformation" ?
@@ -139,9 +145,9 @@ export const Graph = ({
                                                         className="extraInfo"
                                                         style={{
                                                             color:
-                                                                tooltipData.type === "node"
-                                                                    ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
-                                                                    : tooltipData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour,
+                                                                tooltipDisplayData.type === "node"
+                                                                    ? (tooltipDisplayData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
+                                                                    : tooltipDisplayData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour,
                                                             marginTop: "0.4rem",
                                                             width: "100%"
                                                         }}
@@ -168,9 +174,9 @@ export const Graph = ({
                                                             className="extraInfo"
                                                             style={{
                                                                 color:
-                                                                    tooltipData.type === "node"
-                                                                        ? (tooltipData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
-                                                                        : tooltipData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour,
+                                                                    tooltipDisplayData.type === "node"
+                                                                        ? (tooltipDisplayData.surface ? styles.nodeStyles.surfaceNodeColour : styles.nodeStyles.abstractNodeColour)
+                                                                        : tooltipDisplayData.type === "token" ? styles.tokenStyles.tokenColour : styles.nodeStyles.topNodeColour,
                                                                 marginTop: "0.4rem",
                                                                 width: "100%"
                                                             }}
