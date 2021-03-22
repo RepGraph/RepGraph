@@ -90,8 +90,14 @@ export const Node = ({
             }
             if (node.dummy) {
                 fillColor = styles.nodeStyles.surfaceNodeColour;
-                stroke = styles.nodeStyles.dummyNodeColour;
-                strokeWidth = "6px"
+                if (tooltipOpen && node.label.includes(`ID:${tooltipData.extraInformation.id}`)){
+                    stroke = "black"
+                    strokeWidth="4"
+                }
+                else{
+                    stroke = styles.nodeStyles.dummyNodeColour;
+                    strokeWidth = "6"
+                }
             }
             break;
         case "token":
