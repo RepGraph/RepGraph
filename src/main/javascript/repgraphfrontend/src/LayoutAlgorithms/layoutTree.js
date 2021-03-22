@@ -263,6 +263,39 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
 
         const finalGraphNodes = nodesInFinalLevelsArray.flat().concat(tokens);
 
+        //Add top node and corresponding link to graphData
+        if (addTopNode) {
+            //Get top node's associated node
+            const associatedNode = finalGraphNodes.find(node => node.id === graphClone.tops);
+            //console.log("associatedNode", associatedNode);
+
+            if (associatedNode) {
+                //Add the top node to the array of nodes
+                finalGraphNodes.push({
+                    id: "TOP",
+                    x: associatedNode.x,
+                    y: 0 - (nodeHeight + interLevelSpacing),
+                    type: "topNode",
+                    group: "top",
+                    label: "TOP",
+                    anchors: associatedNode.anchors,
+                    span: false
+                });
+
+                const addedTopNode = finalGraphNodes.find(node => node.id === "TOP")
+
+                //Add the top node link
+                graphClone.edges.push({
+                    id: "TOPLINK",
+                    source: addedTopNode.id,
+                    target: associatedNode.id,
+                    label: "",
+                    type: "topLink",
+                });
+
+            }
+        }
+
         const finalGraphEdges = graphClone.edges.map((edge, index) => {
 
             const sourceNodeIndex = finalGraphNodes.findIndex(
@@ -316,7 +349,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                 labelOffsetY: cp.offsetY,
                 x1: cp.x1,
                 y1: cp.y1,
-                type: "link",
+                type: edge.id === "TOPLINK" ? "topLink" : "link",
                 group: "link",
                 selected: false
             };
@@ -348,7 +381,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
                 if (node.surface === true) {
                     if (node.anchors[0].from - node.anchors[0].end !== 0) {
                         for (let j = node.anchors[0].from + 1; j < node.anchors[0].end + 1; j++) {
-                            let index = tokens.findIndex( (token) => token.index === j);
+                            let index = tokens.findIndex((token) => token.index === j);
                             cp = controlPoints(
                                 node,
                                 tokens[index],
@@ -374,48 +407,6 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
 
         const allEdges = finalGraphEdges.concat(tokenEdges);
 
-        //Add top node and corresponding link to graphData
-        if (addTopNode) {
-            //Get top node's associated node
-            const associatedNode = finalGraphNodes.find(node => node.id === graphData.tops);
-            //console.log("associatedNode", associatedNode);
-
-            if (associatedNode) {
-                //Add the top node to the array of nodes
-                finalGraphNodes.push({
-                    id: "TOP",
-                    x: associatedNode.x,
-                    y: 0 - (nodeHeight + interLevelSpacing),
-                    type: "topNode",
-                    group: "top",
-                    label: "TOP",
-                    anchors: associatedNode.anchors,
-                    span: false
-                });
-
-                const addedTopNode = finalGraphNodes.find(node => node.id === "TOP")
-
-                let topCP = controlPoints(
-                    addedTopNode,
-                    associatedNode,
-                    "",
-                    0,
-                    graphLayoutSpacing
-                );
-
-                //Add the top node link
-                allEdges.push({
-                    id: "TOPLINK",
-                    source: addedTopNode,
-                    target: associatedNode,
-                    label: "",
-                    x1: topCP.x1,
-                    y1: topCP.y1,
-                    type: "topLink",
-                });
-
-            }
-        }
 
         return {nodes: finalGraphNodes, links: allEdges};
     }
