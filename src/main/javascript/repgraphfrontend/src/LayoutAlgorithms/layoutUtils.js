@@ -72,16 +72,16 @@ export function addTokenSpanText(graphData) {
     for (let j = 0; j < graphData.nodes.length; j++) {
         let node = graphData.nodes[j];
         let output = ""
-        if (node.anchors !== null) {
-            for (let i = 0; i < node.anchors.length; i++) {
-                let anch = node.anchors[i];
+        if (node.anchorsCopy !== null) {
+            for (let i = 0; i < node.anchorsCopy.length; i++) {
+                let anch = node.anchorsCopy[i];
                 for (let i = anch.from; i < anch.end + 1; i++) {
                     output += graphData.tokens.find((token)=>(token.index === i)).form + " "
                 }
                 output = output.trim();
                 anch = {...anch, text: output}
                 output = "";
-                graphData.nodes[j].anchors[i] = anch;
+                graphData.nodes[j].anchorsCopy[i] = anch;
             }
         }
     }
