@@ -241,8 +241,9 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
         }
 
     }
-
-    return {nodes: finalGraphNodes, links: finalGraphEdges};
+    const gwidth = (graphLayoutSpacing.nodeWidth+graphLayoutSpacing.intraLevelSpacing)*nodes.length;
+    const gheight = graphLayoutSpacing.nodeHeight*4;
+    return {nodes: finalGraphNodes, links: finalGraphEdges,graphHeight :gheight,graphWidth : gwidth };
 };
 
 function controlPoints(source, target, direction, degree, graphLayoutSpacing) {

@@ -15,7 +15,7 @@ export const Graph = ({
                           adjacentLinks,
                           events
                       }) => {
-    const {nodes, links} = graph;
+    const {nodes, links,graphHeight,graphWidth} = graph;
     const [tooltipData, setTooltipData] = useState({extraInformation: {}});
     const {state, dispatch} = useContext(AppContext); //Provide access to global state
 
@@ -70,6 +70,8 @@ export const Graph = ({
                 height={height}
                 backgroundColour={styles.general.backgroundColour}
                 graphFormatCode={graphFormatCode}
+                graphHeight = {graphHeight}
+                graphWidth = {graphWidth}
             >
                 {links.map((link, i) => (
                     <Link

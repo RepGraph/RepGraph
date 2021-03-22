@@ -8,7 +8,7 @@ import {layoutFlat} from "../../LayoutAlgorithms/layoutFlat";
 import {AppContext, defaultGraphLayoutSpacing} from "../../Store/AppContextProvider";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Button from "@material-ui/core/Button";
-import { positions } from '@material-ui/system';
+import {positions} from '@material-ui/system';
 import Box from "@material-ui/core/Box";
 
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
@@ -22,8 +22,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 
 
 const initialTransform = {
-    scaleX: 1/4,
-    scaleY: 1/4,
+    scaleX: 1 / 4,
+    scaleY: 1 / 4,
     translateX: 200,
     translateY: 200,
     skewX: 0,
@@ -31,7 +31,7 @@ const initialTransform = {
 };
 
 const ZoomPortal = (props) => {
-    const {width, height, backgroundColour, graphFormatCode} = props;
+    const {width, height, backgroundColour, graphFormatCode, graphHeight, graphWidth} = props;
     const {state, dispatch} = useContext(AppContext);
     const zoomRef = useRef(null);
 
@@ -46,17 +46,16 @@ const ZoomPortal = (props) => {
 
     const handleChangeGraphSpacing = (name) => {
 
-        let intraValue,interValue;
+        let intraValue, interValue;
         if (name === "decrease") {
             intraValue = state.graphLayoutSpacing.intraLevelSpacing - 20;
             interValue = state.graphLayoutSpacing.interLevelSpacing - 10;
-        }
-        else{
+        } else {
             intraValue = state.graphLayoutSpacing.intraLevelSpacing + 20;
             interValue = state.graphLayoutSpacing.interLevelSpacing + 10;
         }
 
-        if (intraValue >= 0 && interValue >= 0){
+        if (intraValue >= 0 && interValue >= 0) {
 
 
             dispatch({
@@ -104,19 +103,19 @@ const ZoomPortal = (props) => {
     }
 
     return (
-            <Zoom
-                width={width}
-                height={height}
-                scaleXMin={1 / 8}
-                scaleXMax={4}
-                scaleYMin={1 / 8}
-                scaleYMax={4}
-                transformMatrix={initialTransform}
-            >
-                {(zoom) => {
-                    zoomRef.current = zoom;
-                    return (
-                    <div style={{position: 'relative' }}>
+        <Zoom
+            width={width}
+            height={height}
+            scaleXMin={0.0001}
+            scaleXMax={50}
+            scaleYMin={0.0001}
+            scaleYMax={50}
+            transformMatrix={initialTransform}
+        >
+            {(zoom) => {
+                zoomRef.current = zoom;
+                return (
+                    <div style={{position: 'relative'}}>
                         <svg
                             width={width}
                             height={height}
@@ -159,20 +158,61 @@ const ZoomPortal = (props) => {
                                 variant="contained"
                             >
                                 <Tooltip title="Increase Spacing Between Elements of the Graph" placement="left" arrow>
-                                <Button size="small" startIcon={<AddIcon />} onClick={ () => handleChangeGraphSpacing("increase")} disableElevation>Spacing</Button>
+                                    <Button size="small" startIcon={<AddIcon/>}
+                                            onClick={() => handleChangeGraphSpacing("increase")}
+                                            disableElevation>Spacing</Button>
                                 </Tooltip>
                                 <Tooltip title="Decrease Spacing Between Elements of the Graph" placement="left" arrow>
-                                <Button size="small" startIcon={<RemoveIcon />} onClick={() => handleChangeGraphSpacing("decrease")} disableElevation>Spacing</Button>
+                                    <Button size="small" startIcon={<RemoveIcon/>}
+                                            onClick={() => handleChangeGraphSpacing("decrease")}
+                                            disableElevation>Spacing</Button>
                                 </Tooltip>
                                 <Tooltip title="Bring the Graph Into View" placement="left" arrow>
-                                <Button size="small" startIcon={<CenterFocusStrongIcon />} onClick={() => zoom.center()} disableElevation>Center</Button>
+                                    <Button size="small" startIcon={<CenterFocusStrongIcon/>} onClick={function () {
+
+                                        console.log("HEIGHT", graphHeight);
+                                        console.log("WIDTH", graphWidth);
+                                        console.log("Graph Center", {x: graphWidth / 2, y: graphHeight / 2})
+                                        console.log("Canvas", {x: width, y: height})
+                                        let scalingFactor = 0;
+
+                                        if (width > graphWidth && height > graphHeight) {
+                                            scalingFactor = 1;
+                                        } else {
+                                            if (width > graphWidth && graphHeight > height) {
+                                                scalingFactor = height / graphHeight;
+                                            } else if (height > graphHeight && graphWidth > width) {
+                                                scalingFactor = width / graphWidth;
+                                            } else {
+                                                if (width / graphWidth > height / graphHeight) {
+                                                    scalingFactor = height / graphHeight;
+                                                } else {
+                                                    scalingFactor = width / graphWidth;
+                                                }
+                                            }
+
+                                        }
+                                        scalingFactor = scalingFactor - 0.02;
+
+                                        let newCenter = {x:graphWidth*scalingFactor/2,y:graphHeight*scalingFactor/2}
+
+                                        zoom.setTransformMatrix({
+                                            scaleX: scalingFactor,
+                                            scaleY: scalingFactor,
+                                            translateX: (Math.abs(newCenter.x-(width/2)))+40,
+                                            translateY: (Math.abs(newCenter.y-(height/2))) + (state.graphLayoutSpacing.nodeHeight+state.graphLayoutSpacing.interLevelSpacing)*scalingFactor,
+                                            skewX: 0,
+                                            skewY: 0
+                                        });
+                                    }}
+                                            disableElevation>Center</Button>
                                 </Tooltip>
                             </ButtonGroup>
                         </Box>
                         <GraphLegend graphFormatCode={graphFormatCode}/>
                     </div>)
-                }}
-            </Zoom>
+            }}
+        </Zoom>
     );
 };
 

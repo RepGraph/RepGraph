@@ -416,8 +416,9 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
 
             }
         }
-
-        return {nodes: finalGraphNodes, links: allEdges};
+        const gheight = (height+1) * (graphLayoutSpacing.nodeHeight +interLevelSpacing);
+        const gwidth =  (graphLayoutSpacing.nodeWidth+graphLayoutSpacing.intraLevelSpacing)*tokens.length;
+        return {nodes: finalGraphNodes, links: allEdges,graphHeight :gheight,graphWidth : gwidth };
     }
 ;
 

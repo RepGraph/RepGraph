@@ -215,6 +215,8 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             span: nodesWithoutAnchors.includes(node.id) ? false : true
         }));
 
+
+
         const tokens = graphClone.tokens.map((token) => ({
             ...token,
             x: (token.index - minTokenIndex) * (nodeWidth + intraLevelSpacing),
@@ -328,8 +330,10 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             }
         }
 
+    const gheight = (graphLayoutSpacing.nodeHeight+graphLayoutSpacing.interLevelSpacing)*(levelTopologyMax+1)
+    const gwidth = (graphLayoutSpacing.nodeWidth+graphLayoutSpacing.intraLevelSpacing)*tokens.length;
     console.log("layoutHierarchy", {nodes: finalGraphNodes, links: finalGraphEdges});
-        return {nodes: finalGraphNodes, links: finalGraphEdges};
+        return {nodes: finalGraphNodes, links: finalGraphEdges,graphHeight :gheight,graphWidth : gwidth };
     }
 ;
 
