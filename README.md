@@ -1,4 +1,7 @@
-![alt text](/RGLogo.png)
+<p align="center">
+    <img src="https://github.com/RepGraph/RepGraph/blob/main/RGLogo.png"> 
+</p>
+
 # RepGraph
 
 RepGraph is an application tool to equip Natural Language Processing (NLP) Researchers and Engineers with the ability to visualise and analyse graph data that has been processed by one of the MRP frameworks.
