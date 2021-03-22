@@ -262,7 +262,6 @@ export const Node = ({
         "surface",
         "selected",
         "dummy",
-        "anchors"
     ]; //Extra information object keys to be excluded from tooltip
 
     //Remove id property from tree-like token tooltip
@@ -281,7 +280,7 @@ export const Node = ({
         filteredExtraInformation.anchorsCopy = filteredExtraInformation.anchorsCopy.map(anchor => {
 
             let anchorString = anchor.from + "-" + anchor.end;
-            if (anchor.hasOwnProperty("text")) {
+            if (anchor.hasOwnProperty("text") && graphFormatCode === "flat") {
                 anchorString += " : " + anchor.text;
             }
             return anchorString;
@@ -289,7 +288,17 @@ export const Node = ({
         }).join(", ");
     }
 
-     //filteredExtraInformation = {...filteredExtraInformation,anchors:filteredExtraInformation.anchorsCopy};
+    if (filteredExtraInformation.hasOwnProperty("anchors")) {
+        filteredExtraInformation.anchors = filteredExtraInformation.anchors.map(anchor => {
+
+            let anchorString = anchor.from + "-" + anchor.end;
+            if (anchor.hasOwnProperty("text") && graphFormatCode === "flat") {
+                anchorString += " : " + anchor.text;
+            }
+            return anchorString;
+
+        }).join(", ");
+    }
 
 
     return (
