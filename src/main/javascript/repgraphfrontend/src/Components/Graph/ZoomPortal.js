@@ -110,8 +110,7 @@ const ZoomPortal = (props) => {
             scaleXMax={50}
             scaleYMin={0.0001}
             scaleYMax={50}
-            transformMatrix={initialTransform}
-        >
+            transformMatrix={initialTransform}>
             {(zoom) => {
                 zoomRef.current = zoom;
                 return (
@@ -170,22 +169,20 @@ const ZoomPortal = (props) => {
                                 <Tooltip title="Bring the Graph Into View" placement="left" arrow>
                                     <Button size="small" startIcon={<CenterFocusStrongIcon/>} onClick={function () {
 
-                                        console.log("HEIGHT", graphHeight);
-                                        console.log("WIDTH", graphWidth);
-                                        console.log("Graph Center", {x: graphWidth / 2, y: graphHeight / 2})
-                                        console.log("Canvas", {x: width, y: height})
+                                        let newgraphHeight = graphHeight + state.graphLayoutSpacing.nodeHeight + state.graphLayoutSpacing.tokenLevelSpacing;
+
                                         let scalingFactor = 0;
 
-                                        if (width > graphWidth && height > graphHeight) {
+                                        if (width > graphWidth && height > newgraphHeight) {
                                             scalingFactor = 1;
                                         } else {
-                                            if (width > graphWidth && graphHeight > height) {
-                                                scalingFactor = height / graphHeight;
-                                            } else if (height > graphHeight && graphWidth > width) {
+                                            if (width > graphWidth && newgraphHeight > height) {
+                                                scalingFactor = height / newgraphHeight;
+                                            } else if (height > newgraphHeight && graphWidth > width) {
                                                 scalingFactor = width / graphWidth;
                                             } else {
-                                                if (width / graphWidth > height / graphHeight) {
-                                                    scalingFactor = height / graphHeight;
+                                                if (width / graphWidth > height / newgraphHeight) {
+                                                    scalingFactor = height / newgraphHeight;
                                                 } else {
                                                     scalingFactor = width / graphWidth;
                                                 }
@@ -194,13 +191,16 @@ const ZoomPortal = (props) => {
                                         }
                                         scalingFactor = scalingFactor - 0.02;
 
-                                        let newCenter = {x:graphWidth*scalingFactor/2,y:graphHeight*scalingFactor/2}
+                                        let newCenter = {
+                                            x: graphWidth * scalingFactor / 2,
+                                            y: newgraphHeight * scalingFactor / 2
+                                        }
 
                                         zoom.setTransformMatrix({
                                             scaleX: scalingFactor,
                                             scaleY: scalingFactor,
-                                            translateX: (Math.abs(newCenter.x-(width/2)))+40,
-                                            translateY: (Math.abs(newCenter.y-(height/2))) + (state.graphLayoutSpacing.nodeHeight+state.graphLayoutSpacing.interLevelSpacing)*scalingFactor,
+                                            translateX: (Math.abs(newCenter.x - (width / 2))) + 40,
+                                            translateY: (Math.abs(newCenter.y - (height / 2))) + (state.graphLayoutSpacing.nodeHeight + state.graphLayoutSpacing.interLevelSpacing) * scalingFactor+40,
                                             skewX: 0,
                                             skewY: 0
                                         });
