@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Node object - contains node information
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Node {
 

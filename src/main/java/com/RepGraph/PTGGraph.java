@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
+ * The PTG Graph class represents a graph following the PTG Framework
  */
 public class PTGGraph extends AbstractGraph {
 
 
-    /**
-     * Default constructor for the Graph class.
-     */
+
     public PTGGraph() {
         super();
     }
@@ -23,6 +21,10 @@ public class PTGGraph extends AbstractGraph {
 
     }
 
+    /**
+     * Sets the nodes hashmap from an array of node objects - uses PTG specific rules
+     * @param nodelist Array of Node objects
+     */
     @JsonSetter("nodes")
     public void setNodes(ArrayList<Node> nodelist) {
 

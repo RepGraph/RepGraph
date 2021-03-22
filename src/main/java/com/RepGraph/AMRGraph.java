@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 /**
- * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
+ * The AMR Graph class represents a graph following the AMR Framework
  */
 public class AMRGraph extends AbstractGraph {
 
@@ -47,6 +47,9 @@ public class AMRGraph extends AbstractGraph {
     }
 
 
+    /**
+     * Utility function used in the process of aligning nodes to tokens using the JAMR aligner
+     */
     public void alignUtil(String NodeID, HashMap<String, Node> nodes, HashMap<String, Boolean> visited, int layer, StringWriter writer) throws IOException {
         // Mark the current node as visited and print it
         visited.put(NodeID, true);
@@ -71,6 +74,11 @@ public class AMRGraph extends AbstractGraph {
 
     }
 
+    /**
+     * Aligns nodes to tokens
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void alignNodes() throws IOException, InterruptedException {
         setNodeNeighbours();
 
@@ -158,78 +166,12 @@ public class AMRGraph extends AbstractGraph {
 
     }
 
-    public void fillInSpans(HashMap<String, Node> nodes) {
-        ArrayList<ArrayList<String>> order = getPaths(nodes);
-
-        for (ArrayList<String> path : order) {
-            if (nodes.get(path.get(0)).getAnchors() != null) {
-                continue;
-            }
-            int min = Integer.MAX_VALUE;
-            for (int i = 1; i < path.size(); i++) {
-                if (nodes.get(path.get(i)).getAnchors() != null) {
-                    min = Math.min(min, nodes.get(path.get(i)).getAnchors().get(0).getFrom());
-                }
-            }
-            if (min == Integer.MAX_VALUE) {
-                for (Node n : nodes.get(path.get(0)).getUndirectedNeighbours()) {
-                    if (n.getAnchors() != null) {
-                        min = Math.min(min, n.getAnchors().get(0).getFrom());
-                    }
-                }
-            }
-            if (min != Integer.MAX_VALUE) {
-                ArrayList<Anchors> arr = new ArrayList<>();
-                Anchors a = new Anchors(min, min);
-                arr.add(a);
-                nodes.get(path.get(0)).setAnchors(arr);
-            }
-        }
-
-    }
-
-    private void topologicalSort(String nodeID, HashMap<String, Node> nodes, HashMap<String, Boolean> visited,
-                                 Stack<String> stack) {
-
-        visited.put(nodeID, true);
-        Iterator<Node> it = nodes.get(nodeID).getDirectedNeighbours().iterator();
-
-        String i;
-        while (it.hasNext()) {
-            i = it.next().getId();
-            if (!visited.get(i))
-                topologicalSort(i, nodes, visited, stack);
-        }
-
-        stack.push((nodeID));
-    }
-
-    private ArrayList<ArrayList<String>> getPaths(HashMap<String, Node> nodes) {
-
-        Stack<String> stack = new Stack<String>();
-
-        HashMap<String, Boolean> visited = new HashMap<>();
-
-        ArrayList<ArrayList<String>> searches = new ArrayList<>();
-        for (Node n : nodes.values()) {
-            for (String i : nodes.keySet()) {
-                visited.put(i, false);
-            }
-            if (!visited.get(n.getId())) {
-                topologicalSort(n.getId(), nodes, visited, stack);
-            }
-
-            ArrayList<String> order = new ArrayList<>();
-            while (!stack.empty()) {
-                order.add(stack.pop());
-            }
-            searches.add(order);
-
-        }
-
-        return searches;
-    }
-
+    /**
+     * Overrided method to align nodes before calling planar method
+     * @return planar data
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @JsonIgnore
     public HashMap<String,Object> isPlanar() throws IOException, InterruptedException {
         this.alignNodes();

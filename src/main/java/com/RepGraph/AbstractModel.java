@@ -37,6 +37,11 @@ class AbstractModel {
         return graphs.get(graphID);
     }
 
+
+    /**
+     * get hashmap of all graphs in model
+     * @return all graphs in model
+     */
     public HashMap<String, AbstractGraph> getAllGraphs() {
         return graphs;
     }
@@ -67,6 +72,12 @@ class AbstractModel {
         graphs.clear();
     }
 
+    /**
+     * Collects statistics about the dataset the model represents
+     * @return model statistics
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public HashMap<String, String> modelAnalysis() throws IOException, InterruptedException {
         HashMap<String, String> AnalysisInfo = new HashMap<>();
 
@@ -119,6 +130,9 @@ class AbstractModel {
         return AnalysisInfo;
     }
 
+    /**
+     * Runs graphs through Core NLP NER model and assigns NER to tokens
+     */
     public void parseAlltokens() {
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner");
@@ -157,6 +171,12 @@ class AbstractModel {
 
     }
 
+    /**
+     * Creates a subgraph from adjacent nodes
+     * @param parent Graph that the subgraph is created from
+     * @param headNodeID Node ID that the subgraph is created from
+     * @return Subgraph
+     */
     public AbstractGraph CreateSubsetAdjacent(AbstractGraph parent, String headNodeID) {
 
 
@@ -229,6 +249,12 @@ class AbstractModel {
         return subset;
     }
 
+    /**
+     * Creates a subgraph from descendent nodes
+     * @param parent Graph that the subgraph is created from
+     * @param headNodeID Node ID that the subgraph is created from
+     * @return Subgraph
+     */
     public AbstractGraph CreateSubsetDescendent(AbstractGraph parent, String headNodeID) {
 
         AbstractGraph subset = new AbstractGraph();
@@ -348,6 +374,11 @@ class AbstractModel {
 
     }
 
+    /**
+     * Search through model to find graphs containing the subgraph pattern given
+     * @param Asubgraph subgraph pattern
+     * @return hashmap of inputs and ids as well as a response - keys : "data" and "response"
+     */
     public HashMap<String, Object> searchSubgraphPattern(AbstractGraph Asubgraph) {
 
         AbstractGraph subgraph = (AbstractGraph) Asubgraph;
@@ -505,6 +536,9 @@ class AbstractModel {
      *
      * @param graphID1 AbstractGraph ID of the first AbstractGraph.
      * @param graphID2 AbstractGraph ID of the second AbstractGraph.
+     * @param strict Boolean for strict comparison
+     * @param noSurface Boolean to not check surface nodes
+     * @param noAbstract Boolean to not check abstract nodes
      * @return HashMap<String, Object> The differences and similarities of the two graphs i.e
      * the "SimilarNodes1" key gives the Node ids of the similar nodes in graph1.
      * the "SimilarNodes2" key gives the Node ids of the similar nodes in graph2.
@@ -657,8 +691,7 @@ class AbstractModel {
      * @param longestPathUndirected Boolean to decide if to find the longest undirected path.
      * @param connected             Boolean to decide if to test for if the AbstractGraph is connected.
      * @return HashMap<String, Object> Results of the tests i.e
-     * the "Planar" key returns a boolean of whether or not the AbstractGraph is planar
-     * the "PlanarVis" key returns the visualisation data
+     * the "Planar" key returns a HashMap of Planar data - the result and the graph construction
      * the "LongestPathDirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest directed paths in the graphs
      * the "LongestPathUndirected" key returns an ArrayList of an Arraylist of integers defining the multiple longest undirected paths in the graphs
      * the "Connected" returns a boolean of whether or not the AbstractGraph is connected.

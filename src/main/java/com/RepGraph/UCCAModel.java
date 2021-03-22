@@ -3,7 +3,7 @@ package com.RepGraph;
 import java.util.*;
 
 /**
- * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
+ * Model class for UCCA graphs - contains UCCA specific functions
  */
 public class UCCAModel extends AbstractModel {
 

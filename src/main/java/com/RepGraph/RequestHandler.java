@@ -26,28 +26,43 @@ public class RequestHandler {
     public static final String USER_HEADER = "X-USER";
 
 
-    HashMap<String,AbstractModel> RepModel = new HashMap<>();
+    /**
+     * HashMap to contain different models for different user IDs
+     */
+    HashMap<String, AbstractModel> RepModel = new HashMap<>();
 
     /**
-     * Testing function
+     * Home
      */
     @GetMapping(value = "/")
     @ResponseBody
-    public void Home(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
+    public String Home(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
 
+        return "Welcome to RepGraph";
 
     }
+
+
+    /**
+     * Runs graphs through Stanford Core NLP model adding NER tags to tokens - it is mapped to "/ParseTokens"
+     *
+     * @param userID The ID of the user making the request
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @PatchMapping(value = "/ParseTokens")
     @ResponseBody
     public void ParseTokens(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
-    RepModel.get(userID).parseAlltokens();
+        RepModel.get(userID).parseAlltokens();
     }
 
     /**
      * This method is the post request to upload data to the model. It is mapped to "/UploadData"
      *
-     * @param name This is the name that the file will be saved under. The RequestParam is "FileName"
-     * @param file This is the file data. The RequestParam is "data"
+     * @param name      This is the name that the file will be saved under. The RequestParam is "FileName"
+     * @param file      This is the file data. The RequestParam is "data"
+     * @param framework This is the semantic framework of the file being uploaded - 1:DMRS 2:EDS 3:PTG 4:UCCA 5:AMR - number corresponds to framework
+     * @param userID    This is the ID of the user requesting - The model object will be created under this ID
      * @return HashMap<String, Object> This is a hashmap to return the necessary uploaded file information
      * and a response about whether or not there are duplicate graphs.
      * Keys for the return object:
@@ -56,24 +71,24 @@ public class RequestHandler {
      */
     @PostMapping("/UploadData")
     @ResponseBody
-    public HashMap<String, Object> UploadData(@RequestHeader(USER_HEADER)String userID,@RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
+    public HashMap<String, Object> UploadData(@RequestHeader(USER_HEADER) String userID, @RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
         System.out.println(userID);
         //This is where we would change framework model
-        switch (framework){
+        switch (framework) {
             case "1":
-                this.RepModel.put(userID,new DMRSModel());
+                this.RepModel.put(userID, new DMRSModel());
                 break;
             case "2":
-                this.RepModel.put(userID,new EDSModel());
+                this.RepModel.put(userID, new EDSModel());
                 break;
             case "3":
-                this.RepModel.put(userID,new PTGModel());
+                this.RepModel.put(userID, new PTGModel());
                 break;
             case "4":
-                this.RepModel.put(userID,new UCCAModel());
+                this.RepModel.put(userID, new UCCAModel());
                 break;
             case "5":
-                this.RepModel.put(userID,new AMRModel());
+                this.RepModel.put(userID, new AMRModel());
                 break;
         }
 
@@ -116,10 +131,10 @@ public class RequestHandler {
             } else if (framework.equals("3")) {
                 currgraph = objectMapper.readValue(currentLine, PTGGraph.class);
 
-            }else if (framework.equals("4")) {
+            } else if (framework.equals("4")) {
                 currgraph = objectMapper.readValue(currentLine, UCCAGraph.class);
 
-            }else {
+            } else {
                 currgraph = objectMapper.readValue(currentLine, AMRGraph.class);
 
             }
@@ -153,32 +168,43 @@ public class RequestHandler {
     }
 
 
+    /**
+     * @param userID         ID of user requesting
+     * @param framework      semantic framework of data
+     * @param demoDataObject graph data in a hashmap
+     * @throws IOException
+     * @return hashmap to return the necessary uploaded file information
+     * and a response about whether or not there are duplicate graphs.
+     * Keys for the return object:
+     * - Response : a response message
+     * - data : list of Graph IDs (key - id) and Graph inputs (key - input)
+     */
     @PostMapping("/UploadDemo")
     @ResponseBody
-    public HashMap<String, Object> UploadDemo(@RequestHeader(USER_HEADER)String userID,@RequestParam("Framework") String framework,@RequestBody HashMap<String,Object> demoDataObject) throws IOException {
+    public HashMap<String, Object> UploadDemo(@RequestHeader(USER_HEADER) String userID, @RequestParam("Framework") String framework, @RequestBody HashMap<String, Object> demoDataObject) throws IOException {
         ArrayList<LinkedHashMap> demoData = (ArrayList<LinkedHashMap>) demoDataObject.get("data");
         HashMap<String, Object> returnobj = new HashMap<>();
         ArrayList<HashMap<String, String>> returninfo = new ArrayList<>();
-        switch (framework){
+        switch (framework) {
             case "1":
-                this.RepModel.put(userID,new DMRSModel());
+                this.RepModel.put(userID, new DMRSModel());
                 break;
             case "2":
-                this.RepModel.put(userID,new EDSModel());
+                this.RepModel.put(userID, new EDSModel());
                 break;
             case "3":
-                this.RepModel.put(userID,new PTGModel());
+                this.RepModel.put(userID, new PTGModel());
                 break;
             case "4":
-                this.RepModel.put(userID,new UCCAModel());
+                this.RepModel.put(userID, new UCCAModel());
                 break;
             case "5":
-                this.RepModel.put(userID,new AMRModel());
+                this.RepModel.put(userID, new AMRModel());
                 break;
         }
         ObjectMapper objectMapper = new ObjectMapper();
         boolean duplicates = false;
-        for (LinkedHashMap<String,Object> currentLine:demoData) {
+        for (LinkedHashMap<String, Object> currentLine : demoData) {
             AbstractGraph currgraph;
             if (framework.equals("1")) {
 
@@ -190,10 +216,10 @@ public class RequestHandler {
             } else if (framework.equals("3")) {
                 currgraph = objectMapper.convertValue(currentLine, PTGGraph.class);
 
-            }else if (framework.equals("4")) {
+            } else if (framework.equals("4")) {
                 currgraph = objectMapper.convertValue(currentLine, UCCAGraph.class);
 
-            }else {
+            } else {
                 currgraph = objectMapper.convertValue(currentLine, AMRGraph.class);
 
             }
@@ -225,9 +251,6 @@ public class RequestHandler {
     }
 
 
-
-
-
     /**
      * This method will be called when the class receives a GET HTTP request with "/SearchSubgraphNodeSet".
      * The Request URL also requires the Request Parameter "labels" - List of Node labels to be present.
@@ -235,13 +258,14 @@ public class RequestHandler {
      * returns information on graphs where the set of Node labels have been found.
      *
      * @param labels list of labels to be searched for.
+     * @param userID ID of user requesting
      * @return HashMap<String, Object> This is the list of Graph ids and Graph inputs under the "data" key of the returned hashmap.
      * The "data" key returns a list of hashmaps that have "id" and "input" keys.
      * The "Response" key returns an error message if an error has taken place.
      */
     @GetMapping("/SearchSubgraphNodeSet")
     @ResponseBody
-    public HashMap<String, Object> SearchSubgraphNodeSet(@RequestHeader(USER_HEADER)String userID,@RequestParam ArrayList<String> labels) {
+    public HashMap<String, Object> SearchSubgraphNodeSet(@RequestHeader(USER_HEADER) String userID, @RequestParam ArrayList<String> labels) {
 
         return RepModel.get(userID).searchSubgraphNodeSet(labels);
 
@@ -252,14 +276,17 @@ public class RequestHandler {
      * The Request URL also requires the "graphID", "NodeId" - list of Node ids, "EdgeIndices" list of Edge indices Request Params to be present.
      * This method searches the model's dataset for graphs containing the specified subgraph pattern and
      * returns information on graphs where the subgraph pattern has been found.
-     *
+     * @param EdgeIndices Array of Indices of the Edges selected in the subgraph pattern
+     * @param userID ID of the user requesting
+     * @param graphID ID of graph containing subgraph pattern
+     * @param NodeID Array of Node ID's that are in subgraph pattern
      * @return HashMap<String, Object> This is the list of Graph ids and Graph inputs under the "data" key of the returned hashmap.
      * The "data" key returns a list of hashmaps that have "id" and "input" keys.
      * The "Response" key returns an error message if an error has taken place.
      */
     @GetMapping("/SearchSubgraphPattern")
     @ResponseBody
-    public HashMap<String, Object> SearchSubgraphPattern(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String[] NodeID, @RequestParam int[] EdgeIndices) {
+    public HashMap<String, Object> SearchSubgraphPattern(@RequestHeader(USER_HEADER) String userID, @RequestParam String graphID, @RequestParam String[] NodeID, @RequestParam int[] EdgeIndices) {
         return RepModel.get(userID).searchSubgraphPattern(graphID, NodeID, EdgeIndices);
     }
 
@@ -271,6 +298,10 @@ public class RequestHandler {
      *
      * @param graphID1 This refers to one of the indexes of the graphs to be compared.
      * @param graphID2 This refers to the other index of the Graph to be compared.
+     * @param userID ID of user requesting
+     * @param noAbstract Boolean to decide whether or not to check abstract nodes
+     * @param noSurface Boolean to decide whether or not to check surface nodes
+     * @param strict Boolean to decide whether to check strictly
      * @return HashMap<String, Object> The differences and similarities of the two graphs i.e
      * the "SimilarNodes1" key gives the Node ids of the similar nodes in graph1.
      * the "SimilarNodes2" key gives the Node ids of the similar nodes in graph2.
@@ -279,8 +310,8 @@ public class RequestHandler {
      */
     @GetMapping("/CompareGraphs")
     @ResponseBody
-    public HashMap<String, Object> CompareGraphs(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID1, @RequestParam String graphID2,@RequestParam boolean strict,@RequestParam boolean noAbstract,@RequestParam boolean noSurface ) {
-        return RepModel.get(userID).compareTwoGraphs(graphID1, graphID2,strict,noAbstract,noSurface);
+    public HashMap<String, Object> CompareGraphs(@RequestHeader(USER_HEADER) String userID, @RequestParam String graphID1, @RequestParam String graphID2, @RequestParam boolean strict, @RequestParam boolean noAbstract, @RequestParam boolean noSurface) {
+        return RepModel.get(userID).compareTwoGraphs(graphID1, graphID2, strict, noAbstract, noSurface);
     }
 
     /**
@@ -293,6 +324,7 @@ public class RequestHandler {
      * @param connected             This refers to whether its getting tested for being connected
      * @param longestPathDirected   This refers to finding the longest directed path
      * @param longestPathUndirected This refers to finding the longest undirected path
+     * @param userID ID of user requesting
      * @return HashMap<String, Object> Results of the tests i.e
      * the "Planar" key returns a boolean of whether or not the Graph is planar
      * the "PlanarVis" returns the planar visualisation data.
@@ -302,7 +334,7 @@ public class RequestHandler {
      */
     @GetMapping("/TestGraph")
     @ResponseBody
-    public HashMap<String, Object> TestGraph(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestPathDirected, @RequestParam boolean longestPathUndirected, @RequestParam boolean connected) throws IOException, InterruptedException {
+    public HashMap<String, Object> TestGraph(@RequestHeader(USER_HEADER) String userID, @RequestParam String graphID, @RequestParam boolean planar, @RequestParam boolean longestPathDirected, @RequestParam boolean longestPathUndirected, @RequestParam boolean connected) throws IOException, InterruptedException {
         return RepModel.get(userID).runFormalTests(graphID, planar, longestPathDirected, longestPathUndirected, connected);
 
     }
@@ -310,20 +342,20 @@ public class RequestHandler {
     /**
      * This method gets only the Graph data of a specific Graph ID in the model and it is mapped to "/GetGraph"
      * The Request URL also requires the "graphID" request param.
-     *
+     * @param userID ID of user requesting
      * @param graphID This is the ID of the Graph that is requested.
      * @return Graph Returns the Graph data
      */
     @GetMapping("/GetGraph")
     @ResponseBody
-    public AbstractGraph GetGraph(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID) throws IOException, InterruptedException {
+    public AbstractGraph GetGraph(@RequestHeader(USER_HEADER) String userID, @RequestParam String graphID) throws IOException, InterruptedException {
         return RepModel.get(userID).getGraph(graphID);
     }
 
     /**
      * This method gets only the Graph data of a created subset. This method is mapped to "/GetSubset"
      * This method requires the "graphID","headNodeID", and "SubsetType" request parameters.
-     *
+     * @param userID ID of user requesting
      * @param graphID    This is the Graph ID of the Graph where the subset is created from
      * @param NodeID     This is the Node ID of the starting point of subset creation.
      * @param SubsetType This is the type of subset being created. "adjacent" or "descendent"
@@ -331,7 +363,7 @@ public class RequestHandler {
      */
     @GetMapping("/GetSubset")
     @ResponseBody
-    public AbstractGraph GetSubset(@RequestHeader(USER_HEADER)String userID,@RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType) {
+    public AbstractGraph GetSubset(@RequestHeader(USER_HEADER) String userID, @RequestParam String graphID, @RequestParam String NodeID, @RequestParam String SubsetType) {
         AbstractGraph graph = RepModel.get(userID).graphs.get(graphID);
         if (SubsetType.equals("adjacent")) {
             return RepModel.get(userID).CreateSubsetAdjacent(graph, NodeID);
@@ -342,9 +374,14 @@ public class RequestHandler {
     }
 
 
+    /**
+     * Gets all graphs ids and inputs
+     * @param userID ID of user requesting
+     * @return
+     */
     @GetMapping("/ReturnModelList")
     @ResponseBody
-    public ArrayList<HashMap<String, String>> GetModelList(@RequestHeader(USER_HEADER)String userID) {
+    public ArrayList<HashMap<String, String>> GetModelList(@RequestHeader(USER_HEADER) String userID) {
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
         for (AbstractGraph g : RepModel.get(userID).getAllGraphs().values()) {
@@ -363,17 +400,30 @@ public class RequestHandler {
         return list;
     }
 
+    /**
+     * Gets all statistics of a model
+     * @param userID ID of user requesting
+     * @return Statistics of model
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @GetMapping("/GetModelAnalysis")
     @ResponseBody
-    public HashMap<String,String> GetModelAnalysis(@RequestHeader(USER_HEADER)String userID) throws IOException, InterruptedException {
-       return RepModel.get(userID).modelAnalysis();
+    public HashMap<String, String> GetModelAnalysis(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
+        return RepModel.get(userID).modelAnalysis();
     }
 
+    /**
+     * This method specifically is used for AMR models to align all graphs in the model
+     * @param userID ID of user requesting
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @PatchMapping("/AlignAMR")
     @ResponseBody
-    public void AlignAMR(@RequestHeader(USER_HEADER)String userID) throws IOException, InterruptedException {
-       AMRModel m = (AMRModel) RepModel.get(userID);
-       m.alignAllGraphs();
+    public void AlignAMR(@RequestHeader(USER_HEADER) String userID) throws IOException, InterruptedException {
+        AMRModel m = (AMRModel) RepModel.get(userID);
+        m.alignAllGraphs();
     }
 
     /**

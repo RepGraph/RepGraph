@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The Graph class represents a single sentence which comprises of nodes, edges and tokens.
+ * The UCCA Graph class represents a graph following the UCCA Framework
  */
 public class UCCAGraph extends AbstractGraph {
 
@@ -56,6 +56,10 @@ public class UCCAGraph extends AbstractGraph {
 
     }
 
+    /**
+     * Assigns implicit UCCA spans of abstract nodes using the union of their descendents
+     * @param root Node to start traversal
+     */
     public void setNodeSpans(Node root) {
 
         if (root.getAnchors() == null) {

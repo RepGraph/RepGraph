@@ -5,22 +5,38 @@ import org.apache.commons.math3.util.Precision;
 import java.io.IOException;
 import java.util.*;
 
+
 /**
- * The RepGraphModel class is used to store all the system's graphs and run analysis functions on graphs.
+ * Model class for AMR graphs - contains AMR specific functions
  */
 public class AMRModel extends AbstractModel {
 
 
+    /**
+     * AMR model constructor - simply calls super
+     */
     public AMRModel() {
         super();
     }
 
+    /**
+     * @param graphID A Graph's ID.
+     * @return the graph requested.
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Override
     public AMRGraph getGraph(String graphID) throws IOException, InterruptedException {
         AMRGraph g =  (AMRGraph)graphs.get(graphID);
         g.alignNodes();
         return g;
     }
 
+    /**
+     * Runs all graphs in the model through the aligner
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void alignAllGraphs() throws IOException, InterruptedException {
         for (AbstractGraph t:graphs.values()) {
             AMRGraph g =  (AMRGraph)t;
@@ -29,6 +45,11 @@ public class AMRModel extends AbstractModel {
         }
     }
 
+    /**
+     * @return statistics about the graphs in the dataset - AMR model analysis does not include planarity or edge length
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @Override
     public HashMap<String, String> modelAnalysis() throws IOException, InterruptedException {
         HashMap<String, String> AnalysisInfo = new HashMap<>();
