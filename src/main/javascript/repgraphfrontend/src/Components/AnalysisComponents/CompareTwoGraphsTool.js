@@ -69,7 +69,7 @@ function CompareTwoGraphsTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Compare two graphs"}
+                <DialogTitle id="alert-dialog-title">{"Compare Two Graphs"}
                     <PopupState variant="popover" popupId="demo-popup-popover">
                         {(popupState) => (
                             <>

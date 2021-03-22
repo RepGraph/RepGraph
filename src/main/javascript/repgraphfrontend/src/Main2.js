@@ -69,6 +69,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import {Octokit} from "@octokit/core";
 import DatasetAnalysisFormDisplay from "./Components/AnalysisComponents/DatasetAnalysisDisplay";
 import DatasetAnalysisTool from "./Components/AnalysisComponents/DatasetAnalysisTool";
+import CompareTwoGraphsVisualisation from "./Components/Main/CompareTwoGraphsVisualisation";
 
 const drawerWidth = 300;
 
@@ -238,7 +239,6 @@ export default function MiniDrawer() {
                 }
 
 
-
                 dispatch({type: "SET_SENTENCE_VISUALISATION", payload: {selectedSentenceVisualisation: graphData}});
                 dispatch({type: "SET_LOADING", payload: {isLoading: false}});
             }
@@ -324,7 +324,6 @@ export default function MiniDrawer() {
             graphFormatCode = "hierarchical";
             break;
     }
-
 
 
     const currentScreenWidth = useWidth();
@@ -699,34 +698,34 @@ export default function MiniDrawer() {
                 </div>
                 <List>
                     <Tooltip title="Subset Tool" placement="right" arrow>
-                    <ListItem button onClick={handleSubsetToolClick}>
-                        <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Subset Tool"}/>
-                    </ListItem>
+                        <ListItem button onClick={handleSubsetToolClick}>
+                            <ListItemIcon>{<SelectAllIcon/>}</ListItemIcon>
+                            <ListItemText primary={"Subset Tool"}/>
+                        </ListItem>
                     </Tooltip>
                     <Tooltip title="Subgraph Pattern Search" placement="right" arrow>
-                    <ListItem button onClick={handleSubgraphToolClick}>
-                        <ListItemIcon>{<SearchIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Subgraph Pattern Search"}/>
-                    </ListItem>
+                        <ListItem button onClick={handleSubgraphToolClick}>
+                            <ListItemIcon>{<SearchIcon/>}</ListItemIcon>
+                            <ListItemText primary={"Subgraph Pattern Search"}/>
+                        </ListItem>
                     </Tooltip>
                     <Tooltip title="Compare Two Graphs" placement="right" arrow>
-                    <ListItem button onClick={handleCompareToolClick}>
-                        <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Compare Two Graphs"}/>
-                    </ListItem>
+                        <ListItem button onClick={handleCompareToolClick}>
+                            <ListItemIcon>{<CompareArrowsIcon/>}</ListItemIcon>
+                            <ListItemText primary={"Compare Two Graphs"}/>
+                        </ListItem>
                     </Tooltip>
                     <Tooltip title="Graph Analysis" placement="right" arrow>
-                    <ListItem button onClick={handleTestsToolClick}>
-                        <ListItemIcon>{<AssessmentIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Graph Analysis"}/>
-                    </ListItem>
+                        <ListItem button onClick={handleTestsToolClick}>
+                            <ListItemIcon>{<AssessmentIcon/>}</ListItemIcon>
+                            <ListItemText primary={"Graph Analysis"}/>
+                        </ListItem>
                     </Tooltip>
                     <Tooltip title="Data-set Analysis" placement="right" arrow>
-                    <ListItem button onClick={handleDatasetAnalysisToolClick}>
-                        <ListItemIcon>{<AssignmentIcon/>}</ListItemIcon>
-                        <ListItemText primary={"Data-set Analysis"}/>
-                    </ListItem>
+                        <ListItem button onClick={handleDatasetAnalysisToolClick}>
+                            <ListItemIcon>{<AssignmentIcon/>}</ListItemIcon>
+                            <ListItemText primary={"Data-set Analysis"}/>
+                        </ListItem>
                     </Tooltip>
                 </List>
                 <Divider/>
@@ -792,7 +791,8 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2" color="textPrimary">
-                                        Select a graph node visually. The node and its adjacent or descendent nodes (and the corresponding tokens) will be displayed as a subgraph.
+                                        Select a graph node visually. The node and its adjacent or descendent nodes (and
+                                        the corresponding tokens) will be displayed as a subgraph.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -829,11 +829,11 @@ export default function MiniDrawer() {
                         justify="center"
                         alignItems="center"
                         spacing={2}
-                        style={{width:"100%"}}
+                        style={{width: "100%"}}
                     >
                         <Grid item>
-                            <Card variant="outlined" >
-                                <CardContent >
+                            <Card variant="outlined">
+                                <CardContent>
                                     <Typography
                                         className={classes.title}
                                         gutterBottom
@@ -845,14 +845,15 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2">
-                                        Search for occurrences of a sub-graph pattern across the entire dataset. Select the pattern using nodes and labels of the current graph.
+                                        Search for occurrences of a sub-graph pattern across the entire dataset. Select
+                                        the pattern using nodes and labels of the current graph.
                                     </Typography>
                                 </CardContent>
                             </Card>
                         </Grid>
-                        <Grid item style={{flexGrow:"1"}}>
-                            <Card  variant="outlined">
-                                <CardContent >
+                        <Grid item style={{flexGrow: "1"}}>
+                            <Card variant="outlined">
+                                <CardContent>
                                     <SearchSubgraphPatternTool/>
                                 </CardContent>
                             </Card>
@@ -866,55 +867,50 @@ export default function MiniDrawer() {
                 </DialogActions>
             </Dialog>
             <Dialog
-                fullWidth
-                maxWidth="md"
                 open={compareDialogOpen}
                 onClose={handleCompareToolDialogClose}
+                fullWidth={true}
+                maxWidth="xl"
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
             >
-                <DialogTitle>
-                    Compare Two Graphs
+                <DialogTitle id="alert-dialog-title">{"Compare two graphs"}
+                    <PopupState variant="popover" popupId="demo-popup-popover">
+                        {(popupState) => (
+                            <>
+                                <IconButton color="primary" component="span" {...bindTrigger(popupState)}>
+                                    <InfoIcon/>
+                                </IconButton>
+                                <Popover
+                                    {...bindPopover(popupState)}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}
+                                >
+                                    <Box p={2} width={"50vw"}>
+                                        <Typography gutterBottom={true}>Click the button to compare the similarities and differences of any
+                                            two graphs. </Typography>
+                                        <Typography>Non-strict comparison simply compares node labels and their
+                                            respective edges, whereas strict comparison compares each node's labels and
+                                            the phrase they span for equality.</Typography>
+                                    </Box>
+                                </Popover>
+                            </>
+                        )}
+                    </PopupState>
+
                 </DialogTitle>
                 <DialogContent>
-                    <Grid
-                        className={classes.rootJustWidth}
-                        container
-                        direction="row"
-                        justify="space-between"
-                        alignItems="center"
-                        spacing={2}
-                    >
-                        <Grid item xs={6} className={classes.body}>
-                            <Card className={classes.body} variant="outlined">
-                                <CardContent className={classes.body}>
-                                    <Typography
-                                        className={classes.title}
-                                        color="textPrimary"
-                                        gutterBottom
-                                    >
-                                        About the tool:
-                                        {/*<IconButton aria-label="Display subset information button" color={"secondary"}*/}
-                                        {/*            onClick={() => handleInfoClick("display subset tool")}>*/}
-                                        {/*    <InfoIcon/>*/}
-                                        {/*</IconButton>*/}
-                                    </Typography>
-                                    <Typography variant="body2" color="textPrimary">
-                                        Click the button to compare the similarities and differences of any two
-                                        graphs.
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        <Grid item xs={6} style={{height: "100%"}}>
-                            <Card className={classes.body} variant="outlined">
-                                <CardContent>
-                                    <CompareTwoGraphsTool/>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
+                    <CompareTwoGraphsVisualisation/>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCompareToolDialogClose} variant="contained" color="primary" disableElevation>
+                    <Button onClick={handleCompareToolDialogClose} variant="contained" color="primary" disableElevation
+                            autoFocus>
                         Close
                     </Button>
                 </DialogActions>
@@ -952,7 +948,8 @@ export default function MiniDrawer() {
                                         {/*</IconButton>*/}
                                     </Typography>
                                     <Typography variant="body2" color="textPrimary">
-                                        Run graph analyses on the current graph. The results are visualized where applicable.
+                                        Run graph analyses on the current graph. The results are visualized where
+                                        applicable.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -1036,7 +1033,8 @@ export default function MiniDrawer() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDatasetAnalysisDialogClose} variant="contained" color="primary" disableElevation>
+                    <Button onClick={handleDatasetAnalysisDialogClose} variant="contained" color="primary"
+                            disableElevation>
                         Close
                     </Button>
                 </DialogActions>
