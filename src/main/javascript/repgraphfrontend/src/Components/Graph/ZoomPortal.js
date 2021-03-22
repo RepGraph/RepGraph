@@ -1,4 +1,4 @@
-import React, {useContext, useState, useRef, useEffect} from "react";
+import React, {useContext, useState, useRef, useEffect, useLayoutEffect} from "react";
 import {Zoom} from "@visx/zoom";
 import {RectClipPath} from "@visx/clip-path";
 import {localPoint} from "@visx/event";
@@ -35,13 +35,13 @@ const ZoomPortal = (props) => {
     const {state, dispatch} = useContext(AppContext);
     const zoomRef = useRef(null);
 
-    // useEffect(
+    // useLayoutEffect(
     //     () => {
     //         if(zoomRef.current){
-    //             zoomRef.current.center();
+    //             zoomRef.current.setTransformMatrix(centerHandler());
     //         }
     //     },
-    //     [zoomRef.current],
+    //     [width, height],
     // );
 
     const handleChangeGraphSpacing = (name) => {
@@ -56,7 +56,6 @@ const ZoomPortal = (props) => {
         }
 
         if (intraValue >= 0 && interValue >= 0) {
-
 
             dispatch({
                 type: "SET_GRAPH_LAYOUT_SPACING",
@@ -102,6 +101,44 @@ const ZoomPortal = (props) => {
         }
     }
 
+    const centerHandler = () => {
+        let newgraphHeight = graphHeight + state.graphLayoutSpacing.nodeHeight + state.graphLayoutSpacing.tokenLevelSpacing;
+
+        let scalingFactor = 0;
+
+        if (width > graphWidth && height > newgraphHeight) {
+            scalingFactor = 1;
+        } else {
+            if (width > graphWidth && newgraphHeight > height) {
+                scalingFactor = height / newgraphHeight;
+            } else if (height > newgraphHeight && graphWidth > width) {
+                scalingFactor = width / graphWidth;
+            } else {
+                if (width / graphWidth > height / newgraphHeight) {
+                    scalingFactor = height / newgraphHeight;
+                } else {
+                    scalingFactor = width / graphWidth;
+                }
+            }
+
+        }
+        scalingFactor = scalingFactor - 0.02;
+
+        let newCenter = {
+            x: graphWidth * scalingFactor / 2,
+            y: newgraphHeight * scalingFactor / 2
+        }
+
+        return ({
+            scaleX: scalingFactor,
+            scaleY: scalingFactor,
+            translateX: (Math.abs(newCenter.x - (width / 2))) + 40,
+            translateY: (Math.abs(newCenter.y - (height / 2))) + (state.graphLayoutSpacing.nodeHeight + state.graphLayoutSpacing.interLevelSpacing) * scalingFactor+40,
+            skewX: 0,
+            skewY: 0
+        });
+    }
+
     return (
         <Zoom
             width={width}
@@ -110,7 +147,8 @@ const ZoomPortal = (props) => {
             scaleXMax={50}
             scaleYMin={0.0001}
             scaleYMax={50}
-            transformMatrix={initialTransform}>
+            transformMatrix={initialTransform}
+        >
             {(zoom) => {
                 zoomRef.current = zoom;
                 return (
@@ -167,43 +205,8 @@ const ZoomPortal = (props) => {
                                             disableElevation>Spacing</Button>
                                 </Tooltip>
                                 <Tooltip title="Bring the Graph Into View" placement="left" arrow>
-                                    <Button size="small" startIcon={<CenterFocusStrongIcon/>} onClick={function () {
-
-                                        let newgraphHeight = graphHeight + state.graphLayoutSpacing.nodeHeight + state.graphLayoutSpacing.tokenLevelSpacing;
-
-                                        let scalingFactor = 0;
-
-                                        if (width > graphWidth && height > newgraphHeight) {
-                                            scalingFactor = 1;
-                                        } else {
-                                            if (width > graphWidth && newgraphHeight > height) {
-                                                scalingFactor = height / newgraphHeight;
-                                            } else if (height > newgraphHeight && graphWidth > width) {
-                                                scalingFactor = width / graphWidth;
-                                            } else {
-                                                if (width / graphWidth > height / newgraphHeight) {
-                                                    scalingFactor = height / newgraphHeight;
-                                                } else {
-                                                    scalingFactor = width / graphWidth;
-                                                }
-                                            }
-
-                                        }
-                                        scalingFactor = scalingFactor - 0.02;
-
-                                        let newCenter = {
-                                            x: graphWidth * scalingFactor / 2,
-                                            y: newgraphHeight * scalingFactor / 2
-                                        }
-
-                                        zoom.setTransformMatrix({
-                                            scaleX: scalingFactor,
-                                            scaleY: scalingFactor,
-                                            translateX: (Math.abs(newCenter.x - (width / 2))) + 40,
-                                            translateY: (Math.abs(newCenter.y - (height / 2))) + (state.graphLayoutSpacing.nodeHeight + state.graphLayoutSpacing.interLevelSpacing) * scalingFactor+40,
-                                            skewX: 0,
-                                            skewY: 0
-                                        });
+                                    <Button size="small" startIcon={<CenterFocusStrongIcon/>} onClick={() => {
+                                        zoom.setTransformMatrix(centerHandler());
                                     }}
                                             disableElevation>Center</Button>
                                 </Tooltip>
