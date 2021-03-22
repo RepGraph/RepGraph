@@ -48,7 +48,6 @@ export const Node = ({
     let fillColor = null;
     let stroke = null;
     let strokeWidth = null;
-    //
 
     switch (node.type) {
         case "node":
@@ -112,13 +111,13 @@ export const Node = ({
                 let anchs = tooltipData.extraInformation.anchors;
                 if (anchs.includes(",")) {
                     while (anchs.includes(",")) {
-
                         let commaIndex = anchs.indexOf(",");
                         let index = anchs.indexOf("-");
                         let lower = parseInt(anchs.slice(0, index));
                         let upper = parseInt(anchs.slice(index + 1, commaIndex));
                         if (node.index >= lower && node.index <= upper) {
-                            fillColor = styles.tokenStyles.hoverColour;
+                            stroke = "black"
+                            strokeWidth="4"
                             break;
                         }
                         anchs = anchs.slice(commaIndex + 2);
@@ -128,7 +127,8 @@ export const Node = ({
                 let lower = parseInt(anchs.slice(0, index));
                 let upper = parseInt(anchs.slice(index + 1));
                 if (node.index >= lower && node.index <= upper) {
-                    fillColor = styles.tokenStyles.hoverColour;
+                    stroke = "black"
+                    strokeWidth="4"
                 }
             } else {
                 fillColor = styles.tokenStyles.tokenColour;
