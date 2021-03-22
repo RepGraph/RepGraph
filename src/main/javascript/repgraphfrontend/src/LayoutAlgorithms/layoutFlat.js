@@ -7,6 +7,7 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
     const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
     let graphClone = lodash.cloneDeep(graphData);
+    graphClone.nodes = graphClone.nodes.map(node => ({...node,anchorsCopy : node.anchors===null ? null : graphData.nodes.find(n=>n.id===node.id).anchors}))
 
 
     let children = new Map();

@@ -36,6 +36,7 @@ export const layoutTree = (graphData, graphLayoutSpacing, framework) => {
         }
 
         let graphClone = lodash.cloneDeep(graphData);
+        graphClone.nodes = graphClone.nodes.map(node => ({...node,anchorsCopy : node.anchors===null ? null : graphData.nodes.find(n=>n.id===node.id).anchors}))
 
         let nodeMap = new Map();
         for (let node of graphClone.nodes) {

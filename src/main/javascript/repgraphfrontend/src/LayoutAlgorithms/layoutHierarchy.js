@@ -11,7 +11,7 @@ import uuid from "react-uuid";
 
 export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
 
-    console.log("graphData", graphData);
+        console.log("graphData", graphData);
 
         const {nodeHeight, nodeWidth, interLevelSpacing, intraLevelSpacing, tokenLevelSpacing} = graphLayoutSpacing;
 
@@ -38,6 +38,8 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
 
         let graphClone = lodash.cloneDeep(graphData);
 
+        graphClone.nodes = graphClone.nodes.map(node => ({...node,anchorsCopy : node.anchors===null ? null : graphData.nodes.find(n=>n.id===node.id).anchors}))
+
         let children = new Map();
         let parents = new Map();
 
@@ -58,7 +60,6 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             parents.set(e.target, temp);
         }
 
-        //graphClone = createDummyNodes(graphClone, parents, children);
 
         let nodeMap = new Map();
         for (let node of graphClone.nodes) {
@@ -68,11 +69,12 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
 
         let nodesWithoutAnchors = []; //Array to keep track of nodes which originally had no anchors
 
-    if(framework === "3" || framework === "5"){
-        setAnchors(graphClone, children, parents, nodesWithoutAnchors);
-    }
+        if (framework === "3" || framework === "5") {
+            setAnchors(graphClone, children, parents, nodesWithoutAnchors);
+        }
 
-    graphClone = createDummyNodes(graphClone,parents, children ,false);
+
+        graphClone = createDummyNodes(graphClone, parents, children, false);
 //Determine span lengths of each node
         const graphNodeSpanLengths = Array.from(graphClone.nodes.values())
             .map((node) => node.anchors[0])
@@ -201,6 +203,8 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
         const nodeSectionHeight =
             levelTopologyMax * nodeHeight + (levelTopologyMax - 1) * interLevelSpacing;
 
+        console.log("GRAPPPPPP", graphData)
+
         const nodes = newNodesInLevels.flat(2).map((node) => ({
             ...node,
             x:
@@ -214,7 +218,6 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             selected: false,
             span: nodesWithoutAnchors.includes(node.id) ? false : true
         }));
-
 
 
         const tokens = graphClone.tokens.map((token) => ({
@@ -320,11 +323,10 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
         });
 
 
-
-    const gheight = (graphLayoutSpacing.nodeHeight+graphLayoutSpacing.interLevelSpacing)*(levelTopologyMax+1)
-    const gwidth = (graphLayoutSpacing.nodeWidth+graphLayoutSpacing.intraLevelSpacing)*tokens.length;
-    console.log("layoutHierarchy", {nodes: finalGraphNodes, links: finalGraphEdges});
-        return {nodes: finalGraphNodes, links: finalGraphEdges,graphHeight :gheight,graphWidth : gwidth };
+        const gheight = (graphLayoutSpacing.nodeHeight + graphLayoutSpacing.interLevelSpacing) * (levelTopologyMax + 1)
+        const gwidth = (graphLayoutSpacing.nodeWidth + graphLayoutSpacing.intraLevelSpacing) * tokens.length;
+        console.log("layoutHierarchy", {nodes: finalGraphNodes, links: finalGraphEdges});
+        return {nodes: finalGraphNodes, links: finalGraphEdges, graphHeight: gheight, graphWidth: gwidth};
     }
 ;
 
