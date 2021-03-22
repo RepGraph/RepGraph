@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/RepGraph/RepGraph/blob/main/RGLogo.png"> 
+    <img width="50%" src="https://github.com/RepGraph/RepGraph/blob/main/RGLogo.png"> 
 </p>
 
 # RepGraph
