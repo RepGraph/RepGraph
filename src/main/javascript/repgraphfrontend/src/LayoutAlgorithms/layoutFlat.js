@@ -124,7 +124,8 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
                 label: finalGraphNodes[i].label,
                 type: "node",
                 group: "node",
-                span: false
+                span: false,
+                ignoreID : height===0 ? false : true
             }
             lastCount = count;
             if (!(finalGraphNodes[i].anchors[0].from === finalGraphNodes[i + 1].anchors[0].from && finalGraphNodes[i].anchors[0].end === finalGraphNodes[i + 1].anchors[0].end)) {
@@ -145,7 +146,8 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
             type: "node",
             group: "node",
             span: false,
-            selected: false
+            selected: false,
+            ignoreID : height===0 ? false : true
         }
 
     }
@@ -215,10 +217,7 @@ export const layoutFlat = (graphData, planar, graphLayoutSpacing, framework) => 
 
     if (planar) {
         try {
-            finalGraphNodes = finalGraphNodes.map((node) => ({
-                ...node,
-                dummy: node.label.includes("Dummy Span") ? true : false
-            }))
+
             finalGraphEdges = finalGraphEdges.map((link) => ({
                 ...link,
                 group:

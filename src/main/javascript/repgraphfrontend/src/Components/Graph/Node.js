@@ -88,7 +88,7 @@ export const Node = ({
             } else {
                 fillColor = styles.nodeStyles.abstractNodeColour;
             }
-            if (node.dummy) {
+            if (node.dummy === true) {
                 fillColor = styles.nodeStyles.surfaceNodeColour;
                 if (tooltipOpen && node.label.includes(`(ID:${tooltipData.extraInformation.id}`)){
                     stroke = "black"
@@ -210,7 +210,7 @@ export const Node = ({
 
                     const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
                         ...oldNode,
-                        selected: oldNode.type === "node" && !oldNode.hasOwnProperty("dummy") ? (oldNode.id === node.id ? true : false) : false
+                        selected: oldNode.type === "node" && oldNode.dummy===false ? (oldNode.id === node.id ? true : false) : false
                     }));
 
 
@@ -234,7 +234,7 @@ export const Node = ({
 
                     const newNodes = state.selectedSentenceVisualisation.nodes.map(oldNode => ({
                         ...oldNode,
-                        selected: oldNode.type === "node" && !oldNode.hasOwnProperty("dummy") ? oldNode.id === node.id ? !oldNode.selected : oldNode.selected : oldNode.selected
+                        selected: oldNode.type === "node" && oldNode.dummy===false ? oldNode.id === node.id ? !oldNode.selected : oldNode.selected : oldNode.selected
                     }));
 
                     dispatch({
@@ -268,10 +268,11 @@ export const Node = ({
         "surface",
         "selected",
         "dummy",
+        "ignoreID"
     ]; //Extra information object keys to be excluded from tooltip
 
     //Remove id property from tree-like token tooltip
-    if (node.type === "token" || node.dummy === true) {
+    if (node.type === "token" || node.dummy === true || node.ignoreID === true) {
         notAllowed = notAllowed.concat("id");
     }
 

@@ -875,6 +875,8 @@ class AbstractGraph {
 
         ArrayList<Node> ordered = new ArrayList<>();
         HashMap<String, ArrayList<String>> dummyNodes = new HashMap<>();
+        HashMap<Node,Node> dummyParents = new HashMap<>();
+
         //add the Node objects to a list
         for (Node n : nodes.values()) {
             if(n.getAnchors()!=null){
@@ -885,11 +887,12 @@ class AbstractGraph {
                     ArrayList<Anchors> anchs = new ArrayList<>();
                     anchs.add(n.getAnchors().get(i));
                     String uuid = UUID.randomUUID().toString();
-                    Node dum = new Node(uuid, n.getLabel() +" Dummy Span "+ (i+1), anchs);
+                    Node dum = new Node(uuid, n.getLabel(),anchs);
                     dum.setSurface(n.isSurface());
                     dum.setDummy(true);
                     ordered.add(dum);
                     dummyNodes.get(n.getId()).add(uuid);
+                    dummyParents.put(dum,n);
                 }
             }
         }
@@ -1000,12 +1003,10 @@ class AbstractGraph {
             }
         }
 
-
+//WHY IS THIS HERE
         for (int i = 0; i < ordered.size() - 1; i++) {
             if (!(ordered.get(i).getAnchors().get(0).getFrom() == ordered.get(i + 1).getAnchors().get(0).getFrom() && ordered.get(i).getAnchors().get(0).getEnd() == ordered.get(i + 1).getAnchors().get(0).getEnd())) {
                 ordered.get(i).setId(nodeToToken.get(ordered.get(i).getId()));
-            } else {
-
             }
         }
 
@@ -1034,6 +1035,20 @@ class AbstractGraph {
         } else {
             ordered.get(ordered.size() - 1).setId(count + "");
         }
+
+        for (Node n:dummyParents.keySet()) {
+            int span =0;
+            for (int i=0;i<dummyParents.get(n).getAnchors().size();i++){
+                if(n.getAnchors().get(0).equals(dummyParents.get(n).getAnchors().get(i))){
+                    span=i;
+                    break;
+                }
+            }
+            span++;
+            n.setLabel(dummyParents.get(n).getLabel()+" (Positional ID:"+nodeToToken.get(dummyParents.get(n).getId())+" Span "+span+")");
+        }
+
+
 
         HashMap<String, Object> returnInfo = new HashMap<>();
 

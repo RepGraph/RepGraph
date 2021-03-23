@@ -29,8 +29,8 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
 
                 let nodeClone = lodash.cloneDeep(node)
                 nodeClone = {
-                    dummy: true,
                     ...nodeClone,
+                    dummy: true,
                     label: nodeClone.label + " (ID:"+ nodeClone.id+ " Span "+ (i + 1)+")",
                     id: uuid,
                     anchors: [nodeClone.anchors[i]]
