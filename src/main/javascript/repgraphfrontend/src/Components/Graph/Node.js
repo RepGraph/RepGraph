@@ -90,13 +90,19 @@ export const Node = ({
             }
             if (node.dummy) {
                 fillColor = styles.nodeStyles.surfaceNodeColour;
-                if (tooltipOpen && node.label.includes(`ID:${tooltipData.extraInformation.id}`)){
+                if (tooltipOpen && node.label.includes(`(ID:${tooltipData.extraInformation.id}`)){
                     stroke = "black"
                     strokeWidth="4"
                 }
                 else{
                     stroke = styles.nodeStyles.dummyNodeColour;
                     strokeWidth = "6"
+                }
+            }
+            else {
+                if (tooltipOpen && tooltipData.label.includes(`(ID:${node.id}`)) {
+                    stroke = "black"
+                    strokeWidth="4"
                 }
             }
             break;
