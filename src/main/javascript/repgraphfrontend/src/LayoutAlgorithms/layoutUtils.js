@@ -404,6 +404,11 @@ export const edgeRulesSameRow = (
             //There exists a duplicate edge
             if (edge.label.localeCompare(e.label) <= 0) {
                 degree = degree + 0.15;
+                if (source.x < target.x) {
+                    direction = "horizontal-right";
+                } else {
+                    direction = "horizontal-left";
+                }
             }
             break;
         }
