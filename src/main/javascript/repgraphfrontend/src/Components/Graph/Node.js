@@ -90,7 +90,7 @@ export const Node = ({
             }
             if (node.dummy === true) {
                 fillColor = styles.nodeStyles.surfaceNodeColour;
-                if (tooltipOpen && node.label.includes(`(ID:${tooltipData.extraInformation.id} `)){
+                if (tooltipOpen && node.label.includes(`ID:${tooltipData.extraInformation.id} `)){
                     stroke = "black"
                     strokeWidth="4"
                 }
@@ -100,7 +100,7 @@ export const Node = ({
                 }
             }
             else {
-                if (tooltipOpen && tooltipData.label.includes(`(ID:${node.id} `)) {
+                if (tooltipOpen && tooltipData.label.includes(`ID:${node.id} `)) {
                     stroke = "black"
                     strokeWidth="4"
                 }
