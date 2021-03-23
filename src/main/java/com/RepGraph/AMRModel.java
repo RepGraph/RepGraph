@@ -28,7 +28,16 @@ public class AMRModel extends AbstractModel {
     @Override
     public AMRGraph getGraph(String graphID) throws IOException, InterruptedException {
         AMRGraph g =  (AMRGraph)graphs.get(graphID);
-        g.alignNodes();
+        boolean beenProcessed = false;
+        for (Node n : g.nodes.values()){
+            if(n.getAnchors()!=null){
+                beenProcessed = true;
+            }
+        }
+        if (!beenProcessed){
+            g.alignNodes();
+        }
+
         return g;
     }
 

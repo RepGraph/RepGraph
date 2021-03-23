@@ -1,4 +1,4 @@
-import React, {useContext, useState, useRef, useEffect, useLayoutEffect} from "react";
+import React, {useContext, useState, useRef, useEffect} from "react";
 import {Zoom} from "@visx/zoom";
 import {RectClipPath} from "@visx/clip-path";
 import {localPoint} from "@visx/event";
@@ -35,13 +35,13 @@ const ZoomPortal = (props) => {
     const {state, dispatch} = useContext(AppContext);
     const zoomRef = useRef(null);
 
-    // useLayoutEffect(
+    // useEffect(
     //     () => {
     //         if(zoomRef.current){
-    //             zoomRef.current.setTransformMatrix(centerHandler());
+    //             zoomRef.current.center();
     //         }
     //     },
-    //     [width, height],
+    //     [zoomRef.current],
     // );
 
     const handleChangeGraphSpacing = (name) => {
@@ -56,6 +56,7 @@ const ZoomPortal = (props) => {
         }
 
         if (intraValue >= 0 && interValue >= 0) {
+
 
             dispatch({
                 type: "SET_GRAPH_LAYOUT_SPACING",

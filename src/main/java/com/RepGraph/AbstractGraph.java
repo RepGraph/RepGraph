@@ -282,6 +282,7 @@ class AbstractGraph {
     }
 
     public void populateTokens() {
+
         if (tokens.size() == 0) {
             setTokens(extractTokensFromNodes());
         }

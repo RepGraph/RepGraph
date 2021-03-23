@@ -29,24 +29,6 @@ public class AMRGraph extends AbstractGraph {
         super();
     }
 
-    @JsonCreator
-    public AMRGraph(@JsonProperty("id") String id, @JsonProperty("source") String source, @JsonProperty("input") String input, @JsonProperty("nodes") ArrayList<Node> nodes, @JsonProperty("edges") ArrayList<Edge> edges, @JsonProperty("tops") ArrayList<Integer> top) throws IOException, InterruptedException {
-        this.id = id;
-        this.source = source;
-        this.input = input;
-        this.edges = edges;
-
-        for (Node n : nodes) {
-            this.nodes.put(n.getId(), n);
-
-        }
-        this.setNodeNeighbours();
-        this.top = top.get(0) + "";
-
-
-    }
-
-
     /**
      * Utility function used in the process of aligning nodes to tokens using the JAMR aligner
      */
@@ -164,6 +146,25 @@ public class AMRGraph extends AbstractGraph {
         }
         beenProcessed = true;
 
+    }
+
+    @JsonSetter
+    public void setNodes(ArrayList<Node> nodelist) {
+
+
+        for (Node n : nodelist) {
+            ArrayList<Anchors> characterSpans = null;
+            if (n.getAnchors()!=null){
+                n.setSurface(true);
+                characterSpans = new ArrayList<>();
+                for (Anchors a:n.getAnchors()) {
+                    Anchors AnchChar = new Anchors(a.getFrom(),a.getEnd());
+                    characterSpans.add(AnchChar);
+                }}
+            n.setCharacterSpans(characterSpans);
+            this.nodes.put(n.getId(), n);
+        }
+        populateTokens();
     }
 
     /**
