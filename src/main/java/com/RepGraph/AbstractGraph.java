@@ -887,6 +887,7 @@ class AbstractGraph {
                     String uuid = UUID.randomUUID().toString();
                     Node dum = new Node(uuid, n.getLabel() +" Dummy Span "+ (i+1), anchs);
                     dum.setSurface(n.isSurface());
+                    dum.setDummy(true);
                     ordered.add(dum);
                     dummyNodes.get(n.getId()).add(uuid);
                 }

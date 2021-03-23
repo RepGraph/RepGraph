@@ -42,6 +42,9 @@ public class Node {
     @JsonProperty("surface")
     private boolean surface;
 
+    @JsonProperty("dummy")
+    private boolean dummy = false;
+
     @JsonIgnore
     private ArrayList<Anchors> characterSpans;
 
@@ -267,5 +270,14 @@ public class Node {
 
         Node n = (Node) o;
         return ((id == n.getId()) && (label.equals(n.getLabel())) && (anchors.equals(n.getAnchors())));
+    }
+
+
+    public boolean isDummy() {
+        return dummy;
+    }
+
+    public void setDummy(boolean dummy) {
+        this.dummy = dummy;
     }
 }
