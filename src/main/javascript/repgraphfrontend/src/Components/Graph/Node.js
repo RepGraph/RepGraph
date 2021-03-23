@@ -90,13 +90,19 @@ export const Node = ({
             }
             if (node.dummy) {
                 fillColor = styles.nodeStyles.surfaceNodeColour;
-                if (tooltipOpen && node.label.includes(`ID:${tooltipData.extraInformation.id}`)){
+                if (tooltipOpen && node.label.includes(`(ID:${tooltipData.extraInformation.id}`)){
                     stroke = "black"
                     strokeWidth="4"
                 }
                 else{
                     stroke = styles.nodeStyles.dummyNodeColour;
                     strokeWidth = "6"
+                }
+            }
+            else {
+                if (tooltipOpen && tooltipData.label.includes(`(ID:${node.id}`)) {
+                    stroke = "black"
+                    strokeWidth="4"
                 }
             }
             break;
@@ -262,7 +268,6 @@ export const Node = ({
         "surface",
         "selected",
         "dummy",
-        "anchors"
     ]; //Extra information object keys to be excluded from tooltip
 
     //Remove id property from tree-like token tooltip
@@ -281,7 +286,7 @@ export const Node = ({
         filteredExtraInformation.anchorsCopy = filteredExtraInformation.anchorsCopy.map(anchor => {
 
             let anchorString = anchor.from + "-" + anchor.end;
-            if (anchor.hasOwnProperty("text")) {
+            if (anchor.hasOwnProperty("text") && graphFormatCode === "flat") {
                 anchorString += " : " + anchor.text;
             }
             return anchorString;
@@ -289,7 +294,17 @@ export const Node = ({
         }).join(", ");
     }
 
-     //filteredExtraInformation = {...filteredExtraInformation,anchors:filteredExtraInformation.anchorsCopy};
+    if (filteredExtraInformation.hasOwnProperty("anchors")) {
+        filteredExtraInformation.anchors = filteredExtraInformation.anchors.map(anchor => {
+
+            let anchorString = anchor.from + "-" + anchor.end;
+            if (anchor.hasOwnProperty("text") && graphFormatCode === "flat") {
+                anchorString += " : " + anchor.text;
+            }
+            return anchorString;
+
+        }).join(", ");
+    }
 
 
     return (

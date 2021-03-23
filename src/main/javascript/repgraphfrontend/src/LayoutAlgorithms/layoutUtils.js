@@ -72,16 +72,16 @@ export function addTokenSpanText(graphData) {
     for (let j = 0; j < graphData.nodes.length; j++) {
         let node = graphData.nodes[j];
         let output = ""
-        if (node.anchors !== null) {
-            for (let i = 0; i < node.anchors.length; i++) {
-                let anch = node.anchors[i];
+        if (node.anchorsCopy !== null) {
+            for (let i = 0; i < node.anchorsCopy.length; i++) {
+                let anch = node.anchorsCopy[i];
                 for (let i = anch.from; i < anch.end + 1; i++) {
                     output += graphData.tokens.find((token)=>(token.index === i)).form + " "
                 }
                 output = output.trim();
                 anch = {...anch, text: output}
                 output = "";
-                graphData.nodes[j].anchors[i] = anch;
+                graphData.nodes[j].anchorsCopy[i] = anch;
             }
         }
     }
@@ -404,6 +404,11 @@ export const edgeRulesSameRow = (
             //There exists a duplicate edge
             if (edge.label.localeCompare(e.label) <= 0) {
                 degree = degree + 0.15;
+                if (source.x < target.x) {
+                    direction = "horizontal-right";
+                } else {
+                    direction = "horizontal-left";
+                }
             }
             break;
         }
