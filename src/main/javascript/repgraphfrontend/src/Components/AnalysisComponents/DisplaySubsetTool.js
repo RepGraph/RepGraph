@@ -129,7 +129,6 @@ function DisplaySubsetTool(props) {
                 const jsonResult = JSON.parse(result); //Parse response into JSON
 
 
-
                 let graphData = null;
 
                 switch (state.visualisationFormat) {
@@ -219,11 +218,13 @@ function DisplaySubsetTool(props) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Select a node on the graph:"}<Chip style={{marginLeft:"10px", marginRight:"10px"}}
-                    label={`Selected Node: ${getSelectedNodeLabel()}`}/> <Button onClick={handleDisplaySubset} variant="contained" color="primary" disableElevation autoFocus
-                                                                                 disabled={getSelectedNodeID() === null ? true : false}>
-                    Display
-                </Button></DialogTitle>
+                <DialogTitle id="alert-dialog-title">
+                    {"Select a node on the graph:"}
+                    <Chip style={{marginLeft: "10px", marginRight: "10px"}}
+                          label={`Selected Node: ${getSelectedNodeLabel()}`}
+                    />
+
+                </DialogTitle>
                 <DialogContent style={{height: "80vh"}}>
                     {state.selectedSentenceID === null ? (
                         <div>Select a sentence first.</div>
@@ -245,7 +246,10 @@ function DisplaySubsetTool(props) {
                     )}
                 </DialogContent>
                 <DialogActions>
-
+                    <Button onClick={handleDisplaySubset} variant="contained" color="primary" disableElevation autoFocus
+                            disabled={getSelectedNodeID() === null ? true : false}>
+                        Display
+                    </Button>
                 </DialogActions>
             </Dialog>
             <Dialog
