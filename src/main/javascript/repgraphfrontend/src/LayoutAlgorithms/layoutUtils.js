@@ -31,7 +31,7 @@ export function createDummyNodes(graphData, parents, children, createEdges) {
                 nodeClone = {
                     dummy: true,
                     ...nodeClone,
-                    label: nodeClone.label + " ID:"+ nodeClone.id+ " Span "+ (i + 1),
+                    label: nodeClone.label + " (ID:"+ nodeClone.id+ " Span "+ (i + 1)+")",
                     id: uuid,
                     anchors: [nodeClone.anchors[i]]
                 }

@@ -195,11 +195,19 @@ const ZoomPortal = (props) => {
                                             x: graphWidth * scalingFactor / 2,
                                             y: newgraphHeight * scalingFactor / 2
                                         }
+                                        console.log("Matrix",{
+                                            scaleX: scalingFactor,
+                                            scaleY: scalingFactor,
+                                            translateX: (Math.abs(newCenter.x - (width / 2))) + 45,
+                                            translateY: (Math.abs(newCenter.y - (height / 2))) + (state.graphLayoutSpacing.nodeHeight + state.graphLayoutSpacing.interLevelSpacing) * scalingFactor+40,
+                                            skewX: 0,
+                                            skewY: 0
+                                        })
 
                                         zoom.setTransformMatrix({
                                             scaleX: scalingFactor,
                                             scaleY: scalingFactor,
-                                            translateX: (Math.abs(newCenter.x - (width / 2))) + 40,
+                                            translateX: (Math.abs(newCenter.x - (width / 2))) + 45,
                                             translateY: (Math.abs(newCenter.y - (height / 2))) + (state.graphLayoutSpacing.nodeHeight + state.graphLayoutSpacing.interLevelSpacing) * scalingFactor+40,
                                             skewX: 0,
                                             skewY: 0
