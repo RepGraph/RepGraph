@@ -212,13 +212,15 @@ export const setAnchors = (graphClone, children, parents, nodesWithoutAnchors) =
     }
 }
 
+//Takes in the source and target nodes, the direction of the edge with its degree in order to calculate the coordinates of the second point in the Bezier curve edge.
 export const controlPoints = (source, target, direction, degree, graphLayoutSpacing) => {
     let x1 = 0;
-    let y1 = 0;
+    let y1 = 0; // Points for Bezier Curve
     let offsetX = 0;
-    let offsetY = 0;
+    let offsetY = 0; //Offset for the edge label.
 
     if (direction === "vertical-left") {
+        //negative or positive based on if the node is going up or down. Limited by the space between the neighbouring colunm
         if (source.y < target.y) {
             x1 = Math.min(
                 target.x - (source.y - target.y) * degree,
@@ -235,6 +237,7 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         y1 = (source.y + target.y) / 2;
         offsetY = -20;
     } else if (direction === "vertical-right") {
+        //negative or positive based on if the node is going up or down. Limited by the space between the neighbouring colunm
         if (source.y < target.y) {
             x1 = Math.max(
                 target.x + (source.y - target.y) * degree,
@@ -251,21 +254,22 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         y1 = (source.y + target.y) / 2;
         offsetY = -20;
     } else if (direction === "horizontal-left") {
+
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing);
+        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing); //Limited by the space to the token level
         offsetX = 0;
         offsetY = source.x < target.x ? -20 : 20;
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y - (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing);
+        y1 = Math.min(target.y - (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing); //Limited by the space to the token level
         offsetX = 0;
         offsetY = source.x < target.x ? 20 : -20;
-    } else if (direction === "custom") {
+    } else if (direction === "custom") { //Rules for an edge that has a protruding node on it, See edgeRulesOther()
         x1 = target.x;
         y1 = source.y;
         offsetX = source.x < target.x ? 30 : -30;
         offsetY = 20;
-    } else if (direction === "duplicate") {
+    } else if (direction === "duplicate") {//Rules for edges that have another edge with the same source and target node.
         if (source.x < target.x) {
             x1 = (source.x + target.x) / 2 + graphLayoutSpacing.nodeWidth;
         } else {
@@ -274,7 +278,7 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         y1 = (source.y + target.y) / 2 - 2 * graphLayoutSpacing.nodeHeight;
         offsetY = source.x === target.x ? -10 : -20;
         offsetX = source.y === target.y ? 0 : source.x < target.x ? 22 : -22;
-    } else {
+    } else {//Standard straight line edge.
         x1 = (source.x + target.x) / 2;
         y1 = (source.y + target.y) / 2;
         if (source.y < target.y) {
