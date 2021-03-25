@@ -72,7 +72,6 @@ public class RequestHandler {
     @PostMapping("/UploadData")
     @ResponseBody
     public HashMap<String, Object> UploadData(@RequestHeader(USER_HEADER) String userID, @RequestParam("FileName") String name, @RequestParam("Framework") String framework, @RequestParam("data") MultipartFile file) throws IOException {
-        System.out.println(userID);
         //This is where we would change framework model
         switch (framework) {
             case "1":

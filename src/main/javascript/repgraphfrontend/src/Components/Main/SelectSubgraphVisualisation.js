@@ -148,7 +148,7 @@ const SelectSubgraphVisualisation = () => {
                     } else if (x.id === edges[0] && x.group === "Selected") {
                         currentStandardVisualisation.edges[i] = {
                             ...x,
-                            color: state.darkMode === true ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                            color: state.visualisationOptions.edges.color,
                             group: "normal",
                             shadow: false,
                             background: {
@@ -233,7 +233,7 @@ const SelectSubgraphVisualisation = () => {
                         ...state.visualisationOptions,
                         edges: {
                             ...state.visualisationOptions.edges,
-                            color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                            color: state.visualisationOptions.edges.color,
                         }
                     }} //Options from global state
                     events={events}

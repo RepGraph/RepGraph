@@ -16,7 +16,7 @@ const PlanarVisualisation = (props) => {
                     ...state.visualisationOptions,
                     edges: {
                         ...state.visualisationOptions.edges,
-                        color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
+                        color: state.visualisationOptions.edges.color,
                     }
                 }}
                 events={events}

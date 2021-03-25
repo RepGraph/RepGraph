@@ -215,10 +215,6 @@ export default function Main() {
         setAnchorSen(null);
     };
 
-    const handleThemeChange = () => {
-        dispatch({type: "SET_DARK_MODE", payload: {darkMode: !state.darkMode}});
-    };
-
     const legendOpen = Boolean(anchorEl); //State of graph legend
     const senOpen = Boolean(anchorSen);
 
@@ -408,7 +404,6 @@ export default function Main() {
                                      title={state.dataSet === null ? "Upload data-set" : "Upload new data-set"}>
                                 <Fab color="primary" aria-label="add" variant="extended"
                                      className={classes.fabButton} onClick={() => {
-                                    dispatch({type: "SET_DARK_MODE", payload: {darkMode: false}});
                                     history.push("/");
                                 }}>
                                     {state.dataSet === null ? "No Data-set Uploaded" : state.dataSetFileName} {state.dataSet === null ?
@@ -416,7 +411,6 @@ export default function Main() {
                                 </Fab>
                             </Tooltip>
                         </Grid>
-                        <Switch color={"primary"} checked={state.darkMode} onChange={handleThemeChange}/>
                         <Typography color={ "textPrimary"}>Dark</Typography>
                     </Toolbar>
 
@@ -486,18 +480,6 @@ export default function Main() {
 
                     </Grid>
                 ) : (
-                    // <div style={{height: "80vh", width: "100vw"}}>
-                    //     <GraphVisualisation/>
-                    // </div>
-                    // <div style={{height:"100%", border:"1px solid blue"}}>
-                    //     <Graph
-                    //         width={width}
-                    //         height={height}
-                    //         graph={state.selectedSentenceGraphData}
-                    //         adjacentLinks={determineAdjacentLinks(state.selectedSentenceGraphData)}
-                    //         graphFormatCode={graphFormatCode}
-                    //     />
-                    // </div>
                     <div style={{height: "80vh", width: "100vw"}}>
                              <Graph
                                 width={width}
@@ -508,17 +490,6 @@ export default function Main() {
                             />
                     </div>
                 )}
-                {/*<div item style={{height: "100%", width: "100%", display:"flex",flexDirection: "column",}}>*/}
-                {/*<div style={{border:"1px solid blue", flex: "1"}}>*/}
-                {/*    <Graph*/}
-                {/*        width={width}*/}
-                {/*        height={height}*/}
-                {/*        graph={state.selectedSentenceGraphData}*/}
-                {/*        adjacentLinks={determineAdjacentLinks(state.selectedSentenceGraphData)}*/}
-                {/*        graphFormatCode={graphFormatCode}*/}
-                {/*    />*/}
-                {/*</div>*/}
-                {/*</div>*/}
             </Grid>
         </Grid>
     );

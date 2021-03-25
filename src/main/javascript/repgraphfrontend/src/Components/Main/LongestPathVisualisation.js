@@ -165,24 +165,6 @@ function LongestPathVisualisation({type}) {
                 {state.testResults[type].map((path, index) => (
                     <div className={classes.body} key={index}>
                         {Math.abs(activeStep - index) <= 2 ? (
-                            // <Graph
-                            //     graph={showLongestPath(
-                            //         state.selectedSentenceVisualisation,
-                            //         path
-                            //     )} //Modified current visualisation with longest path highlighted
-                            //     options={{
-                            //         ...state.visualisationOptions,
-                            //         edges: {
-                            //             ...state.visualisationOptions.edges,
-                            //             color: state.darkMode ? state.visualisationOptions.darkMode.edgeColor : state.visualisationOptions.edges.color,
-                            //         }
-                            //     }} //Options from global state
-                            //     events={events}
-                            //     style={{ width: "100%", height: "100%" }}
-                            //     getNetwork={(network) => {
-                            //         //  if you want access to vis.js network api you can set the state in a parent component using this property
-                            //     }}
-                            // />
                             <div className={classes.graphDiv}>
                                 <ParentSize>
                                     {parent => (
