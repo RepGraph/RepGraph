@@ -135,12 +135,12 @@ export const childrenAnchors = (node, children, visited, graphClone, nodesWithou
     }
 }
 
+//Recursive function that returns a node topological sorting of its descendant nodes.
 export const topologicalSort = (node, children, visited, stack, graphClone) => {
 
-    visited[node.id] = true;
+    visited[node.id] = true; //Keep track of which nodes have been visited.
 
-    for (let child of children.get(node.id)) {
-
+    for (let child of children.get(node.id)) { //Iterate through a node's children
         if (!visited[child]) {
             topologicalSort(graphClone.nodes.get(child), children, visited, stack, graphClone);
         }
