@@ -105,7 +105,6 @@ export default function HomePage(props) {
                 requestOptions
             )
                 .then((response) => {
-                    console.log(response);
                     if (!response.ok) {
                         throw "Uploaded File Response not OK";
                     }
@@ -113,8 +112,6 @@ export default function HomePage(props) {
                 })
                 .then((result) => {
                     const jsonResult = JSON.parse(result);
-                    console.log(jsonResult); //Debugging
-                    console.log(jsonResult.response); //Debugging
 
                     dispatch({type: "SET_DATASET", payload: {dataSet: jsonResult.data}}); //Store the data-set (ids and inputs stored in backend)
                     dispatch({type: "SET_DATASET_FILENAME", payload: {dataSetFileName: fileObjects[0].name}}); //store name of data-set uploaded
@@ -232,7 +229,6 @@ export default function HomePage(props) {
 
         fetch(state.APIendpoint+"/UploadDemo?Framework="+ framework, requestOptions)
             .then((response) => {
-                        console.log(response);
                         if (!response.ok) {
                             throw "Uploaded File Response not OK";
                         }
@@ -240,7 +236,6 @@ export default function HomePage(props) {
                     })
             .then((result) => {
                     const jsonResult = JSON.parse(result);
-                    console.log(jsonResult); //Debugging
 
 
                     dispatch({type: "SET_DATASET", payload: {dataSet: jsonResult.data}}); //Store the data-set (ids and inputs stored in backend)

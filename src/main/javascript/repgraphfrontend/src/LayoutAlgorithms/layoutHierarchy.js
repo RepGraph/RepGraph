@@ -72,9 +72,7 @@ export const layoutHierarchy = (graphData, graphLayoutSpacing, framework) => {
             setAnchors(graphClone, children, parents, nodesWithoutAnchors);
         }
 
-
         graphClone = createDummyNodes(graphClone, parents, children, false);
-        console.log(graphClone)
 
 //Determine span lengths of each node
         const graphNodeSpanLengths = Array.from(graphClone.nodes.values())
