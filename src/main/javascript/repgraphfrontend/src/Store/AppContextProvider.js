@@ -1,5 +1,5 @@
 import React, {useReducer} from "react";
-import {dmrsDebugData} from "../store";
+import {dmrsDebugData} from "./demoData";
 
 export const AppContext = React.createContext();
 
