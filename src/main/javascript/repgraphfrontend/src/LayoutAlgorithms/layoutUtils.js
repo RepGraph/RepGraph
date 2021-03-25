@@ -88,29 +88,34 @@ export function addTokenSpanText(graphData) {
 
 }
 
+//Recursive function used to assign anchors to nodes who do not have anchors.
 export const childrenAnchors = (node, children, visited, graphClone, nodesWithoutAnchors) => {
 
+    //Base cases, node has already been visited and either does/doesn't have anchors.
     if (visited[node.id] && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
     } else if (visited[node.id] && node.anchors !== null) {
         return {from: node.anchors[0].from, end: node.anchors[0].end};
     }
     visited[node.id] = true;
-    if (children.get(node.id).length === 0 && node.anchors === null) {
 
+    if (children.get(node.id).length === 0 && node.anchors === null) {
+        //No children which to take anchors from.
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
-        ;
     } else if (node.anchors !== null) {
+        //Anchors found
         return {from: node.anchors[0].from, end: node.anchors[0].end};
     } else {
 
         let anchors = [];
+        //Iterate through children nodes to find anchors.
         for (let childID of children.get(node.id)) {
             if (graphClone.nodes.get(childID).anchors === null) {
 
                 let temp = childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone, nodesWithoutAnchors);
 
                 if (temp.from !== Number.MAX_VALUE) {
+                    //Set this node's anchors in graphClone
                     graphClone.nodes.set(node.id, {...node, anchors: [{from: temp.from, end: temp.end}], span: false});
                     nodesWithoutAnchors.push(node.id);
                 }
@@ -126,6 +131,7 @@ export const childrenAnchors = (node, children, visited, graphClone, nodesWithou
             }
         }
         let leftMost = anchors[0];
+        //Finds leftmost anchored nodes out of its children.
         for (let i = 1; i < anchors.length; i++) {
             if (leftMost.from > anchors[i].from) {
                 leftMost = anchors[i];
