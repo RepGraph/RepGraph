@@ -282,6 +282,7 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
     return {x1, y1, offsetX, offsetY};
 }
 
+//Edge rules for edges with source and target nodes that are in the same column.
 export const edgeRulesSameColumn = (
     edge,
     source,
@@ -358,6 +359,7 @@ export const edgeRulesSameColumn = (
     return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
+//Edge rules for edges with source and target nodes that are in the saame row
 export const edgeRulesSameRow = (
     edge,
     source,
@@ -417,6 +419,7 @@ export const edgeRulesSameRow = (
     return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
+//Edge rules for edges with source and target nodes that are not in the same row nor column.
 export const edgeRulesOther = (
     edge,
     source,
@@ -451,7 +454,7 @@ export const edgeRulesOther = (
                 ((node.x < source.x && node.x > target.x) ||
                     (node.x > source.x && node.x < target.x))
             ) {
-
+                //Node is protruding
                 let xtemp = Math.abs(node.x - source.x);
                 let ytemp = Math.abs(node.y - target.y);
                 if (ytemp > yProtrusion && xtemp > xProtrusion) {
@@ -462,6 +465,7 @@ export const edgeRulesOther = (
         }
     }
 
+    //Make protrusion variables a percentage of the vertical and horizontal distance between the source and target node.
     xProtrusion = (xProtrusion / Math.abs(target.x - source.x)).toFixed(3);
     yProtrusion = (yProtrusion / Math.abs(target.y - source.y)).toFixed(3);
     if (xProtrusion >= 0.5 && yProtrusion >= 0.5) {
