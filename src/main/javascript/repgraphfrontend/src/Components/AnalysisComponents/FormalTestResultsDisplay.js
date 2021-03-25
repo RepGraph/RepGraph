@@ -21,7 +21,6 @@ import LongestPathVisualisation from "../Main/LongestPathVisualisation";
 import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
 import Popover from "@material-ui/core/Popover";
-import PlanarVisualisation from "../Main/PlanarVisualisation";
 import {ParentSize} from "@visx/responsive";
 import {Graph} from "../Graph/Graph";
 import {determineAdjacentLinks} from "../../LayoutAlgorithms/layoutHierarchy";

@@ -18,8 +18,6 @@ import {AppContext} from "../../Store/AppContextProvider";
 import Card from "@material-ui/core/Card";
 import ListItem from "@material-ui/core/ListItem";
 import {Virtuoso} from "react-virtuoso";
-import SelectSubgraphVisualisation from "../Main/SelectSubgraphVisualisation";
-import SubgraphVisualisation from "../Main/SubgraphVisualisation";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
 import {ParentSize} from "@visx/responsive";

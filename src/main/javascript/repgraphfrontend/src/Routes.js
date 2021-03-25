@@ -2,8 +2,7 @@ import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 
 import HomePage from "./HomePage.js";
-import Main from "./Main.js";
-import MiniDrawer from "./Main2";
+import Main from "./Main";
 import ErrorPage from "./ErrorPage.js";
 
 export default function Routes() {
@@ -13,8 +12,7 @@ export default function Routes() {
         <HomePage />
       </Route>
       <Route exact path="/main">
-        {/*<Main />*/}
-        <MiniDrawer/>
+        <Main/>
       </Route>
       <Route exact path="/404">
         <ErrorPage />

@@ -11,7 +11,7 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import uuid from 'react-uuid'
 
-import {dmrsData, edsData, ptgData, uccaData, amrData} from "./store";
+import {dmrsData, edsData, ptgData, uccaData, amrData} from "./Store/demoData";
 import Box from "@material-ui/core/Box";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
