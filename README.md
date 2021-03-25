@@ -4,7 +4,7 @@
 
 # RepGraph
 
-RepGraph is an application tool to equip Natural Language Processing (NLP) Researchers and Engineers with the ability to visualise and analyse graph data that has been processed by one of the MRP frameworks.
+RepGraph is an application tool to equip Natural Language Processing (NLP) Researchers and Engineers with the ability to visualise and analyse graph data that has been processed by one of the MRP frameworks. [Demonstration Video](https://vimeo.com/user136369092/repgraph)
 
 **Last Updated Feb 10th 2021**
 
@@ -34,7 +34,7 @@ RepGraph is an application tool to equip Natural Language Processing (NLP) Resea
 ## Usage
 The user interface is easy to use and intuitive but for a clear and easy usage guide, refer to the user manual here: [User Manual](https://github.com/EdanToledo/RepGraph/blob/main/UserManual.pdf)
 
-If you simply want to use the application without the hassle of compiling and running everything locally - you can go [here](http://repgraph.herokuapp.com/)
+If you simply want to use the application without the hassle of compiling and running everything locally - you can go [here](https://repgraph.vercel.app/)
 
 ## Getting Started
 To use the RepGraph tool is simple. All that is needed are up to date versions of the following prerequisites and Language compilers/interpreters.
@@ -50,10 +50,12 @@ git clone https://github.com/RepGraph/RepGraph.git
 * Java
 * Maven
 * Node Package Manager
+* Python 3.8.5
 
 ### Backend
 
 ```bash
+pip install -r requirements.txt
 mvn compile
 mvn package
 java -jar *Location of Jar File*
@@ -75,24 +77,23 @@ RepGraph
 |       ├── java 'contains all java source code that is used in backend'
 |       ├── javascript 'contains all javascript code that is used in frontend'
 |       └── resources 'contains all other resources used such as config and property files'
-|   └── test 'contains test methods to test source code in main'
-|       ├── java 'contains test methods for the java backend'
-|       └── testResources 'contains resources used for test methods'
 ```
 
 ## Acknowledgements
 
-A big thanks to Jan Buys (jbuys@cs.uct.ac.za) for help and supervision of this project.
+A big thanks to Jan Buys (jbuys@cs.uct.ac.za) for his help and supervision of this project.
 
 ## Authors
 * Edan Toledo
 * Roy Cohen
 * Jaron Cohen
+* Jan Buys
 
 ## Contact
 * TLDEDA001@myuct.ac.za
 * CHNROY002@myuct.ac.za
 * CHNJAR003@myuct.ac.za
+* jbuys@cs.uct.ac.za
 
 ## Contribution guidelines
 Please ensure that you adhere to the following guidelines when making any contributions to this repo:
