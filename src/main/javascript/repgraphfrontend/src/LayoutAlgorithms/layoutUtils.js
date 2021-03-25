@@ -88,29 +88,34 @@ export function addTokenSpanText(graphData) {
 
 }
 
+//Recursive function used to assign anchors to nodes who do not have anchors.
 export const childrenAnchors = (node, children, visited, graphClone, nodesWithoutAnchors) => {
 
+    //Base cases, node has already been visited and either does/doesn't have anchors.
     if (visited[node.id] && node.anchors === null) {
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
     } else if (visited[node.id] && node.anchors !== null) {
         return {from: node.anchors[0].from, end: node.anchors[0].end};
     }
     visited[node.id] = true;
-    if (children.get(node.id).length === 0 && node.anchors === null) {
 
+    if (children.get(node.id).length === 0 && node.anchors === null) {
+        //No children which to take anchors from.
         return {from: Number.MAX_VALUE, end: Number.MAX_VALUE};
-        ;
     } else if (node.anchors !== null) {
+        //Anchors found
         return {from: node.anchors[0].from, end: node.anchors[0].end};
     } else {
 
         let anchors = [];
+        //Iterate through children nodes to find anchors.
         for (let childID of children.get(node.id)) {
             if (graphClone.nodes.get(childID).anchors === null) {
 
                 let temp = childrenAnchors(graphClone.nodes.get(childID), children, visited, graphClone, nodesWithoutAnchors);
 
                 if (temp.from !== Number.MAX_VALUE) {
+                    //Set this node's anchors in graphClone
                     graphClone.nodes.set(node.id, {...node, anchors: [{from: temp.from, end: temp.end}], span: false});
                     nodesWithoutAnchors.push(node.id);
                 }
@@ -126,6 +131,7 @@ export const childrenAnchors = (node, children, visited, graphClone, nodesWithou
             }
         }
         let leftMost = anchors[0];
+        //Finds leftmost anchored nodes out of its children.
         for (let i = 1; i < anchors.length; i++) {
             if (leftMost.from > anchors[i].from) {
                 leftMost = anchors[i];
@@ -135,12 +141,12 @@ export const childrenAnchors = (node, children, visited, graphClone, nodesWithou
     }
 }
 
+//Recursive function that returns a node topological sorting of its descendant nodes.
 export const topologicalSort = (node, children, visited, stack, graphClone) => {
 
-    visited[node.id] = true;
+    visited[node.id] = true; //Keep track of which nodes have been visited.
 
-    for (let child of children.get(node.id)) {
-
+    for (let child of children.get(node.id)) { //Iterate through a node's children
         if (!visited[child]) {
             topologicalSort(graphClone.nodes.get(child), children, visited, stack, graphClone);
         }
@@ -206,13 +212,15 @@ export const setAnchors = (graphClone, children, parents, nodesWithoutAnchors) =
     }
 }
 
+//Takes in the source and target nodes, the direction of the edge with its degree in order to calculate the coordinates of the second point in the Bezier curve edge.
 export const controlPoints = (source, target, direction, degree, graphLayoutSpacing) => {
     let x1 = 0;
-    let y1 = 0;
+    let y1 = 0; // Points for Bezier Curve
     let offsetX = 0;
-    let offsetY = 0;
+    let offsetY = 0; //Offset for the edge label.
 
     if (direction === "vertical-left") {
+        //negative or positive based on if the node is going up or down. Limited by the space between the neighbouring colunm
         if (source.y < target.y) {
             x1 = Math.min(
                 target.x - (source.y - target.y) * degree,
@@ -229,6 +237,7 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         y1 = (source.y + target.y) / 2;
         offsetY = -20;
     } else if (direction === "vertical-right") {
+        //negative or positive based on if the node is going up or down. Limited by the space between the neighbouring colunm
         if (source.y < target.y) {
             x1 = Math.max(
                 target.x + (source.y - target.y) * degree,
@@ -245,21 +254,22 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         y1 = (source.y + target.y) / 2;
         offsetY = -20;
     } else if (direction === "horizontal-left") {
+
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing);
+        y1 = Math.min(target.y + (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing); //Limited by the space to the token level
         offsetX = 0;
         offsetY = source.x < target.x ? -20 : 20;
     } else if (direction === "horizontal-right") {
         x1 = (source.x + target.x) / 2;
-        y1 = Math.min(target.y - (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing);
+        y1 = Math.min(target.y - (source.x - target.x) * degree, target.y + graphLayoutSpacing.tokenLevelSpacing); //Limited by the space to the token level
         offsetX = 0;
         offsetY = source.x < target.x ? 20 : -20;
-    } else if (direction === "custom") {
+    } else if (direction === "custom") { //Rules for an edge that has a protruding node on it, See edgeRulesOther()
         x1 = target.x;
         y1 = source.y;
         offsetX = source.x < target.x ? 30 : -30;
         offsetY = 20;
-    } else if (direction === "duplicate") {
+    } else if (direction === "duplicate") {//Rules for edges that have another edge with the same source and target node.
         if (source.x < target.x) {
             x1 = (source.x + target.x) / 2 + graphLayoutSpacing.nodeWidth;
         } else {
@@ -268,7 +278,7 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
         y1 = (source.y + target.y) / 2 - 2 * graphLayoutSpacing.nodeHeight;
         offsetY = source.x === target.x ? -10 : -20;
         offsetX = source.y === target.y ? 0 : source.x < target.x ? 22 : -22;
-    } else {
+    } else {//Standard straight line edge.
         x1 = (source.x + target.x) / 2;
         y1 = (source.y + target.y) / 2;
         if (source.y < target.y) {
@@ -282,6 +292,7 @@ export const controlPoints = (source, target, direction, degree, graphLayoutSpac
     return {x1, y1, offsetX, offsetY};
 }
 
+//Edge rules for edges with source and target nodes that are in the same column.
 export const edgeRulesSameColumn = (
     edge,
     source,
@@ -358,6 +369,7 @@ export const edgeRulesSameColumn = (
     return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
+//Edge rules for edges with source and target nodes that are in the saame row
 export const edgeRulesSameRow = (
     edge,
     source,
@@ -417,6 +429,7 @@ export const edgeRulesSameRow = (
     return controlPoints(source, target, direction, degree, graphLayoutSpacing);
 }
 
+//Edge rules for edges with source and target nodes that are not in the same row nor column.
 export const edgeRulesOther = (
     edge,
     source,
@@ -451,7 +464,7 @@ export const edgeRulesOther = (
                 ((node.x < source.x && node.x > target.x) ||
                     (node.x > source.x && node.x < target.x))
             ) {
-
+                //Node is protruding
                 let xtemp = Math.abs(node.x - source.x);
                 let ytemp = Math.abs(node.y - target.y);
                 if (ytemp > yProtrusion && xtemp > xProtrusion) {
@@ -462,6 +475,7 @@ export const edgeRulesOther = (
         }
     }
 
+    //Make protrusion variables a percentage of the vertical and horizontal distance between the source and target node.
     xProtrusion = (xProtrusion / Math.abs(target.x - source.x)).toFixed(3);
     yProtrusion = (yProtrusion / Math.abs(target.y - source.y)).toFixed(3);
     if (xProtrusion >= 0.5 && yProtrusion >= 0.5) {
