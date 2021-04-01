@@ -4,7 +4,7 @@
 
 # RepGraph
 
-RepGraph is an application tool to equip Natural Language Processing (NLP) Researchers and Engineers with the ability to visualise and analyse graph data that has been processed by one of the MRP frameworks. [Demonstration Video](https://vimeo.com/user136369092/repgraph) [Demonstration Website](https://repgraph.vercel.app/)
+RepGraph is an application tool to equip Natural Language Processing (NLP) Researchers and Engineers with the ability to visualise and analyse graph data that has been processed by one of the MRP frameworks. [Demonstration Video](https://vimeo.com/user136369092/repgraph) - [Demonstration Website](https://repgraph.vercel.app/)
 
 **Last Updated March 2021**
 
@@ -69,7 +69,6 @@ npm start
 
 Remember to change the API endpoint in the AppContextProvider file if you want to use a locally hosted backend.
 ## Repository structure
-This section contains the current repository structure of RepGraph
 
 ```commandline
 RepGraph
