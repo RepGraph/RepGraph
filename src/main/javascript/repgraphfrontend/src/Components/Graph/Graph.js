@@ -57,9 +57,10 @@ export const Graph = ({
 
     //Only show original, unprocessed anchors information from the data-set
     const tooltipDisplayData = cloneDeep(tooltipData);
-    tooltipDisplayData.extraInformation.anchors = tooltipDisplayData.extraInformation.anchorsCopy;
-    delete tooltipDisplayData.extraInformation.anchorsCopy;
-
+    if (tooltipDisplayData.extraInformation.hasOwnProperty("anchorsCopy")) {
+        tooltipDisplayData.extraInformation.anchors = tooltipDisplayData.extraInformation.anchorsCopy;
+        delete tooltipDisplayData.extraInformation.anchorsCopy;
+    }
     return (
         <div
             ref={containerRef}
