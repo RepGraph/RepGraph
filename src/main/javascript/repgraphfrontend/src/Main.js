@@ -773,7 +773,6 @@ export default function Main() {
                         justify="space-between"
                         alignItems="center"
                         spacing={2}
-
                     >
                         <Grid item xs={6} className={classes.body}>
                             <Card className={classes.body} variant="outlined">
