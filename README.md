@@ -36,6 +36,8 @@ The user interface is easy to use and intuitive but for a clear and easy usage g
 
 If you simply want to use the application without the hassle of compiling and running everything locally - you can go [here](https://repgraph.vercel.app/)
 
+For access to sample data as well as a description of Uniform Graph Interchange Format: http://mrp.nlpl.eu/2020/index.php?page=14
+
 ## Getting Started
 To use the RepGraph tool is simple. All that is needed are up to date versions of the following prerequisites and Language compilers/interpreters.
 
