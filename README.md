@@ -114,6 +114,24 @@ Please ensure that you adhere to the following guidelines when making any contri
 - Once a core member has reviewed and approved with the changes/additions you have made, your branch will be merged with `master` and will be live in the RepGraph tool.
 - Please make sure old branches are deleted after they have been merged and are no longer in use.
 
-
+## Citation
+If this work helped you in anyway please consider citing us:
+```
+@inproceedings{cohen-etal-2021-repgraph,
+    title = "{R}ep{G}raph: Visualising and Analysing Meaning Representation Graphs",
+    author = "Cohen, Jaron  and
+      Cohen, Roy  and
+      Toledo, Edan  and
+      Buys, Jan",
+    booktitle = "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing: System Demonstrations",
+    month = nov,
+    year = "2021",
+    address = "Online and Punta Cana, Dominican Republic",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.emnlp-demo.10",
+    pages = "79--86",
+    abstract = "We present RepGraph, an open source visualisation and analysis tool for meaning representation graphs. Graph-based meaning representations provide rich semantic annotations, but visualising them clearly is more challenging than for fully lexicalized representations. Our application provides a seamless, unifying interface with which to visualise, manipulate and analyse semantically parsed graph data represented in a JSON-based serialisation format. RepGraph visualises graphs in multiple formats, with an emphasis on showing the relation between nodes and their corresponding token spans, whilst keeping the representation compact. Additionally, the web-based tool provides NLP researchers with a clear, visually intuitive way of interacting with these graphs, and includes a number of graph analysis features. The tool currently supports the DMRS, EDS, PTG, UCCA, and AMR semantic frameworks. A live demo is available at https://repgraph.vercel.app/.",
+}
+```
 
 
