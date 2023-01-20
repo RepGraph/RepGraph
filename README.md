@@ -2,6 +2,9 @@
     <img width="50%" src="https://github.com/RepGraph/RepGraph/blob/main/RGLogo.png"> 
 </p>
 
+### Update December 2022
+The backend server is no longer hosted - it is easy to host your own backend and frontend server locally.
+
 # RepGraph
 
 RepGraph is an application tool to equip Natural Language Processing (NLP) Researchers and Engineers with the ability to visualise and analyse graph data that has been processed by one of the MRP frameworks. [Demonstration Video](https://vimeo.com/user136369092/repgraph) - [Demonstration Website](https://repgraph.vercel.app/)
